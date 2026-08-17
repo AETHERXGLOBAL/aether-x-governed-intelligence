@@ -1,7 +1,7 @@
 # AX-PUB-REF-003 — Agent Tool-Use Authority Validator
 
 **Version:** `1.0`  
-**Status:** `PUBLIC REFERENCE IMPLEMENTATION · REPRODUCIBLY VERIFIED · CI WORKFLOW TO BE PUBLISHED · EDUCATIONAL / NON-PRODUCTION`  
+**Status:** `PUBLIC REFERENCE IMPLEMENTATION · CI WORKFLOW PUBLISHED · VALIDATION PENDING · EDUCATIONAL / NON-PRODUCTION`  
 **Scope:** Selected deterministic semantics from `AX-PUB-SPEC-004`
 
 ## Purpose
@@ -44,18 +44,13 @@ python3 reference-implementations/agent-tool-authority-validator/validator.py \
   reference-implementations/agent-tool-authority-validator/examples/valid_envelope.json
 ```
 
-Expected result:
+Expected result when the published validator and example conform:
 
 ```text
 AX_AGENT_AUTHORITY_REFERENCE_VALIDATION_PASS
 ```
 
-The intentionally invalid example should be rejected:
-
-```bash
-python3 reference-implementations/agent-tool-authority-validator/validator.py \
-  reference-implementations/agent-tool-authority-validator/examples/invalid_envelope.json
-```
+The intentionally invalid example is designed to be rejected.
 
 Run unit tests:
 
@@ -63,6 +58,8 @@ Run unit tests:
 python3 -m unittest discover \
   -s reference-implementations/agent-tool-authority-validator/tests -v
 ```
+
+A public GitHub Actions workflow is published at `.github/workflows/validate-agent-authority-reference.yml`. Until a successful run against the published repository state is directly verified, this artifact remains `VALIDATION PENDING` rather than being represented as CI-tested.
 
 ## Public Reference Profile
 
@@ -77,7 +74,7 @@ This profile demonstrates bounded parameter authority. It is not a universal pol
 
 ## Claim Boundary
 
-A validator pass means only that the supplied envelope satisfied the selected deterministic checks implemented by this public reference version.
+A validator pass means only that the supplied envelope satisfied the selected deterministic checks implemented by that public reference version.
 
 It does **not** establish product implementation, production authorization, security certification, regulatory approval, autonomous authority, private-repository behavior, agent-framework adoption, shared company runtime, or production API/SDK compatibility.
 
