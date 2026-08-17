@@ -1,0 +1,131 @@
+{
+  "snapshot_id": "AX-PUB-SNAP-001",
+  "snapshot_version": "1.0",
+  "name": "Governed Intelligence Public v1.0",
+  "status": "PUBLIC ENGINEERING SNAPSHOT / REPRODUCIBILITY ANCHOR / NON-PRODUCT",
+  "repository": "AETHERXGLOBAL/aether-x-governed-intelligence",
+  "anchor_commit": "f839d4ac0a0b69dcbb682e900f02aad7e24524eb",
+  "anchor_commit_date": "2026-08-17T21:37:23Z",
+  "artifact_manifest": {
+    "id": "AX-PUB-MANIFEST-001",
+    "version": "1.0",
+    "path": "artifacts/AX-PUB-MANIFEST-001.json",
+    "git_blob_sha": "824c34494e6dba7b1ecb81bec9ad678950cdee22"
+  },
+  "inventory": [
+    {
+      "id": "AX-PUB-ARCH-001",
+      "version": "1.0",
+      "path": "specifications/AX-PUB-ARCH-001_GOVERNED_INTELLIGENCE_REFERENCE_ARCHITECTURE.md",
+      "git_blob_sha": "d61777ae7b1c9b76d20bc9e996ed5e551b714589"
+    },
+    {
+      "id": "AX-PUB-SPEC-002",
+      "version": "1.0",
+      "path": "specifications/AX-PUB-SPEC-002_EVIDENCE_AUTHORITY_VERIFICATION_CONTRACT.md",
+      "git_blob_sha": "d384c162e6b42c30ef6d407de51ebb14553a8fbb"
+    },
+    {
+      "id": "AX-PUB-SPEC-003",
+      "version": "1.0",
+      "path": "specifications/AX-PUB-SPEC-003_POINT_IN_TIME_KNOWLEDGE_PROVENANCE_STANDARD.md",
+      "git_blob_sha": "077f477629de37931d6f47fd49ccdb9254ccfba6"
+    },
+    {
+      "id": "AX-PUB-SCHEMA-001",
+      "version": "1.0",
+      "path": "schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json",
+      "git_blob_sha": "2d4d305105211824fe01478b1255fdb4e1de4390"
+    },
+    {
+      "id": "AX-PUB-SCHEMA-002",
+      "version": "1.0",
+      "path": "schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json",
+      "git_blob_sha": "c66839a873d6abe1210641a8f7b10200cc0f8ded"
+    },
+    {
+      "id": "AX-PUB-REF-001",
+      "version": "1.0",
+      "path": "reference-implementations/eav-contract-validator/README.md",
+      "git_blob_sha": "e9e2256020144ca5cd2efa21e3059cd3557c46aa",
+      "entrypoint": "reference-implementations/eav-contract-validator/validator.py",
+      "entrypoint_git_blob_sha": "10b31f990cdeb0a2285081d4b4a8cc2457564c69"
+    },
+    {
+      "id": "AX-PUB-REF-002",
+      "version": "1.0",
+      "path": "reference-implementations/point-in-time-knowledge-validator/README.md",
+      "git_blob_sha": "7f21541aaa9bd9e6d76842456a711c9b156558a6",
+      "entrypoint": "reference-implementations/point-in-time-knowledge-validator/validator.py",
+      "entrypoint_git_blob_sha": "f4344dfb70685b490e716e33f8f2fd2da1f0ca50"
+    },
+    {
+      "id": "AX-PUB-POL-001",
+      "version": "1.0",
+      "path": "docs/COMPATIBILITY_AND_VERSIONING.md",
+      "git_blob_sha": "44debca931ffa9b957745b9061c90be2370084ed"
+    }
+  ],
+  "supporting_material": [
+    {
+      "name": "Public Quickstart",
+      "path": "docs/QUICKSTART.md",
+      "git_blob_sha": "ff728def831a7cec80140e7cfe51714714e6fa61"
+    },
+    {
+      "name": "Repository README",
+      "path": "README.md",
+      "git_blob_sha": "7702b6d9e7f667053a84a01807617a7f11e40c50"
+    }
+  ],
+  "validation_evidence": [
+    {
+      "workflow": "Validate Public Artifact Manifest",
+      "run_id": 32072063735,
+      "head_commit": "f839d4ac0a0b69dcbb682e900f02aad7e24524eb",
+      "conclusion": "success",
+      "scope": "exact snapshot anchor: artifact paths, versions, schema identity, compatibility relationships and developer entry-point integrity"
+    },
+    {
+      "workflow": "Validate EAV Reference Implementation",
+      "run_id": 32070584145,
+      "head_commit": "e356d7b8032758a89b775dd246ba2078e6bfe468",
+      "conclusion": "success",
+      "scope": "EAV validator compilation, unit tests, conforming example and intentional-invalid rejection"
+    },
+    {
+      "workflow": "Validate EAV Machine-Readable Contract",
+      "run_id": 32070512245,
+      "head_commit": "9f6ba69dc1c97ec3d23ba95fa16cdebc5843d3a1",
+      "conclusion": "success",
+      "scope": "EAV schema parse and schema-validator-example alignment"
+    },
+    {
+      "workflow": "Validate Point-in-Time Knowledge Contract",
+      "run_id": 32070954378,
+      "head_commit": "0e9cf8cb667063a3a08b783bc2710758764890f0",
+      "conclusion": "success",
+      "scope": "point-in-time schema parse, example parse and alignment checks"
+    },
+    {
+      "workflow": "Validate Point-in-Time Knowledge Reference Implementation",
+      "run_id": 32071251186,
+      "head_commit": "ee9cc8975d34018828c793fff9483a94f3cc7bc4",
+      "conclusion": "success",
+      "scope": "point-in-time validator compilation, unit tests, conforming envelope and intentional-invalid rejection"
+    }
+  ],
+  "reproducibility": {
+    "primary_identifier": "anchor_commit",
+    "artifact_integrity_identifier": "git_blob_sha",
+    "recommended_checkout": "git checkout f839d4ac0a0b69dcbb682e900f02aad7e24524eb",
+    "note": "A Git commit SHA is the immutable snapshot anchor. Git blob SHAs identify the recorded file contents."
+  },
+  "claim_boundary": [
+    "THIS SNAPSHOT IS NOT A GITHUB RELEASE OR GIT TAG",
+    "PUBLIC SNAPSHOT DOES NOT ESTABLISH PRODUCT IMPLEMENTATION",
+    "REFERENCE VALIDATOR PASS DOES NOT ESTABLISH PRODUCTION APPROVAL",
+    "PUBLIC COMPATIBILITY DOES NOT ESTABLISH PRODUCT INTEGRATION",
+    "SNAPSHOT CONTENT DOES NOT ESTABLISH IMPLEMENTATION INSIDE AETHER X PORTFOLIO INITIATIVES"
+  ]
+}
