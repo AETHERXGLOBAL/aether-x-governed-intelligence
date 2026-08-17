@@ -1,0 +1,37 @@
+name: Validate Agent Tool-Use Authority Reference
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'reference-implementations/agent-tool-authority-validator/**'
+      - 'schemas/AX-PUB-SCHEMA-003_AGENT_TOOL_USE_AUTHORITY_ENVELOPE.schema.json'
+      - '.github/workflows/validate-agent-authority-reference.yml'
+  pull_request:
+    paths:
+      - 'reference-implementations/agent-tool-authority-validator/**'
+      - 'schemas/AX-PUB-SCHEMA-003_AGENT_TOOL_USE_AUTHORITY_ENVELOPE.schema.json'
+      - '.github/workflows/validate-agent-authority-reference.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-agent-authority-reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout public repository only
+        uses: actions/checkout@v4
+      - name: Compile public validator
+        run: python3 -m py_compile reference-implementations/agent-tool-authority-validator/validator.py
+      - name: Run unit tests
+        run: python3 -m unittest discover -s reference-implementations/agent-tool-authority-validator/tests -v
+      - name: Accept conforming public example
+        run: python3 reference-implementations/agent-tool-authority-validator/validator.py reference-implementations/agent-tool-authority-validator/examples/valid_envelope.json
+      - name: Reject intentionally invalid public example
+        run: |
+          if python3 reference-implementations/agent-tool-authority-validator/validator.py reference-implementations/agent-tool-authority-validator/examples/invalid_envelope.json; then
+            echo "invalid example unexpectedly passed"
+            exit 1
+          fi
