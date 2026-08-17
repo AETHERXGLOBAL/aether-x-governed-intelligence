@@ -1,6 +1,6 @@
 {
   "manifest_id": "AX-PUB-MANIFEST-001",
-  "manifest_version": "1.3",
+  "manifest_version": "1.4",
   "repository": "AETHERXGLOBAL/aether-x-governed-intelligence",
   "scope": "PUBLIC_ENGINEERING_ARTIFACT_COMPATIBILITY",
   "public_state": "CURRENT",
@@ -12,12 +12,12 @@
     {"id":"AX-PUB-SPEC-004","version":"1.0","type":"AGENT_AUTHORITY_TOOL_USE_SPECIFICATION","path":"specifications/AX-PUB-SPEC-004_GOVERNED_AGENT_AUTHORITY_TOOL_USE_STANDARD.md","state":"CURRENT","public_maturity":"CONCEPTUAL / NON-PRODUCT-SPECIFIC"},
     {"id":"AX-PUB-SCHEMA-001","version":"1.0","type":"MACHINE_READABLE_CONTROL_CONTRACT","path":"schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json","state":"CURRENT","public_maturity":"JSON SCHEMA / CONCEPTUAL / NON-PRODUCT-SPECIFIC"},
     {"id":"AX-PUB-SCHEMA-002","version":"1.0","type":"MACHINE_READABLE_TEMPORAL_PROVENANCE_CONTRACT","path":"schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json","state":"CURRENT","public_maturity":"JSON SCHEMA / CONCEPTUAL / NON-PRODUCT-SPECIFIC"},
-    {"id":"AX-PUB-SCHEMA-003","version":"1.0","type":"MACHINE_READABLE_AGENT_AUTHORITY_CONTRACT","path":"schemas/AX-PUB-SCHEMA-003_AGENT_TOOL_USE_AUTHORITY_ENVELOPE.schema.json","state":"CURRENT","public_maturity":"JSON SCHEMA / CONCEPTUAL / NON-PRODUCT-SPECIFIC"},
+    {"id":"AX-PUB-SCHEMA-003","version":"1.0","type":"MACHINE_READABLE_AGENT_AUTHORITY_CONTRACT","path":"schemas/AX-PUB-SCHEMA-003_AGENT_TOOL_USE_AUTHORITY_ENVELOPE.schema.json","state":"CURRENT","public_maturity":"JSON SCHEMA / CI-VALIDATED / CONCEPTUAL / NON-PRODUCT-SPECIFIC"},
     {"id":"AX-PUB-REF-001","version":"1.0","type":"REFERENCE_IMPLEMENTATION","path":"reference-implementations/eav-contract-validator/README.md","entrypoint":"reference-implementations/eav-contract-validator/validator.py","state":"CURRENT","public_maturity":"CI-TESTED / EDUCATIONAL / NON-PRODUCTION"},
     {"id":"AX-PUB-REF-002","version":"1.0","type":"REFERENCE_IMPLEMENTATION","path":"reference-implementations/point-in-time-knowledge-validator/README.md","entrypoint":"reference-implementations/point-in-time-knowledge-validator/validator.py","state":"CURRENT","public_maturity":"CI-TESTED / EDUCATIONAL / NON-PRODUCTION"},
-    {"id":"AX-PUB-REF-003","version":"1.0","type":"REFERENCE_IMPLEMENTATION","path":"reference-implementations/agent-tool-authority-validator/README.md","entrypoint":"reference-implementations/agent-tool-authority-validator/validator.py","state":"CURRENT","public_maturity":"CI WORKFLOW PUBLISHED / VALIDATION PENDING / EDUCATIONAL / NON-PRODUCTION"},
+    {"id":"AX-PUB-REF-003","version":"1.0","type":"REFERENCE_IMPLEMENTATION","path":"reference-implementations/agent-tool-authority-validator/README.md","entrypoint":"reference-implementations/agent-tool-authority-validator/validator.py","state":"CURRENT","public_maturity":"CI-TESTED / EDUCATIONAL / NON-PRODUCTION"},
     {"id":"AX-PUB-TEST-001","version":"1.0","type":"PUBLIC_CONFORMANCE_TEST_KIT","path":"conformance/AX-PUB-TEST-001/README.md","entrypoint":"conformance/AX-PUB-TEST-001/run_conformance.py","state":"CURRENT","public_maturity":"REPRODUCIBLY VERIFIED / CI WORKFLOW PUBLISHED / CI RUN UNVERIFIED / NON-PRODUCTION"},
-    {"id":"AX-PUB-TEST-002","version":"1.0","type":"PUBLIC_CONFORMANCE_TEST_KIT","path":"conformance/AX-PUB-TEST-002/README.md","entrypoint":"conformance/AX-PUB-TEST-002/run_conformance.py","state":"CURRENT","public_maturity":"CI WORKFLOW PUBLISHED / VALIDATION PENDING / NON-PRODUCTION"},
+    {"id":"AX-PUB-TEST-002","version":"1.0","type":"PUBLIC_CONFORMANCE_TEST_KIT","path":"conformance/AX-PUB-TEST-002/README.md","entrypoint":"conformance/AX-PUB-TEST-002/run_conformance.py","state":"CURRENT","public_maturity":"CI-TESTED / NON-PRODUCTION"},
     {"id":"AX-PUB-POL-001","version":"1.3","type":"PUBLIC_ENGINEERING_POLICY","path":"docs/COMPATIBILITY_AND_VERSIONING.md","state":"CURRENT","public_maturity":"ACTIVE FOR THIS REPOSITORY"}
   ],
   "relationships": [
@@ -38,6 +38,12 @@
     {"from_id":"AX-PUB-TEST-001","from_version":"1.0","relationship":"EXERCISES_PUBLIC_BEHAVIOR_OF","to_id":"AX-PUB-REF-002","to_version":"1.0","state":"COMPATIBLE"},
     {"from_id":"AX-PUB-TEST-002","from_version":"1.0","relationship":"EXERCISES_PUBLIC_BEHAVIOR_OF","to_id":"AX-PUB-REF-003","to_version":"1.0","state":"COMPATIBLE"}
   ],
+  "validation_evidence": {
+    "id": "AX-PUB-CI-001",
+    "path": "evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md",
+    "verified_head_commit": "f07bfb55eb45924f9ee62024f144064506d4be48",
+    "verified_base_commit": "85cf6fde5623a19e04076def5658571849c72f62"
+  },
   "claim_boundary": [
     "PUBLIC COMPATIBILITY DOES NOT ESTABLISH PRODUCT INTEGRATION",
     "REFERENCE VALIDATOR PASS DOES NOT ESTABLISH PRODUCTION APPROVAL OR AUTHORIZATION",
