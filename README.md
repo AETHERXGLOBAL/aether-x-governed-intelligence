@@ -4,18 +4,16 @@
 
 # AETHER X Governed Intelligence
 
-**Public reference architecture, technical specifications, machine-readable contracts, non-production reference implementations, and bounded conformance artifacts for governed intelligence systems by AETHER X GLOBAL.**
+**Public reference architecture, technical specifications, machine-readable contracts, non-production reference implementations and bounded conformance artifacts for governed intelligence systems by AETHER X GLOBAL.**
 
 `PUBLIC ENGINEERING REPOSITORY · CONTROLLED DISCLOSURE`
 
-AETHER X GLOBAL is **A Governed Intelligence Systems Company**. This repository makes selected parts of the company's engineering doctrine independently inspectable without exposing proprietary product implementation, private research, confidential architecture, credentials, customer information, or unpublished intellectual property.
+AETHER X GLOBAL is **A Governed Intelligence Systems Company**. This repository makes selected engineering doctrine independently inspectable without exposing proprietary product implementation, private research, confidential architecture, credentials, customer information or unpublished intellectual property.
 
 > **Institutional Intelligence. Governed Autonomy.**  
 > **Build Intelligence That Can Be Trusted to Act.**
 
----
-
-## Public Engineering Chain
+## Core Engineering Boundary
 
 ```text
 GOVERNED KNOWLEDGE
@@ -37,259 +35,177 @@ VERIFIED OUTCOME
 AUDIT / INSTITUTIONAL LEARNING
 ```
 
-The core distinction is deliberate:
-
 `OUTPUT ≠ FACT`  
 `RECOMMENDATION ≠ DECISION`  
 `CAPABILITY ≠ AUTHORITY`  
 `TOOL AVAILABILITY ≠ TOOL PERMISSION`  
 `EXECUTION COMPLETE ≠ VERIFIED`  
-`CURRENT TRUTH ≠ HISTORICAL TRUTH`  
 `ARCHITECTURE ≠ IMPLEMENTATION`
-
----
 
 ## Developer Entry Point
 
-New to the repository? Start with the **[Public Quickstart](./docs/QUICKSTART.md)**.
+Start with the **[Public Quickstart](./docs/QUICKSTART.md)**.
 
-For compatibility, conformance and reproducibility:
+Current public governance records:
 
-- **[Artifact Compatibility & Versioning Policy](./docs/COMPATIBILITY_AND_VERSIONING.md)** — `AX-PUB-POL-001 v1.2`
-- **[Machine-Readable Public Artifact Manifest](./artifacts/AX-PUB-MANIFEST-001.json)** — `AX-PUB-MANIFEST-001 v1.2`
-- **[Governed Intelligence Conformance Test Kit](./conformance/AX-PUB-TEST-001/README.md)** — `AX-PUB-TEST-001 v1.0 · REPRODUCIBLY VERIFIED · CI RUN UNVERIFIED`
-- **[Public Engineering Snapshot v1.0](./snapshots/AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md)** — `AX-PUB-SNAP-001 v1.0`
-- **[Machine-Readable Snapshot Record](./snapshots/AX-PUB-SNAP-001.json)** — anchored to commit `f839d4ac0a0b69dcbb682e900f02aad7e24524eb`
-- **Public manifest CI** validates declared artifact paths, versions, schema identity and compatibility relationships.
-- **Public snapshot CI** validates the immutable snapshot anchor and recorded Git blob inventory.
-- **Public conformance workflow** is published for the current synthetic test vectors. Byte-identical public blobs have been reproducibly executed with `15/15` conforming cases and the public/private boundary guard passing; a GitHub Actions CI run remains explicitly unverified.
-
-For reproducible external review, use the validated snapshot or pin an explicit Git commit SHA. The `main` branch represents the current public engineering state and may advance.
+- **[Artifact Compatibility & Versioning Policy](./docs/COMPATIBILITY_AND_VERSIONING.md)** — `AX-PUB-POL-001 v1.3`
+- **[Machine-Readable Artifact Manifest](./artifacts/AX-PUB-MANIFEST-001.json)** — `AX-PUB-MANIFEST-001 v1.3`
+- **[Public Engineering Snapshot v1.0](./snapshots/AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md)** — immutable historical review state
 
 `PUBLIC COMPATIBILITY ≠ PRODUCT INTEGRATION`
 
 `PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
 
-`CONFORMANCE PASS ≠ PRODUCT IMPLEMENTATION`
-
----
-
 ## Public Technical Series
 
-| ID | Artifact | Type | Public state |
-|---|---|---|---|
-| `AX-PUB-ARCH-001` | [Governed Intelligence Reference Architecture](./specifications/AX-PUB-ARCH-001_GOVERNED_INTELLIGENCE_REFERENCE_ARCHITECTURE.md) | Reference Architecture | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
-| `AX-PUB-SPEC-002` | [Evidence, Authority & Verification Contract](./specifications/AX-PUB-SPEC-002_EVIDENCE_AUTHORITY_VERIFICATION_CONTRACT.md) | Control Specification | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
-| `AX-PUB-SPEC-003` | [Point-in-Time Knowledge & Provenance Standard](./specifications/AX-PUB-SPEC-003_POINT_IN_TIME_KNOWLEDGE_PROVENANCE_STANDARD.md) | Data / Knowledge Integrity Specification | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
-| `AX-PUB-SPEC-004` | [Governed Agent Authority & Tool-Use Boundary Standard](./specifications/AX-PUB-SPEC-004_GOVERNED_AGENT_AUTHORITY_TOOL_USE_STANDARD.md) | Agent Authority / Tool-Use Specification | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
-| `AX-PUB-SCHEMA-001` | [Governed EAV Contract Schema](./schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json) | Machine-Readable Control Contract | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
-| `AX-PUB-SCHEMA-002` | [Point-in-Time Knowledge Envelope](./schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json) | Machine-Readable Temporal / Provenance Contract | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
-| `AX-PUB-REF-001` | [EAV Contract Validator](./reference-implementations/eav-contract-validator/README.md) | Executable Reference Implementation | `v1.0 · CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
-| `AX-PUB-REF-002` | [Point-in-Time Knowledge Validator](./reference-implementations/point-in-time-knowledge-validator/README.md) | Executable Temporal / Provenance Reference Implementation | `v1.0 · CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
-| `AX-PUB-TEST-001` | [Governed Intelligence Conformance Test Kit](./conformance/AX-PUB-TEST-001/README.md) | Public Conformance Test Kit | `v1.0 · REPRODUCIBLY VERIFIED · CI WORKFLOW PUBLISHED · CI RUN UNVERIFIED · NON-PRODUCTION` |
-| `AX-PUB-POL-001` | [Artifact Compatibility & Versioning Policy](./docs/COMPATIBILITY_AND_VERSIONING.md) | Public Engineering Policy | `v1.2 · ACTIVE FOR THIS REPOSITORY` |
+| ID | Artifact | Public state |
+|---|---|---|
+| `AX-PUB-ARCH-001` | [Governed Intelligence Reference Architecture](./specifications/AX-PUB-ARCH-001_GOVERNED_INTELLIGENCE_REFERENCE_ARCHITECTURE.md) | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
+| `AX-PUB-SPEC-002` | [Evidence, Authority & Verification Contract](./specifications/AX-PUB-SPEC-002_EVIDENCE_AUTHORITY_VERIFICATION_CONTRACT.md) | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
+| `AX-PUB-SPEC-003` | [Point-in-Time Knowledge & Provenance Standard](./specifications/AX-PUB-SPEC-003_POINT_IN_TIME_KNOWLEDGE_PROVENANCE_STANDARD.md) | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
+| `AX-PUB-SPEC-004` | [Governed Agent Authority & Tool-Use Boundary Standard](./specifications/AX-PUB-SPEC-004_GOVERNED_AGENT_AUTHORITY_TOOL_USE_STANDARD.md) | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
+| `AX-PUB-SCHEMA-001` | [Governed EAV Contract Schema](./schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json) | `JSON SCHEMA · CONCEPTUAL` |
+| `AX-PUB-SCHEMA-002` | [Point-in-Time Knowledge Envelope](./schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json) | `JSON SCHEMA · CONCEPTUAL` |
+| `AX-PUB-SCHEMA-003` | [Agent Tool-Use Authority Envelope](./schemas/AX-PUB-SCHEMA-003_AGENT_TOOL_USE_AUTHORITY_ENVELOPE.schema.json) | `JSON SCHEMA · CONCEPTUAL` |
+| `AX-PUB-REF-001` | [EAV Contract Validator](./reference-implementations/eav-contract-validator/README.md) | `v1.0 · CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
+| `AX-PUB-REF-002` | [Point-in-Time Knowledge Validator](./reference-implementations/point-in-time-knowledge-validator/README.md) | `v1.0 · CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
+| `AX-PUB-REF-003` | [Agent Tool-Use Authority Validator](./reference-implementations/agent-tool-authority-validator/README.md) | `v1.0 · CI WORKFLOW PUBLISHED · VALIDATION PENDING · NON-PRODUCTION` |
+| `AX-PUB-TEST-001` | [Governed Intelligence Conformance Test Kit](./conformance/AX-PUB-TEST-001/README.md) | `v1.0 · REPRODUCIBLY VERIFIED · CI RUN UNVERIFIED · NON-PRODUCTION` |
+| `AX-PUB-TEST-002` | [Agent Authority Conformance Test Kit](./conformance/AX-PUB-TEST-002/README.md) | `v1.0 · CI WORKFLOW PUBLISHED · VALIDATION PENDING · NON-PRODUCTION` |
 
-### Specification-to-Execution Evidence Paths
+## Specification-to-Execution Paths
+
+### Evidence / Authority / Verification
 
 ```text
-AX-PUB-ARCH-001
-REFERENCE ARCHITECTURE
-        ↓
 AX-PUB-SPEC-002
-EVIDENCE / AUTHORITY / VERIFICATION SPECIFICATION
         ↓
 AX-PUB-SCHEMA-001
-MACHINE-READABLE STRUCTURAL CONTRACT
         ↓
 AX-PUB-REF-001
-EXECUTABLE RELATIONAL / SEMANTIC CHECKS
         ↓
 AX-PUB-TEST-001
-SYNTHETIC CONFORMANCE VECTORS
 ```
+
+### Point-in-Time Knowledge / Provenance
 
 ```text
 AX-PUB-SPEC-003
-POINT-IN-TIME KNOWLEDGE / PROVENANCE SPECIFICATION
         ↓
 AX-PUB-SCHEMA-002
-MACHINE-READABLE TEMPORAL / PROVENANCE ENVELOPE
         ↓
 AX-PUB-REF-002
-NO-FUTURE-LEAKAGE / LINEAGE / REVISION SEMANTICS
         ↓
 AX-PUB-TEST-001
-SYNTHETIC CONFORMANCE VECTORS
 ```
 
+### Governed Agent Authority / Tool Use
+
 ```text
-AX-PUB-ARCH-001
-        ↓
-AX-PUB-SPEC-002
-GENERAL AUTHORITY / EXECUTION BOUNDARY
-        ↓ specialized by
 AX-PUB-SPEC-004
-AGENT AUTHORITY / TOOL-USE BOUNDARY
+        ↓
+AX-PUB-SCHEMA-003
+        ↓
+AX-PUB-REF-003
+        ↓
+AX-PUB-TEST-002
 ```
 
-`AX-PUB-SPEC-004` currently has no separately published machine-readable schema, reference validator or conformance suite. Those evidence states must not be inferred from the existence of the specification.
+The third path defines selected public reference controls around **principal identity, action proposal, authority context, bounded tool-use grants, resource/parameter/time/environment scope, invocation records and tool-result state**.
 
-The JSON Schemas, reference validators and conformance vectors deliberately have different responsibilities. Schemas define selected structure. Validators apply selected relational semantics. The conformance kit declares expected behavior for synthetic public test cases; it does not certify production systems.
+It does **not** establish a production agent framework, shared authorization plane, credential broker, production tool registry, autonomous execution authority or implementation by any AETHER X initiative.
 
-### Reproducibility Snapshot
+## Validation Evidence
 
-`AX-PUB-SNAP-001` records **Governed Intelligence Public v1.0** against the immutable Git anchor:
+`AX-PUB-REF-001` and `AX-PUB-REF-002` have prior public CI evidence for their defined reference checks.
 
-```text
-f839d4ac0a0b69dcbb682e900f02aad7e24524eb
-```
+`AX-PUB-TEST-001` has published reproducibility evidence for `15/15` declared synthetic cases and a passing public/private dependency-boundary check. Its GitHub Actions run status remains kept separate from that reproducibility evidence.
 
-The machine-readable snapshot records the public artifact inventory, Git blob identities and selected CI evidence. Snapshot integrity is independently checked by a public workflow using full Git history.
+For the newly published agent-authority path, schema/reference/conformance workflows are present, but `AX-PUB-REF-003` and `AX-PUB-TEST-002` remain **`VALIDATION PENDING`** until execution against the published repository state is directly verified.
 
-This historical snapshot predates later additive public artifacts including `AX-PUB-TEST-001` and `AX-PUB-SPEC-004`. It is not a GitHub Release, Git tag or product release and must not be silently redefined to include later material.
+`WORKFLOW PUBLISHED ≠ CI RUN VERIFIED`
 
----
+`CONFORMANCE PASS ≠ PRODUCT IMPLEMENTATION`
+
+`REFERENCE VALIDATOR PASS ≠ PRODUCTION AUTHORIZATION`
 
 ## Repository Structure
 
 ```text
 .
-├── docs/
-│   ├── QUICKSTART.md
-│   └── COMPATIBILITY_AND_VERSIONING.md
-├── artifacts/
-│   └── AX-PUB-MANIFEST-001.json
-├── conformance/
-│   └── AX-PUB-TEST-001/
-│       ├── README.md
-│       ├── vectors.json
-│       └── run_conformance.py
-├── snapshots/
-│   ├── README.md
-│   ├── AX-PUB-SNAP-001.json
-│   └── AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md
 ├── specifications/
 │   ├── AX-PUB-ARCH-001_...
 │   ├── AX-PUB-SPEC-002_...
 │   ├── AX-PUB-SPEC-003_...
 │   └── AX-PUB-SPEC-004_...
 ├── schemas/
-│   ├── README.md
-│   ├── AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json
-│   ├── AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json
-│   └── examples/
+│   ├── AX-PUB-SCHEMA-001_...
+│   ├── AX-PUB-SCHEMA-002_...
+│   └── AX-PUB-SCHEMA-003_...
 ├── reference-implementations/
 │   ├── eav-contract-validator/
-│   └── point-in-time-knowledge-validator/
+│   ├── point-in-time-knowledge-validator/
+│   └── agent-tool-authority-validator/
+├── conformance/
+│   ├── AX-PUB-TEST-001/
+│   └── AX-PUB-TEST-002/
+├── artifacts/
+│   └── AX-PUB-MANIFEST-001.json
+├── docs/
+│   ├── QUICKSTART.md
+│   └── COMPATIBILITY_AND_VERSIONING.md
+├── snapshots/
 ├── tools/
-│   ├── check_eav_schema_alignment.py
-│   ├── check_ptk_schema_alignment.py
-│   ├── check_artifact_manifest.py
-│   ├── check_public_conformance_boundary.py
-│   └── check_public_snapshot.py
 ├── .github/workflows/
-│   ├── validate-eav-reference.yml
-│   ├── validate-eav-schema.yml
-│   ├── validate-ptk-schema.yml
-│   ├── validate-ptk-reference.yml
-│   ├── validate-public-artifact-manifest.yml
-│   ├── validate-public-conformance.yml
-│   └── validate-public-snapshot.yml
 └── SECURITY.md
 ```
 
----
-
 ## What This Repository Establishes
 
-A public reviewer can inspect that AETHER X GLOBAL has published:
+A public reviewer can inspect that AETHER X GLOBAL has intentionally published:
 
 - a technology-neutral governed-intelligence reference architecture;
 - explicit evidence, decision, authority, execution and verification semantics;
-- point-in-time knowledge, provenance and revision-integrity rules;
-- explicit public agent-authority and tool-use boundaries covering identity, action proposals, authority evaluation, bounded grants, delegation, untrusted-content boundaries, parameter constraints, step-up authority, tool invocation and post-execution verification;
-- machine-readable JSON Schema profiles for selected EAV and point-in-time knowledge / provenance structures;
-- two bounded executable reference validators with prior public CI evidence;
-- a synthetic public conformance-test kit covering selected positive and negative validator behaviors;
-- reproducible execution evidence showing `15/15` declared conformance cases matching expected behavior for byte-identical published Git blobs;
-- a passing fail-closed public/private dependency-boundary check for the reproduced conformance state;
-- an explicit public artifact compatibility and versioning policy;
-- a machine-readable current-state manifest;
-- a validated public reproducibility snapshot anchored to an immutable Git commit and recorded Git blob identities;
-- public workflows for schema alignment, reference validation, artifact-manifest integrity, snapshot integrity and the conformance kit.
+- point-in-time knowledge, provenance, lineage and revision-integrity rules;
+- an agent/tool-use authority standard separating capability from permission;
+- three machine-readable public structural contracts;
+- three bounded non-production reference validators at their stated validation states;
+- synthetic public conformance suites;
+- machine-readable compatibility/version governance;
+- a fixed historical reproducibility snapshot;
+- public security and private-project separation boundaries.
 
-The conformance workflow is published. `AX-PUB-TEST-001` is represented as **reproducibly verified**, not as GitHub-CI-tested, until a successful Actions run is directly verified.
-
-`AX-PUB-SPEC-004` is represented only as a **conceptual / non-product-specific public technical specification**. No schema, validator, production agent runtime or internal authorization implementation is established by it.
-
-These artifacts are evidence of **published engineering doctrine, reference control design, agent-authority boundary design, machine-readable contract design, versioned public-artifact governance, reproducibility discipline and inspectable reference engineering**.
+These are evidence of **published engineering doctrine, control design, machine-readable contract design, conformance discipline and reproducibility discipline**.
 
 ## What This Repository Does Not Establish
 
 Publication here does **not** establish or imply:
 
 - full implementation inside any AETHER X product;
-- completion or production readiness of AETHER Intelligence Core (AIC);
-- a production API, SDK, agent framework, authorization plane or company-wide data model;
-- stable product API or SDK compatibility;
-- a shared runtime, tool registry, authorization service or shared data platform across company initiatives;
-- technical integration between AETHER X Quantum, AX-OS, AIC, or AETHER X Research;
-- production readiness;
-- customer deployment;
-- ownership or availability of any particular financial-data source;
-- production-scale data completeness, correctness, timeliness or latency guarantees;
-- regulatory approval or security certification;
-- production-scale global financial-data infrastructure;
-- predictive, financial, or investment performance;
+- a shared runtime, shared data platform, agent framework or authorization plane across initiatives;
+- production readiness or customer deployment;
+- a production API or SDK;
 - autonomous authority for consequential actions;
-- commercial or product release status merely because a public engineering snapshot exists;
-- internal product behavior merely because a public conformance vector passes.
+- production financial-data completeness, correctness, latency or scale;
+- security certification or regulatory approval;
+- predictive, financial or investment performance;
+- commercial or product release status.
 
 `PUBLIC SPECIFICATION ≠ PRODUCT IMPLEMENTATION`
 
-`PUBLIC AGENT STANDARD ≠ INTERNAL AGENT RUNTIME`
-
 `MACHINE-READABLE SCHEMA ≠ PRODUCT DATA MODEL`
 
-`PUBLIC COMPATIBILITY ≠ PRODUCT INTEGRATION`
-
-`CONFORMANCE PASS ≠ PRODUCT IMPLEMENTATION`
-
-`PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
-
-`REFERENCE TEMPORAL VALIDATION ≠ PRODUCTION DATA QUALITY`
+`AGENT AUTHORITY SCHEMA ≠ PRODUCTION AUTHORIZATION PLANE`
 
 `REFERENCE IMPLEMENTATION ≠ PRODUCTION SYSTEM`
 
----
-
 ## Private-Project Boundary
 
-This public repository is intentionally self-contained. Public artifacts and test vectors use generic or synthetic reference material only.
+This public repository is intentionally self-contained. Public examples and conformance vectors are generic or synthetic.
 
-No private AETHER X product repository is a runtime, checkout, submodule or package dependency of the public conformance kit. Public specifications are technology-neutral and do not disclose private implementation topology. Private product source code, unpublished research, internal endpoints, credentials, proprietary algorithms and confidential implementation architecture are outside this repository's disclosure boundary.
+No private AETHER X project repository is a runtime, checkout, submodule or package dependency of the public reference validators or conformance kits. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside this repository's disclosure boundary.
 
-`PUBLIC TEST VECTOR ≠ PRIVATE PROJECT DATA`
-
-`PUBLIC SPECIFICATION ≠ PRIVATE ARCHITECTURE DISCLOSURE`
-
----
-
-## Portfolio Boundary
-
-AETHER X initiatives may adopt all, some, or none of these reference patterns according to their domain, maturity, risk, and explicit implementation decisions.
-
-Shared engineering doctrine must not be interpreted as shared runtime, deployment dependency, interoperability, agent framework, authorization plane or integration. Those claims require separate implementation evidence and authority.
-
----
-
-## Security & Intellectual Property
-
-This repository is intentionally bounded for public disclosure. Do not publish credentials, customer information, private research, confidential architecture, unresolved exploit details, proprietary implementation, or restricted data here.
-
-See [SECURITY.md](./SECURITY.md) for the public reporting boundary.
-
----
+See [SECURITY.md](./SECURITY.md).
 
 ## Organization
 
