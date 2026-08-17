@@ -179,7 +179,8 @@ def main() -> int:
         text = SNAPSHOT_DOC.read_text(encoding="utf-8")
         if anchor not in text:
             findings.append("snapshot documentation does not contain the anchor commit")
-        if "not a GitHub Release" not in text or "not a Git tag" not in text:
+        normalized_text = text.replace("**", "").replace("__", "")
+        if "not a GitHub Release" not in normalized_text or "not a Git tag" not in normalized_text:
             findings.append("snapshot documentation must preserve release/tag claim boundary")
 
     evidence = snapshot.get("validation_evidence")
