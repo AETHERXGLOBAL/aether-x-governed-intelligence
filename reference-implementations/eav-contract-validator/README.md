@@ -3,6 +3,7 @@
 **Artifact ID:** `AX-PUB-REF-001`  
 **Status:** `PUBLIC REFERENCE IMPLEMENTATION · CI-TESTED · EDUCATIONAL / NON-PRODUCTION`  
 **Related Specification:** [`AX-PUB-SPEC-002 — Evidence, Authority & Verification Contract`](../../specifications/AX-PUB-SPEC-002_EVIDENCE_AUTHORITY_VERIFICATION_CONTRACT.md)  
+**Related Machine-Readable Contract:** [`AX-PUB-SCHEMA-001 — Governed EAV Contract Schema`](../../schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json)  
 **Organization:** AETHER X GLOBAL
 
 ## Purpose
@@ -21,6 +22,20 @@ Evidence Records
 ```
 
 The implementation is dependency-free and intentionally favors semantic clarity over framework complexity.
+
+## Schema vs. Validator
+
+`AX-PUB-SCHEMA-001` and this validator are complementary, not interchangeable:
+
+```text
+JSON SCHEMA
+structure · types · required fields · selected enums · timestamp formats
+        ↓
+REFERENCE VALIDATOR
+cross-record references · authority scope · time windows · verifier independence · verified-outcome semantics
+```
+
+Structural conformance does not establish authorization or a verified outcome.
 
 ## What It Checks
 
@@ -101,7 +116,9 @@ python3 validator.py examples/invalid_bundle.json --json
 python3 -m unittest discover -s tests -v
 ```
 
-The repository workflow compiles the validator, runs the unit tests, validates the conforming example and confirms that the intentionally invalid example is rejected.
+The reference workflow compiles the validator, runs unit tests, validates the conforming example and confirms that the intentionally invalid example is rejected.
+
+A separate schema workflow parses `AX-PUB-SCHEMA-001`, verifies schema / validator / example alignment, and fails closed on reference-contract drift.
 
 ## Design Intent
 
@@ -113,6 +130,8 @@ This is deliberately **not an SDK**. The purpose is to make selected governance 
 - [AX-PUB-ARCH-001](../../specifications/AX-PUB-ARCH-001_GOVERNED_INTELLIGENCE_REFERENCE_ARCHITECTURE.md)
 - [AX-PUB-SPEC-002](../../specifications/AX-PUB-SPEC-002_EVIDENCE_AUTHORITY_VERIFICATION_CONTRACT.md)
 - [AX-PUB-SPEC-003](../../specifications/AX-PUB-SPEC-003_POINT_IN_TIME_KNOWLEDGE_PROVENANCE_STANDARD.md)
+- [AX-PUB-SCHEMA-001](../../schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json)
+- [Schema index](../../schemas/README.md)
 
 ---
 
