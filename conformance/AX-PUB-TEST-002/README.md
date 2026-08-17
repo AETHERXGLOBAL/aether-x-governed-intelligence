@@ -1,7 +1,7 @@
 # AX-PUB-TEST-002 — Agent Authority Conformance Test Kit
 
 **Version:** `1.0`  
-**Status:** `PUBLIC CONFORMANCE TEST KIT · CI WORKFLOW PUBLISHED · VALIDATION PENDING · NON-PRODUCTION`  
+**Status:** `PUBLIC CONFORMANCE TEST KIT · CI-TESTED · NON-PRODUCTION`  
 **Scope:** `AX-PUB-REF-003` public agent/tool-use authority behavior
 
 ## Purpose
@@ -44,7 +44,24 @@ The public dependency-boundary checker is designed to end with:
 AX_AGENT_AUTHORITY_PUBLIC_BOUNDARY_PASS
 ```
 
-A GitHub Actions workflow is published at `.github/workflows/validate-agent-authority-conformance.yml`. Until a successful workflow run against the published repository state is directly verified, this artifact remains `VALIDATION PENDING`.
+## Verified Public CI Evidence
+
+The published GitHub Actions conformance workflow was directly verified through public verification PR `#1` on head commit:
+
+```text
+f07bfb55eb45924f9ee62024f144064506d4be48
+```
+
+Verified workflow:
+
+```text
+Validate Agent Authority Conformance Kit
+Run ID: 32078037943
+Run number: 5
+Conclusion: SUCCESS
+```
+
+Because that workflow executes the public/private boundary checker and the full public `AX-PUB-TEST-002` runner, the current kit is represented as `CI-TESTED` for its declared public scope. See [`AX-PUB-CI-001`](../../evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md).
 
 ## Dependency Boundary
 
