@@ -1,0 +1,42 @@
+name: Validate Point-in-Time Knowledge Reference Implementation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'reference-implementations/point-in-time-knowledge-validator/**'
+      - '.github/workflows/validate-ptk-reference.yml'
+  pull_request:
+    paths:
+      - 'reference-implementations/point-in-time-knowledge-validator/**'
+      - '.github/workflows/validate-ptk-reference.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile validator
+        run: python3 -m py_compile reference-implementations/point-in-time-knowledge-validator/validator.py
+
+      - name: Run unit tests
+        working-directory: reference-implementations/point-in-time-knowledge-validator
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Validate conforming envelope
+        working-directory: reference-implementations/point-in-time-knowledge-validator
+        run: python3 validator.py examples/valid_envelope.json
+
+      - name: Confirm invalid envelope is rejected
+        working-directory: reference-implementations/point-in-time-knowledge-validator
+        run: |
+          if python3 validator.py examples/invalid_envelope.json; then
+            echo 'Expected invalid point-in-time envelope to be rejected.' >&2
+            exit 1
+          fi
+          echo 'Invalid point-in-time envelope rejected as expected.'
