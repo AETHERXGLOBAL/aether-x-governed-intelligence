@@ -1,0 +1,300 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aetherx:public-schema:AX-PUB-SCHEMA-001:1.0",
+  "title": "AETHER X Governed EAV Contract Bundle",
+  "description": "Machine-readable structural reference for selected Evidence, Decision, Authority, Execution, Verification, and Verified Outcome objects defined by AX-PUB-SPEC-002. This schema is conceptual, non-product-specific, and non-production.",
+  "type": "object",
+  "required": [
+    "schema_id",
+    "schema_version",
+    "bundle_id",
+    "evidence_records",
+    "decision_records",
+    "authority_grants",
+    "execution_records",
+    "verification_records",
+    "verified_outcomes"
+  ],
+  "properties": {
+    "schema_id": {
+      "const": "AX-PUB-SCHEMA-001"
+    },
+    "schema_version": {
+      "const": "1.0"
+    },
+    "bundle_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence_records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence_record"
+      }
+    },
+    "decision_records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/decision_record"
+      }
+    },
+    "authority_grants": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/authority_grant"
+      }
+    },
+    "execution_records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/execution_record"
+      }
+    },
+    "verification_records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/verification_record"
+      }
+    },
+    "verified_outcomes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/verified_outcome"
+      }
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "non_empty_string": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "evidence_record": {
+      "type": "object",
+      "required": [
+        "evidence_id",
+        "classification",
+        "source_identity",
+        "observed_at"
+      ],
+      "properties": {
+        "evidence_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "classification": {
+          "enum": [
+            "FACT",
+            "SOURCE_DATA",
+            "ASSUMPTION",
+            "ESTIMATE",
+            "HYPOTHESIS",
+            "INFERENCE",
+            "FORECAST",
+            "SCENARIO",
+            "PROFESSIONAL_OPINION",
+            "RECOMMENDATION",
+            "DECISION",
+            "VERIFIED_OUTCOME",
+            "UNKNOWN",
+            "SUPERSEDED"
+          ]
+        },
+        "source_identity": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effective_at": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": true
+    },
+    "decision_record": {
+      "type": "object",
+      "required": [
+        "decision_id",
+        "decision_question",
+        "decision_owner",
+        "evidence_refs",
+        "decided_at"
+      ],
+      "properties": {
+        "decision_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "decision_question": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "decision_owner": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/non_empty_string"
+          }
+        },
+        "decided_at": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": true
+    },
+    "authority_grant": {
+      "type": "object",
+      "required": [
+        "authority_id",
+        "decision_id",
+        "principal",
+        "permitted_action",
+        "resource_scope",
+        "status",
+        "granted_at"
+      ],
+      "properties": {
+        "authority_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "decision_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "principal": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "permitted_action": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "resource_scope": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/non_empty_string"
+          }
+        },
+        "status": {
+          "enum": [
+            "ACTIVE",
+            "REVOKED",
+            "EXPIRED"
+          ]
+        },
+        "granted_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "expires_at": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": true
+    },
+    "execution_record": {
+      "type": "object",
+      "required": [
+        "execution_id",
+        "decision_id",
+        "authority_id",
+        "actor",
+        "action",
+        "resource",
+        "started_at",
+        "status"
+      ],
+      "properties": {
+        "execution_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "decision_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "authority_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "actor": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "action": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "resource": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "started_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "status": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "verification_record": {
+      "type": "object",
+      "required": [
+        "verification_id",
+        "execution_id",
+        "verifier",
+        "verdict",
+        "verified_at"
+      ],
+      "properties": {
+        "verification_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "execution_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "verifier": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "verdict": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "INCONCLUSIVE",
+            "NOT_PERFORMED"
+          ]
+        },
+        "verified_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "requires_independent_verifier": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "verified_outcome": {
+      "type": "object",
+      "required": [
+        "outcome_id",
+        "verification_id",
+        "outcome_state",
+        "accepted_at"
+      ],
+      "properties": {
+        "outcome_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "verification_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "outcome_state": {
+          "const": "VERIFIED"
+        },
+        "accepted_at": {
+          "$ref": "#/$defs/timestamp"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}
