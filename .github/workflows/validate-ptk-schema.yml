@@ -1,0 +1,38 @@
+name: Validate Point-in-Time Knowledge Contract
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json'
+      - 'schemas/examples/AX-PUB-SCHEMA-002_example.json'
+      - 'tools/check_ptk_schema_alignment.py'
+      - '.github/workflows/validate-ptk-schema.yml'
+  pull_request:
+    paths:
+      - 'schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json'
+      - 'schemas/examples/AX-PUB-SCHEMA-002_example.json'
+      - 'tools/check_ptk_schema_alignment.py'
+      - '.github/workflows/validate-ptk-schema.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-point-in-time-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Parse point-in-time JSON Schema
+        run: python3 -m json.tool schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json > /dev/null
+
+      - name: Parse reference envelope example
+        run: python3 -m json.tool schemas/examples/AX-PUB-SCHEMA-002_example.json > /dev/null
+
+      - name: Compile integrity checker
+        run: python3 -m py_compile tools/check_ptk_schema_alignment.py
+
+      - name: Check point-in-time schema alignment
+        run: python3 tools/check_ptk_schema_alignment.py
