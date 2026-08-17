@@ -56,12 +56,12 @@ For compatibility, conformance and reproducibility:
 
 - **[Artifact Compatibility & Versioning Policy](./docs/COMPATIBILITY_AND_VERSIONING.md)** — `AX-PUB-POL-001 v1.1`
 - **[Machine-Readable Public Artifact Manifest](./artifacts/AX-PUB-MANIFEST-001.json)** — `AX-PUB-MANIFEST-001 v1.1`
-- **[Governed Intelligence Conformance Test Kit](./conformance/AX-PUB-TEST-001/README.md)** — `AX-PUB-TEST-001 v1.0 · VALIDATION PENDING`
+- **[Governed Intelligence Conformance Test Kit](./conformance/AX-PUB-TEST-001/README.md)** — `AX-PUB-TEST-001 v1.0 · REPRODUCIBLY VERIFIED · CI RUN UNVERIFIED`
 - **[Public Engineering Snapshot v1.0](./snapshots/AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md)** — `AX-PUB-SNAP-001 v1.0`
 - **[Machine-Readable Snapshot Record](./snapshots/AX-PUB-SNAP-001.json)** — anchored to commit `f839d4ac0a0b69dcbb682e900f02aad7e24524eb`
 - **Public manifest CI** validates declared artifact paths, versions, schema identity and compatibility relationships.
 - **Public snapshot CI** validates the immutable snapshot anchor and recorded Git blob inventory.
-- **Public conformance CI workflow** is published for the current synthetic test vectors; successful execution remains explicitly unclaimed until directly verified.
+- **Public conformance workflow** is published for the current synthetic test vectors. Byte-identical public blobs have been reproducibly executed with `15/15` conforming cases and the public/private boundary guard passing; a GitHub Actions CI run remains explicitly unverified.
 
 For reproducible external review, use the validated snapshot or pin an explicit Git commit SHA. The `main` branch represents the current public engineering state and may advance.
 
@@ -84,7 +84,7 @@ For reproducible external review, use the validated snapshot or pin an explicit 
 | `AX-PUB-SCHEMA-002` | [Point-in-Time Knowledge Envelope](./schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json) | Machine-Readable Temporal / Provenance Contract | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-REF-001` | [EAV Contract Validator](./reference-implementations/eav-contract-validator/README.md) | Executable Reference Implementation | `v1.0 · CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
 | `AX-PUB-REF-002` | [Point-in-Time Knowledge Validator](./reference-implementations/point-in-time-knowledge-validator/README.md) | Executable Temporal / Provenance Reference Implementation | `v1.0 · CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
-| `AX-PUB-TEST-001` | [Governed Intelligence Conformance Test Kit](./conformance/AX-PUB-TEST-001/README.md) | Public Conformance Test Kit | `v1.0 · CI WORKFLOW PUBLISHED · VALIDATION PENDING · NON-PRODUCTION` |
+| `AX-PUB-TEST-001` | [Governed Intelligence Conformance Test Kit](./conformance/AX-PUB-TEST-001/README.md) | Public Conformance Test Kit | `v1.0 · REPRODUCIBLY VERIFIED · CI WORKFLOW PUBLISHED · CI RUN UNVERIFIED · NON-PRODUCTION` |
 | `AX-PUB-POL-001` | [Artifact Compatibility & Versioning Policy](./docs/COMPATIBILITY_AND_VERSIONING.md) | Public Engineering Policy | `v1.1 · ACTIVE FOR THIS REPOSITORY` |
 
 ### Specification-to-Execution Evidence Paths
@@ -170,6 +170,7 @@ This snapshot is not a GitHub Release, Git tag or product release.
 │   ├── check_eav_schema_alignment.py
 │   ├── check_ptk_schema_alignment.py
 │   ├── check_artifact_manifest.py
+│   ├── check_public_conformance_boundary.py
 │   └── check_public_snapshot.py
 ├── .github/workflows/
 │   ├── validate-eav-reference.yml
@@ -194,12 +195,14 @@ A public reviewer can inspect that AETHER X GLOBAL has published:
 - machine-readable JSON Schema profiles for selected EAV and point-in-time knowledge / provenance structures;
 - two bounded executable reference validators with prior public CI evidence;
 - a synthetic public conformance-test kit covering selected positive and negative validator behaviors;
+- reproducible execution evidence showing `15/15` declared conformance cases matching expected behavior for byte-identical published Git blobs;
+- a passing fail-closed public/private dependency-boundary check for the reproduced conformance state;
 - an explicit public artifact compatibility and versioning policy;
 - a machine-readable current-state manifest;
 - a validated public reproducibility snapshot anchored to an immutable Git commit and recorded Git blob identities;
 - public workflows for schema alignment, reference validation, artifact-manifest integrity, snapshot integrity and the conformance kit.
 
-The conformance workflow is published, but the repository does not represent `AX-PUB-TEST-001` as CI-tested until a successful run is directly verified.
+The conformance workflow is published. `AX-PUB-TEST-001` is represented as **reproducibly verified**, not as GitHub-CI-tested, until a successful Actions run is directly verified.
 
 These artifacts are evidence of **published engineering doctrine, reference control design, machine-readable contract design, versioned public-artifact governance, reproducibility discipline and inspectable reference engineering**.
 
