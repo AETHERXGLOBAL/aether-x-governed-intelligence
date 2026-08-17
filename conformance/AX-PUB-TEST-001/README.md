@@ -1,7 +1,7 @@
 # AX-PUB-TEST-001 — Governed Intelligence Conformance Test Kit
 
 **Version:** `1.0`  
-**Status:** `PUBLIC CONFORMANCE TEST KIT · CI-TESTED · NON-PRODUCTION`  
+**Status:** `PUBLIC CONFORMANCE TEST KIT · CI WORKFLOW PUBLISHED · VALIDATION PENDING · NON-PRODUCTION`  
 **Scope:** Public reference artifacts in `AETHERXGLOBAL/aether-x-governed-intelligence`
 
 ## Purpose
@@ -47,12 +47,7 @@ The canonical vector set is:
 
 [`vectors.json`](./vectors.json)
 
-Each case declares:
-
-- a public baseline example;
-- deterministic mutations;
-- expected `PASS` or `FAIL`;
-- required finding codes for negative cases.
+Each case declares a public baseline example, deterministic mutations, expected `PASS` or `FAIL`, and required finding codes for negative cases.
 
 The vectors contain only synthetic public example data. They do not contain private project data, customer information, credentials, proprietary algorithms, unpublished research, internal endpoints, or internal architecture.
 
@@ -70,11 +65,13 @@ Machine-readable report:
 python3 conformance/AX-PUB-TEST-001/run_conformance.py --json
 ```
 
-A successful run ends with:
+When all declared cases conform, the runner is designed to end with:
 
 ```text
 AX_PUBLIC_CONFORMANCE_PASS
 ```
+
+A GitHub Actions workflow for this kit is published at `.github/workflows/validate-public-conformance.yml`. Until a successful workflow run is directly verified, this artifact remains `VALIDATION PENDING` rather than being represented as CI-tested.
 
 ## Interpretation
 
@@ -106,7 +103,7 @@ No private AETHER X repository is required or referenced by path, token, checkou
 
 ## Public Claim Boundary
 
-This artifact demonstrates public reference-validator conformance behavior only. It does not establish behavior, implementation, adoption, maturity, or integration inside AETHER X Quantum, AX-OS, AIC, AETHER X Research, or any other private initiative.
+This artifact demonstrates a public conformance-test design and runner for the published reference validators. It does not establish behavior, implementation, adoption, maturity, or integration inside AETHER X Quantum, AX-OS, AIC, AETHER X Research, or any other private initiative.
 
 ---
 
