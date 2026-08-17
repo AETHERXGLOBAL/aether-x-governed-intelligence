@@ -153,15 +153,37 @@ Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json
 
 The current compatibility and change rules are documented in [`COMPATIBILITY_AND_VERSIONING.md`](./COMPATIBILITY_AND_VERSIONING.md).
 
-For reproducible external review, pin a repository commit SHA. The `main` branch represents the current public engineering state and may advance.
+## 8. Reproduce the Published v1.0 Snapshot
 
-## 8. Public Claim Boundary
+For a fixed external-review state, use [`AX-PUB-SNAP-001 — Governed Intelligence Public v1.0`](../snapshots/AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md).
+
+Its immutable Git anchor is:
+
+```text
+f839d4ac0a0b69dcbb682e900f02aad7e24524eb
+```
+
+Check it out directly:
+
+```bash
+git checkout f839d4ac0a0b69dcbb682e900f02aad7e24524eb
+```
+
+The machine-readable snapshot record is [`snapshots/AX-PUB-SNAP-001.json`](../snapshots/AX-PUB-SNAP-001.json). It records Git blob identities for the material files and selected public CI evidence.
+
+The snapshot has its own public integrity workflow. It is **not** a GitHub Release, Git tag or product release.
+
+For other reproducible review points, pin an explicit Git commit SHA. The `main` branch represents the current public engineering state and may advance.
+
+## 9. Public Claim Boundary
 
 This repository publishes reference engineering material. It does not expose or establish proprietary product implementation.
 
 Shared public doctrine does not imply shared runtime, shared data infrastructure, deployment dependency or technical integration across AETHER X initiatives.
 
 `PUBLIC ARTIFACT ≠ PRODUCT IMPLEMENTATION`
+
+`PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
 
 `REFERENCE IMPLEMENTATION ≠ PRODUCTION SYSTEM`
 
