@@ -4,7 +4,7 @@
 
 # AETHER X Governed Intelligence
 
-**Public reference architecture, technical specifications, and non-production reference implementations for governed intelligence systems by AETHER X GLOBAL.**
+**Public reference architecture, technical specifications, machine-readable contracts, and non-production reference implementations for governed intelligence systems by AETHER X GLOBAL.**
 
 `PUBLIC ENGINEERING REPOSITORY · CONTROLLED DISCLOSURE`
 
@@ -55,7 +55,29 @@ The core distinction is deliberate:
 | `AX-PUB-ARCH-001` | [Governed Intelligence Reference Architecture](./specifications/AX-PUB-ARCH-001_GOVERNED_INTELLIGENCE_REFERENCE_ARCHITECTURE.md) | Reference Architecture | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-SPEC-002` | [Evidence, Authority & Verification Contract](./specifications/AX-PUB-SPEC-002_EVIDENCE_AUTHORITY_VERIFICATION_CONTRACT.md) | Control Specification | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-SPEC-003` | [Point-in-Time Knowledge & Provenance Standard](./specifications/AX-PUB-SPEC-003_POINT_IN_TIME_KNOWLEDGE_PROVENANCE_STANDARD.md) | Data / Knowledge Integrity Specification | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
+| `AX-PUB-SCHEMA-001` | [Governed EAV Contract Schema](./schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json) | Machine-Readable Contract | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-REF-001` | [EAV Contract Validator](./reference-implementations/eav-contract-validator/README.md) | Executable Reference Implementation | `CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
+
+### Specification-to-Execution Evidence Path
+
+```text
+AX-PUB-ARCH-001
+REFERENCE ARCHITECTURE
+        ↓
+AX-PUB-SPEC-002 / 003
+NORMATIVE PUBLIC SPECIFICATIONS
+        ↓
+AX-PUB-SCHEMA-001
+MACHINE-READABLE STRUCTURAL CONTRACT
+        ↓
+AX-PUB-REF-001
+EXECUTABLE RELATIONAL / SEMANTIC CHECKS
+        ↓
+PUBLIC CI
+REPOSITORY-INTEGRITY EVIDENCE
+```
+
+The JSON Schema and reference validator deliberately have different responsibilities. The schema defines structure, types, required fields, selected enums, and timestamp formats. The validator checks cross-record relationships and governance semantics such as evidence references, bounded authority, execution scope, temporal authority windows, verifier independence, and the requirement that a `VERIFIED` outcome be backed by `PASS` verification.
 
 ---
 
@@ -67,13 +89,19 @@ The core distinction is deliberate:
 │   ├── AX-PUB-ARCH-001_...
 │   ├── AX-PUB-SPEC-002_...
 │   └── AX-PUB-SPEC-003_...
+├── schemas/
+│   ├── README.md
+│   └── AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json
 ├── reference-implementations/
 │   └── eav-contract-validator/
 │       ├── validator.py
 │       ├── examples/
 │       └── tests/
+├── tools/
+│   └── check_eav_schema_alignment.py
 ├── .github/workflows/
-│   └── validate-eav-reference.yml
+│   ├── validate-eav-reference.yml
+│   └── validate-eav-schema.yml
 └── SECURITY.md
 ```
 
@@ -86,16 +114,18 @@ A public reviewer can inspect that AETHER X GLOBAL has published:
 - a technology-neutral governed-intelligence reference architecture;
 - explicit evidence, decision, authority, execution and verification semantics;
 - point-in-time knowledge, provenance and revision-integrity rules;
-- an executable reference validator implementing selected control invariants;
-- public automated tests for that bounded reference implementation.
+- a machine-readable JSON Schema profile for selected EAV control objects;
+- an executable reference validator implementing selected cross-record control invariants;
+- public automated checks for both schema alignment and the bounded reference implementation.
 
-These artifacts are evidence of **published engineering doctrine and reference control design**.
+These artifacts are evidence of **published engineering doctrine, reference control design, machine-readable contract design, and inspectable reference engineering**.
 
 ## What This Repository Does Not Establish
 
 Publication here does **not** establish or imply:
 
 - full implementation inside any AETHER X product;
+- a production API, SDK, or company-wide data model;
 - a shared runtime or shared data platform across company initiatives;
 - technical integration between AETHER X Quantum, AX-OS, AIC, or AETHER X Research;
 - production readiness;
@@ -106,6 +136,8 @@ Publication here does **not** establish or imply:
 - autonomous authority for consequential actions.
 
 `PUBLIC SPECIFICATION ≠ PRODUCT IMPLEMENTATION`
+
+`MACHINE-READABLE SCHEMA ≠ PRODUCT DATA MODEL`
 
 `REFERENCE IMPLEMENTATION ≠ PRODUCTION SYSTEM`
 
