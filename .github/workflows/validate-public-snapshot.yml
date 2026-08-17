@@ -1,0 +1,36 @@
+name: Validate Public Engineering Snapshot
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'snapshots/**'
+      - 'tools/check_public_snapshot.py'
+      - '.github/workflows/validate-public-snapshot.yml'
+  pull_request:
+    paths:
+      - 'snapshots/**'
+      - 'tools/check_public_snapshot.py'
+      - '.github/workflows/validate-public-snapshot.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-public-snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository with history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Parse snapshot manifest
+        run: python3 -m json.tool snapshots/AX-PUB-SNAP-001.json > /dev/null
+
+      - name: Compile snapshot checker
+        run: python3 -m py_compile tools/check_public_snapshot.py
+
+      - name: Validate anchor and Git blob inventory
+        run: python3 tools/check_public_snapshot.py
