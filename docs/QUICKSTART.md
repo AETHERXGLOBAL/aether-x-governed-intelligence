@@ -169,11 +169,17 @@ See [`COMPATIBILITY_AND_VERSIONING.md`](./COMPATIBILITY_AND_VERSIONING.md).
 
 ## 9. Reproducible Snapshots
 
-Historical snapshot:
+Historical public snapshot:
 
 - [`AX-PUB-SNAP-001 — Governed Intelligence Public v1.0`](../snapshots/AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md)
+- [Machine-readable `AX-PUB-SNAP-001.json`](../snapshots/AX-PUB-SNAP-001.json)
 
-Current vNext snapshot is published separately as `AX-PUB-SNAP-002` after the verified agent-authority CI evidence gate.
+Current vNext public snapshot:
+
+- [`AX-PUB-SNAP-002 — Governed Intelligence Public vNext`](../snapshots/AX-PUB-SNAP-002_GOVERNED_INTELLIGENCE_PUBLIC_VNEXT.md)
+- [Machine-readable `AX-PUB-SNAP-002.json`](../snapshots/AX-PUB-SNAP-002.json)
+
+`AX-PUB-SNAP-002` is anchored to a fixed public Git commit and records the vNext artifact inventory plus the verified agent-authority CI evidence boundary.
 
 `PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
 
