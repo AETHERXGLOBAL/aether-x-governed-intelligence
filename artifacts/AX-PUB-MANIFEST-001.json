@@ -1,12 +1,12 @@
 {
   "manifest_id": "AX-PUB-MANIFEST-001",
-  "manifest_version": "1.1",
+  "manifest_version": "1.2",
   "repository": "AETHERXGLOBAL/aether-x-governed-intelligence",
   "scope": "PUBLIC_ENGINEERING_ARTIFACT_COMPATIBILITY",
   "public_state": "CURRENT",
   "versioning_policy": {
     "id": "AX-PUB-POL-001",
-    "version": "1.1",
+    "version": "1.2",
     "path": "docs/COMPATIBILITY_AND_VERSIONING.md"
   },
   "artifacts": [
@@ -31,6 +31,14 @@
       "version": "1.0",
       "type": "TEMPORAL_PROVENANCE_SPECIFICATION",
       "path": "specifications/AX-PUB-SPEC-003_POINT_IN_TIME_KNOWLEDGE_PROVENANCE_STANDARD.md",
+      "state": "CURRENT",
+      "public_maturity": "CONCEPTUAL / NON-PRODUCT-SPECIFIC"
+    },
+    {
+      "id": "AX-PUB-SPEC-004",
+      "version": "1.0",
+      "type": "AGENT_AUTHORITY_TOOL_USE_SPECIFICATION",
+      "path": "specifications/AX-PUB-SPEC-004_GOVERNED_AGENT_AUTHORITY_TOOL_USE_STANDARD.md",
       "state": "CURRENT",
       "public_maturity": "CONCEPTUAL / NON-PRODUCT-SPECIFIC"
     },
@@ -79,7 +87,7 @@
     },
     {
       "id": "AX-PUB-POL-001",
-      "version": "1.1",
+      "version": "1.2",
       "type": "PUBLIC_ENGINEERING_POLICY",
       "path": "docs/COMPATIBILITY_AND_VERSIONING.md",
       "state": "CURRENT",
@@ -100,6 +108,22 @@
       "from_version": "1.0",
       "relationship": "ALIGNS_WITH_ARCHITECTURE",
       "to_id": "AX-PUB-ARCH-001",
+      "to_version": "1.0",
+      "state": "COMPATIBLE"
+    },
+    {
+      "from_id": "AX-PUB-SPEC-004",
+      "from_version": "1.0",
+      "relationship": "ALIGNS_WITH_ARCHITECTURE",
+      "to_id": "AX-PUB-ARCH-001",
+      "to_version": "1.0",
+      "state": "COMPATIBLE"
+    },
+    {
+      "from_id": "AX-PUB-SPEC-004",
+      "from_version": "1.0",
+      "relationship": "SPECIALIZES_AUTHORITY_BOUNDARY_OF",
+      "to_id": "AX-PUB-SPEC-002",
       "to_version": "1.0",
       "state": "COMPATIBLE"
     },
@@ -173,6 +197,7 @@
     "REFERENCE VALIDATOR PASS DOES NOT ESTABLISH PRODUCTION APPROVAL",
     "CONFORMANCE PASS DOES NOT ESTABLISH PRODUCT IMPLEMENTATION OR PRODUCTION READINESS",
     "MACHINE-READABLE SCHEMA DOES NOT ESTABLISH A PRODUCTION DATA MODEL",
+    "PUBLIC SPECIFICATION DOES NOT ESTABLISH INTERNAL AGENT OR AUTHORIZATION IMPLEMENTATION",
     "PUBLIC ARTIFACTS DO NOT ESTABLISH IMPLEMENTATION INSIDE AETHER X PORTFOLIO INITIATIVES"
   ]
 }
