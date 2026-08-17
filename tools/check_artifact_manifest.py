@@ -9,7 +9,6 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "artifacts" / "AX-PUB-MANIFEST-001.json"
 VERSION_RE = re.compile(r"^[1-9][0-9]*\.[0-9]+$")
 STATES = {"CURRENT","COMPATIBLE","SUPERSEDED","DEPRECATED","WITHDRAWN"}
-
 REQUIRED_PAIRS = {
     ("AX-PUB-ARCH-001","1.0"),("AX-PUB-SPEC-002","1.0"),("AX-PUB-SPEC-003","1.0"),("AX-PUB-SPEC-004","1.0"),
     ("AX-PUB-SCHEMA-001","1.0"),("AX-PUB-SCHEMA-002","1.0"),("AX-PUB-SCHEMA-003","1.0"),
@@ -56,12 +55,16 @@ def check_artifact(path: Path, artifact_id: str, version: str, findings: list[st
         if artifact_id not in text: findings.append(f"{path.relative_to(ROOT)} does not declare {artifact_id}")
         if f"`{version}`" not in text: findings.append(f"{path.relative_to(ROOT)} does not declare version {version}")
 
+def fail(findings: list[str]) -> int:
+    for item in findings: print(f"AX_MANIFEST_FAIL: {item}")
+    return 1
+
 def main() -> int:
     findings: list[str] = []
     manifest = load_json(MANIFEST_PATH, findings)
     if manifest is None: return fail(findings)
     if manifest.get("manifest_id") != "AX-PUB-MANIFEST-001": findings.append("manifest_id mismatch")
-    if manifest.get("manifest_version") != "1.3": findings.append("manifest_version must be 1.3")
+    if manifest.get("manifest_version") != "1.4": findings.append("manifest_version must be 1.4")
     if manifest.get("repository") != "AETHERXGLOBAL/aether-x-governed-intelligence": findings.append("repository identity mismatch")
     policy = manifest.get("versioning_policy")
     if not isinstance(policy, dict) or policy.get("id") != "AX-PUB-POL-001" or policy.get("version") != "1.3": findings.append("versioning policy must be AX-PUB-POL-001 v1.3")
@@ -71,8 +74,7 @@ def main() -> int:
 
     artifacts = manifest.get("artifacts") if isinstance(manifest.get("artifacts"), list) else []
     if not artifacts: findings.append("artifacts must be a non-empty array")
-    by_pair: dict[tuple[str,str],dict[str,Any]] = {}
-    ids: set[str] = set()
+    by_pair: dict[tuple[str,str],dict[str,Any]] = {}; ids: set[str] = set()
     for i, artifact in enumerate(artifacts):
         if not isinstance(artifact, dict): findings.append(f"artifacts[{i}] must be object"); continue
         aid, ver = artifact.get("id"), artifact.get("version")
@@ -81,8 +83,8 @@ def main() -> int:
         if aid in ids: findings.append(f"duplicate current artifact id: {aid}")
         ids.add(aid); by_pair[(aid,ver)] = artifact
         if artifact.get("state") not in STATES: findings.append(f"artifacts[{i}].state invalid")
-        path = safe_path(artifact.get("path"), findings, f"artifacts[{i}]")
-        if path is not None: check_artifact(path, aid, ver, findings)
+        p = safe_path(artifact.get("path"), findings, f"artifacts[{i}]")
+        if p is not None: check_artifact(p, aid, ver, findings)
         if artifact.get("entrypoint") is not None:
             ep = safe_path(artifact.get("entrypoint"), findings, f"artifacts[{i}].entrypoint")
             if ep is not None and not ep.is_file(): findings.append(f"entrypoint missing: {artifact.get('entrypoint')}")
@@ -92,7 +94,7 @@ def main() -> int:
     rels: set[tuple[str,str,str,str,str]] = set()
     for i, rel in enumerate(relationships):
         if not isinstance(rel, dict): findings.append(f"relationships[{i}] must be object"); continue
-        fp, tp = (rel.get("from_id"), rel.get("from_version")), (rel.get("to_id"), rel.get("to_version")); kind = rel.get("relationship")
+        fp, tp = (rel.get("from_id"),rel.get("from_version")), (rel.get("to_id"),rel.get("to_version")); kind = rel.get("relationship")
         if fp not in by_pair: findings.append(f"relationship source missing: {fp}")
         if tp not in by_pair: findings.append(f"relationship target missing: {tp}")
         if rel.get("state") not in STATES - {"CURRENT"}: findings.append(f"relationships[{i}].state invalid")
@@ -100,6 +102,15 @@ def main() -> int:
         if key in rels: findings.append(f"duplicate relationship: {key}")
         rels.add(key)
     for rel in sorted(REQUIRED_RELATIONS - rels): findings.append(f"required compatibility relationship missing: {rel}")
+
+    evidence = manifest.get("validation_evidence")
+    if not isinstance(evidence, dict) or evidence.get("id") != "AX-PUB-CI-001": findings.append("validation_evidence must identify AX-PUB-CI-001")
+    else:
+        ep = safe_path(evidence.get("path"), findings, "validation_evidence")
+        if ep is not None and not ep.is_file(): findings.append("validation evidence path missing")
+        for field in ("verified_head_commit","verified_base_commit"):
+            value = evidence.get(field)
+            if not isinstance(value, str) or len(value) != 40: findings.append(f"validation_evidence.{field} must be full commit SHA")
 
     quickstart = ROOT / "docs" / "QUICKSTART.md"
     if not quickstart.is_file(): findings.append("docs/QUICKSTART.md missing")
@@ -110,9 +121,5 @@ def main() -> int:
     if not isinstance(manifest.get("claim_boundary"), list) or not manifest.get("claim_boundary"): findings.append("claim_boundary must be non-empty array")
     if findings: return fail(findings)
     print("AX_PUBLIC_ARTIFACT_MANIFEST_PASS"); return 0
-
-def fail(findings: list[str]) -> int:
-    for item in findings: print(f"AX_MANIFEST_FAIL: {item}")
-    return 1
 
 if __name__ == "__main__": raise SystemExit(main())
