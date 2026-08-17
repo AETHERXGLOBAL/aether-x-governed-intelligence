@@ -1,0 +1,42 @@
+name: Validate EAV Machine-Readable Contract
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'schemas/**'
+      - 'tools/check_eav_schema_alignment.py'
+      - 'reference-implementations/eav-contract-validator/validator.py'
+      - 'reference-implementations/eav-contract-validator/examples/**'
+      - '.github/workflows/validate-eav-schema.yml'
+  pull_request:
+    paths:
+      - 'schemas/**'
+      - 'tools/check_eav_schema_alignment.py'
+      - 'reference-implementations/eav-contract-validator/validator.py'
+      - 'reference-implementations/eav-contract-validator/examples/**'
+      - '.github/workflows/validate-eav-schema.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-schema-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Parse JSON Schema
+        run: python3 -m json.tool schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json > /dev/null
+
+      - name: Parse reference examples
+        run: |
+          python3 -m json.tool reference-implementations/eav-contract-validator/examples/valid_bundle.json > /dev/null
+          python3 -m json.tool reference-implementations/eav-contract-validator/examples/invalid_bundle.json > /dev/null
+
+      - name: Compile integrity checker
+        run: python3 -m py_compile tools/check_eav_schema_alignment.py
+
+      - name: Check schema-validator-example alignment
+        run: python3 tools/check_eav_schema_alignment.py
