@@ -6,23 +6,27 @@ on:
     paths:
       - 'README.md'
       - 'artifacts/**'
+      - 'conformance/**'
       - 'docs/**'
       - 'snapshots/**'
       - 'specifications/**'
       - 'schemas/**'
       - 'reference-implementations/**'
       - 'tools/check_artifact_manifest.py'
+      - 'tools/check_public_conformance_boundary.py'
       - '.github/workflows/validate-public-artifact-manifest.yml'
   pull_request:
     paths:
       - 'README.md'
       - 'artifacts/**'
+      - 'conformance/**'
       - 'docs/**'
       - 'snapshots/**'
       - 'specifications/**'
       - 'schemas/**'
       - 'reference-implementations/**'
       - 'tools/check_artifact_manifest.py'
+      - 'tools/check_public_conformance_boundary.py'
       - '.github/workflows/validate-public-artifact-manifest.yml'
 
 permissions:
@@ -33,14 +37,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Checkout repository
+      - name: Checkout public repository
         uses: actions/checkout@v4
 
       - name: Parse artifact manifest
         run: python3 -m json.tool artifacts/AX-PUB-MANIFEST-001.json > /dev/null
 
-      - name: Compile manifest checker
-        run: python3 -m py_compile tools/check_artifact_manifest.py
+      - name: Compile public integrity checkers
+        run: |
+          python3 -m py_compile tools/check_artifact_manifest.py
+          python3 -m py_compile tools/check_public_conformance_boundary.py
 
       - name: Validate artifact paths versions and compatibility
         run: python3 tools/check_artifact_manifest.py
+
+      - name: Validate public-only conformance boundary
+        run: python3 tools/check_public_conformance_boundary.py
