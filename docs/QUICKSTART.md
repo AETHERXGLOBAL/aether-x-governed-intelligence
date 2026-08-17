@@ -106,18 +106,13 @@ python3 reference-implementations/agent-tool-authority-validator/validator.py \
   reference-implementations/agent-tool-authority-validator/examples/valid_envelope.json
 ```
 
-Expected:
+The public reference is designed to return:
 
 ```text
 AX_AGENT_AUTHORITY_REFERENCE_VALIDATION_PASS
 ```
 
-The intentionally invalid envelope should be rejected:
-
-```bash
-python3 reference-implementations/agent-tool-authority-validator/validator.py \
-  reference-implementations/agent-tool-authority-validator/examples/invalid_envelope.json
-```
+The intentionally invalid envelope is designed to be rejected.
 
 Unit tests:
 
@@ -125,7 +120,11 @@ Unit tests:
 python3 -m unittest discover -s reference-implementations/agent-tool-authority-validator/tests -v
 ```
 
-The public reference validator checks selected principal/tool/action/resource/time/environment/parameter boundaries. A pass is not production authorization.
+`AX-PUB-REF-003` currently remains `VALIDATION PENDING` until a successful run against the published repository state is directly verified. The workflow is published; the run is not yet claimed.
+
+The public reference validator covers selected principal/tool/action/resource/time/environment/parameter boundaries only.
+
+`REFERENCE VALIDATOR PASS ≠ PRODUCTION AUTHORIZATION`
 
 ## 6. Run Public Conformance
 
@@ -135,7 +134,7 @@ EAV + point-in-time suite:
 python3 conformance/AX-PUB-TEST-001/run_conformance.py
 ```
 
-Published reproducible evidence:
+Current published reproducibility evidence for `AX-PUB-TEST-001`:
 
 ```text
 AX_PUBLIC_CONFORMANCE_PASS cases=15 conforming=15
@@ -148,18 +147,18 @@ Agent-authority suite:
 python3 conformance/AX-PUB-TEST-002/run_conformance.py
 ```
 
-Published reproducible evidence:
+`AX-PUB-TEST-002` defines `10` synthetic cases and is designed to emit:
 
 ```text
 AX_AGENT_AUTHORITY_CONFORMANCE_PASS cases=10 conforming=10
 AX_AGENT_AUTHORITY_PUBLIC_BOUNDARY_PASS
 ```
 
-Both suites use synthetic public data only. Their GitHub Actions workflows are published, but successful Actions runs remain unclaimed until directly verified.
-
-`REPRODUCIBLY VERIFIED ≠ GITHUB CI VERIFIED`
+Its workflow is published, but successful execution against the published repository state remains `VALIDATION PENDING` until directly verified.
 
 `CONFORMANCE PASS ≠ PRODUCT IMPLEMENTATION`
+
+`CONFORMANCE PASS ≠ PRODUCTION AUTHORIZATION`
 
 `PUBLIC TEST VECTOR ≠ PRIVATE PROJECT DATA`
 
