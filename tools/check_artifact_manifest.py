@@ -78,14 +78,14 @@ def main() -> int:
 
     if manifest.get("manifest_id") != "AX-PUB-MANIFEST-001":
         findings.append("manifest_id must be AX-PUB-MANIFEST-001")
-    if manifest.get("manifest_version") != "1.1":
-        findings.append("manifest_version must be 1.1 for the current manifest contract")
+    if manifest.get("manifest_version") != "1.2":
+        findings.append("manifest_version must be 1.2 for the current manifest contract")
     if manifest.get("repository") != "AETHERXGLOBAL/aether-x-governed-intelligence":
         findings.append("repository identity mismatch")
 
     policy = manifest.get("versioning_policy")
-    if not isinstance(policy, dict) or policy.get("id") != "AX-PUB-POL-001" or policy.get("version") != "1.1":
-        findings.append("versioning_policy must identify AX-PUB-POL-001 v1.1")
+    if not isinstance(policy, dict) or policy.get("id") != "AX-PUB-POL-001" or policy.get("version") != "1.2":
+        findings.append("versioning_policy must identify AX-PUB-POL-001 v1.2")
     else:
         policy_path = safe_path(policy.get("path"), findings, "versioning_policy")
         if policy_path is not None and not policy_path.is_file():
@@ -130,12 +130,13 @@ def main() -> int:
         ("AX-PUB-ARCH-001", "1.0"),
         ("AX-PUB-SPEC-002", "1.0"),
         ("AX-PUB-SPEC-003", "1.0"),
+        ("AX-PUB-SPEC-004", "1.0"),
         ("AX-PUB-SCHEMA-001", "1.0"),
         ("AX-PUB-SCHEMA-002", "1.0"),
         ("AX-PUB-REF-001", "1.0"),
         ("AX-PUB-REF-002", "1.0"),
         ("AX-PUB-TEST-001", "1.0"),
-        ("AX-PUB-POL-001", "1.1"),
+        ("AX-PUB-POL-001", "1.2"),
     }
     for pair in sorted(required_pairs - set(by_pair)):
         findings.append(f"required current artifact is missing: {pair}")
@@ -161,13 +162,18 @@ def main() -> int:
             continue
         if relation.get("state") not in RELATION_STATES:
             findings.append(f"relationships[{index}] has unsupported state")
-        relation_keys.add((str(from_pair[0]), str(from_pair[1]), kind, str(to_pair[0]), str(to_pair[1])))
+        key = (str(from_pair[0]), str(from_pair[1]), kind, str(to_pair[0]), str(to_pair[1]))
+        if key in relation_keys:
+            findings.append(f"duplicate compatibility relationship: {key}")
+        relation_keys.add(key)
 
     required_relations = {
         ("AX-PUB-SCHEMA-001", "1.0", "STRUCTURAL_PROFILE_OF", "AX-PUB-SPEC-002", "1.0"),
         ("AX-PUB-REF-001", "1.0", "USES_STRUCTURAL_CONTRACT", "AX-PUB-SCHEMA-001", "1.0"),
         ("AX-PUB-SCHEMA-002", "1.0", "STRUCTURAL_PROFILE_OF", "AX-PUB-SPEC-003", "1.0"),
         ("AX-PUB-REF-002", "1.0", "USES_STRUCTURAL_CONTRACT", "AX-PUB-SCHEMA-002", "1.0"),
+        ("AX-PUB-SPEC-004", "1.0", "ALIGNS_WITH_ARCHITECTURE", "AX-PUB-ARCH-001", "1.0"),
+        ("AX-PUB-SPEC-004", "1.0", "SPECIALIZES_AUTHORITY_BOUNDARY_OF", "AX-PUB-SPEC-002", "1.0"),
         ("AX-PUB-TEST-001", "1.0", "EXERCISES_PUBLIC_BEHAVIOR_OF", "AX-PUB-REF-001", "1.0"),
         ("AX-PUB-TEST-001", "1.0", "EXERCISES_PUBLIC_BEHAVIOR_OF", "AX-PUB-REF-002", "1.0"),
     }
@@ -179,7 +185,12 @@ def main() -> int:
         findings.append("docs/QUICKSTART.md is missing")
     else:
         text = quickstart.read_text(encoding="utf-8")
-        for required in ("AX-PUB-MANIFEST-001.json", "COMPATIBILITY_AND_VERSIONING.md", "AX-PUB-SNAP-001.json"):
+        for required in (
+            "AX-PUB-MANIFEST-001.json",
+            "COMPATIBILITY_AND_VERSIONING.md",
+            "AX-PUB-SNAP-001.json",
+            "AX-PUB-SPEC-004",
+        ):
             if required not in text:
                 findings.append(f"quickstart does not reference {required}")
 
