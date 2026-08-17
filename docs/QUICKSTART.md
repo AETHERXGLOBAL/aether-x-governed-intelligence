@@ -130,7 +130,16 @@ See:
 - [`AX-PUB-TEST-001`](../conformance/AX-PUB-TEST-001/README.md)
 - [`vectors.json`](../conformance/AX-PUB-TEST-001/vectors.json)
 
-The GitHub Actions workflow for this kit is published, but successful CI execution remains **unclaimed until directly verified**.
+Byte-identical copies of the published public Git blobs have been reproducibly executed with:
+
+```text
+AX_PUBLIC_CONFORMANCE_PASS cases=15 conforming=15
+AX_PUBLIC_CONFORMANCE_BOUNDARY_PASS
+```
+
+The exact Git blob identities used for that reproducible execution are recorded in the `AX-PUB-TEST-001` documentation. The GitHub Actions workflow is published, but a successful Actions run remains **unclaimed until directly verified**.
+
+`REPRODUCIBLY VERIFIED ≠ GITHUB CI VERIFIED`
 
 `CONFORMANCE PASS ≠ PRODUCT IMPLEMENTATION`
 
