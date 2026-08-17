@@ -1,4 +1,7 @@
 {
+  "schema_id": "AX-PUB-SCHEMA-001",
+  "schema_version": "1.0",
+  "bundle_id": "bundle-invalid-example-001",
   "evidence_records": [
     {
       "evidence_id": "ev-1",
