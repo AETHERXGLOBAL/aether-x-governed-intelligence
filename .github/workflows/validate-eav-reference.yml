@@ -1,0 +1,42 @@
+name: Validate EAV Reference Implementation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'reference-implementations/eav-contract-validator/**'
+      - '.github/workflows/validate-eav-reference.yml'
+  pull_request:
+    paths:
+      - 'reference-implementations/eav-contract-validator/**'
+      - '.github/workflows/validate-eav-reference.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile validator
+        run: python3 -m py_compile reference-implementations/eav-contract-validator/validator.py
+
+      - name: Run unit tests
+        working-directory: reference-implementations/eav-contract-validator
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Validate conforming example
+        working-directory: reference-implementations/eav-contract-validator
+        run: python3 validator.py examples/valid_bundle.json
+
+      - name: Confirm invalid example is rejected
+        working-directory: reference-implementations/eav-contract-validator
+        run: |
+          if python3 validator.py examples/invalid_bundle.json; then
+            echo 'Expected invalid example to be rejected.' >&2
+            exit 1
+          fi
+          echo 'Invalid example rejected as expected.'
