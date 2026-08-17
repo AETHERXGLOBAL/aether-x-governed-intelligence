@@ -31,13 +31,13 @@ GOVERNED KNOWLEDGE
 
 Start with the **[Public Quickstart](./docs/QUICKSTART.md)**.
 
-Current public governance:
+Current moving public governance:
 
-- **[AX-PUB-MANIFEST-001 v1.4](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state.
-- **[AX-PUB-POL-001 v1.3](./docs/COMPATIBILITY_AND_VERSIONING.md)** — compatibility/versioning policy.
+- **[AX-PUB-MANIFEST-001 v1.5](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state and closure-evidence references.
+- **[AX-PUB-POL-001 v1.4](./docs/COMPATIBILITY_AND_VERSIONING.md)** — compatibility/versioning and snapshot policy.
 - **[AX-PUB-CI-001](./evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md)** — verified agent-authority schema/reference/conformance CI evidence.
 - **[AX-PUB-CI-002](./evidence/AX-PUB-CI-002_VNEXT_SNAPSHOT_VALIDATION.md)** — verified vNext snapshot and manifest closure evidence.
-- **[AX-PUB-SNAP-002](./snapshots/AX-PUB-SNAP-002_GOVERNED_INTELLIGENCE_PUBLIC_VNEXT.md)** — current `CI-VALIDATED` vNext reproducibility snapshot.
+- **[AX-PUB-SNAP-002](./snapshots/AX-PUB-SNAP-002_GOVERNED_INTELLIGENCE_PUBLIC_VNEXT.md)** — current fixed `CI-VALIDATED` vNext reproducibility snapshot.
 - **[AX-PUB-SNAP-001](./snapshots/AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md)** — historical reproducibility snapshot.
 
 ## Public Technical Series
@@ -65,7 +65,7 @@ AX-PUB-SPEC-003 → AX-PUB-SCHEMA-002 → AX-PUB-REF-002 → AX-PUB-TEST-001
 AX-PUB-SPEC-004 → AX-PUB-SCHEMA-003 → AX-PUB-REF-003 → AX-PUB-TEST-002
 ```
 
-The third path has direct GitHub Actions evidence recorded by `AX-PUB-CI-001`. The current vNext reproducibility state is independently validated and recorded by `AX-PUB-CI-002`.
+The third path has direct GitHub Actions evidence recorded by `AX-PUB-CI-001`. The vNext reproducibility state is independently validated and recorded by `AX-PUB-CI-002`.
 
 ```text
 PUBLIC ENGINEERING vNext
