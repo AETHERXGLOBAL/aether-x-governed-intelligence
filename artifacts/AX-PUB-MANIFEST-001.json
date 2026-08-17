@@ -1,0 +1,152 @@
+{
+  "manifest_id": "AX-PUB-MANIFEST-001",
+  "manifest_version": "1.0",
+  "repository": "AETHERXGLOBAL/aether-x-governed-intelligence",
+  "scope": "PUBLIC_ENGINEERING_ARTIFACT_COMPATIBILITY",
+  "public_state": "CURRENT",
+  "versioning_policy": {
+    "id": "AX-PUB-POL-001",
+    "version": "1.0",
+    "path": "docs/COMPATIBILITY_AND_VERSIONING.md"
+  },
+  "artifacts": [
+    {
+      "id": "AX-PUB-ARCH-001",
+      "version": "1.0",
+      "type": "REFERENCE_ARCHITECTURE",
+      "path": "specifications/AX-PUB-ARCH-001_GOVERNED_INTELLIGENCE_REFERENCE_ARCHITECTURE.md",
+      "state": "CURRENT",
+      "public_maturity": "CONCEPTUAL / NON-PRODUCT-SPECIFIC"
+    },
+    {
+      "id": "AX-PUB-SPEC-002",
+      "version": "1.0",
+      "type": "CONTROL_SPECIFICATION",
+      "path": "specifications/AX-PUB-SPEC-002_EVIDENCE_AUTHORITY_VERIFICATION_CONTRACT.md",
+      "state": "CURRENT",
+      "public_maturity": "CONCEPTUAL / NON-PRODUCT-SPECIFIC"
+    },
+    {
+      "id": "AX-PUB-SPEC-003",
+      "version": "1.0",
+      "type": "TEMPORAL_PROVENANCE_SPECIFICATION",
+      "path": "specifications/AX-PUB-SPEC-003_POINT_IN_TIME_KNOWLEDGE_PROVENANCE_STANDARD.md",
+      "state": "CURRENT",
+      "public_maturity": "CONCEPTUAL / NON-PRODUCT-SPECIFIC"
+    },
+    {
+      "id": "AX-PUB-SCHEMA-001",
+      "version": "1.0",
+      "type": "MACHINE_READABLE_CONTROL_CONTRACT",
+      "path": "schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json",
+      "state": "CURRENT",
+      "public_maturity": "JSON SCHEMA / CONCEPTUAL / NON-PRODUCT-SPECIFIC"
+    },
+    {
+      "id": "AX-PUB-SCHEMA-002",
+      "version": "1.0",
+      "type": "MACHINE_READABLE_TEMPORAL_PROVENANCE_CONTRACT",
+      "path": "schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json",
+      "state": "CURRENT",
+      "public_maturity": "JSON SCHEMA / CONCEPTUAL / NON-PRODUCT-SPECIFIC"
+    },
+    {
+      "id": "AX-PUB-REF-001",
+      "version": "1.0",
+      "type": "REFERENCE_IMPLEMENTATION",
+      "path": "reference-implementations/eav-contract-validator/README.md",
+      "entrypoint": "reference-implementations/eav-contract-validator/validator.py",
+      "state": "CURRENT",
+      "public_maturity": "CI-TESTED / EDUCATIONAL / NON-PRODUCTION"
+    },
+    {
+      "id": "AX-PUB-REF-002",
+      "version": "1.0",
+      "type": "REFERENCE_IMPLEMENTATION",
+      "path": "reference-implementations/point-in-time-knowledge-validator/README.md",
+      "entrypoint": "reference-implementations/point-in-time-knowledge-validator/validator.py",
+      "state": "CURRENT",
+      "public_maturity": "CI-TESTED / EDUCATIONAL / NON-PRODUCTION"
+    },
+    {
+      "id": "AX-PUB-POL-001",
+      "version": "1.0",
+      "type": "PUBLIC_ENGINEERING_POLICY",
+      "path": "docs/COMPATIBILITY_AND_VERSIONING.md",
+      "state": "CURRENT",
+      "public_maturity": "ACTIVE FOR THIS REPOSITORY"
+    }
+  ],
+  "relationships": [
+    {
+      "from_id": "AX-PUB-SPEC-002",
+      "from_version": "1.0",
+      "relationship": "ALIGNS_WITH_ARCHITECTURE",
+      "to_id": "AX-PUB-ARCH-001",
+      "to_version": "1.0",
+      "state": "COMPATIBLE"
+    },
+    {
+      "from_id": "AX-PUB-SPEC-003",
+      "from_version": "1.0",
+      "relationship": "ALIGNS_WITH_ARCHITECTURE",
+      "to_id": "AX-PUB-ARCH-001",
+      "to_version": "1.0",
+      "state": "COMPATIBLE"
+    },
+    {
+      "from_id": "AX-PUB-SCHEMA-001",
+      "from_version": "1.0",
+      "relationship": "STRUCTURAL_PROFILE_OF",
+      "to_id": "AX-PUB-SPEC-002",
+      "to_version": "1.0",
+      "state": "COMPATIBLE"
+    },
+    {
+      "from_id": "AX-PUB-REF-001",
+      "from_version": "1.0",
+      "relationship": "DEMONSTRATES_SELECTED_SEMANTICS_OF",
+      "to_id": "AX-PUB-SPEC-002",
+      "to_version": "1.0",
+      "state": "COMPATIBLE"
+    },
+    {
+      "from_id": "AX-PUB-REF-001",
+      "from_version": "1.0",
+      "relationship": "USES_STRUCTURAL_CONTRACT",
+      "to_id": "AX-PUB-SCHEMA-001",
+      "to_version": "1.0",
+      "state": "COMPATIBLE"
+    },
+    {
+      "from_id": "AX-PUB-SCHEMA-002",
+      "from_version": "1.0",
+      "relationship": "STRUCTURAL_PROFILE_OF",
+      "to_id": "AX-PUB-SPEC-003",
+      "to_version": "1.0",
+      "state": "COMPATIBLE"
+    },
+    {
+      "from_id": "AX-PUB-REF-002",
+      "from_version": "1.0",
+      "relationship": "DEMONSTRATES_SELECTED_SEMANTICS_OF",
+      "to_id": "AX-PUB-SPEC-003",
+      "to_version": "1.0",
+      "state": "COMPATIBLE"
+    },
+    {
+      "from_id": "AX-PUB-REF-002",
+      "from_version": "1.0",
+      "relationship": "USES_STRUCTURAL_CONTRACT",
+      "to_id": "AX-PUB-SCHEMA-002",
+      "to_version": "1.0",
+      "state": "COMPATIBLE"
+    }
+  ],
+  "claim_boundary": [
+    "PUBLIC COMPATIBILITY DOES NOT ESTABLISH PRODUCT INTEGRATION",
+    "REFERENCE VALIDATOR PASS DOES NOT ESTABLISH PRODUCTION APPROVAL",
+    "MACHINE-READABLE SCHEMA DOES NOT ESTABLISH A PRODUCTION DATA MODEL",
+    "PUBLIC ARTIFACTS DO NOT ESTABLISH IMPLEMENTATION INSIDE AETHER X PORTFOLIO INITIATIVES"
+  ]
+}
