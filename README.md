@@ -48,6 +48,22 @@ The core distinction is deliberate:
 
 ---
 
+## Developer Entry Point
+
+New to the repository? Start with the **[Public Quickstart](./docs/QUICKSTART.md)**.
+
+For compatibility and reproducibility:
+
+- **[Artifact Compatibility & Versioning Policy](./docs/COMPATIBILITY_AND_VERSIONING.md)** — `AX-PUB-POL-001 v1.0`
+- **[Machine-Readable Public Artifact Manifest](./artifacts/AX-PUB-MANIFEST-001.json)** — `AX-PUB-MANIFEST-001 v1.0`
+- **Public manifest CI** validates declared artifact paths, versions, schema identity and compatibility relationships.
+
+For reproducible external review, pin a Git commit SHA. The `main` branch represents the current public engineering state and may advance.
+
+`PUBLIC COMPATIBILITY ≠ PRODUCT INTEGRATION`
+
+---
+
 ## Public Technical Series
 
 | ID | Artifact | Type | Public state |
@@ -57,8 +73,9 @@ The core distinction is deliberate:
 | `AX-PUB-SPEC-003` | [Point-in-Time Knowledge & Provenance Standard](./specifications/AX-PUB-SPEC-003_POINT_IN_TIME_KNOWLEDGE_PROVENANCE_STANDARD.md) | Data / Knowledge Integrity Specification | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-SCHEMA-001` | [Governed EAV Contract Schema](./schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json) | Machine-Readable Control Contract | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-SCHEMA-002` | [Point-in-Time Knowledge Envelope](./schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json) | Machine-Readable Temporal / Provenance Contract | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
-| `AX-PUB-REF-001` | [EAV Contract Validator](./reference-implementations/eav-contract-validator/README.md) | Executable Reference Implementation | `CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
-| `AX-PUB-REF-002` | [Point-in-Time Knowledge Validator](./reference-implementations/point-in-time-knowledge-validator/README.md) | Executable Temporal / Provenance Reference Implementation | `CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
+| `AX-PUB-REF-001` | [EAV Contract Validator](./reference-implementations/eav-contract-validator/README.md) | Executable Reference Implementation | `v1.0 · CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
+| `AX-PUB-REF-002` | [Point-in-Time Knowledge Validator](./reference-implementations/point-in-time-knowledge-validator/README.md) | Executable Temporal / Provenance Reference Implementation | `v1.0 · CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
+| `AX-PUB-POL-001` | [Artifact Compatibility & Versioning Policy](./docs/COMPATIBILITY_AND_VERSIONING.md) | Public Engineering Policy | `v1.0 · ACTIVE FOR THIS REPOSITORY` |
 
 ### Specification-to-Execution Evidence Paths
 
@@ -99,6 +116,11 @@ The JSON Schemas and reference validators deliberately have different responsibi
 
 ```text
 .
+├── docs/
+│   ├── QUICKSTART.md
+│   └── COMPATIBILITY_AND_VERSIONING.md
+├── artifacts/
+│   └── AX-PUB-MANIFEST-001.json
 ├── specifications/
 │   ├── AX-PUB-ARCH-001_...
 │   ├── AX-PUB-SPEC-002_...
@@ -121,12 +143,14 @@ The JSON Schemas and reference validators deliberately have different responsibi
 │       └── tests/
 ├── tools/
 │   ├── check_eav_schema_alignment.py
-│   └── check_ptk_schema_alignment.py
+│   ├── check_ptk_schema_alignment.py
+│   └── check_artifact_manifest.py
 ├── .github/workflows/
 │   ├── validate-eav-reference.yml
 │   ├── validate-eav-schema.yml
 │   ├── validate-ptk-schema.yml
-│   └── validate-ptk-reference.yml
+│   ├── validate-ptk-reference.yml
+│   └── validate-public-artifact-manifest.yml
 └── SECURITY.md
 ```
 
@@ -142,9 +166,11 @@ A public reviewer can inspect that AETHER X GLOBAL has published:
 - machine-readable JSON Schema profiles for selected EAV and point-in-time knowledge / provenance structures;
 - an executable EAV reference validator implementing selected cross-record control invariants;
 - an executable point-in-time knowledge validator implementing selected no-future-leakage, lineage, revision and missing-state invariants;
-- public automated checks for schema alignment and both bounded reference implementations.
+- an explicit public artifact compatibility and versioning policy;
+- a machine-readable manifest that declares the current public artifact/version relationships;
+- public automated checks for schema alignment, both bounded reference implementations and artifact-manifest integrity.
 
-These artifacts are evidence of **published engineering doctrine, reference control design, machine-readable contract design, and inspectable reference engineering**.
+These artifacts are evidence of **published engineering doctrine, reference control design, machine-readable contract design, versioned public-artifact governance and inspectable reference engineering**.
 
 ## What This Repository Does Not Establish
 
@@ -153,6 +179,7 @@ Publication here does **not** establish or imply:
 - full implementation inside any AETHER X product;
 - completion or production readiness of AETHER Intelligence Core (AIC);
 - a production API, SDK, or company-wide data model;
+- stable product API or SDK compatibility;
 - a shared runtime or shared data platform across company initiatives;
 - technical integration between AETHER X Quantum, AX-OS, AIC, or AETHER X Research;
 - production readiness;
@@ -167,6 +194,8 @@ Publication here does **not** establish or imply:
 `PUBLIC SPECIFICATION ≠ PRODUCT IMPLEMENTATION`
 
 `MACHINE-READABLE SCHEMA ≠ PRODUCT DATA MODEL`
+
+`PUBLIC COMPATIBILITY ≠ PRODUCT INTEGRATION`
 
 `REFERENCE TEMPORAL VALIDATION ≠ PRODUCTION DATA QUALITY`
 
