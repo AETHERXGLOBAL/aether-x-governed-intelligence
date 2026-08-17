@@ -1,6 +1,6 @@
 {
   "manifest_id": "AX-PUB-MANIFEST-001",
-  "manifest_version": "1.0",
+  "manifest_version": "1.1",
   "repository": "AETHERXGLOBAL/aether-x-governed-intelligence",
   "scope": "PUBLIC_ENGINEERING_ARTIFACT_COMPATIBILITY",
   "public_state": "CURRENT",
@@ -67,6 +67,15 @@
       "entrypoint": "reference-implementations/point-in-time-knowledge-validator/validator.py",
       "state": "CURRENT",
       "public_maturity": "CI-TESTED / EDUCATIONAL / NON-PRODUCTION"
+    },
+    {
+      "id": "AX-PUB-TEST-001",
+      "version": "1.0",
+      "type": "PUBLIC_CONFORMANCE_TEST_KIT",
+      "path": "conformance/AX-PUB-TEST-001/README.md",
+      "entrypoint": "conformance/AX-PUB-TEST-001/run_conformance.py",
+      "state": "CURRENT",
+      "public_maturity": "PUBLIC CONFORMANCE / NON-PRODUCTION"
     },
     {
       "id": "AX-PUB-POL-001",
@@ -141,11 +150,28 @@
       "to_id": "AX-PUB-SCHEMA-002",
       "to_version": "1.0",
       "state": "COMPATIBLE"
+    },
+    {
+      "from_id": "AX-PUB-TEST-001",
+      "from_version": "1.0",
+      "relationship": "EXERCISES_PUBLIC_BEHAVIOR_OF",
+      "to_id": "AX-PUB-REF-001",
+      "to_version": "1.0",
+      "state": "COMPATIBLE"
+    },
+    {
+      "from_id": "AX-PUB-TEST-001",
+      "from_version": "1.0",
+      "relationship": "EXERCISES_PUBLIC_BEHAVIOR_OF",
+      "to_id": "AX-PUB-REF-002",
+      "to_version": "1.0",
+      "state": "COMPATIBLE"
     }
   ],
   "claim_boundary": [
     "PUBLIC COMPATIBILITY DOES NOT ESTABLISH PRODUCT INTEGRATION",
     "REFERENCE VALIDATOR PASS DOES NOT ESTABLISH PRODUCTION APPROVAL",
+    "CONFORMANCE PASS DOES NOT ESTABLISH PRODUCT IMPLEMENTATION OR PRODUCTION READINESS",
     "MACHINE-READABLE SCHEMA DOES NOT ESTABLISH A PRODUCTION DATA MODEL",
     "PUBLIC ARTIFACTS DO NOT ESTABLISH IMPLEMENTATION INSIDE AETHER X PORTFOLIO INITIATIVES"
   ]
