@@ -10,8 +10,7 @@ This directory contains machine-readable structural contracts that accompany AET
 |---|---|---|---|
 | `AX-PUB-SCHEMA-001` | [Governed EAV Contract Schema](./AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json) | `AX-PUB-SPEC-002` | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-SCHEMA-002` | [Point-in-Time Knowledge Envelope](./AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json) | `AX-PUB-SPEC-003` | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
-
-A public reference envelope for `AX-PUB-SCHEMA-002` is available at [schemas/examples/AX-PUB-SCHEMA-002_example.json](./examples/AX-PUB-SCHEMA-002_example.json).
+| `AX-PUB-SCHEMA-003` | [Agent Tool-Use Authority Envelope](./AX-PUB-SCHEMA-003_AGENT_TOOL_USE_AUTHORITY_ENVELOPE.schema.json) | `AX-PUB-SPEC-004` | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 
 ## Role of the Schemas
 
@@ -23,47 +22,59 @@ Its companion [`AX-PUB-REF-001`](../reference-implementations/eav-contract-valid
 
 ### AX-PUB-SCHEMA-002 — Point-in-Time Knowledge Envelope
 
-Makes selected `AX-PUB-SPEC-003` structures machine-readable, including:
-
-- `QueryContext`;
-- `SourceRecord`;
-- `TransformationRecord`;
-- `KnowledgeAssertion`;
-- reproducibility-package metadata;
-- observation, publication, effective, validity, and cutoff time dimensions;
-- revision, freshness, and explicit missing-data states.
+Makes selected `AX-PUB-SPEC-003` structures machine-readable, including query context, source/provenance records, transformation lineage, knowledge assertions, revision state, explicit missing-data state, and point-in-time cutoffs.
 
 Its companion [`AX-PUB-REF-002`](../reference-implementations/point-in-time-knowledge-validator/README.md) applies selected semantic checks including no-future-leakage, source/lineage references, supersession integrity, explicit missing states and reproducibility-cutoff consistency.
+
+### AX-PUB-SCHEMA-003 — Agent Tool-Use Authority Envelope
+
+Makes selected `AX-PUB-SPEC-004` structures machine-readable, including:
+
+- `AgentIdentity`;
+- `ToolDescriptor`;
+- `ActionProposal`;
+- `AuthorityContext`;
+- `ToolUseGrant`;
+- `ToolInvocationRecord`;
+- `ToolResultRecord`;
+- selected parameter, resource, environment, time and revocation fields.
+
+Its companion [`AX-PUB-REF-003`](../reference-implementations/agent-tool-authority-validator/README.md) demonstrates selected relational authority semantics. `AX-PUB-REF-003` remains `VALIDATION PENDING` until published-run evidence is directly verified.
 
 ## Structural Validation vs. Semantic Validation
 
 ```text
 AX-PUB-SCHEMA-001
-STRUCTURE / TYPES / ENUMS / REQUIRED FIELDS
+STRUCTURE
         ↓
 AX-PUB-REF-001
-CROSS-RECORD REFERENCES / AUTHORITY SCOPE / TEMPORAL RELATIONSHIPS / VERIFIED-OUTCOME RULES
+EAV RELATIONAL / AUTHORITY / VERIFICATION SEMANTICS
 
 AX-PUB-SCHEMA-002
-POINT-IN-TIME STRUCTURE / TEMPORAL FIELDS / PROVENANCE ENVELOPE
+POINT-IN-TIME / PROVENANCE STRUCTURE
         ↓
 AX-PUB-REF-002
-NO-FUTURE-LEAKAGE / CROSS-RECORD TEMPORAL & LINEAGE INVARIANTS
+TEMPORAL / LINEAGE / REVISION SEMANTICS
+
+AX-PUB-SCHEMA-003
+AGENT / TOOL / GRANT / INVOCATION STRUCTURE
+        ↓
+AX-PUB-REF-003
+SELECTED PRINCIPAL / TOOL / ACTION / RESOURCE / PARAMETER AUTHORITY SEMANTICS
 ```
 
-Both schemas use the JSON Schema Draft 2020-12 dialect. They intentionally permit additional properties so domain-specific or future reference fields can be represented without claiming that these public schemas are complete production data models.
+The published schemas use JSON Schema Draft 2020-12. They intentionally permit additional properties so domain-specific or future reference fields can be represented without claiming that these public schemas are complete production data models.
 
 ## Claim Boundary
 
 Publication of these schemas and companion reference validators does **not** establish or imply:
 
 - adoption by any AETHER X product;
-- completion or production readiness of AETHER Intelligence Core (AIC);
 - a production API or SDK contract;
-- a shared company-wide data model;
+- a shared company-wide data model, agent runtime or authorization plane;
 - technical integration between portfolio initiatives;
 - production authorization enforcement;
-- ownership or availability of any particular financial-data source;
+- autonomous authority for consequential actions;
 - production-scale data-quality guarantees;
 - security certification;
 - regulatory compliance;
@@ -71,9 +82,9 @@ Publication of these schemas and companion reference validators does **not** est
 
 `MACHINE-READABLE SCHEMA ≠ PRODUCT DATA MODEL`
 
-`SCHEMA CONFORMANCE ≠ AUTHORIZATION`
+`AGENT AUTHORITY SCHEMA ≠ PRODUCTION AUTHORIZATION PLANE`
 
-`REFERENCE TEMPORAL VALIDATION ≠ PRODUCTION DATA QUALITY`
+`SCHEMA CONFORMANCE ≠ AUTHORIZATION`
 
 `STRUCTURAL VALIDITY ≠ VERIFIED OUTCOME`
 
