@@ -141,13 +141,29 @@ A material change should preserve a traceable answer to:
 
 Changes should fail closed when the artifact manifest, referenced paths or declared compatibility relationships become internally inconsistent.
 
-## 8. Main Branch and Reproducibility
+## 8. Main Branch, Snapshots & Reproducibility
 
 The `main` branch represents the **current public engineering state** and may advance.
 
-Until AETHER X separately adopts and publishes a formal tag/release policy, an external reviewer requiring reproducibility SHOULD pin a specific Git commit SHA.
+For a fixed public-review state, AETHER X may publish a **Public Engineering Snapshot**. A snapshot records an immutable Git commit anchor, a declared artifact inventory, Git blob identities for material files and selected public CI evidence.
+
+The current snapshot is:
+
+[`AX-PUB-SNAP-001 — Governed Intelligence Public v1.0`](../snapshots/AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md)
+
+with anchor:
+
+```text
+f839d4ac0a0b69dcbb682e900f02aad7e24524eb
+```
+
+Its machine-readable record is [`snapshots/AX-PUB-SNAP-001.json`](../snapshots/AX-PUB-SNAP-001.json).
+
+A public snapshot is not automatically a Git tag, GitHub Release, product release or SDK release. Until AETHER X separately adopts and publishes a formal Git tag / GitHub Release policy, the commit SHA remains the authoritative immutable identifier for reproducible review.
 
 A branch name alone is not a permanent reproducibility identifier.
+
+`PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
 
 ## 9. Deprecation and Supersession
 
@@ -160,9 +176,11 @@ When a public artifact is superseded or deprecated, AETHER X should preserve eno
 
 Historical material should not be silently rewritten in a way that obscures which public contract existed at an earlier point in time.
 
+Published snapshots should preserve their original anchor and recorded inventory. A later snapshot should use a new snapshot identifier or version rather than silently redefining an earlier reproducibility record.
+
 ## 10. No Product Adoption Inference
 
-A public artifact relationship does **not** establish:
+A public artifact relationship or snapshot does **not** establish:
 
 - implementation by AETHER X Quantum, AX-OS, AIC or AETHER X Research;
 - a shared company-wide runtime or data model;
@@ -175,9 +193,11 @@ Product adoption requires separate implementation evidence and explicit disclosu
 
 `PUBLIC COMPATIBILITY ≠ PRODUCT INTEGRATION`
 
+`PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
+
 ## 11. Current Public Compatibility Set
 
-The authoritative machine-readable list is the artifact manifest. At policy version `1.0`, the intended current paths are:
+The authoritative machine-readable compatibility list is the artifact manifest. At policy version `1.0`, the intended current paths are:
 
 ```text
 AX-PUB-ARCH-001 v1.0
@@ -190,6 +210,8 @@ AX-PUB-SPEC-003 v1.0
 → AX-PUB-SCHEMA-002 v1.0
 → AX-PUB-REF-002 v1.0
 ```
+
+The current reproducibility snapshot is separately recorded by `AX-PUB-SNAP-001` and must not be inferred from the moving `main` branch.
 
 ---
 
