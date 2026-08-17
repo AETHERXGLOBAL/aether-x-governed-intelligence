@@ -1,0 +1,42 @@
+{
+  "test_kit_id": "AX-PUB-TEST-001",
+  "version": "1.0",
+  "state": "PUBLIC CONFORMANCE TEST KIT / CI-TESTED / NON-PRODUCTION",
+  "claim_boundary": [
+    "CONFORMANCE PASS DOES NOT ESTABLISH PRODUCT IMPLEMENTATION",
+    "CONFORMANCE PASS DOES NOT ESTABLISH PRODUCTION READINESS",
+    "TEST VECTORS DO NOT REPRESENT PRIVATE AETHER X PROJECT DATA",
+    "REFERENCE VALIDATOR BEHAVIOR DOES NOT ESTABLISH INTERNAL PRODUCT BEHAVIOR"
+  ],
+  "suites": [
+    {
+      "suite_id": "EAV",
+      "validator": "AX-PUB-REF-001",
+      "baseline": "reference-implementations/eav-contract-validator/examples/valid_bundle.json",
+      "cases": [
+        {"id":"EAV-001","title":"valid bounded authority path","expected":"PASS","mutations":[]},
+        {"id":"EAV-002","title":"revoked authority cannot execute","expected":"FAIL","required_findings":["AX-EAV-EXEC-AUTHORITY-INACTIVE"],"mutations":[{"op":"set","path":["authority_grants",0,"status"],"value":"REVOKED"}]},
+        {"id":"EAV-003","title":"execution after authority expiry","expected":"FAIL","required_findings":["AX-EAV-EXEC-AFTER-EXPIRY"],"mutations":[{"op":"set","path":["execution_records",0,"started_at"],"value":"2026-08-17T21:03:00Z"}]},
+        {"id":"EAV-004","title":"principal mismatch","expected":"FAIL","required_findings":["AX-EAV-EXEC-PRINCIPAL"],"mutations":[{"op":"set","path":["execution_records",0,"actor"],"value":"agent:other"}]},
+        {"id":"EAV-005","title":"action outside grant","expected":"FAIL","required_findings":["AX-EAV-EXEC-ACTION"],"mutations":[{"op":"set","path":["execution_records",0,"action"],"value":"DELETE_EXAMPLE"}]},
+        {"id":"EAV-006","title":"resource outside scope","expected":"FAIL","required_findings":["AX-EAV-EXEC-SCOPE"],"mutations":[{"op":"set","path":["execution_records",0,"resource"],"value":"sandbox:item-2"}]},
+        {"id":"EAV-007","title":"independent verifier cannot equal actor","expected":"FAIL","required_findings":["AX-EAV-VERIFY-INDEPENDENCE"],"mutations":[{"op":"set","path":["verification_records",0,"verifier"],"value":"agent:example-1"}]},
+        {"id":"EAV-008","title":"verified outcome requires PASS","expected":"FAIL","required_findings":["AX-EAV-OUTCOME-NOT-PASSED"],"mutations":[{"op":"set","path":["verification_records",0,"verdict"],"value":"FAIL"}]}
+      ]
+    },
+    {
+      "suite_id": "PTK",
+      "validator": "AX-PUB-REF-002",
+      "baseline": "reference-implementations/point-in-time-knowledge-validator/examples/valid_envelope.json",
+      "cases": [
+        {"id":"PTK-001","title":"valid historical knowledge envelope","expected":"PASS","mutations":[]},
+        {"id":"PTK-002","title":"future source retrieval leakage","expected":"FAIL","required_findings":["AX-PTK-FUTURE-SOURCE-RETRIEVAL"],"mutations":[{"op":"set","path":["source_records",0,"retrieved_at"],"value":"2026-08-17T20:20:00Z"}]},
+        {"id":"PTK-003","title":"future assertion observation leakage","expected":"FAIL","required_findings":["AX-PTK-FUTURE-ASSERTION-OBSERVED"],"mutations":[{"op":"set","path":["knowledge_assertions",0,"observed_at"],"value":"2026-08-17T20:20:00Z"}]},
+        {"id":"PTK-004","title":"invalid transformation lineage reference","expected":"FAIL","required_findings":["AX-PTK-TRANSFORMATION-INPUT-REF"],"mutations":[{"op":"set","path":["transformation_records",0,"input_references",0],"value":"unknown-input"}]},
+        {"id":"PTK-005","title":"correction must identify superseded assertion","expected":"FAIL","required_findings":["AX-PTK-REVISION-SUPERSEDES-REQUIRED"],"mutations":[{"op":"set","path":["knowledge_assertions",0,"revision_kind"],"value":"CORRECTION"}]},
+        {"id":"PTK-006","title":"missing value requires explicit missing state","expected":"FAIL","required_findings":["AX-PTK-MISSING-STATE-REQUIRED"],"mutations":[{"op":"delete","path":["knowledge_assertions",0,"value"]}]},
+        {"id":"PTK-007","title":"assertion must reference known source","expected":"FAIL","required_findings":["AX-PTK-SOURCE-REFERENCE"],"mutations":[{"op":"set","path":["knowledge_assertions",0,"source_record_id"],"value":"unknown-source"}]}
+      ]
+    }
+  ]
+}
