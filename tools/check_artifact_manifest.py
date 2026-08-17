@@ -97,8 +97,8 @@ def main() -> int:
     if not isinstance(policy, dict):
         fail(findings, "versioning_policy must be an object")
     else:
-        if policy.get("id") != "AX-PUB-POL-001" or policy.get("version") != "1.0":
-            fail(findings, "versioning_policy must identify AX-PUB-POL-001 v1.0")
+        if policy.get("id") != "AX-PUB-POL-001" or policy.get("version") != "1.1":
+            fail(findings, "versioning_policy must identify AX-PUB-POL-001 v1.1")
         policy_path = safe_repo_path(policy.get("path"), findings, "versioning_policy")
         if policy_path is not None and not policy_path.is_file():
             fail(findings, f"versioning policy path does not exist: {policy.get('path')}")
@@ -161,7 +161,7 @@ def main() -> int:
         ("AX-PUB-SCHEMA-002", "1.0"),
         ("AX-PUB-REF-001", "1.0"),
         ("AX-PUB-REF-002", "1.0"),
-        ("AX-PUB-POL-001", "1.0"),
+        ("AX-PUB-POL-001", "1.1"),
     }
     missing_pairs = sorted(required_pairs - set(by_pair))
     for artifact_id, version in missing_pairs:
@@ -213,7 +213,11 @@ def main() -> int:
         fail(findings, "docs/QUICKSTART.md is missing")
     else:
         quickstart_text = quickstart.read_text(encoding="utf-8")
-        for required_reference in ("AX-PUB-MANIFEST-001.json", "COMPATIBILITY_AND_VERSIONING.md"):
+        for required_reference in (
+            "AX-PUB-MANIFEST-001.json",
+            "COMPATIBILITY_AND_VERSIONING.md",
+            "AX-PUB-SNAP-001.json",
+        ):
             if required_reference not in quickstart_text:
                 fail(findings, f"quickstart does not reference {required_reference}")
 
