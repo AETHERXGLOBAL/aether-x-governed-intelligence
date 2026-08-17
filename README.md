@@ -4,7 +4,7 @@
 
 # AETHER X Governed Intelligence
 
-**Public reference architecture, technical specifications, machine-readable contracts, and non-production reference implementations for governed intelligence systems by AETHER X GLOBAL.**
+**Public reference architecture, technical specifications, machine-readable contracts, non-production reference implementations, and bounded conformance artifacts for governed intelligence systems by AETHER X GLOBAL.**
 
 `PUBLIC ENGINEERING REPOSITORY · CONTROLLED DISCLOSURE`
 
@@ -52,20 +52,24 @@ The core distinction is deliberate:
 
 New to the repository? Start with the **[Public Quickstart](./docs/QUICKSTART.md)**.
 
-For compatibility and reproducibility:
+For compatibility, conformance and reproducibility:
 
 - **[Artifact Compatibility & Versioning Policy](./docs/COMPATIBILITY_AND_VERSIONING.md)** — `AX-PUB-POL-001 v1.1`
-- **[Machine-Readable Public Artifact Manifest](./artifacts/AX-PUB-MANIFEST-001.json)** — `AX-PUB-MANIFEST-001 v1.0`
+- **[Machine-Readable Public Artifact Manifest](./artifacts/AX-PUB-MANIFEST-001.json)** — `AX-PUB-MANIFEST-001 v1.1`
+- **[Governed Intelligence Conformance Test Kit](./conformance/AX-PUB-TEST-001/README.md)** — `AX-PUB-TEST-001 v1.0 · VALIDATION PENDING`
 - **[Public Engineering Snapshot v1.0](./snapshots/AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md)** — `AX-PUB-SNAP-001 v1.0`
 - **[Machine-Readable Snapshot Record](./snapshots/AX-PUB-SNAP-001.json)** — anchored to commit `f839d4ac0a0b69dcbb682e900f02aad7e24524eb`
 - **Public manifest CI** validates declared artifact paths, versions, schema identity and compatibility relationships.
 - **Public snapshot CI** validates the immutable snapshot anchor and recorded Git blob inventory.
+- **Public conformance CI workflow** is published for the current synthetic test vectors; successful execution remains explicitly unclaimed until directly verified.
 
 For reproducible external review, use the validated snapshot or pin an explicit Git commit SHA. The `main` branch represents the current public engineering state and may advance.
 
 `PUBLIC COMPATIBILITY ≠ PRODUCT INTEGRATION`
 
 `PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
+
+`CONFORMANCE PASS ≠ PRODUCT IMPLEMENTATION`
 
 ---
 
@@ -80,6 +84,7 @@ For reproducible external review, use the validated snapshot or pin an explicit 
 | `AX-PUB-SCHEMA-002` | [Point-in-Time Knowledge Envelope](./schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json) | Machine-Readable Temporal / Provenance Contract | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-REF-001` | [EAV Contract Validator](./reference-implementations/eav-contract-validator/README.md) | Executable Reference Implementation | `v1.0 · CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
 | `AX-PUB-REF-002` | [Point-in-Time Knowledge Validator](./reference-implementations/point-in-time-knowledge-validator/README.md) | Executable Temporal / Provenance Reference Implementation | `v1.0 · CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
+| `AX-PUB-TEST-001` | [Governed Intelligence Conformance Test Kit](./conformance/AX-PUB-TEST-001/README.md) | Public Conformance Test Kit | `v1.0 · CI WORKFLOW PUBLISHED · VALIDATION PENDING · NON-PRODUCTION` |
 | `AX-PUB-POL-001` | [Artifact Compatibility & Versioning Policy](./docs/COMPATIBILITY_AND_VERSIONING.md) | Public Engineering Policy | `v1.1 · ACTIVE FOR THIS REPOSITORY` |
 
 ### Specification-to-Execution Evidence Paths
@@ -97,7 +102,8 @@ MACHINE-READABLE STRUCTURAL CONTRACT
 AX-PUB-REF-001
 EXECUTABLE RELATIONAL / SEMANTIC CHECKS
         ↓
-PUBLIC CI
+AX-PUB-TEST-001
+SYNTHETIC CONFORMANCE VECTORS
 ```
 
 ```text
@@ -110,10 +116,11 @@ MACHINE-READABLE TEMPORAL / PROVENANCE ENVELOPE
 AX-PUB-REF-002
 NO-FUTURE-LEAKAGE / LINEAGE / REVISION SEMANTICS
         ↓
-PUBLIC CI
+AX-PUB-TEST-001
+SYNTHETIC CONFORMANCE VECTORS
 ```
 
-The JSON Schemas and reference validators deliberately have different responsibilities. Schemas define structure, types, required fields, selected enums, timestamp fields and reference-envelope metadata. Executable validators apply selected relational semantics that structural validation alone cannot establish.
+The JSON Schemas, reference validators and conformance vectors deliberately have different responsibilities. Schemas define selected structure. Validators apply selected relational semantics. The conformance kit declares expected behavior for synthetic public test cases; it does not certify production systems.
 
 ### Reproducibility Snapshot
 
@@ -138,6 +145,11 @@ This snapshot is not a GitHub Release, Git tag or product release.
 │   └── COMPATIBILITY_AND_VERSIONING.md
 ├── artifacts/
 │   └── AX-PUB-MANIFEST-001.json
+├── conformance/
+│   └── AX-PUB-TEST-001/
+│       ├── README.md
+│       ├── vectors.json
+│       └── run_conformance.py
 ├── snapshots/
 │   ├── README.md
 │   ├── AX-PUB-SNAP-001.json
@@ -151,17 +163,9 @@ This snapshot is not a GitHub Release, Git tag or product release.
 │   ├── AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json
 │   ├── AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json
 │   └── examples/
-│       └── AX-PUB-SCHEMA-002_example.json
 ├── reference-implementations/
-│   ├── README.md
 │   ├── eav-contract-validator/
-│   │   ├── validator.py
-│   │   ├── examples/
-│   │   └── tests/
 │   └── point-in-time-knowledge-validator/
-│       ├── validator.py
-│       ├── examples/
-│       └── tests/
 ├── tools/
 │   ├── check_eav_schema_alignment.py
 │   ├── check_ptk_schema_alignment.py
@@ -173,6 +177,7 @@ This snapshot is not a GitHub Release, Git tag or product release.
 │   ├── validate-ptk-schema.yml
 │   ├── validate-ptk-reference.yml
 │   ├── validate-public-artifact-manifest.yml
+│   ├── validate-public-conformance.yml
 │   └── validate-public-snapshot.yml
 └── SECURITY.md
 ```
@@ -187,12 +192,14 @@ A public reviewer can inspect that AETHER X GLOBAL has published:
 - explicit evidence, decision, authority, execution and verification semantics;
 - point-in-time knowledge, provenance and revision-integrity rules;
 - machine-readable JSON Schema profiles for selected EAV and point-in-time knowledge / provenance structures;
-- an executable EAV reference validator implementing selected cross-record control invariants;
-- an executable point-in-time knowledge validator implementing selected no-future-leakage, lineage, revision and missing-state invariants;
+- two bounded executable reference validators with prior public CI evidence;
+- a synthetic public conformance-test kit covering selected positive and negative validator behaviors;
 - an explicit public artifact compatibility and versioning policy;
-- a machine-readable manifest that declares the current public artifact/version relationships;
+- a machine-readable current-state manifest;
 - a validated public reproducibility snapshot anchored to an immutable Git commit and recorded Git blob identities;
-- public automated checks for schema alignment, both bounded reference implementations, artifact-manifest integrity and snapshot integrity.
+- public workflows for schema alignment, reference validation, artifact-manifest integrity, snapshot integrity and the conformance kit.
+
+The conformance workflow is published, but the repository does not represent `AX-PUB-TEST-001` as CI-tested until a successful run is directly verified.
 
 These artifacts are evidence of **published engineering doctrine, reference control design, machine-readable contract design, versioned public-artifact governance, reproducibility discipline and inspectable reference engineering**.
 
@@ -214,7 +221,8 @@ Publication here does **not** establish or imply:
 - production-scale global financial-data infrastructure;
 - predictive, financial, or investment performance;
 - autonomous authority for consequential actions;
-- commercial or product release status merely because a public engineering snapshot exists.
+- commercial or product release status merely because a public engineering snapshot exists;
+- internal product behavior merely because a public conformance vector passes.
 
 `PUBLIC SPECIFICATION ≠ PRODUCT IMPLEMENTATION`
 
@@ -222,11 +230,23 @@ Publication here does **not** establish or imply:
 
 `PUBLIC COMPATIBILITY ≠ PRODUCT INTEGRATION`
 
+`CONFORMANCE PASS ≠ PRODUCT IMPLEMENTATION`
+
 `PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
 
 `REFERENCE TEMPORAL VALIDATION ≠ PRODUCTION DATA QUALITY`
 
 `REFERENCE IMPLEMENTATION ≠ PRODUCTION SYSTEM`
+
+---
+
+## Private-Project Boundary
+
+This public repository is intentionally self-contained. Public artifacts and test vectors use generic or synthetic reference material only.
+
+No private AETHER X product repository is a runtime, checkout, submodule or package dependency of the public conformance kit. Private product source code, unpublished research, internal endpoints, credentials, proprietary algorithms and confidential implementation architecture are outside this repository's disclosure boundary.
+
+`PUBLIC TEST VECTOR ≠ PRIVATE PROJECT DATA`
 
 ---
 
