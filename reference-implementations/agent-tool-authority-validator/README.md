@@ -1,7 +1,7 @@
 # AX-PUB-REF-003 — Agent Tool-Use Authority Validator
 
 **Version:** `1.0`  
-**Status:** `PUBLIC REFERENCE IMPLEMENTATION · CI WORKFLOW PUBLISHED · VALIDATION PENDING · EDUCATIONAL / NON-PRODUCTION`  
+**Status:** `PUBLIC REFERENCE IMPLEMENTATION · CI-TESTED · EDUCATIONAL / NON-PRODUCTION`  
 **Scope:** Selected deterministic semantics from `AX-PUB-SPEC-004`
 
 ## Purpose
@@ -59,7 +59,26 @@ python3 -m unittest discover \
   -s reference-implementations/agent-tool-authority-validator/tests -v
 ```
 
-A public GitHub Actions workflow is published at `.github/workflows/validate-agent-authority-reference.yml`. Until a successful run against the published repository state is directly verified, this artifact remains `VALIDATION PENDING` rather than being represented as CI-tested.
+## Verified Public CI Evidence
+
+The published GitHub Actions reference workflow was directly verified through public verification PR `#1` on head commit:
+
+```text
+f07bfb55eb45924f9ee62024f144064506d4be48
+```
+
+Verified workflow:
+
+```text
+Validate Agent Tool-Use Authority Reference
+Run ID: 32078037920
+Run number: 3
+Conclusion: SUCCESS
+```
+
+The same verification state also passed the public schema, conformance and artifact-manifest workflows. See [`AX-PUB-CI-001`](../../evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md).
+
+`CI PASS ≠ PRODUCTION AUTHORIZATION`
 
 ## Public Reference Profile
 
