@@ -1,0 +1,37 @@
+name: Validate Agent Authority Conformance Kit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'conformance/AX-PUB-TEST-002/**'
+      - 'reference-implementations/agent-tool-authority-validator/**'
+      - 'tools/check_agent_authority_public_boundary.py'
+      - '.github/workflows/validate-agent-authority-conformance.yml'
+  pull_request:
+    paths:
+      - 'conformance/AX-PUB-TEST-002/**'
+      - 'reference-implementations/agent-tool-authority-validator/**'
+      - 'tools/check_agent_authority_public_boundary.py'
+      - '.github/workflows/validate-agent-authority-conformance.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-agent-authority-conformance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout public repository only
+        uses: actions/checkout@v4
+      - name: Enforce private-project boundary
+        run: python3 tools/check_agent_authority_public_boundary.py
+      - name: Parse conformance vectors
+        run: python3 -m json.tool conformance/AX-PUB-TEST-002/vectors.json > /dev/null
+      - name: Compile conformance runner
+        run: python3 -m py_compile conformance/AX-PUB-TEST-002/run_conformance.py
+      - name: Run public agent-authority conformance suite
+        run: python3 conformance/AX-PUB-TEST-002/run_conformance.py
+      - name: Emit machine-readable report
+        run: python3 conformance/AX-PUB-TEST-002/run_conformance.py --json > /tmp/ax-agent-authority-conformance.json
