@@ -1,0 +1,25 @@
+{
+  "test_kit_id": "AX-PUB-TEST-002",
+  "version": "1.0",
+  "state": "PUBLIC AGENT AUTHORITY CONFORMANCE TEST KIT / REPRODUCIBLY VERIFIED / CI WORKFLOW TO BE PUBLISHED / NON-PRODUCTION",
+  "validator": "AX-PUB-REF-003",
+  "baseline": "reference-implementations/agent-tool-authority-validator/examples/valid_envelope.json",
+  "claim_boundary": [
+    "CONFORMANCE PASS DOES NOT ESTABLISH PRODUCT IMPLEMENTATION",
+    "CONFORMANCE PASS DOES NOT ESTABLISH PRODUCTION AUTHORIZATION",
+    "TEST VECTORS DO NOT REPRESENT PRIVATE AETHER X PROJECT DATA",
+    "REFERENCE VALIDATOR BEHAVIOR DOES NOT ESTABLISH INTERNAL PRODUCT BEHAVIOR"
+  ],
+  "cases": [
+    {"id":"AGT-001","title":"valid bounded agent tool-use path","expected":"PASS","mutations":[]},
+    {"id":"AGT-002","title":"revoked authority blocks invocation","expected":"FAIL","required_findings":["AX-AGT-INVOKE-AUTHORITY-INACTIVE"],"mutations":[{"op":"set","path":["authority_contexts",0,"revocation_state"],"value":"REVOKED"}]},
+    {"id":"AGT-003","title":"invocation principal must match grant","expected":"FAIL","required_findings":["AX-AGT-INVOKE-PRINCIPAL"],"mutations":[{"op":"set","path":["tool_invocations",0,"principal_id"],"value":"agent:other"}]},
+    {"id":"AGT-004","title":"invocation tool must match grant","expected":"FAIL","required_findings":["AX-AGT-INVOKE-TOOL"],"mutations":[{"op":"set","path":["tool_invocations",0,"tool_id"],"value":"tool:other"}]},
+    {"id":"AGT-005","title":"invocation action must match grant","expected":"FAIL","required_findings":["AX-AGT-INVOKE-ACTION"],"mutations":[{"op":"set","path":["tool_invocations",0,"action"],"value":"DELETE_RECORD"}]},
+    {"id":"AGT-006","title":"invocation resource must remain in grant scope","expected":"FAIL","required_findings":["AX-AGT-INVOKE-RESOURCE"],"mutations":[{"op":"set","path":["tool_invocations",0,"target_resource"],"value":"sandbox:item-2"}]},
+    {"id":"AGT-007","title":"invocation after grant expiry is rejected","expected":"FAIL","required_findings":["AX-AGT-INVOKE-AFTER-GRANT"],"mutations":[{"op":"set","path":["tool_invocations",0,"invoked_at"],"value":"2026-08-18T00:16:00Z"}]},
+    {"id":"AGT-008","title":"effective parameter must remain in authorized set","expected":"FAIL","required_findings":["AX-AGT-PARAM-ALLOWED-VALUES"],"mutations":[{"op":"set","path":["tool_invocations",0,"effective_parameters","value"],"value":"rejected"}]},
+    {"id":"AGT-009","title":"execution environment must remain authorized","expected":"FAIL","required_findings":["AX-AGT-INVOKE-ENVIRONMENT"],"mutations":[{"op":"set","path":["tool_invocations",0,"environment"],"value":"PRODUCTION"}]},
+    {"id":"AGT-010","title":"grant parameter scope must not exceed authority context","expected":"FAIL","required_findings":["AX-AGT-GRANT-PARAM-SCOPE"],"mutations":[{"op":"set","path":["tool_use_grants",0,"parameter_constraints","value","allowed_values"],"value":["approved","rejected"]}]}
+  ]
+}
