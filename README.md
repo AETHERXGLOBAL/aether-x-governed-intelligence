@@ -42,6 +42,7 @@ The core distinction is deliberate:
 `OUTPUT ≠ FACT`  
 `RECOMMENDATION ≠ DECISION`  
 `CAPABILITY ≠ AUTHORITY`  
+`TOOL AVAILABILITY ≠ TOOL PERMISSION`  
 `EXECUTION COMPLETE ≠ VERIFIED`  
 `CURRENT TRUTH ≠ HISTORICAL TRUTH`  
 `ARCHITECTURE ≠ IMPLEMENTATION`
@@ -54,8 +55,8 @@ New to the repository? Start with the **[Public Quickstart](./docs/QUICKSTART.md
 
 For compatibility, conformance and reproducibility:
 
-- **[Artifact Compatibility & Versioning Policy](./docs/COMPATIBILITY_AND_VERSIONING.md)** — `AX-PUB-POL-001 v1.1`
-- **[Machine-Readable Public Artifact Manifest](./artifacts/AX-PUB-MANIFEST-001.json)** — `AX-PUB-MANIFEST-001 v1.1`
+- **[Artifact Compatibility & Versioning Policy](./docs/COMPATIBILITY_AND_VERSIONING.md)** — `AX-PUB-POL-001 v1.2`
+- **[Machine-Readable Public Artifact Manifest](./artifacts/AX-PUB-MANIFEST-001.json)** — `AX-PUB-MANIFEST-001 v1.2`
 - **[Governed Intelligence Conformance Test Kit](./conformance/AX-PUB-TEST-001/README.md)** — `AX-PUB-TEST-001 v1.0 · REPRODUCIBLY VERIFIED · CI RUN UNVERIFIED`
 - **[Public Engineering Snapshot v1.0](./snapshots/AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md)** — `AX-PUB-SNAP-001 v1.0`
 - **[Machine-Readable Snapshot Record](./snapshots/AX-PUB-SNAP-001.json)** — anchored to commit `f839d4ac0a0b69dcbb682e900f02aad7e24524eb`
@@ -80,12 +81,13 @@ For reproducible external review, use the validated snapshot or pin an explicit 
 | `AX-PUB-ARCH-001` | [Governed Intelligence Reference Architecture](./specifications/AX-PUB-ARCH-001_GOVERNED_INTELLIGENCE_REFERENCE_ARCHITECTURE.md) | Reference Architecture | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-SPEC-002` | [Evidence, Authority & Verification Contract](./specifications/AX-PUB-SPEC-002_EVIDENCE_AUTHORITY_VERIFICATION_CONTRACT.md) | Control Specification | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-SPEC-003` | [Point-in-Time Knowledge & Provenance Standard](./specifications/AX-PUB-SPEC-003_POINT_IN_TIME_KNOWLEDGE_PROVENANCE_STANDARD.md) | Data / Knowledge Integrity Specification | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
+| `AX-PUB-SPEC-004` | [Governed Agent Authority & Tool-Use Boundary Standard](./specifications/AX-PUB-SPEC-004_GOVERNED_AGENT_AUTHORITY_TOOL_USE_STANDARD.md) | Agent Authority / Tool-Use Specification | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-SCHEMA-001` | [Governed EAV Contract Schema](./schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json) | Machine-Readable Control Contract | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-SCHEMA-002` | [Point-in-Time Knowledge Envelope](./schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json) | Machine-Readable Temporal / Provenance Contract | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-REF-001` | [EAV Contract Validator](./reference-implementations/eav-contract-validator/README.md) | Executable Reference Implementation | `v1.0 · CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
 | `AX-PUB-REF-002` | [Point-in-Time Knowledge Validator](./reference-implementations/point-in-time-knowledge-validator/README.md) | Executable Temporal / Provenance Reference Implementation | `v1.0 · CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
 | `AX-PUB-TEST-001` | [Governed Intelligence Conformance Test Kit](./conformance/AX-PUB-TEST-001/README.md) | Public Conformance Test Kit | `v1.0 · REPRODUCIBLY VERIFIED · CI WORKFLOW PUBLISHED · CI RUN UNVERIFIED · NON-PRODUCTION` |
-| `AX-PUB-POL-001` | [Artifact Compatibility & Versioning Policy](./docs/COMPATIBILITY_AND_VERSIONING.md) | Public Engineering Policy | `v1.1 · ACTIVE FOR THIS REPOSITORY` |
+| `AX-PUB-POL-001` | [Artifact Compatibility & Versioning Policy](./docs/COMPATIBILITY_AND_VERSIONING.md) | Public Engineering Policy | `v1.2 · ACTIVE FOR THIS REPOSITORY` |
 
 ### Specification-to-Execution Evidence Paths
 
@@ -120,6 +122,18 @@ AX-PUB-TEST-001
 SYNTHETIC CONFORMANCE VECTORS
 ```
 
+```text
+AX-PUB-ARCH-001
+        ↓
+AX-PUB-SPEC-002
+GENERAL AUTHORITY / EXECUTION BOUNDARY
+        ↓ specialized by
+AX-PUB-SPEC-004
+AGENT AUTHORITY / TOOL-USE BOUNDARY
+```
+
+`AX-PUB-SPEC-004` currently has no separately published machine-readable schema, reference validator or conformance suite. Those evidence states must not be inferred from the existence of the specification.
+
 The JSON Schemas, reference validators and conformance vectors deliberately have different responsibilities. Schemas define selected structure. Validators apply selected relational semantics. The conformance kit declares expected behavior for synthetic public test cases; it does not certify production systems.
 
 ### Reproducibility Snapshot
@@ -132,7 +146,7 @@ f839d4ac0a0b69dcbb682e900f02aad7e24524eb
 
 The machine-readable snapshot records the public artifact inventory, Git blob identities and selected CI evidence. Snapshot integrity is independently checked by a public workflow using full Git history.
 
-This snapshot is not a GitHub Release, Git tag or product release.
+This historical snapshot predates later additive public artifacts including `AX-PUB-TEST-001` and `AX-PUB-SPEC-004`. It is not a GitHub Release, Git tag or product release and must not be silently redefined to include later material.
 
 ---
 
@@ -157,7 +171,8 @@ This snapshot is not a GitHub Release, Git tag or product release.
 ├── specifications/
 │   ├── AX-PUB-ARCH-001_...
 │   ├── AX-PUB-SPEC-002_...
-│   └── AX-PUB-SPEC-003_...
+│   ├── AX-PUB-SPEC-003_...
+│   └── AX-PUB-SPEC-004_...
 ├── schemas/
 │   ├── README.md
 │   ├── AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json
@@ -192,6 +207,7 @@ A public reviewer can inspect that AETHER X GLOBAL has published:
 - a technology-neutral governed-intelligence reference architecture;
 - explicit evidence, decision, authority, execution and verification semantics;
 - point-in-time knowledge, provenance and revision-integrity rules;
+- explicit public agent-authority and tool-use boundaries covering identity, action proposals, authority evaluation, bounded grants, delegation, untrusted-content boundaries, parameter constraints, step-up authority, tool invocation and post-execution verification;
 - machine-readable JSON Schema profiles for selected EAV and point-in-time knowledge / provenance structures;
 - two bounded executable reference validators with prior public CI evidence;
 - a synthetic public conformance-test kit covering selected positive and negative validator behaviors;
@@ -204,7 +220,9 @@ A public reviewer can inspect that AETHER X GLOBAL has published:
 
 The conformance workflow is published. `AX-PUB-TEST-001` is represented as **reproducibly verified**, not as GitHub-CI-tested, until a successful Actions run is directly verified.
 
-These artifacts are evidence of **published engineering doctrine, reference control design, machine-readable contract design, versioned public-artifact governance, reproducibility discipline and inspectable reference engineering**.
+`AX-PUB-SPEC-004` is represented only as a **conceptual / non-product-specific public technical specification**. No schema, validator, production agent runtime or internal authorization implementation is established by it.
+
+These artifacts are evidence of **published engineering doctrine, reference control design, agent-authority boundary design, machine-readable contract design, versioned public-artifact governance, reproducibility discipline and inspectable reference engineering**.
 
 ## What This Repository Does Not Establish
 
@@ -212,9 +230,9 @@ Publication here does **not** establish or imply:
 
 - full implementation inside any AETHER X product;
 - completion or production readiness of AETHER Intelligence Core (AIC);
-- a production API, SDK, or company-wide data model;
+- a production API, SDK, agent framework, authorization plane or company-wide data model;
 - stable product API or SDK compatibility;
-- a shared runtime or shared data platform across company initiatives;
+- a shared runtime, tool registry, authorization service or shared data platform across company initiatives;
 - technical integration between AETHER X Quantum, AX-OS, AIC, or AETHER X Research;
 - production readiness;
 - customer deployment;
@@ -228,6 +246,8 @@ Publication here does **not** establish or imply:
 - internal product behavior merely because a public conformance vector passes.
 
 `PUBLIC SPECIFICATION ≠ PRODUCT IMPLEMENTATION`
+
+`PUBLIC AGENT STANDARD ≠ INTERNAL AGENT RUNTIME`
 
 `MACHINE-READABLE SCHEMA ≠ PRODUCT DATA MODEL`
 
@@ -247,9 +267,11 @@ Publication here does **not** establish or imply:
 
 This public repository is intentionally self-contained. Public artifacts and test vectors use generic or synthetic reference material only.
 
-No private AETHER X product repository is a runtime, checkout, submodule or package dependency of the public conformance kit. Private product source code, unpublished research, internal endpoints, credentials, proprietary algorithms and confidential implementation architecture are outside this repository's disclosure boundary.
+No private AETHER X product repository is a runtime, checkout, submodule or package dependency of the public conformance kit. Public specifications are technology-neutral and do not disclose private implementation topology. Private product source code, unpublished research, internal endpoints, credentials, proprietary algorithms and confidential implementation architecture are outside this repository's disclosure boundary.
 
 `PUBLIC TEST VECTOR ≠ PRIVATE PROJECT DATA`
+
+`PUBLIC SPECIFICATION ≠ PRIVATE ARCHITECTURE DISCLOSURE`
 
 ---
 
@@ -257,7 +279,7 @@ No private AETHER X product repository is a runtime, checkout, submodule or pack
 
 AETHER X initiatives may adopt all, some, or none of these reference patterns according to their domain, maturity, risk, and explicit implementation decisions.
 
-Shared engineering doctrine must not be interpreted as shared runtime, deployment dependency, interoperability, or integration. Those claims require separate implementation evidence and authority.
+Shared engineering doctrine must not be interpreted as shared runtime, deployment dependency, interoperability, agent framework, authorization plane or integration. Those claims require separate implementation evidence and authority.
 
 ---
 
