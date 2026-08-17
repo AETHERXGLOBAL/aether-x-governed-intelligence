@@ -1,0 +1,61 @@
+{
+  "evidence_records": [
+    {
+      "evidence_id": "ev-1",
+      "classification": "SOURCE_DATA",
+      "source_identity": "public-example-source",
+      "observed_at": "2026-08-17T20:00:00Z"
+    }
+  ],
+  "decision_records": [
+    {
+      "decision_id": "dec-1",
+      "decision_question": "Proceed with the bounded example action?",
+      "decision_owner": "human:example-owner",
+      "evidence_refs": ["ev-1"],
+      "decided_at": "2026-08-17T20:01:00Z"
+    }
+  ],
+  "authority_grants": [
+    {
+      "authority_id": "auth-1",
+      "decision_id": "dec-1",
+      "principal": "agent:example-1",
+      "permitted_action": "WRITE_EXAMPLE",
+      "resource_scope": ["sandbox:item-1"],
+      "status": "ACTIVE",
+      "granted_at": "2026-08-17T20:02:00Z",
+      "expires_at": "2026-08-17T21:02:00Z"
+    }
+  ],
+  "execution_records": [
+    {
+      "execution_id": "exec-1",
+      "decision_id": "dec-1",
+      "authority_id": "auth-1",
+      "actor": "agent:example-1",
+      "action": "WRITE_EXAMPLE",
+      "resource": "sandbox:item-1",
+      "started_at": "2026-08-17T20:03:00Z",
+      "status": "COMPLETED"
+    }
+  ],
+  "verification_records": [
+    {
+      "verification_id": "ver-1",
+      "execution_id": "exec-1",
+      "verifier": "checker:example-1",
+      "verdict": "PASS",
+      "verified_at": "2026-08-17T20:04:00Z",
+      "requires_independent_verifier": true
+    }
+  ],
+  "verified_outcomes": [
+    {
+      "outcome_id": "out-1",
+      "verification_id": "ver-1",
+      "outcome_state": "VERIFIED",
+      "accepted_at": "2026-08-17T20:05:00Z"
+    }
+  ]
+}
