@@ -1,7 +1,7 @@
 # AX-PUB-TEST-002 — Agent Authority Conformance Test Kit
 
 **Version:** `1.0`  
-**Status:** `PUBLIC CONFORMANCE TEST KIT · REPRODUCIBLY VERIFIED · CI WORKFLOW TO BE PUBLISHED · NON-PRODUCTION`  
+**Status:** `PUBLIC CONFORMANCE TEST KIT · CI WORKFLOW PUBLISHED · VALIDATION PENDING · NON-PRODUCTION`  
 **Scope:** `AX-PUB-REF-003` public agent/tool-use authority behavior
 
 ## Purpose
@@ -32,14 +32,19 @@ Machine-readable report:
 python3 conformance/AX-PUB-TEST-002/run_conformance.py --json
 ```
 
-The current byte-identical public content has been reproducibly exercised with:
+The suite is designed to end with:
 
 ```text
 AX_AGENT_AUTHORITY_CONFORMANCE_PASS cases=10 conforming=10
+```
+
+The public dependency-boundary checker is designed to end with:
+
+```text
 AX_AGENT_AUTHORITY_PUBLIC_BOUNDARY_PASS
 ```
 
-A GitHub Actions workflow is published separately. Until a successful Actions run is directly verified, the kit is represented as **reproducibly verified**, not GitHub-CI-verified.
+A GitHub Actions workflow is published at `.github/workflows/validate-agent-authority-conformance.yml`. Until a successful workflow run against the published repository state is directly verified, this artifact remains `VALIDATION PENDING`.
 
 ## Dependency Boundary
 
@@ -64,8 +69,6 @@ All runtime inputs are synthetic public files in this repository.
 `CONFORMANCE PASS ≠ SECURITY CERTIFICATION`
 
 `CONFORMANCE PASS ≠ PRODUCT IMPLEMENTATION`
-
-`REPRODUCIBLY VERIFIED ≠ GITHUB CI VERIFIED`
 
 ---
 
