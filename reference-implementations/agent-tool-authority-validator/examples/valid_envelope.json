@@ -1,0 +1,113 @@
+{
+  "schema_id": "AX-PUB-SCHEMA-003",
+  "schema_version": "1.0",
+  "envelope_id": "agent-authority-valid-001",
+  "agent_identities": [
+    {
+      "principal_id": "agent:example-1",
+      "principal_type": "AGENT",
+      "runtime_identity": "runtime:example-1",
+      "declared_capabilities": ["WRITE"],
+      "created_at": "2026-08-18T00:00:00Z"
+    }
+  ],
+  "tool_descriptors": [
+    {
+      "tool_id": "tool:example-write",
+      "tool_version": "1.0",
+      "capability_class": "WRITE",
+      "supported_actions": ["UPDATE_RECORD"],
+      "target_domains": ["sandbox"],
+      "side_effect_profile": "BOUNDED_WRITE",
+      "reversibility_profile": "REVERSIBLE",
+      "lifecycle_state": "ACTIVE"
+    }
+  ],
+  "action_proposals": [
+    {
+      "proposal_id": "proposal-1",
+      "principal_id": "agent:example-1",
+      "intent_reference": "intent:example-1",
+      "proposed_tool": "tool:example-write",
+      "proposed_action": "UPDATE_RECORD",
+      "target_resource": "sandbox:item-1",
+      "bounded_parameters": {"field": "status", "value": "approved"},
+      "expected_side_effects": ["UPDATE_SANDBOX_RECORD"],
+      "consequence_class": "LOW",
+      "reversibility": "REVERSIBLE",
+      "requested_at": "2026-08-18T00:01:00Z",
+      "expires_at": "2026-08-18T00:20:00Z"
+    }
+  ],
+  "authority_contexts": [
+    {
+      "authority_context_id": "ctx-1",
+      "principal_id": "agent:example-1",
+      "governing_policy_references": ["policy:example-1"],
+      "permitted_tools": ["tool:example-write"],
+      "permitted_actions": ["UPDATE_RECORD"],
+      "resource_scope": ["sandbox:item-1"],
+      "parameter_constraints": {
+        "field": {"allowed_values": ["status"]},
+        "value": {"allowed_values": ["approved", "pending"]}
+      },
+      "approval_requirements": [],
+      "valid_from": "2026-08-18T00:00:00Z",
+      "valid_until": "2026-08-18T01:00:00Z",
+      "revocation_state": "ACTIVE",
+      "environment_constraints": ["SANDBOX"],
+      "audit_requirements": ["RECORD_INVOCATION"],
+      "evaluated_at": "2026-08-18T00:01:30Z"
+    }
+  ],
+  "tool_use_grants": [
+    {
+      "grant_id": "grant-1",
+      "principal_id": "agent:example-1",
+      "proposal_reference": "proposal-1",
+      "authority_context_reference": "ctx-1",
+      "tool_id": "tool:example-write",
+      "permitted_action": "UPDATE_RECORD",
+      "resource_scope": ["sandbox:item-1"],
+      "parameter_constraints": {
+        "field": {"allowed_values": ["status"]},
+        "value": {"allowed_values": ["approved"]}
+      },
+      "approval_evidence": [],
+      "valid_from": "2026-08-18T00:01:30Z",
+      "valid_until": "2026-08-18T00:15:00Z",
+      "single_use_or_reusable": "SINGLE_USE",
+      "maximum_invocations": 1,
+      "issued_by": "policy:example-1",
+      "issued_at": "2026-08-18T00:01:30Z"
+    }
+  ],
+  "tool_invocations": [
+    {
+      "invocation_id": "invoke-1",
+      "grant_id": "grant-1",
+      "principal_id": "agent:example-1",
+      "tool_id": "tool:example-write",
+      "tool_version": "1.0",
+      "action": "UPDATE_RECORD",
+      "target_resource": "sandbox:item-1",
+      "effective_parameters": {"field": "status", "value": "approved"},
+      "environment": "SANDBOX",
+      "invoked_at": "2026-08-18T00:02:00Z",
+      "completed_at": "2026-08-18T00:02:05Z",
+      "status": "SUCCEEDED",
+      "observed_side_effects": ["UPDATE_SANDBOX_RECORD"]
+    }
+  ],
+  "tool_results": [
+    {
+      "result_id": "result-1",
+      "invocation_id": "invoke-1",
+      "tool_reported_status": "SUCCESS",
+      "parsed_result": {"updated": true},
+      "observed_at": "2026-08-18T00:02:06Z",
+      "material_side_effects": ["UPDATE_SANDBOX_RECORD"],
+      "verification_required": true
+    }
+  ]
+}
