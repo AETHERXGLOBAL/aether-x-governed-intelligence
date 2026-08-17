@@ -1,0 +1,53 @@
+{
+  "snapshot_id": "AX-PUB-SNAP-002",
+  "snapshot_version": "1.0",
+  "label": "Governed Intelligence Public vNext",
+  "status": "PUBLIC ENGINEERING SNAPSHOT / REPRODUCIBILITY ANCHOR / NON-PRODUCT",
+  "repository": "AETHERXGLOBAL/aether-x-governed-intelligence",
+  "anchor_commit": "6dfdec04a4d8375bc2da0bb6a3830ff07eeb1711",
+  "artifact_manifest": {
+    "id": "AX-PUB-MANIFEST-001",
+    "version": "1.4",
+    "path": "artifacts/AX-PUB-MANIFEST-001.json",
+    "git_blob_sha": "e4830e8b910040af782725fc4a5e356185f444eb"
+  },
+  "inventory": [
+    {"id":"AX-PUB-ARCH-001","version":"1.0","path":"specifications/AX-PUB-ARCH-001_GOVERNED_INTELLIGENCE_REFERENCE_ARCHITECTURE.md","git_blob_sha":"d61777ae7b1c9b76d20bc9e996ed5e551b714589"},
+    {"id":"AX-PUB-SPEC-002","version":"1.0","path":"specifications/AX-PUB-SPEC-002_EVIDENCE_AUTHORITY_VERIFICATION_CONTRACT.md","git_blob_sha":"d384c162e6b42c30ef6d407de51ebb14553a8fbb"},
+    {"id":"AX-PUB-SPEC-003","version":"1.0","path":"specifications/AX-PUB-SPEC-003_POINT_IN_TIME_KNOWLEDGE_PROVENANCE_STANDARD.md","git_blob_sha":"077f477629de37931d6f47fd49ccdb9254ccfba6"},
+    {"id":"AX-PUB-SPEC-004","version":"1.0","path":"specifications/AX-PUB-SPEC-004_GOVERNED_AGENT_AUTHORITY_TOOL_USE_STANDARD.md","git_blob_sha":"37cdc4c42d0bad6dd95b64bd99a5c1dc832ac8e6"},
+    {"id":"AX-PUB-SCHEMA-001","version":"1.0","path":"schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json","git_blob_sha":"2d4d305105211824fe01478b1255fdb4e1de4390"},
+    {"id":"AX-PUB-SCHEMA-002","version":"1.0","path":"schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json","git_blob_sha":"c66839a873d6abe1210641a8f7b10200cc0f8ded"},
+    {"id":"AX-PUB-SCHEMA-003","version":"1.0","path":"schemas/AX-PUB-SCHEMA-003_AGENT_TOOL_USE_AUTHORITY_ENVELOPE.schema.json","git_blob_sha":"aec32122739d2efb12f0abb2bf84be737c57fc8b"},
+    {"id":"AX-PUB-REF-001","version":"1.0","path":"reference-implementations/eav-contract-validator/README.md","git_blob_sha":"e9e2256020144ca5cd2efa21e3059cd3557c46aa","entrypoint":"reference-implementations/eav-contract-validator/validator.py","entrypoint_git_blob_sha":"10b31f990cdeb0a2285081d4b4a8cc2457564c69"},
+    {"id":"AX-PUB-REF-002","version":"1.0","path":"reference-implementations/point-in-time-knowledge-validator/README.md","git_blob_sha":"7f21541aaa9bd9e6d76842456a711c9b156558a6","entrypoint":"reference-implementations/point-in-time-knowledge-validator/validator.py","entrypoint_git_blob_sha":"f4344dfb70685b490e716e33f8f2fd2da1f0ca50"},
+    {"id":"AX-PUB-REF-003","version":"1.0","path":"reference-implementations/agent-tool-authority-validator/README.md","git_blob_sha":"d0700dbbf945de7d6faaecd97522ff3447386165","entrypoint":"reference-implementations/agent-tool-authority-validator/validator.py","entrypoint_git_blob_sha":"6c8f4d325ef3d3f2041909f8bba7d554ced4366e"},
+    {"id":"AX-PUB-TEST-001","version":"1.0","path":"conformance/AX-PUB-TEST-001/README.md","git_blob_sha":"99df92064eee2c24069178eabaf5cda045b341eb","entrypoint":"conformance/AX-PUB-TEST-001/run_conformance.py","entrypoint_git_blob_sha":"bcab4e34f020a0c5feb37acb13bfe59ec27681ca"},
+    {"id":"AX-PUB-TEST-002","version":"1.0","path":"conformance/AX-PUB-TEST-002/README.md","git_blob_sha":"c3338cc6e39e6ba1f9c5420e6cc153b99f698e0f","entrypoint":"conformance/AX-PUB-TEST-002/run_conformance.py","entrypoint_git_blob_sha":"d73b7871a1b79dc57ef0721887d029828074be65"},
+    {"id":"AX-PUB-POL-001","version":"1.3","path":"docs/COMPATIBILITY_AND_VERSIONING.md","git_blob_sha":"37e9df6a3a120866ffddeb75d99b1f99c000fa0e"}
+  ],
+  "supporting_material": [
+    {"id":"AX-PUB-CI-001","version":"1.0","path":"evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md","git_blob_sha":"8b0c7f23f1f4803d144dca4a57af98e375925a84"},
+    {"id":"PUBLIC-QUICKSTART","path":"docs/QUICKSTART.md","git_blob_sha":"eed0e204f6140c8f914db14df08c5990f4fed9f4"},
+    {"id":"REPOSITORY-README","path":"README.md","git_blob_sha":"c31e18cad8b22c02c6d7c16aa14a395acfa2508f"}
+  ],
+  "ci_evidence": {
+    "evidence_id": "AX-PUB-CI-001",
+    "verification_pr": 1,
+    "verified_head_commit": "f07bfb55eb45924f9ee62024f144064506d4be48",
+    "verified_base_commit": "85cf6fde5623a19e04076def5658571849c72f62",
+    "runs": [
+      {"workflow":"Validate Agent Authority Conformance Kit","run_id":32078037943,"run_number":5,"conclusion":"success"},
+      {"workflow":"Validate Agent Tool-Use Authority Contract","run_id":32078037960,"run_number":2,"conclusion":"success"},
+      {"workflow":"Validate Agent Tool-Use Authority Reference","run_id":32078037920,"run_number":3,"conclusion":"success"},
+      {"workflow":"Validate Public Artifact Manifest","run_id":32078037902,"run_number":47,"conclusion":"success"}
+    ]
+  },
+  "claim_boundary": [
+    "PUBLIC SNAPSHOT DOES NOT ESTABLISH PRODUCT RELEASE",
+    "PUBLIC CI PASS DOES NOT ESTABLISH PRODUCT IMPLEMENTATION",
+    "PUBLIC CI PASS DOES NOT ESTABLISH PRODUCTION AUTHORIZATION",
+    "PUBLIC ARTIFACT COMPATIBILITY DOES NOT ESTABLISH PRODUCT INTEGRATION",
+    "PRIVATE AETHER X PROJECT REPOSITORIES ARE OUTSIDE THIS SNAPSHOT"
+  ]
+}
