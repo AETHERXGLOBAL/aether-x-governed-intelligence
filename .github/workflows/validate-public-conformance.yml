@@ -1,0 +1,39 @@
+name: Validate Public Conformance Kit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'conformance/**'
+      - 'reference-implementations/eav-contract-validator/**'
+      - 'reference-implementations/point-in-time-knowledge-validator/**'
+      - '.github/workflows/validate-public-conformance.yml'
+  pull_request:
+    paths:
+      - 'conformance/**'
+      - 'reference-implementations/eav-contract-validator/**'
+      - 'reference-implementations/point-in-time-knowledge-validator/**'
+      - '.github/workflows/validate-public-conformance.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-public-conformance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Parse conformance vectors
+        run: python3 -m json.tool conformance/AX-PUB-TEST-001/vectors.json > /dev/null
+
+      - name: Compile public conformance runner
+        run: python3 -m py_compile conformance/AX-PUB-TEST-001/run_conformance.py
+
+      - name: Run public conformance suite
+        run: python3 conformance/AX-PUB-TEST-001/run_conformance.py
+
+      - name: Emit machine-readable conformance report
+        run: python3 conformance/AX-PUB-TEST-001/run_conformance.py --json > /tmp/ax-public-conformance-report.json
