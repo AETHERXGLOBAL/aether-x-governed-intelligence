@@ -1,7 +1,7 @@
 {
   "test_kit_id": "AX-PUB-TEST-002",
   "version": "1.0",
-  "state": "PUBLIC AGENT AUTHORITY CONFORMANCE TEST KIT / REPRODUCIBLY VERIFIED / CI WORKFLOW TO BE PUBLISHED / NON-PRODUCTION",
+  "state": "PUBLIC AGENT AUTHORITY CONFORMANCE TEST KIT / CI WORKFLOW PUBLISHED / VALIDATION PENDING / NON-PRODUCTION",
   "validator": "AX-PUB-REF-003",
   "baseline": "reference-implementations/agent-tool-authority-validator/examples/valid_envelope.json",
   "claim_boundary": [
