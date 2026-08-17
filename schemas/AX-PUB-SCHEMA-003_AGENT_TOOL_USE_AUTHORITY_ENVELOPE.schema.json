@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aetherx:public-schema:AX-PUB-SCHEMA-003:1.0",
+  "title": "AETHER X Agent Tool-Use Authority Envelope",
+  "description": "Machine-readable structural reference for selected agent identity, action proposal, authority context, tool-use grant, tool invocation, and tool result fields defined by AX-PUB-SPEC-004. Conceptual, non-product-specific, and non-production.",
+  "type": "object",
+  "required": [
+    "schema_id",
+    "schema_version",
+    "envelope_id",
+    "agent_identities",
+    "tool_descriptors",
+    "action_proposals",
+    "authority_contexts",
+    "tool_use_grants",
+    "tool_invocations",
+    "tool_results"
+  ],
+  "properties": {
+    "schema_id": {"const": "AX-PUB-SCHEMA-003"},
+    "schema_version": {"const": "1.0"},
+    "envelope_id": {"$ref": "#/$defs/non_empty_string"},
+    "agent_identities": {"type": "array", "items": {"$ref": "#/$defs/agent_identity"}},
+    "tool_descriptors": {"type": "array", "items": {"$ref": "#/$defs/tool_descriptor"}},
+    "action_proposals": {"type": "array", "items": {"$ref": "#/$defs/action_proposal"}},
+    "authority_contexts": {"type": "array", "items": {"$ref": "#/$defs/authority_context"}},
+    "tool_use_grants": {"type": "array", "items": {"$ref": "#/$defs/tool_use_grant"}},
+    "tool_invocations": {"type": "array", "items": {"$ref": "#/$defs/tool_invocation"}},
+    "tool_results": {"type": "array", "items": {"$ref": "#/$defs/tool_result"}}
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "non_empty_string": {"type": "string", "minLength": 1},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "string_list": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/non_empty_string"}},
+    "parameter_constraint": {
+      "type": "object",
+      "properties": {
+        "allowed_values": {"type": "array", "minItems": 1, "uniqueItems": true},
+        "minimum": {"type": "number"},
+        "maximum": {"type": "number"},
+        "required": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    },
+    "parameter_constraints": {"type": "object", "additionalProperties": {"$ref": "#/$defs/parameter_constraint"}},
+    "agent_identity": {
+      "type": "object",
+      "required": ["principal_id", "principal_type", "runtime_identity", "created_at"],
+      "properties": {
+        "principal_id": {"$ref": "#/$defs/non_empty_string"},
+        "principal_type": {"enum": ["HUMAN", "AGENT", "SERVICE", "WORKFLOW", "OTHER"]},
+        "runtime_identity": {"$ref": "#/$defs/non_empty_string"},
+        "parent_principal_reference": {"$ref": "#/$defs/non_empty_string"},
+        "acting_for": {"$ref": "#/$defs/non_empty_string"},
+        "model_or_logic_reference": {"$ref": "#/$defs/non_empty_string"},
+        "session_or_workflow_reference": {"$ref": "#/$defs/non_empty_string"},
+        "authenticated_context": {"type": "object"},
+        "declared_capabilities": {"$ref": "#/$defs/string_list"},
+        "current_authority_references": {"$ref": "#/$defs/string_list"},
+        "created_at": {"$ref": "#/$defs/timestamp"}
+      },
+      "additionalProperties": true
+    },
+    "tool_descriptor": {
+      "type": "object",
+      "required": ["tool_id", "tool_version", "capability_class", "supported_actions", "side_effect_profile", "reversibility_profile", "lifecycle_state"],
+      "properties": {
+        "tool_id": {"$ref": "#/$defs/non_empty_string"},
+        "tool_version": {"$ref": "#/$defs/non_empty_string"},
+        "capability_class": {"enum": ["READ", "SEARCH", "TRANSFORM", "COMMUNICATE", "WRITE", "EXECUTE_CODE", "TRANSACT", "ADMINISTER", "CONTROL_EXTERNAL_SYSTEM"]},
+        "supported_actions": {"$ref": "#/$defs/string_list"},
+        "target_domains": {"$ref": "#/$defs/string_list"},
+        "side_effect_profile": {"$ref": "#/$defs/non_empty_string"},
+        "reversibility_profile": {"enum": ["REVERSIBLE", "COMPENSATABLE", "DIFFICULT_TO_REVERSE", "IRREVERSIBLE", "UNKNOWN"]},
+        "credential_boundary": {"type": "string"},
+        "network_or_system_boundary": {"type": "string"},
+        "parameter_schema_reference": {"type": "string"},
+        "output_contract_reference": {"type": "string"},
+        "risk_metadata": {"type": "object"},
+        "owner": {"type": "string"},
+        "lifecycle_state": {"enum": ["ACTIVE", "DEPRECATED", "DISABLED"]}
+      },
+      "additionalProperties": true
+    },
+    "action_proposal": {
+      "type": "object",
+      "required": ["proposal_id", "principal_id", "proposed_tool", "proposed_action", "target_resource", "bounded_parameters", "consequence_class", "reversibility", "requested_at"],
+      "properties": {
+        "proposal_id": {"$ref": "#/$defs/non_empty_string"},
+        "principal_id": {"$ref": "#/$defs/non_empty_string"},
+        "intent_reference": {"type": "string"},
+        "decision_reference": {"type": "string"},
+        "proposed_tool": {"$ref": "#/$defs/non_empty_string"},
+        "proposed_action": {"$ref": "#/$defs/non_empty_string"},
+        "target_resource": {"$ref": "#/$defs/non_empty_string"},
+        "target_identity": {"type": "string"},
+        "bounded_parameters": {"type": "object"},
+        "expected_side_effects": {"type": "array"},
+        "consequence_class": {"enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]},
+        "reversibility": {"enum": ["REVERSIBLE", "COMPENSATABLE", "DIFFICULT_TO_REVERSE", "IRREVERSIBLE", "UNKNOWN"]},
+        "evidence_references": {"$ref": "#/$defs/string_list"},
+        "assumptions": {"type": "array"},
+        "material_unknowns": {"type": "array"},
+        "requested_at": {"$ref": "#/$defs/timestamp"},
+        "expires_at": {"$ref": "#/$defs/timestamp"}
+      },
+      "additionalProperties": true
+    },
+    "authority_context": {
+      "type": "object",
+      "required": ["authority_context_id", "principal_id", "permitted_tools", "permitted_actions", "resource_scope", "parameter_constraints", "approval_requirements", "valid_from", "valid_until", "revocation_state", "environment_constraints", "evaluated_at"],
+      "properties": {
+        "authority_context_id": {"$ref": "#/$defs/non_empty_string"},
+        "principal_id": {"$ref": "#/$defs/non_empty_string"},
+        "decision_reference": {"type": "string"},
+        "governing_policy_references": {"$ref": "#/$defs/string_list"},
+        "role_or_delegation_references": {"$ref": "#/$defs/string_list"},
+        "permitted_tools": {"$ref": "#/$defs/string_list"},
+        "permitted_actions": {"$ref": "#/$defs/string_list"},
+        "resource_scope": {"$ref": "#/$defs/string_list"},
+        "data_scope": {"$ref": "#/$defs/string_list"},
+        "parameter_constraints": {"$ref": "#/$defs/parameter_constraints"},
+        "consequence_limits": {"type": "object"},
+        "approval_requirements": {"type": "array"},
+        "separation_of_duties_requirements": {"type": "array"},
+        "valid_from": {"$ref": "#/$defs/timestamp"},
+        "valid_until": {"$ref": "#/$defs/timestamp"},
+        "revocation_state": {"enum": ["ACTIVE", "REVOKED", "EXPIRED", "UNKNOWN"]},
+        "environment_constraints": {"$ref": "#/$defs/string_list"},
+        "audit_requirements": {"type": "array"},
+        "evaluated_at": {"$ref": "#/$defs/timestamp"}
+      },
+      "additionalProperties": true
+    },
+    "tool_use_grant": {
+      "type": "object",
+      "required": ["grant_id", "principal_id", "proposal_reference", "authority_context_reference", "tool_id", "permitted_action", "resource_scope", "parameter_constraints", "valid_from", "valid_until", "single_use_or_reusable", "maximum_invocations", "issued_by", "issued_at"],
+      "properties": {
+        "grant_id": {"$ref": "#/$defs/non_empty_string"},
+        "principal_id": {"$ref": "#/$defs/non_empty_string"},
+        "proposal_reference": {"$ref": "#/$defs/non_empty_string"},
+        "authority_context_reference": {"$ref": "#/$defs/non_empty_string"},
+        "tool_id": {"$ref": "#/$defs/non_empty_string"},
+        "permitted_action": {"$ref": "#/$defs/non_empty_string"},
+        "resource_scope": {"$ref": "#/$defs/string_list"},
+        "parameter_constraints": {"$ref": "#/$defs/parameter_constraints"},
+        "consequence_limit": {"type": "object"},
+        "approval_evidence": {"type": "array"},
+        "valid_from": {"$ref": "#/$defs/timestamp"},
+        "valid_until": {"$ref": "#/$defs/timestamp"},
+        "single_use_or_reusable": {"enum": ["SINGLE_USE", "REUSABLE"]},
+        "maximum_invocations": {"type": "integer", "minimum": 1},
+        "revocation_reference": {"type": "string"},
+        "issued_by": {"$ref": "#/$defs/non_empty_string"},
+        "issued_at": {"$ref": "#/$defs/timestamp"}
+      },
+      "additionalProperties": true
+    },
+    "tool_invocation": {
+      "type": "object",
+      "required": ["invocation_id", "grant_id", "principal_id", "tool_id", "tool_version", "action", "target_resource", "effective_parameters", "environment", "invoked_at", "status"],
+      "properties": {
+        "invocation_id": {"$ref": "#/$defs/non_empty_string"},
+        "grant_id": {"$ref": "#/$defs/non_empty_string"},
+        "principal_id": {"$ref": "#/$defs/non_empty_string"},
+        "tool_id": {"$ref": "#/$defs/non_empty_string"},
+        "tool_version": {"$ref": "#/$defs/non_empty_string"},
+        "action": {"$ref": "#/$defs/non_empty_string"},
+        "target_resource": {"$ref": "#/$defs/non_empty_string"},
+        "effective_parameters": {"type": "object"},
+        "environment": {"$ref": "#/$defs/non_empty_string"},
+        "invoked_at": {"$ref": "#/$defs/timestamp"},
+        "completed_at": {"$ref": "#/$defs/timestamp"},
+        "status": {"enum": ["SUCCEEDED", "FAILED", "PARTIAL", "CANCELLED", "TIMED_OUT", "UNKNOWN"]},
+        "retry_reference": {"type": "string"},
+        "idempotency_reference": {"type": "string"},
+        "observed_side_effects": {"type": "array"},
+        "rollback_or_compensation_reference": {"type": "string"},
+        "telemetry_reference": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "tool_result": {
+      "type": "object",
+      "required": ["result_id", "invocation_id", "tool_reported_status", "observed_at", "verification_required"],
+      "properties": {
+        "result_id": {"$ref": "#/$defs/non_empty_string"},
+        "invocation_id": {"$ref": "#/$defs/non_empty_string"},
+        "raw_result_reference": {"type": "string"},
+        "tool_reported_status": {"$ref": "#/$defs/non_empty_string"},
+        "parsed_result": {},
+        "error_state": {"type": ["string", "null"]},
+        "completeness_state": {"type": "string"},
+        "source_identity": {"type": "string"},
+        "observed_at": {"$ref": "#/$defs/timestamp"},
+        "material_side_effects": {"type": "array"},
+        "uncertainty": {"type": "array"},
+        "verification_required": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    }
+  }
+}
