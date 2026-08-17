@@ -1,0 +1,57 @@
+{
+  "schema_id": "AX-PUB-SCHEMA-002",
+  "schema_version": "1.0",
+  "envelope_id": "ptk-invalid-example-001",
+  "query_context": {
+    "as_of_time": "2026-08-17T20:30:00Z",
+    "knowledge_cutoff_time": "2026-08-17T20:15:00Z",
+    "effective_time_policy": "USE_EFFECTIVE_TIME_WHEN_AVAILABLE",
+    "publication_time_policy": "EXCLUDE_AFTER_CUTOFF",
+    "observed_time_policy": "EXCLUDE_NOT_YET_OBSERVED",
+    "source_scope": ["public-example-source"],
+    "revision_policy": "VERSION_AVAILABLE_AT_CUTOFF",
+    "quality_policy": "PRESERVE_EXPLICIT_QUALITY_STATE",
+    "conflict_policy": "PRESERVE_MATERIAL_CONFLICTS",
+    "missing_data_policy": "PRESERVE_EXPLICIT_MISSING_STATE"
+  },
+  "source_records": [
+    {
+      "source_record_id": "src-1",
+      "source_identity": "public-example-source",
+      "source_type": "PUBLIC_DOCUMENT",
+      "published_at": "2026-08-17T20:16:00Z",
+      "retrieved_at": "2026-08-17T20:20:00Z"
+    }
+  ],
+  "transformation_records": [
+    {
+      "transformation_id": "tx-1",
+      "input_references": ["src-1"],
+      "output_references": ["ka-1"],
+      "method": "NORMALIZATION",
+      "executed_at": "2026-08-17T20:26:00Z",
+      "deterministic_or_probabilistic": "DETERMINISTIC"
+    }
+  ],
+  "knowledge_assertions": [
+    {
+      "assertion_id": "ka-1",
+      "subject_id": "entity:example-1",
+      "predicate": "example_metric",
+      "value": null,
+      "classification": "SOURCE_DATA",
+      "source_record_id": "src-1",
+      "effective_at": "2026-08-17T19:50:00Z",
+      "published_at": "2026-08-17T20:16:00Z",
+      "observed_at": "2026-08-17T20:25:00Z",
+      "version_id": "ka-1:v2",
+      "revision_kind": "CORRECTION",
+      "supersedes": "ka-missing",
+      "freshness_state": "CURRENT_FOR_POLICY",
+      "transformation_references": ["tx-missing"]
+    }
+  ],
+  "reproducibility_package": {
+    "point_in_time_cutoff": "2026-08-17T20:14:00Z"
+  }
+}
