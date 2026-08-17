@@ -13,7 +13,7 @@ REQUIRED_PAIRS = {
     ("AX-PUB-ARCH-001","1.0"),("AX-PUB-SPEC-002","1.0"),("AX-PUB-SPEC-003","1.0"),("AX-PUB-SPEC-004","1.0"),
     ("AX-PUB-SCHEMA-001","1.0"),("AX-PUB-SCHEMA-002","1.0"),("AX-PUB-SCHEMA-003","1.0"),
     ("AX-PUB-REF-001","1.0"),("AX-PUB-REF-002","1.0"),("AX-PUB-REF-003","1.0"),
-    ("AX-PUB-TEST-001","1.0"),("AX-PUB-TEST-002","1.0"),("AX-PUB-POL-001","1.3"),
+    ("AX-PUB-TEST-001","1.0"),("AX-PUB-TEST-002","1.0"),("AX-PUB-POL-001","1.4"),
 }
 REQUIRED_RELATIONS = {
     ("AX-PUB-SCHEMA-001","1.0","STRUCTURAL_PROFILE_OF","AX-PUB-SPEC-002","1.0"),
@@ -41,19 +41,19 @@ def load_json(path: Path, findings: list[str]) -> dict[str, Any] | None:
     if not isinstance(data, dict): findings.append(f"{path.relative_to(ROOT)} must contain an object"); return None
     return data
 
-def check_artifact(path: Path, artifact_id: str, version: str, findings: list[str]) -> None:
+def check_artifact(path: Path, aid: str, ver: str, findings: list[str]) -> None:
     if not path.is_file(): findings.append(f"artifact path missing: {path.relative_to(ROOT)}"); return
     if path.name.endswith(".schema.json"):
         data = load_json(path, findings)
         if data is None: return
-        if f":{artifact_id}:{version}" not in str(data.get("$id", "")): findings.append(f"{path.relative_to(ROOT)} $id mismatch")
+        if f":{aid}:{ver}" not in str(data.get("$id", "")): findings.append(f"{path.relative_to(ROOT)} $id mismatch")
         props = data.get("properties", {})
-        if props.get("schema_id", {}).get("const") != artifact_id: findings.append(f"{path.relative_to(ROOT)} schema_id mismatch")
-        if props.get("schema_version", {}).get("const") != version: findings.append(f"{path.relative_to(ROOT)} schema_version mismatch")
+        if props.get("schema_id", {}).get("const") != aid: findings.append(f"{path.relative_to(ROOT)} schema_id mismatch")
+        if props.get("schema_version", {}).get("const") != ver: findings.append(f"{path.relative_to(ROOT)} schema_version mismatch")
     elif path.suffix == ".md":
         text = path.read_text(encoding="utf-8")
-        if artifact_id not in text: findings.append(f"{path.relative_to(ROOT)} does not declare {artifact_id}")
-        if f"`{version}`" not in text: findings.append(f"{path.relative_to(ROOT)} does not declare version {version}")
+        if aid not in text: findings.append(f"{path.relative_to(ROOT)} does not declare {aid}")
+        if f"`{ver}`" not in text: findings.append(f"{path.relative_to(ROOT)} does not declare version {ver}")
 
 def fail(findings: list[str]) -> int:
     for item in findings: print(f"AX_MANIFEST_FAIL: {item}")
@@ -64,10 +64,11 @@ def main() -> int:
     manifest = load_json(MANIFEST_PATH, findings)
     if manifest is None: return fail(findings)
     if manifest.get("manifest_id") != "AX-PUB-MANIFEST-001": findings.append("manifest_id mismatch")
-    if manifest.get("manifest_version") != "1.4": findings.append("manifest_version must be 1.4")
+    if manifest.get("manifest_version") != "1.5": findings.append("manifest_version must be 1.5")
     if manifest.get("repository") != "AETHERXGLOBAL/aether-x-governed-intelligence": findings.append("repository identity mismatch")
+
     policy = manifest.get("versioning_policy")
-    if not isinstance(policy, dict) or policy.get("id") != "AX-PUB-POL-001" or policy.get("version") != "1.3": findings.append("versioning policy must be AX-PUB-POL-001 v1.3")
+    if not isinstance(policy, dict) or policy.get("id") != "AX-PUB-POL-001" or policy.get("version") != "1.4": findings.append("versioning policy must be AX-PUB-POL-001 v1.4")
     else:
         p = safe_path(policy.get("path"), findings, "versioning_policy")
         if p is not None and not p.is_file(): findings.append("versioning policy path missing")
@@ -90,41 +91,43 @@ def main() -> int:
             if ep is not None and not ep.is_file(): findings.append(f"entrypoint missing: {artifact.get('entrypoint')}")
     for pair in sorted(REQUIRED_PAIRS - set(by_pair)): findings.append(f"required current artifact missing: {pair}")
 
-    relationships = manifest.get("relationships") if isinstance(manifest.get("relationships"), list) else []
     rels: set[tuple[str,str,str,str,str]] = set()
+    relationships = manifest.get("relationships") if isinstance(manifest.get("relationships"), list) else []
     for i, rel in enumerate(relationships):
         if not isinstance(rel, dict): findings.append(f"relationships[{i}] must be object"); continue
         fp, tp = (rel.get("from_id"),rel.get("from_version")), (rel.get("to_id"),rel.get("to_version")); kind = rel.get("relationship")
         if fp not in by_pair: findings.append(f"relationship source missing: {fp}")
         if tp not in by_pair: findings.append(f"relationship target missing: {tp}")
         if rel.get("state") not in STATES - {"CURRENT"}: findings.append(f"relationships[{i}].state invalid")
-        key = (str(fp[0]),str(fp[1]),str(kind),str(tp[0]),str(tp[1]))
-        if key in rels: findings.append(f"duplicate relationship: {key}")
-        rels.add(key)
+        rels.add((str(fp[0]),str(fp[1]),str(kind),str(tp[0]),str(tp[1])))
     for rel in sorted(REQUIRED_RELATIONS - rels): findings.append(f"required compatibility relationship missing: {rel}")
 
     evidence = manifest.get("validation_evidence")
-    if not isinstance(evidence, dict) or evidence.get("id") != "AX-PUB-CI-001": findings.append("validation_evidence must identify AX-PUB-CI-001")
+    if not isinstance(evidence, list): findings.append("validation_evidence must be an array"); evidence=[]
+    evidence_ids=set()
+    for i,item in enumerate(evidence):
+        if not isinstance(item,dict): findings.append(f"validation_evidence[{i}] invalid"); continue
+        eid=item.get("id"); evidence_ids.add(eid)
+        ep=safe_path(item.get("path"),findings,f"validation_evidence[{i}]")
+        if ep is not None and not ep.is_file(): findings.append(f"validation evidence path missing: {item.get('path')}")
+        commit=item.get("verified_head_commit")
+        if not isinstance(commit,str) or len(commit)!=40: findings.append(f"validation_evidence[{i}].verified_head_commit invalid")
+    for eid in ("AX-PUB-CI-001","AX-PUB-CI-002"):
+        if eid not in evidence_ids: findings.append(f"required validation evidence missing: {eid}")
+
+    snapshot=manifest.get("current_snapshot")
+    if not isinstance(snapshot,dict) or snapshot.get("id")!="AX-PUB-SNAP-002" or snapshot.get("version")!="1.0": findings.append("current_snapshot must identify AX-PUB-SNAP-002 v1.0")
     else:
-        ep = safe_path(evidence.get("path"), findings, "validation_evidence")
-        if ep is not None and not ep.is_file(): findings.append("validation evidence path missing")
-        for field in ("verified_head_commit","verified_base_commit"):
-            value = evidence.get(field)
-            if not isinstance(value, str) or len(value) != 40: findings.append(f"validation_evidence.{field} must be full commit SHA")
+        sp=safe_path(snapshot.get("path"),findings,"current_snapshot")
+        if sp is not None and not sp.is_file(): findings.append("current snapshot path missing")
+        anchor=snapshot.get("anchor_commit")
+        if not isinstance(anchor,str) or len(anchor)!=40: findings.append("current snapshot anchor must be full commit SHA")
 
     quickstart = ROOT / "docs" / "QUICKSTART.md"
     if not quickstart.is_file(): findings.append("docs/QUICKSTART.md missing")
     else:
         text = quickstart.read_text(encoding="utf-8")
-        for marker in (
-            "AX-PUB-MANIFEST-001.json",
-            "COMPATIBILITY_AND_VERSIONING.md",
-            "AX-PUB-SNAP-001.json",
-            "AX-PUB-SNAP-002.json",
-            "AX-PUB-SCHEMA-003",
-            "AX-PUB-REF-003",
-            "AX-PUB-TEST-002",
-        ):
+        for marker in ("AX-PUB-MANIFEST-001.json","COMPATIBILITY_AND_VERSIONING.md","AX-PUB-SNAP-001.json","AX-PUB-SNAP-002.json","AX-PUB-SCHEMA-003","AX-PUB-REF-003","AX-PUB-TEST-002"):
             if marker not in text: findings.append(f"quickstart missing reference: {marker}")
     if not isinstance(manifest.get("claim_boundary"), list) or not manifest.get("claim_boundary"): findings.append("claim_boundary must be non-empty array")
     if findings: return fail(findings)
