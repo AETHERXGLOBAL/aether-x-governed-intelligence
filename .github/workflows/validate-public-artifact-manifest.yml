@@ -1,0 +1,42 @@
+name: Validate Public Artifact Manifest
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'artifacts/**'
+      - 'docs/**'
+      - 'specifications/**'
+      - 'schemas/**'
+      - 'reference-implementations/**'
+      - 'tools/check_artifact_manifest.py'
+      - '.github/workflows/validate-public-artifact-manifest.yml'
+  pull_request:
+    paths:
+      - 'artifacts/**'
+      - 'docs/**'
+      - 'specifications/**'
+      - 'schemas/**'
+      - 'reference-implementations/**'
+      - 'tools/check_artifact_manifest.py'
+      - '.github/workflows/validate-public-artifact-manifest.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-public-artifact-manifest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Parse artifact manifest
+        run: python3 -m json.tool artifacts/AX-PUB-MANIFEST-001.json > /dev/null
+
+      - name: Compile manifest checker
+        run: python3 -m py_compile tools/check_artifact_manifest.py
+
+      - name: Validate artifact paths versions and compatibility
+        run: python3 tools/check_artifact_manifest.py
