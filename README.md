@@ -56,11 +56,16 @@ For compatibility and reproducibility:
 
 - **[Artifact Compatibility & Versioning Policy](./docs/COMPATIBILITY_AND_VERSIONING.md)** — `AX-PUB-POL-001 v1.0`
 - **[Machine-Readable Public Artifact Manifest](./artifacts/AX-PUB-MANIFEST-001.json)** — `AX-PUB-MANIFEST-001 v1.0`
+- **[Public Engineering Snapshot v1.0](./snapshots/AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md)** — `AX-PUB-SNAP-001 v1.0`
+- **[Machine-Readable Snapshot Record](./snapshots/AX-PUB-SNAP-001.json)** — anchored to commit `f839d4ac0a0b69dcbb682e900f02aad7e24524eb`
 - **Public manifest CI** validates declared artifact paths, versions, schema identity and compatibility relationships.
+- **Public snapshot CI** validates the immutable snapshot anchor and recorded Git blob inventory.
 
-For reproducible external review, pin a Git commit SHA. The `main` branch represents the current public engineering state and may advance.
+For reproducible external review, use the validated snapshot or pin an explicit Git commit SHA. The `main` branch represents the current public engineering state and may advance.
 
 `PUBLIC COMPATIBILITY ≠ PRODUCT INTEGRATION`
+
+`PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
 
 ---
 
@@ -110,6 +115,18 @@ PUBLIC CI
 
 The JSON Schemas and reference validators deliberately have different responsibilities. Schemas define structure, types, required fields, selected enums, timestamp fields and reference-envelope metadata. Executable validators apply selected relational semantics that structural validation alone cannot establish.
 
+### Reproducibility Snapshot
+
+`AX-PUB-SNAP-001` records **Governed Intelligence Public v1.0** against the immutable Git anchor:
+
+```text
+f839d4ac0a0b69dcbb682e900f02aad7e24524eb
+```
+
+The machine-readable snapshot records the public artifact inventory, Git blob identities and selected CI evidence. Snapshot integrity is independently checked by a public workflow using full Git history.
+
+This snapshot is not a GitHub Release, Git tag or product release.
+
 ---
 
 ## Repository Structure
@@ -121,6 +138,10 @@ The JSON Schemas and reference validators deliberately have different responsibi
 │   └── COMPATIBILITY_AND_VERSIONING.md
 ├── artifacts/
 │   └── AX-PUB-MANIFEST-001.json
+├── snapshots/
+│   ├── README.md
+│   ├── AX-PUB-SNAP-001.json
+│   └── AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md
 ├── specifications/
 │   ├── AX-PUB-ARCH-001_...
 │   ├── AX-PUB-SPEC-002_...
@@ -144,13 +165,15 @@ The JSON Schemas and reference validators deliberately have different responsibi
 ├── tools/
 │   ├── check_eav_schema_alignment.py
 │   ├── check_ptk_schema_alignment.py
-│   └── check_artifact_manifest.py
+│   ├── check_artifact_manifest.py
+│   └── check_public_snapshot.py
 ├── .github/workflows/
 │   ├── validate-eav-reference.yml
 │   ├── validate-eav-schema.yml
 │   ├── validate-ptk-schema.yml
 │   ├── validate-ptk-reference.yml
-│   └── validate-public-artifact-manifest.yml
+│   ├── validate-public-artifact-manifest.yml
+│   └── validate-public-snapshot.yml
 └── SECURITY.md
 ```
 
@@ -168,9 +191,10 @@ A public reviewer can inspect that AETHER X GLOBAL has published:
 - an executable point-in-time knowledge validator implementing selected no-future-leakage, lineage, revision and missing-state invariants;
 - an explicit public artifact compatibility and versioning policy;
 - a machine-readable manifest that declares the current public artifact/version relationships;
-- public automated checks for schema alignment, both bounded reference implementations and artifact-manifest integrity.
+- a validated public reproducibility snapshot anchored to an immutable Git commit and recorded Git blob identities;
+- public automated checks for schema alignment, both bounded reference implementations, artifact-manifest integrity and snapshot integrity.
 
-These artifacts are evidence of **published engineering doctrine, reference control design, machine-readable contract design, versioned public-artifact governance and inspectable reference engineering**.
+These artifacts are evidence of **published engineering doctrine, reference control design, machine-readable contract design, versioned public-artifact governance, reproducibility discipline and inspectable reference engineering**.
 
 ## What This Repository Does Not Establish
 
@@ -189,13 +213,16 @@ Publication here does **not** establish or imply:
 - regulatory approval or security certification;
 - production-scale global financial-data infrastructure;
 - predictive, financial, or investment performance;
-- autonomous authority for consequential actions.
+- autonomous authority for consequential actions;
+- commercial or product release status merely because a public engineering snapshot exists.
 
 `PUBLIC SPECIFICATION ≠ PRODUCT IMPLEMENTATION`
 
 `MACHINE-READABLE SCHEMA ≠ PRODUCT DATA MODEL`
 
 `PUBLIC COMPATIBILITY ≠ PRODUCT INTEGRATION`
+
+`PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
 
 `REFERENCE TEMPORAL VALIDATION ≠ PRODUCTION DATA QUALITY`
 
