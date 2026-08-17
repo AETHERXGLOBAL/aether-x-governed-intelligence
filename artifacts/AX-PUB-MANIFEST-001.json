@@ -75,7 +75,7 @@
       "path": "conformance/AX-PUB-TEST-001/README.md",
       "entrypoint": "conformance/AX-PUB-TEST-001/run_conformance.py",
       "state": "CURRENT",
-      "public_maturity": "PUBLIC CONFORMANCE / NON-PRODUCTION"
+      "public_maturity": "REPRODUCIBLY VERIFIED / CI WORKFLOW PUBLISHED / CI RUN UNVERIFIED / NON-PRODUCTION"
     },
     {
       "id": "AX-PUB-POL-001",
