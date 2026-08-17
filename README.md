@@ -55,17 +55,18 @@ The core distinction is deliberate:
 | `AX-PUB-ARCH-001` | [Governed Intelligence Reference Architecture](./specifications/AX-PUB-ARCH-001_GOVERNED_INTELLIGENCE_REFERENCE_ARCHITECTURE.md) | Reference Architecture | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-SPEC-002` | [Evidence, Authority & Verification Contract](./specifications/AX-PUB-SPEC-002_EVIDENCE_AUTHORITY_VERIFICATION_CONTRACT.md) | Control Specification | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-SPEC-003` | [Point-in-Time Knowledge & Provenance Standard](./specifications/AX-PUB-SPEC-003_POINT_IN_TIME_KNOWLEDGE_PROVENANCE_STANDARD.md) | Data / Knowledge Integrity Specification | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
-| `AX-PUB-SCHEMA-001` | [Governed EAV Contract Schema](./schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json) | Machine-Readable Contract | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
+| `AX-PUB-SCHEMA-001` | [Governed EAV Contract Schema](./schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json) | Machine-Readable Control Contract | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
+| `AX-PUB-SCHEMA-002` | [Point-in-Time Knowledge Envelope](./schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json) | Machine-Readable Temporal / Provenance Contract | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-REF-001` | [EAV Contract Validator](./reference-implementations/eav-contract-validator/README.md) | Executable Reference Implementation | `CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
 
-### Specification-to-Execution Evidence Path
+### Specification-to-Execution Evidence Paths
 
 ```text
 AX-PUB-ARCH-001
 REFERENCE ARCHITECTURE
         ↓
-AX-PUB-SPEC-002 / 003
-NORMATIVE PUBLIC SPECIFICATIONS
+AX-PUB-SPEC-002
+EVIDENCE / AUTHORITY / VERIFICATION SPECIFICATION
         ↓
 AX-PUB-SCHEMA-001
 MACHINE-READABLE STRUCTURAL CONTRACT
@@ -74,10 +75,21 @@ AX-PUB-REF-001
 EXECUTABLE RELATIONAL / SEMANTIC CHECKS
         ↓
 PUBLIC CI
-REPOSITORY-INTEGRITY EVIDENCE
 ```
 
-The JSON Schema and reference validator deliberately have different responsibilities. The schema defines structure, types, required fields, selected enums, and timestamp formats. The validator checks cross-record relationships and governance semantics such as evidence references, bounded authority, execution scope, temporal authority windows, verifier independence, and the requirement that a `VERIFIED` outcome be backed by `PASS` verification.
+```text
+AX-PUB-SPEC-003
+POINT-IN-TIME KNOWLEDGE / PROVENANCE SPECIFICATION
+        ↓
+AX-PUB-SCHEMA-002
+MACHINE-READABLE TEMPORAL / PROVENANCE ENVELOPE
+        ↓
+PUBLIC SCHEMA-ALIGNMENT CI
+```
+
+For the point-in-time path, the current public layer stops at the schema and its alignment checks. No public executable no-future-leakage or cross-record temporal validator is claimed by this repository at this stage.
+
+The JSON Schemas and reference validator deliberately have different responsibilities. Schemas define structure, types, required fields, selected enums, timestamp fields and reference-envelope metadata. Executable validators are required for relational semantics that structural validation alone cannot establish.
 
 ---
 
@@ -91,17 +103,22 @@ The JSON Schema and reference validator deliberately have different responsibili
 │   └── AX-PUB-SPEC-003_...
 ├── schemas/
 │   ├── README.md
-│   └── AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json
+│   ├── AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json
+│   ├── AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json
+│   └── examples/
+│       └── AX-PUB-SCHEMA-002_example.json
 ├── reference-implementations/
 │   └── eav-contract-validator/
 │       ├── validator.py
 │       ├── examples/
 │       └── tests/
 ├── tools/
-│   └── check_eav_schema_alignment.py
+│   ├── check_eav_schema_alignment.py
+│   └── check_ptk_schema_alignment.py
 ├── .github/workflows/
 │   ├── validate-eav-reference.yml
-│   └── validate-eav-schema.yml
+│   ├── validate-eav-schema.yml
+│   └── validate-ptk-schema.yml
 └── SECURITY.md
 ```
 
@@ -114,9 +131,9 @@ A public reviewer can inspect that AETHER X GLOBAL has published:
 - a technology-neutral governed-intelligence reference architecture;
 - explicit evidence, decision, authority, execution and verification semantics;
 - point-in-time knowledge, provenance and revision-integrity rules;
-- a machine-readable JSON Schema profile for selected EAV control objects;
-- an executable reference validator implementing selected cross-record control invariants;
-- public automated checks for both schema alignment and the bounded reference implementation.
+- machine-readable JSON Schema profiles for selected EAV and point-in-time knowledge / provenance structures;
+- an executable EAV reference validator implementing selected cross-record control invariants;
+- public automated checks for schema alignment and the bounded EAV reference implementation.
 
 These artifacts are evidence of **published engineering doctrine, reference control design, machine-readable contract design, and inspectable reference engineering**.
 
@@ -125,11 +142,13 @@ These artifacts are evidence of **published engineering doctrine, reference cont
 Publication here does **not** establish or imply:
 
 - full implementation inside any AETHER X product;
+- completion or production readiness of AETHER Intelligence Core (AIC);
 - a production API, SDK, or company-wide data model;
 - a shared runtime or shared data platform across company initiatives;
 - technical integration between AETHER X Quantum, AX-OS, AIC, or AETHER X Research;
 - production readiness;
 - customer deployment;
+- ownership or availability of any particular financial-data source;
 - regulatory approval or security certification;
 - production-scale global financial-data infrastructure;
 - predictive, financial, or investment performance;
@@ -138,6 +157,8 @@ Publication here does **not** establish or imply:
 `PUBLIC SPECIFICATION ≠ PRODUCT IMPLEMENTATION`
 
 `MACHINE-READABLE SCHEMA ≠ PRODUCT DATA MODEL`
+
+`STRUCTURAL VALIDITY ≠ TEMPORAL INTEGRITY`
 
 `REFERENCE IMPLEMENTATION ≠ PRODUCTION SYSTEM`
 
