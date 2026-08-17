@@ -4,11 +4,7 @@
   "repository": "AETHERXGLOBAL/aether-x-governed-intelligence",
   "scope": "PUBLIC_ENGINEERING_ARTIFACT_COMPATIBILITY",
   "public_state": "CURRENT",
-  "versioning_policy": {
-    "id": "AX-PUB-POL-001",
-    "version": "1.3",
-    "path": "docs/COMPATIBILITY_AND_VERSIONING.md"
-  },
+  "versioning_policy": {"id":"AX-PUB-POL-001","version":"1.3","path":"docs/COMPATIBILITY_AND_VERSIONING.md"},
   "artifacts": [
     {"id":"AX-PUB-ARCH-001","version":"1.0","type":"REFERENCE_ARCHITECTURE","path":"specifications/AX-PUB-ARCH-001_GOVERNED_INTELLIGENCE_REFERENCE_ARCHITECTURE.md","state":"CURRENT","public_maturity":"CONCEPTUAL / NON-PRODUCT-SPECIFIC"},
     {"id":"AX-PUB-SPEC-002","version":"1.0","type":"CONTROL_SPECIFICATION","path":"specifications/AX-PUB-SPEC-002_EVIDENCE_AUTHORITY_VERIFICATION_CONTRACT.md","state":"CURRENT","public_maturity":"CONCEPTUAL / NON-PRODUCT-SPECIFIC"},
@@ -19,9 +15,9 @@
     {"id":"AX-PUB-SCHEMA-003","version":"1.0","type":"MACHINE_READABLE_AGENT_AUTHORITY_CONTRACT","path":"schemas/AX-PUB-SCHEMA-003_AGENT_TOOL_USE_AUTHORITY_ENVELOPE.schema.json","state":"CURRENT","public_maturity":"JSON SCHEMA / CONCEPTUAL / NON-PRODUCT-SPECIFIC"},
     {"id":"AX-PUB-REF-001","version":"1.0","type":"REFERENCE_IMPLEMENTATION","path":"reference-implementations/eav-contract-validator/README.md","entrypoint":"reference-implementations/eav-contract-validator/validator.py","state":"CURRENT","public_maturity":"CI-TESTED / EDUCATIONAL / NON-PRODUCTION"},
     {"id":"AX-PUB-REF-002","version":"1.0","type":"REFERENCE_IMPLEMENTATION","path":"reference-implementations/point-in-time-knowledge-validator/README.md","entrypoint":"reference-implementations/point-in-time-knowledge-validator/validator.py","state":"CURRENT","public_maturity":"CI-TESTED / EDUCATIONAL / NON-PRODUCTION"},
-    {"id":"AX-PUB-REF-003","version":"1.0","type":"REFERENCE_IMPLEMENTATION","path":"reference-implementations/agent-tool-authority-validator/README.md","entrypoint":"reference-implementations/agent-tool-authority-validator/validator.py","state":"CURRENT","public_maturity":"REPRODUCIBLY VERIFIED / CI WORKFLOW PUBLISHED / CI RUN UNVERIFIED / EDUCATIONAL / NON-PRODUCTION"},
+    {"id":"AX-PUB-REF-003","version":"1.0","type":"REFERENCE_IMPLEMENTATION","path":"reference-implementations/agent-tool-authority-validator/README.md","entrypoint":"reference-implementations/agent-tool-authority-validator/validator.py","state":"CURRENT","public_maturity":"CI WORKFLOW PUBLISHED / VALIDATION PENDING / EDUCATIONAL / NON-PRODUCTION"},
     {"id":"AX-PUB-TEST-001","version":"1.0","type":"PUBLIC_CONFORMANCE_TEST_KIT","path":"conformance/AX-PUB-TEST-001/README.md","entrypoint":"conformance/AX-PUB-TEST-001/run_conformance.py","state":"CURRENT","public_maturity":"REPRODUCIBLY VERIFIED / CI WORKFLOW PUBLISHED / CI RUN UNVERIFIED / NON-PRODUCTION"},
-    {"id":"AX-PUB-TEST-002","version":"1.0","type":"PUBLIC_CONFORMANCE_TEST_KIT","path":"conformance/AX-PUB-TEST-002/README.md","entrypoint":"conformance/AX-PUB-TEST-002/run_conformance.py","state":"CURRENT","public_maturity":"REPRODUCIBLY VERIFIED / CI WORKFLOW PUBLISHED / CI RUN UNVERIFIED / NON-PRODUCTION"},
+    {"id":"AX-PUB-TEST-002","version":"1.0","type":"PUBLIC_CONFORMANCE_TEST_KIT","path":"conformance/AX-PUB-TEST-002/README.md","entrypoint":"conformance/AX-PUB-TEST-002/run_conformance.py","state":"CURRENT","public_maturity":"CI WORKFLOW PUBLISHED / VALIDATION PENDING / NON-PRODUCTION"},
     {"id":"AX-PUB-POL-001","version":"1.3","type":"PUBLIC_ENGINEERING_POLICY","path":"docs/COMPATIBILITY_AND_VERSIONING.md","state":"CURRENT","public_maturity":"ACTIVE FOR THIS REPOSITORY"}
   ],
   "relationships": [
