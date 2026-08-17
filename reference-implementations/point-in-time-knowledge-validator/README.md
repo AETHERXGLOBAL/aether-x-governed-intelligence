@@ -1,7 +1,8 @@
 # Point-in-Time Knowledge Validator — Public Reference Implementation
 
 **Artifact ID:** `AX-PUB-REF-002`  
-**Status:** `PUBLIC REFERENCE IMPLEMENTATION · EDUCATIONAL / NON-PRODUCTION`  
+**Version:** `1.0`  
+**Status:** `PUBLIC REFERENCE IMPLEMENTATION · CI-TESTED · EDUCATIONAL / NON-PRODUCTION`  
 **Related Specification:** [`AX-PUB-SPEC-003 — Point-in-Time Knowledge & Provenance Standard`](../../specifications/AX-PUB-SPEC-003_POINT_IN_TIME_KNOWLEDGE_PROVENANCE_STANDARD.md)  
 **Related Machine-Readable Contract:** [`AX-PUB-SCHEMA-002 — Point-in-Time Knowledge Envelope`](../../schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json)  
 **Organization:** AETHER X GLOBAL
@@ -105,6 +106,8 @@ The public workflow compiles the validator, runs unit tests, validates the confo
 ## Related Public Material
 
 - [Repository overview](../../README.md)
+- [Public quickstart](../../docs/QUICKSTART.md)
+- [Compatibility & versioning policy](../../docs/COMPATIBILITY_AND_VERSIONING.md)
 - [AX-PUB-ARCH-001](../../specifications/AX-PUB-ARCH-001_GOVERNED_INTELLIGENCE_REFERENCE_ARCHITECTURE.md)
 - [AX-PUB-SPEC-003](../../specifications/AX-PUB-SPEC-003_POINT_IN_TIME_KNOWLEDGE_PROVENANCE_STANDARD.md)
 - [AX-PUB-SCHEMA-002](../../schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json)
