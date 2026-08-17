@@ -1,0 +1,79 @@
+{
+  "schema_id": "AX-PUB-SCHEMA-002",
+  "schema_version": "1.0",
+  "envelope_id": "ptk-valid-example-001",
+  "query_context": {
+    "as_of_time": "2026-08-17T20:30:00Z",
+    "knowledge_cutoff_time": "2026-08-17T20:15:00Z",
+    "effective_time_policy": "USE_EFFECTIVE_TIME_WHEN_AVAILABLE",
+    "publication_time_policy": "EXCLUDE_AFTER_CUTOFF",
+    "observed_time_policy": "EXCLUDE_NOT_YET_OBSERVED",
+    "source_scope": ["public-example-source"],
+    "revision_policy": "VERSION_AVAILABLE_AT_CUTOFF",
+    "quality_policy": "PRESERVE_EXPLICIT_QUALITY_STATE",
+    "conflict_policy": "PRESERVE_MATERIAL_CONFLICTS",
+    "missing_data_policy": "PRESERVE_EXPLICIT_MISSING_STATE"
+  },
+  "source_records": [
+    {
+      "source_record_id": "src-1",
+      "source_identity": "public-example-source",
+      "source_type": "PUBLIC_DOCUMENT",
+      "source_locator_or_internal_reference": "example:source:1",
+      "publisher_or_provider": "example-provider",
+      "published_at": "2026-08-17T19:55:00Z",
+      "retrieved_at": "2026-08-17T20:00:00Z",
+      "access_method": "PUBLIC_REFERENCE",
+      "original_format": "application/json"
+    }
+  ],
+  "transformation_records": [
+    {
+      "transformation_id": "tx-1",
+      "input_references": ["src-1"],
+      "output_references": ["ka-1"],
+      "method": "NORMALIZATION",
+      "code_or_method_version": "example-normalizer-1.0",
+      "parameter_set": {},
+      "executed_at": "2026-08-17T20:02:00Z",
+      "executor_identity": "reference:normalizer",
+      "deterministic_or_probabilistic": "DETERMINISTIC",
+      "material_assumptions": [],
+      "quality_checks": ["SOURCE_IDENTITY_PRESENT"],
+      "exceptions": []
+    }
+  ],
+  "knowledge_assertions": [
+    {
+      "assertion_id": "ka-1",
+      "subject_id": "entity:example-1",
+      "predicate": "example_metric",
+      "value": 42,
+      "classification": "SOURCE_DATA",
+      "source_record_id": "src-1",
+      "effective_at": "2026-08-17T19:50:00Z",
+      "published_at": "2026-08-17T19:55:00Z",
+      "observed_at": "2026-08-17T20:00:00Z",
+      "valid_from": "2026-08-17T20:00:00Z",
+      "version_id": "ka-1:v1",
+      "revision_kind": "NEW_INFORMATION",
+      "quality_state": "REFERENCE_EXAMPLE",
+      "freshness_state": "CURRENT_FOR_POLICY",
+      "created_at": "2026-08-17T20:02:00Z",
+      "transformation_references": ["tx-1"]
+    }
+  ],
+  "reproducibility_package": {
+    "point_in_time_cutoff": "2026-08-17T20:15:00Z",
+    "source_versions_or_references": ["src-1"],
+    "transformation_versions": ["example-normalizer-1.0"],
+    "methodology_or_code_version": "reference-example-1.0",
+    "parameter_set": {},
+    "assumptions": [],
+    "exclusions": [],
+    "quality_rules": ["NO_FUTURE_INFORMATION_IN_REFERENCE_PACKAGE"],
+    "missing_data_policy": "PRESERVE_EXPLICIT_MISSING_STATE",
+    "conflict_resolution_policy": "PRESERVE_MATERIAL_CONFLICTS",
+    "output_fingerprint_or_reference": "example-output-reference"
+  }
+}
