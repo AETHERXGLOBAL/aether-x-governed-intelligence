@@ -1,0 +1,33 @@
+name: Validate Public Engineering vNext Snapshot
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'snapshots/AX-PUB-SNAP-002.json'
+      - 'snapshots/AX-PUB-SNAP-002_GOVERNED_INTELLIGENCE_PUBLIC_VNEXT.md'
+      - 'tools/check_public_snapshot_vnext.py'
+      - '.github/workflows/validate-public-snapshot-vnext.yml'
+  pull_request:
+    paths:
+      - 'snapshots/AX-PUB-SNAP-002.json'
+      - 'snapshots/AX-PUB-SNAP-002_GOVERNED_INTELLIGENCE_PUBLIC_VNEXT.md'
+      - 'tools/check_public_snapshot_vnext.py'
+      - '.github/workflows/validate-public-snapshot-vnext.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-public-vnext-snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout public repository history only
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Parse machine-readable vNext snapshot
+        run: python3 -m json.tool snapshots/AX-PUB-SNAP-002.json > /dev/null
+      - name: Validate immutable anchor and Git blob inventory
+        run: python3 tools/check_public_snapshot_vnext.py
