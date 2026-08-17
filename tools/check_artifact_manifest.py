@@ -116,7 +116,15 @@ def main() -> int:
     if not quickstart.is_file(): findings.append("docs/QUICKSTART.md missing")
     else:
         text = quickstart.read_text(encoding="utf-8")
-        for marker in ("AX-PUB-MANIFEST-001.json","COMPATIBILITY_AND_VERSIONING.md","AX-PUB-SNAP-001.json","AX-PUB-SCHEMA-003","AX-PUB-REF-003","AX-PUB-TEST-002"):
+        for marker in (
+            "AX-PUB-MANIFEST-001.json",
+            "COMPATIBILITY_AND_VERSIONING.md",
+            "AX-PUB-SNAP-001.json",
+            "AX-PUB-SNAP-002.json",
+            "AX-PUB-SCHEMA-003",
+            "AX-PUB-REF-003",
+            "AX-PUB-TEST-002",
+        ):
             if marker not in text: findings.append(f"quickstart missing reference: {marker}")
     if not isinstance(manifest.get("claim_boundary"), list) or not manifest.get("claim_boundary"): findings.append("claim_boundary must be non-empty array")
     if findings: return fail(findings)
