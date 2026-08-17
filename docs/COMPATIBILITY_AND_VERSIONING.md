@@ -1,7 +1,7 @@
 # AETHER X Public Artifact Compatibility & Versioning Policy
 
 **Policy ID:** `AX-PUB-POL-001`  
-**Version:** `1.0`  
+**Version:** `1.1`  
 **Status:** `PUBLIC ENGINEERING POLICY · ACTIVE FOR THIS REPOSITORY`  
 **Scope:** `AETHERXGLOBAL/aether-x-governed-intelligence`
 
@@ -197,7 +197,7 @@ Product adoption requires separate implementation evidence and explicit disclosu
 
 ## 11. Current Public Compatibility Set
 
-The authoritative machine-readable compatibility list is the artifact manifest. At policy version `1.0`, the intended current paths are:
+The authoritative machine-readable compatibility list is the artifact manifest. At policy version `1.1`, the intended current paths are:
 
 ```text
 AX-PUB-ARCH-001 v1.0
