@@ -1,7 +1,7 @@
 # AETHER X Public Artifact Compatibility & Versioning Policy
 
 **Policy ID:** `AX-PUB-POL-001`  
-**Version:** `1.1`  
+**Version:** `1.2`  
 **Status:** `PUBLIC ENGINEERING POLICY · ACTIVE FOR THIS REPOSITORY`  
 **Scope:** `AETHERXGLOBAL/aether-x-governed-intelligence`
 
@@ -9,7 +9,7 @@
 
 This policy defines how public AETHER X governed-intelligence artifacts are identified, versioned, related and changed inside this repository.
 
-It applies to public reference architecture, specifications, machine-readable schemas and non-production reference implementations.
+It applies to public reference architecture, specifications, machine-readable schemas, non-production reference implementations and public conformance-test artifacts.
 
 It is **not** a product-release, SDK-compatibility or production-API policy.
 
@@ -20,8 +20,10 @@ Each public technical artifact has a stable artifact identifier such as:
 ```text
 AX-PUB-ARCH-001
 AX-PUB-SPEC-002
+AX-PUB-SPEC-004
 AX-PUB-SCHEMA-001
 AX-PUB-REF-001
+AX-PUB-TEST-001
 ```
 
 The artifact ID identifies the conceptual artifact family. The version identifies a published revision within that family.
@@ -61,7 +63,8 @@ Increase `MINOR` for additive or clarifying public changes that are intended to 
 - adding non-breaking examples;
 - adding clarifying normative text that does not reverse an earlier requirement;
 - adding validation for behavior already required by the associated specification;
-- adding new artifact metadata or documentation.
+- adding a new independently identified artifact to the current public compatibility set;
+- adding new artifact metadata, conformance evidence or documentation.
 
 A version increment does not itself establish production adoption or implementation by any AETHER X initiative.
 
@@ -81,6 +84,8 @@ AX-PUB-SPEC-002 v1.0
 AX-PUB-SCHEMA-001 v1.0
         ↓ selected semantics demonstrated by
 AX-PUB-REF-001 v1.0
+        ↓ selected behavior exercised by
+AX-PUB-TEST-001 v1.0
 ```
 
 and:
@@ -91,7 +96,11 @@ AX-PUB-SPEC-003 v1.0
 AX-PUB-SCHEMA-002 v1.0
         ↓ selected semantics demonstrated by
 AX-PUB-REF-002 v1.0
+        ↓ selected behavior exercised by
+AX-PUB-TEST-001 v1.0
 ```
+
+`AX-PUB-SPEC-004 v1.0` is a separately identified public specification that specializes the agent-authority and tool-use boundary while aligning with `AX-PUB-ARCH-001` and `AX-PUB-SPEC-002`. No machine-readable schema or reference implementation for `AX-PUB-SPEC-004` is established merely by publishing the specification.
 
 ## 5. Compatibility States
 
@@ -105,9 +114,13 @@ The public manifest may use the following relationship states:
 
 These states describe public repository artifacts only. They do not describe internal product maturity.
 
-## 6. Specification, Schema and Validator Responsibilities
+## 6. Artifact Responsibilities
 
-A compatibility declaration does not mean the artifacts perform the same role.
+A compatibility declaration does not mean related artifacts perform the same role.
+
+### Reference Architecture
+
+Defines a technology-neutral system-level reference structure and control boundaries.
 
 ### Specification
 
@@ -119,13 +132,19 @@ Defines selected machine-readable structure, required fields, primitive types, e
 
 ### Reference Validator
 
-Implements selected deterministic cross-record or temporal semantics that are not fully expressible through the published schema alone.
+Implements selected deterministic cross-record, authority or temporal semantics that are not fully expressible through the published schema alone.
+
+### Conformance Test Kit
+
+Defines synthetic public cases, expected behavior and selected required findings for published reference validators. A conformance result applies only to the declared public artifacts and test vectors.
 
 Therefore:
 
 `SCHEMA VALID ≠ SEMANTICALLY VALID`
 
 `REFERENCE VALIDATOR PASS ≠ PRODUCTION APPROVAL`
+
+`CONFORMANCE PASS ≠ PRODUCT IMPLEMENTATION`
 
 ## 7. Change Discipline
 
@@ -135,11 +154,13 @@ A material change should preserve a traceable answer to:
 2. Which version changed?
 3. Is the change compatible or incompatible?
 4. Which dependent public artifacts are affected?
-5. Were examples/tests updated?
-6. Did public CI validate the declared relationship?
+5. Were examples/tests updated where applicable?
+6. What public validation or reproducible evidence applies?
 7. Does the change alter any public claim boundary?
 
 Changes should fail closed when the artifact manifest, referenced paths or declared compatibility relationships become internally inconsistent.
+
+A public workflow existing in the repository MUST NOT be represented as a successfully verified CI run unless the run itself is directly evidenced.
 
 ## 8. Main Branch, Snapshots & Reproducibility
 
@@ -180,10 +201,10 @@ Published snapshots should preserve their original anchor and recorded inventory
 
 ## 10. No Product Adoption Inference
 
-A public artifact relationship or snapshot does **not** establish:
+A public artifact relationship, conformance result or snapshot does **not** establish:
 
 - implementation by AETHER X Quantum, AX-OS, AIC or AETHER X Research;
-- a shared company-wide runtime or data model;
+- a shared company-wide runtime, agent framework, authorization plane or data model;
 - a production API or SDK;
 - production readiness;
 - customer deployment;
@@ -193,11 +214,13 @@ Product adoption requires separate implementation evidence and explicit disclosu
 
 `PUBLIC COMPATIBILITY ≠ PRODUCT INTEGRATION`
 
+`PUBLIC CONFORMANCE ≠ PRODUCT IMPLEMENTATION`
+
 `PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
 
 ## 11. Current Public Compatibility Set
 
-The authoritative machine-readable compatibility list is the artifact manifest. At policy version `1.1`, the intended current paths are:
+The authoritative machine-readable compatibility list is the artifact manifest. At policy version `1.2`, the intended current paths are:
 
 ```text
 AX-PUB-ARCH-001 v1.0
@@ -205,11 +228,21 @@ AX-PUB-ARCH-001 v1.0
 AX-PUB-SPEC-002 v1.0
 → AX-PUB-SCHEMA-001 v1.0
 → AX-PUB-REF-001 v1.0
+↘
+  AX-PUB-TEST-001 v1.0
 
 AX-PUB-SPEC-003 v1.0
 → AX-PUB-SCHEMA-002 v1.0
 → AX-PUB-REF-002 v1.0
+↘
+  AX-PUB-TEST-001 v1.0
+
+AX-PUB-SPEC-004 v1.0
+→ ALIGNS WITH AX-PUB-ARCH-001 v1.0
+→ SPECIALIZES AUTHORITY BOUNDARY OF AX-PUB-SPEC-002 v1.0
 ```
+
+No schema, reference validator or conformance suite for `AX-PUB-SPEC-004` is implied unless separately published and registered.
 
 The current reproducibility snapshot is separately recorded by `AX-PUB-SNAP-001` and must not be inferred from the moving `main` branch.
 
