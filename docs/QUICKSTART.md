@@ -6,7 +6,7 @@ This quickstart is for engineers, reviewers, researchers and institutional evalu
 
 ## 1. Start With the Right Path
 
-There are currently two public technical paths.
+There are currently three public technical paths.
 
 ### Evidence / Authority / Verification
 
@@ -45,6 +45,22 @@ Read:
 - [`AX-PUB-SPEC-003`](../specifications/AX-PUB-SPEC-003_POINT_IN_TIME_KNOWLEDGE_PROVENANCE_STANDARD.md)
 - [`AX-PUB-SCHEMA-002`](../schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json)
 - [`AX-PUB-REF-002`](../reference-implementations/point-in-time-knowledge-validator/README.md)
+
+### Governed Agent Authority / Tool Use
+
+```text
+AX-PUB-SPEC-004
+Governed Agent Authority & Tool-Use Boundary Standard
+        ↓
+PUBLIC NORMATIVE BOUNDARY
+identity · proposal · authority evaluation · bounded tool use · verification
+```
+
+Read:
+
+- [`AX-PUB-SPEC-004`](../specifications/AX-PUB-SPEC-004_GOVERNED_AGENT_AUTHORITY_TOOL_USE_STANDARD.md)
+
+`AX-PUB-SPEC-004` is currently a public conceptual specification only. No machine-readable schema, reference validator, SDK or product implementation is implied by its publication.
 
 For system-level context, begin with [`AX-PUB-ARCH-001 — Governed Intelligence Reference Architecture`](../specifications/AX-PUB-ARCH-001_GOVERNED_INTELLIGENCE_REFERENCE_ARCHITECTURE.md).
 
@@ -145,22 +161,29 @@ The exact Git blob identities used for that reproducible execution are recorded 
 
 `PUBLIC TEST VECTOR ≠ PRIVATE PROJECT DATA`
 
-## 6. Understand Schema, Semantic Validation and Conformance
+The current `AX-PUB-TEST-001` suites exercise `AX-PUB-REF-001` and `AX-PUB-REF-002`. They do not establish conformance coverage for `AX-PUB-SPEC-004`.
+
+## 6. Understand Specification, Schema, Semantic Validation and Conformance
 
 ```text
+SPECIFICATION
+normative / conceptual semantics
+        ↓ where separately published
 JSON SCHEMA
 structure · types · required fields · selected enums · timestamp formats
-        ↓
+        ↓ where separately published
 REFERENCE VALIDATOR
-cross-record references · scope · time relationships · lineage · revision semantics
-        ↓
+cross-record references · scope · time relationships · lineage · authority semantics
+        ↓ where separately published
 CONFORMANCE KIT
 synthetic cases · expected behavior · required finding codes
 ```
 
+Not every specification must have a schema, validator or conformance suite at the same maturity point. Those artifacts are separate evidence states and must be registered explicitly if published.
+
 A conforming JSON structure can still violate a semantic rule. A public reference validator pass does not represent complete production validation. A conformance-kit pass demonstrates only that declared public test behavior matches the specific public validator versions under test.
 
-If you use an external JSON Schema implementation, use one that supports **Draft 2020-12**. No third-party schema-validation dependency is bundled with this repository.
+If you use an external JSON Schema implementation for the published schemas, use one that supports **Draft 2020-12**. No third-party schema-validation dependency is bundled with this repository.
 
 ## 7. What PASS Means
 
@@ -172,9 +195,9 @@ It does **not** mean production readiness, security approval, regulatory complia
 
 ## 8. Determine Compatible Artifact Versions
 
-Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json) as the machine-readable public compatibility index. The current manifest is `AX-PUB-MANIFEST-001 v1.1`.
+Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json) as the machine-readable public compatibility index. The current manifest is `AX-PUB-MANIFEST-001 v1.2`.
 
-The current compatibility and change rules are documented in [`COMPATIBILITY_AND_VERSIONING.md`](./COMPATIBILITY_AND_VERSIONING.md).
+The current compatibility and change rules are documented in [`COMPATIBILITY_AND_VERSIONING.md`](./COMPATIBILITY_AND_VERSIONING.md), currently `AX-PUB-POL-001 v1.2`.
 
 ## 9. Reproduce the Published v1.0 Snapshot
 
@@ -196,21 +219,27 @@ The machine-readable snapshot record is [`snapshots/AX-PUB-SNAP-001.json`](../sn
 
 The snapshot has its own public integrity workflow. It is **not** a GitHub Release, Git tag or product release.
 
+The historical v1.0 snapshot predates later additive public artifacts such as `AX-PUB-TEST-001` and `AX-PUB-SPEC-004`; it must not be silently reinterpreted as containing them.
+
 For other reproducible review points, pin an explicit Git commit SHA. The `main` branch represents the current public engineering state and may advance.
 
 ## 10. Private-Project Boundary
 
 The public validators and conformance kit are self-contained within this public repository. They do not checkout, import, execute, package, or depend on private AETHER X project repositories.
 
-No private project source code, unpublished research, credentials, internal endpoints, proprietary algorithms or confidential implementation architecture should be placed into public test vectors.
+Public specifications, including `AX-PUB-SPEC-004`, are technology-neutral and must not be interpreted as disclosure of private product architecture.
+
+No private project source code, unpublished research, credentials, internal endpoints, proprietary algorithms or confidential implementation architecture should be placed into public test vectors or public reference artifacts.
 
 ## 11. Public Claim Boundary
 
 This repository publishes reference engineering material. It does not expose or establish proprietary product implementation.
 
-Shared public doctrine does not imply shared runtime, shared data infrastructure, deployment dependency or technical integration across AETHER X initiatives.
+Shared public doctrine does not imply shared runtime, shared data infrastructure, shared agent framework, shared authorization plane, deployment dependency or technical integration across AETHER X initiatives.
 
 `PUBLIC ARTIFACT ≠ PRODUCT IMPLEMENTATION`
+
+`PUBLIC SPECIFICATION ≠ INTERNAL CONTROL IMPLEMENTATION`
 
 `PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
 
