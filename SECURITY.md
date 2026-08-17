@@ -26,19 +26,25 @@ Public reference code, schemas, examples, tests, conformance vectors and CI work
 - confidential internal endpoints, deployment topology or implementation architecture;
 - private data-source credentials or restricted datasets.
 
-The public conformance workflow includes a fail-closed boundary check intended to detect selected private-repository references and private-access markers before executing the public test kit.
+The public conformance suites include fail-closed boundary checks intended to detect selected private-repository references and private-access markers before executing their public test vectors. The agent-authority conformance path is additionally constrained to its public validator and synthetic public baseline.
 
 `PUBLIC ENGINEERING ≠ PRIVATE PRODUCT IMPLEMENTATION`
 
 `PUBLIC TEST VECTOR ≠ PRIVATE PROJECT DATA`
 
+`AGENT AUTHORITY REFERENCE ≠ PRODUCTION AUTHORIZATION`
+
 ## Scope of This Repository
 
-The code under `reference-implementations/` is explicitly **educational / non-production**. A defect in a reference validator should not be interpreted as evidence of a vulnerability in any private AETHER X product, and a passing validator or conformance result is not a security certification.
+The code under `reference-implementations/` is explicitly **educational / non-production**. A defect in a reference validator should not be interpreted as evidence of a vulnerability in any private AETHER X product, and a passing validator or conformance result is not a security certification or authority grant.
+
+Machine-readable authority objects published here are structural/reference artifacts only. They are not credentials, real permissions, production authorization records, or evidence of an internal AETHER X authorization plane.
 
 `REFERENCE IMPLEMENTATION ≠ PRODUCTION SECURITY CONTROL`
 
 `CONFORMANCE PASS ≠ SECURITY CERTIFICATION`
+
+`MACHINE-READABLE AUTHORITY ≠ LIVE AUTHORITY`
 
 ---
 
