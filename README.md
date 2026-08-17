@@ -58,6 +58,7 @@ The core distinction is deliberate:
 | `AX-PUB-SCHEMA-001` | [Governed EAV Contract Schema](./schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json) | Machine-Readable Control Contract | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-SCHEMA-002` | [Point-in-Time Knowledge Envelope](./schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json) | Machine-Readable Temporal / Provenance Contract | `JSON SCHEMA · CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | `AX-PUB-REF-001` | [EAV Contract Validator](./reference-implementations/eav-contract-validator/README.md) | Executable Reference Implementation | `CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
+| `AX-PUB-REF-002` | [Point-in-Time Knowledge Validator](./reference-implementations/point-in-time-knowledge-validator/README.md) | Executable Temporal / Provenance Reference Implementation | `CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
 
 ### Specification-to-Execution Evidence Paths
 
@@ -84,12 +85,13 @@ POINT-IN-TIME KNOWLEDGE / PROVENANCE SPECIFICATION
 AX-PUB-SCHEMA-002
 MACHINE-READABLE TEMPORAL / PROVENANCE ENVELOPE
         ↓
-PUBLIC SCHEMA-ALIGNMENT CI
+AX-PUB-REF-002
+NO-FUTURE-LEAKAGE / LINEAGE / REVISION SEMANTICS
+        ↓
+PUBLIC CI
 ```
 
-For the point-in-time path, the current public layer stops at the schema and its alignment checks. No public executable no-future-leakage or cross-record temporal validator is claimed by this repository at this stage.
-
-The JSON Schemas and reference validator deliberately have different responsibilities. Schemas define structure, types, required fields, selected enums, timestamp fields and reference-envelope metadata. Executable validators are required for relational semantics that structural validation alone cannot establish.
+The JSON Schemas and reference validators deliberately have different responsibilities. Schemas define structure, types, required fields, selected enums, timestamp fields and reference-envelope metadata. Executable validators apply selected relational semantics that structural validation alone cannot establish.
 
 ---
 
@@ -108,7 +110,12 @@ The JSON Schemas and reference validator deliberately have different responsibil
 │   └── examples/
 │       └── AX-PUB-SCHEMA-002_example.json
 ├── reference-implementations/
-│   └── eav-contract-validator/
+│   ├── README.md
+│   ├── eav-contract-validator/
+│   │   ├── validator.py
+│   │   ├── examples/
+│   │   └── tests/
+│   └── point-in-time-knowledge-validator/
 │       ├── validator.py
 │       ├── examples/
 │       └── tests/
@@ -118,7 +125,8 @@ The JSON Schemas and reference validator deliberately have different responsibil
 ├── .github/workflows/
 │   ├── validate-eav-reference.yml
 │   ├── validate-eav-schema.yml
-│   └── validate-ptk-schema.yml
+│   ├── validate-ptk-schema.yml
+│   └── validate-ptk-reference.yml
 └── SECURITY.md
 ```
 
@@ -133,7 +141,8 @@ A public reviewer can inspect that AETHER X GLOBAL has published:
 - point-in-time knowledge, provenance and revision-integrity rules;
 - machine-readable JSON Schema profiles for selected EAV and point-in-time knowledge / provenance structures;
 - an executable EAV reference validator implementing selected cross-record control invariants;
-- public automated checks for schema alignment and the bounded EAV reference implementation.
+- an executable point-in-time knowledge validator implementing selected no-future-leakage, lineage, revision and missing-state invariants;
+- public automated checks for schema alignment and both bounded reference implementations.
 
 These artifacts are evidence of **published engineering doctrine, reference control design, machine-readable contract design, and inspectable reference engineering**.
 
@@ -149,6 +158,7 @@ Publication here does **not** establish or imply:
 - production readiness;
 - customer deployment;
 - ownership or availability of any particular financial-data source;
+- production-scale data completeness, correctness, timeliness or latency guarantees;
 - regulatory approval or security certification;
 - production-scale global financial-data infrastructure;
 - predictive, financial, or investment performance;
@@ -158,7 +168,7 @@ Publication here does **not** establish or imply:
 
 `MACHINE-READABLE SCHEMA ≠ PRODUCT DATA MODEL`
 
-`STRUCTURAL VALIDITY ≠ TEMPORAL INTEGRITY`
+`REFERENCE TEMPORAL VALIDATION ≠ PRODUCTION DATA QUALITY`
 
 `REFERENCE IMPLEMENTATION ≠ PRODUCTION SYSTEM`
 
