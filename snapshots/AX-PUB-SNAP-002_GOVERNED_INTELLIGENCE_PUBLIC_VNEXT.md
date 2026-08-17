@@ -65,3 +65,4 @@ Until a separate formal Git tag / GitHub Release is actually created, the full a
 ---
 
 **AETHER X GLOBAL — Institutional Intelligence. Governed Autonomy.**
+
