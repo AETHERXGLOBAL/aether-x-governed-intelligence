@@ -1,0 +1,369 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aetherx:public-schema:AX-PUB-SCHEMA-002:1.0",
+  "title": "AETHER X Point-in-Time Knowledge Envelope",
+  "description": "Machine-readable structural reference for selected Knowledge Assertion, Source Record, Transformation Record, and Query Context fields defined by AX-PUB-SPEC-003. Conceptual, non-product-specific, and non-production.",
+  "type": "object",
+  "required": [
+    "schema_id",
+    "schema_version",
+    "envelope_id",
+    "query_context",
+    "source_records",
+    "transformation_records",
+    "knowledge_assertions"
+  ],
+  "properties": {
+    "schema_id": {
+      "const": "AX-PUB-SCHEMA-002"
+    },
+    "schema_version": {
+      "const": "1.0"
+    },
+    "envelope_id": {
+      "$ref": "#/$defs/non_empty_string"
+    },
+    "query_context": {
+      "$ref": "#/$defs/query_context"
+    },
+    "source_records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/source_record"
+      }
+    },
+    "transformation_records": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/transformation_record"
+      }
+    },
+    "knowledge_assertions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/knowledge_assertion"
+      }
+    },
+    "reproducibility_package": {
+      "$ref": "#/$defs/reproducibility_package"
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "non_empty_string": {
+      "type": "string",
+      "minLength": 1
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "string_list": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/non_empty_string"
+      }
+    },
+    "query_context": {
+      "type": "object",
+      "required": [
+        "as_of_time",
+        "knowledge_cutoff_time",
+        "effective_time_policy",
+        "publication_time_policy",
+        "observed_time_policy",
+        "source_scope",
+        "revision_policy",
+        "quality_policy",
+        "conflict_policy",
+        "missing_data_policy"
+      ],
+      "properties": {
+        "as_of_time": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "knowledge_cutoff_time": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effective_time_policy": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "publication_time_policy": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "observed_time_policy": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "source_scope": {
+          "$ref": "#/$defs/string_list"
+        },
+        "revision_policy": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "quality_policy": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "conflict_policy": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "missing_data_policy": {
+          "$ref": "#/$defs/non_empty_string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "source_record": {
+      "type": "object",
+      "required": [
+        "source_record_id",
+        "source_identity",
+        "source_type",
+        "retrieved_at"
+      ],
+      "properties": {
+        "source_record_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "source_identity": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "source_type": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "source_locator_or_internal_reference": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "publisher_or_provider": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "published_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "retrieved_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "access_method": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "licence_or_usage_boundary": {
+          "type": "string"
+        },
+        "original_format": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "content_fingerprint": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "reliability_notes": {
+          "type": "string"
+        },
+        "jurisdiction_or_market_context": {
+          "type": "string"
+        },
+        "retention_boundary": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "transformation_record": {
+      "type": "object",
+      "required": [
+        "transformation_id",
+        "input_references",
+        "output_references",
+        "method",
+        "executed_at",
+        "deterministic_or_probabilistic"
+      ],
+      "properties": {
+        "transformation_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "input_references": {
+          "$ref": "#/$defs/string_list"
+        },
+        "output_references": {
+          "$ref": "#/$defs/string_list"
+        },
+        "method": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "code_or_method_version": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "parameter_set": {
+          "type": "object"
+        },
+        "executed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "executor_identity": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "deterministic_or_probabilistic": {
+          "enum": [
+            "DETERMINISTIC",
+            "PROBABILISTIC",
+            "MIXED"
+          ]
+        },
+        "material_assumptions": {
+          "type": "array"
+        },
+        "quality_checks": {
+          "type": "array"
+        },
+        "exceptions": {
+          "type": "array"
+        }
+      },
+      "additionalProperties": true
+    },
+    "knowledge_assertion": {
+      "type": "object",
+      "required": [
+        "assertion_id",
+        "subject_id",
+        "predicate",
+        "classification",
+        "source_record_id",
+        "observed_at",
+        "version_id"
+      ],
+      "properties": {
+        "assertion_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "subject_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "predicate": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "value": {},
+        "classification": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "source_record_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "effective_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "effective_until": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "published_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "valid_from": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "valid_until": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "superseded_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "version_id": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "revision_kind": {
+          "enum": [
+            "NEW_INFORMATION",
+            "CORRECTION",
+            "RESTATEMENT",
+            "RECLASSIFICATION",
+            "SUPERSESSION",
+            "DELETION_OR_WITHDRAWAL"
+          ]
+        },
+        "quality_state": {
+          "type": "string"
+        },
+        "freshness_state": {
+          "enum": [
+            "CURRENT_FOR_POLICY",
+            "AGING",
+            "STALE",
+            "EXPIRED",
+            "UNKNOWN_FRESHNESS"
+          ]
+        },
+        "missing_state": {
+          "enum": [
+            "MISSING",
+            "NOT_YET_PUBLISHED",
+            "NOT_YET_OBSERVED",
+            "UNAVAILABLE",
+            "NOT_APPLICABLE",
+            "WITHHELD_OR_RESTRICTED",
+            "UNKNOWN",
+            "CONFLICTED"
+          ]
+        },
+        "confidence_or_uncertainty": {},
+        "created_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "supersedes": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "superseded_by": {
+          "$ref": "#/$defs/non_empty_string"
+        },
+        "transformation_references": {
+          "$ref": "#/$defs/string_list"
+        }
+      },
+      "additionalProperties": true
+    },
+    "reproducibility_package": {
+      "type": "object",
+      "properties": {
+        "point_in_time_cutoff": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "source_versions_or_references": {
+          "$ref": "#/$defs/string_list"
+        },
+        "transformation_versions": {
+          "$ref": "#/$defs/string_list"
+        },
+        "methodology_or_code_version": {
+          "type": "string"
+        },
+        "parameter_set": {
+          "type": "object"
+        },
+        "model_version": {
+          "type": "string"
+        },
+        "assumptions": {
+          "type": "array"
+        },
+        "exclusions": {
+          "type": "array"
+        },
+        "quality_rules": {
+          "type": "array"
+        },
+        "missing_data_policy": {
+          "type": "string"
+        },
+        "conflict_resolution_policy": {
+          "type": "string"
+        },
+        "output_fingerprint_or_reference": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}
