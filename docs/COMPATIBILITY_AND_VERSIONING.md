@@ -1,7 +1,7 @@
 # AETHER X Public Artifact Compatibility & Versioning Policy
 
 **Policy ID:** `AX-PUB-POL-001`  
-**Version:** `1.2`  
+**Version:** `1.3`  
 **Status:** `PUBLIC ENGINEERING POLICY · ACTIVE FOR THIS REPOSITORY`  
 **Scope:** `AETHERXGLOBAL/aether-x-governed-intelligence`
 
@@ -100,7 +100,19 @@ AX-PUB-REF-002 v1.0
 AX-PUB-TEST-001 v1.0
 ```
 
-`AX-PUB-SPEC-004 v1.0` is a separately identified public specification that specializes the agent-authority and tool-use boundary while aligning with `AX-PUB-ARCH-001` and `AX-PUB-SPEC-002`. No machine-readable schema or reference implementation for `AX-PUB-SPEC-004` is established merely by publishing the specification.
+and:
+
+```text
+AX-PUB-SPEC-004 v1.0
+        ↓ defined structurally by
+AX-PUB-SCHEMA-003 v1.0
+        ↓ selected semantics demonstrated by
+AX-PUB-REF-003 v1.0
+        ↓ selected behavior exercised by
+AX-PUB-TEST-002 v1.0
+```
+
+`AX-PUB-SCHEMA-003`, `AX-PUB-REF-003` and `AX-PUB-TEST-002` are separately identified public artifacts. Their publication does not alter the normative text of `AX-PUB-SPEC-004 v1.0`, and their compatibility does not establish product adoption.
 
 ## 5. Compatibility States
 
@@ -220,7 +232,7 @@ Product adoption requires separate implementation evidence and explicit disclosu
 
 ## 11. Current Public Compatibility Set
 
-The authoritative machine-readable compatibility list is the artifact manifest. At policy version `1.2`, the intended current paths are:
+The authoritative machine-readable compatibility list is the artifact manifest. At policy version `1.3`, the intended current paths are:
 
 ```text
 AX-PUB-ARCH-001 v1.0
@@ -238,11 +250,12 @@ AX-PUB-SPEC-003 v1.0
   AX-PUB-TEST-001 v1.0
 
 AX-PUB-SPEC-004 v1.0
-→ ALIGNS WITH AX-PUB-ARCH-001 v1.0
-→ SPECIALIZES AUTHORITY BOUNDARY OF AX-PUB-SPEC-002 v1.0
+→ AX-PUB-SCHEMA-003 v1.0
+→ AX-PUB-REF-003 v1.0
+→ AX-PUB-TEST-002 v1.0
 ```
 
-No schema, reference validator or conformance suite for `AX-PUB-SPEC-004` is implied unless separately published and registered.
+The agent-authority artifacts are public reference artifacts only. They do not establish a shared agent runtime, authorization plane, credential boundary, product SDK, or implementation inside any AETHER X initiative.
 
 The current reproducibility snapshot is separately recorded by `AX-PUB-SNAP-001` and must not be inferred from the moving `main` branch.
 
