@@ -15,11 +15,6 @@ AX-PUB-SPEC-002
 → AX-PUB-TEST-001
 ```
 
-- [`AX-PUB-SPEC-002`](../specifications/AX-PUB-SPEC-002_EVIDENCE_AUTHORITY_VERIFICATION_CONTRACT.md)
-- [`AX-PUB-SCHEMA-001`](../schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json)
-- [`AX-PUB-REF-001`](../reference-implementations/eav-contract-validator/README.md)
-- [`AX-PUB-TEST-001`](../conformance/AX-PUB-TEST-001/README.md)
-
 ### Point-in-Time Knowledge / Provenance
 
 ```text
@@ -28,11 +23,6 @@ AX-PUB-SPEC-003
 → AX-PUB-REF-002
 → AX-PUB-TEST-001
 ```
-
-- [`AX-PUB-SPEC-003`](../specifications/AX-PUB-SPEC-003_POINT_IN_TIME_KNOWLEDGE_PROVENANCE_STANDARD.md)
-- [`AX-PUB-SCHEMA-002`](../schemas/AX-PUB-SCHEMA-002_POINT_IN_TIME_KNOWLEDGE_ENVELOPE.schema.json)
-- [`AX-PUB-REF-002`](../reference-implementations/point-in-time-knowledge-validator/README.md)
-- [`AX-PUB-TEST-001`](../conformance/AX-PUB-TEST-001/README.md)
 
 ### Governed Agent Authority / Tool Use
 
@@ -74,12 +64,6 @@ Expected:
 AX_EAV_REFERENCE_VALIDATION_PASS
 ```
 
-Unit tests:
-
-```bash
-python3 -m unittest discover -s reference-implementations/eav-contract-validator/tests -v
-```
-
 ## 4. Run the Point-in-Time Reference Path
 
 ```bash
@@ -93,12 +77,6 @@ Expected:
 AX_PTK_REFERENCE_VALIDATION_PASS
 ```
 
-Unit tests:
-
-```bash
-python3 -m unittest discover -s reference-implementations/point-in-time-knowledge-validator/tests -v
-```
-
 ## 5. Run the Agent Authority Reference Path
 
 ```bash
@@ -106,13 +84,11 @@ python3 reference-implementations/agent-tool-authority-validator/validator.py \
   reference-implementations/agent-tool-authority-validator/examples/valid_envelope.json
 ```
 
-The public reference is designed to return:
+Expected:
 
 ```text
 AX_AGENT_AUTHORITY_REFERENCE_VALIDATION_PASS
 ```
-
-The intentionally invalid envelope is designed to be rejected.
 
 Unit tests:
 
@@ -120,9 +96,7 @@ Unit tests:
 python3 -m unittest discover -s reference-implementations/agent-tool-authority-validator/tests -v
 ```
 
-`AX-PUB-REF-003` currently remains `VALIDATION PENDING` until a successful run against the published repository state is directly verified. The workflow is published; the run is not yet claimed.
-
-The public reference validator covers selected principal/tool/action/resource/time/environment/parameter boundaries only.
+`AX-PUB-REF-003` is now `CI-TESTED` for its declared public reference scope. Direct GitHub Actions evidence is recorded in [`AX-PUB-CI-001`](../evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md).
 
 `REFERENCE VALIDATOR PASS ≠ PRODUCTION AUTHORIZATION`
 
@@ -134,7 +108,7 @@ EAV + point-in-time suite:
 python3 conformance/AX-PUB-TEST-001/run_conformance.py
 ```
 
-Current published reproducibility evidence for `AX-PUB-TEST-001`:
+Published reproducibility evidence for `AX-PUB-TEST-001`:
 
 ```text
 AX_PUBLIC_CONFORMANCE_PASS cases=15 conforming=15
@@ -147,14 +121,14 @@ Agent-authority suite:
 python3 conformance/AX-PUB-TEST-002/run_conformance.py
 ```
 
-`AX-PUB-TEST-002` defines `10` synthetic cases and is designed to emit:
+Current suite:
 
 ```text
-AX_AGENT_AUTHORITY_CONFORMANCE_PASS cases=10 conforming=10
-AX_AGENT_AUTHORITY_PUBLIC_BOUNDARY_PASS
+10 synthetic cases
+CI-TESTED
 ```
 
-Its workflow is published, but successful execution against the published repository state remains `VALIDATION PENDING` until directly verified.
+The verified GitHub Actions conformance run is recorded in [`AX-PUB-CI-001`](../evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md).
 
 `CONFORMANCE PASS ≠ PRODUCT IMPLEMENTATION`
 
@@ -166,21 +140,17 @@ Its workflow is published, but successful execution against the published reposi
 
 ```text
 SPECIFICATION
-normative / conceptual semantics
         ↓
 JSON SCHEMA
-selected structure · required fields · types · enums
         ↓
 REFERENCE VALIDATOR
-selected relational / temporal / authority semantics
         ↓
 CONFORMANCE KIT
-synthetic cases · expected behavior · required findings
+        ↓
+PUBLIC CI EVIDENCE
 ```
 
 The layers have different responsibilities. Schema validity does not guarantee semantic validity. Validator or conformance passes do not establish production fitness, security certification, product adoption, or authorization for consequential action.
-
-The published schemas use JSON Schema Draft 2020-12. No third-party schema-validation dependency is bundled with this repository.
 
 ## 8. Compatibility & Versions
 
@@ -189,7 +159,7 @@ Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json
 Current state:
 
 ```text
-AX-PUB-MANIFEST-001 v1.3
+AX-PUB-MANIFEST-001 v1.4
 AX-PUB-POL-001 v1.3
 ```
 
@@ -197,17 +167,13 @@ See [`COMPATIBILITY_AND_VERSIONING.md`](./COMPATIBILITY_AND_VERSIONING.md).
 
 `PUBLIC COMPATIBILITY ≠ PRODUCT INTEGRATION`
 
-## 9. Reproducible Snapshot
+## 9. Reproducible Snapshots
 
-The fixed historical review state is [`AX-PUB-SNAP-001 — Governed Intelligence Public v1.0`](../snapshots/AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md), anchored to:
+Historical snapshot:
 
-```text
-f839d4ac0a0b69dcbb682e900f02aad7e24524eb
-```
+- [`AX-PUB-SNAP-001 — Governed Intelligence Public v1.0`](../snapshots/AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md)
 
-Machine-readable record: [`AX-PUB-SNAP-001.json`](../snapshots/AX-PUB-SNAP-001.json).
-
-The snapshot predates later additive artifacts including the conformance kits and agent-authority chain. It must not be silently reinterpreted as containing them.
+Current vNext snapshot is published separately as `AX-PUB-SNAP-002` after the verified agent-authority CI evidence gate.
 
 `PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
 
