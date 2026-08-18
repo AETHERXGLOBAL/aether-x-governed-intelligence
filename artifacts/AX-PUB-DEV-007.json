@@ -1,7 +1,7 @@
 {
   "artifact_id": "AX-PUB-DEV-007",
   "version": "0.1",
-  "status": "DEV-GATE-05A CLOSED / DEV-GATE-05B ACTIVE / SDK PUBLICATION NOT AUTHORIZED",
+  "status": "DEV-GATE-05A CLOSED / DEV-GATE-05B CLOSED / DEV-GATE-05C ACTIVE / SDK PUBLICATION NOT AUTHORIZED",
   "verification_state": "DIRECT_CI_VALIDATED",
   "gate": "DEV-GATE-05",
   "publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
@@ -60,7 +60,9 @@
     "repository_relative_runtime_imports_allowed": false,
     "build_metadata": "pyproject.toml / PEP 621",
     "build_backend_candidate": "hatchling",
-    "build_backend_final_requires_build_evidence": true
+    "build_backend_final_requires_build_evidence": true,
+    "installable_package_candidate_state": "DEV-GATE-05B CLOSED",
+    "installable_package_candidate_evidence": "AX-PUB-CI-009"
   },
   "release_security": {
     "ci_build_required": true,
@@ -89,7 +91,8 @@
     "minimum_independent_human_evaluators": 1,
     "machine_readable_result_required": true,
     "unresolved_critical_allowed": false,
-    "high_severity_requires_fix_or_explicit_risk_acceptance": true
+    "high_severity_requires_fix_or_explicit_risk_acceptance": true,
+    "current_state": "DEV-GATE-05C ACTIVE / HUMAN EXTERNAL EVALUATION NOT ESTABLISHED"
   },
   "maintenance": {
     "commercial_sla_implied": false,
@@ -118,18 +121,37 @@
     "conclusion": "SUCCESS",
     "verified_runtime_matrix": ["3.11", "3.12", "3.13", "3.14"]
   },
+  "installable_package_closure_evidence": {
+    "id": "AX-PUB-CI-009",
+    "version": "1.0",
+    "path": "evidence/AX-PUB-CI-009_INSTALLABLE_PACKAGE_CANDIDATE_VALIDATION.md",
+    "published_baseline_commit": "774abcce340c3fbaf3481ab5244ee1d41b88243c",
+    "verification_head_commit": "63477bb11124aebbad4034587a366d5ef882b3c2",
+    "verification_merge_commit": "3267c66681e417bf5eb0f8a384e8c2d992d266c0",
+    "verification_pr": 36,
+    "workflow_run_id": 32171606094,
+    "workflow_run_number": 19,
+    "job_id": 95823835258,
+    "governance_workflow_run_id": 32171606079,
+    "governance_workflow_run_number": 168,
+    "conclusion": "SUCCESS",
+    "verified_runtime_matrix": ["3.11", "3.12", "3.13", "3.14"]
+  },
   "gate_05_phases": {
     "DEV-GATE-05A": "CLOSED",
-    "DEV-GATE-05B": "ACTIVE_ENGINEERING_OBJECTIVE",
-    "DEV-GATE-05C": "NOT_ESTABLISHED",
+    "DEV-GATE-05B": "CLOSED",
+    "DEV-GATE-05C": "ACTIVE_ENGINEERING_OBJECTIVE",
     "DEV-GATE-05D": "NOT_AUTHORIZED"
   },
-  "next_phase": "DEV-GATE-05B — Installable Package Candidate",
+  "next_phase": "DEV-GATE-05C — Distribution & External Validation",
+  "resolved_release_prerequisites": [
+    "RELEASE_DECISION_BASELINE",
+    "INSTALLABLE_PACKAGE_CANDIDATE_EVIDENCE",
+    "PYTHON_3_11_TO_3_14_PACKAGE_LEVEL_CI"
+  ],
   "hard_blockers_before_publication": [
     "IP_AND_COPYRIGHT_CLEARANCE",
     "PACKAGE_NAME_LIVE_AVAILABILITY_AND_OWNERSHIP",
-    "INSTALLABLE_PACKAGE_CANDIDATE_EVIDENCE",
-    "PYTHON_3_11_TO_3_14_PACKAGE_LEVEL_CI",
     "BRANCH_OR_REPOSITORY_RULESET_PROTECTION",
     "PROTECTED_PYPI_RELEASE_ENVIRONMENT",
     "HUMAN_EXTERNAL_EVALUATION",
