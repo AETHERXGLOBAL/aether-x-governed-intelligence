@@ -1,11 +1,13 @@
 {
   "artifact_id": "AX-PUB-DEV-008",
   "version": "0.1",
-  "status": "DEV-GATE-05B INSTALLABLE PACKAGE CANDIDATE / ENGINEERING CANDIDATE / NOT YET DIRECTLY VALIDATED",
+  "status": "DEV-GATE-05B CLOSED / DEV-GATE-05C ACTIVE / SDK PUBLICATION NOT AUTHORIZED",
   "parent_decision_artifact": "AX-PUB-DEV-007",
   "parent_phase_state": "DEV-GATE-05A CLOSED",
   "gate": "DEV-GATE-05",
   "phase": "DEV-GATE-05B",
+  "phase_state": "CLOSED",
+  "next_phase": "DEV-GATE-05C — Distribution & External Validation",
   "publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
   "distribution_authorized": false,
   "license_granted": false,
@@ -39,7 +41,7 @@
     "exact_distribution_testing_required": true,
     "ci_artifact_evidence_required": true,
     "ci_artifact_retention_days": 7,
-    "reproducibility_evidence_established": false
+    "reproducibility_evidence_established": true
   },
   "runtime_target": ["3.11", "3.12", "3.13", "3.14"],
   "scope": {
@@ -63,20 +65,62 @@
     "network_capability_exposed": false,
     "supported_contract_ids": ["AX-PUB-SPEC-002", "AX-PUB-SPEC-003", "AX-PUB-SPEC-004"]
   },
+  "verified_distribution_identity": {
+    "wheel": {
+      "filename": "aetherxglobal_governed_intelligence-0.1.0rc1-py3-none-any.whl",
+      "sha256": "bd3c3bfc7306c9b45659e3e0533ea1ac24b065a4c577f08cbe987cc10a4d1fac"
+    },
+    "sdist": {
+      "filename": "aetherxglobal_governed_intelligence-0.1.0rc1.tar.gz",
+      "sha256": "2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99"
+    },
+    "actions_artifact": {
+      "id": 9337474216,
+      "name": "ax-pub-dev-008-3267c66681e417bf5eb0f8a384e8c2d992d266c0",
+      "sha256": "9b2e050d59146e2b768cb5f9468b2035c078aa1abbb4e0fd0ac4148e8d58d4a2",
+      "retention_days": 7,
+      "expires_at": "2026-08-25T18:33:22Z"
+    }
+  },
   "verification": {
-    "package_boundary": "PENDING",
-    "deterministic_double_build": "PENDING",
-    "wheel_metadata_inventory": "PENDING",
-    "wheel_install": "PENDING",
-    "sdist_build": "PENDING",
-    "installed_package_tests": "PENDING",
-    "runtime_matrix": "PENDING",
-    "artifact_inventory": "PENDING",
-    "artifact_digests": "PENDING",
-    "ci_artifact_retention": "PENDING",
+    "package_boundary": "VERIFIED",
+    "deterministic_double_build": "VERIFIED",
+    "wheel_metadata_inventory": "VERIFIED",
+    "wheel_install": "VERIFIED",
+    "sdist_build": "VERIFIED",
+    "sdist_to_wheel_byte_identity": "VERIFIED",
+    "installed_package_tests": "VERIFIED",
+    "runtime_matrix": "VERIFIED_CPTHON_3_11_TO_3_14",
+    "artifact_inventory": "VERIFIED",
+    "artifact_digests": "VERIFIED",
+    "ci_artifact_retention": "VERIFIED_7_DAYS",
+    "inherited_gate_03": "PRESERVED",
+    "inherited_gate_04": "PRESERVED",
+    "inherited_gate_05a": "PRESERVED",
+    "public_manifest": "PRESERVED",
     "publication": "NOT_AUTHORIZED"
   },
-  "next_phase_after_closure": "DEV-GATE-05C — Distribution & External Validation",
+  "closure_evidence": {
+    "id": "AX-PUB-CI-009",
+    "version": "1.0",
+    "path": "evidence/AX-PUB-CI-009_INSTALLABLE_PACKAGE_CANDIDATE_VALIDATION.md",
+    "published_baseline_commit": "774abcce340c3fbaf3481ab5244ee1d41b88243c",
+    "verification_head_commit": "63477bb11124aebbad4034587a366d5ef882b3c2",
+    "verification_merge_commit": "3267c66681e417bf5eb0f8a384e8c2d992d266c0",
+    "verification_pr": 36,
+    "workflow_run_id": 32171606094,
+    "workflow_run_number": 19,
+    "job_id": 95823835258,
+    "governance_workflow_run_id": 32171606079,
+    "governance_workflow_run_number": 168,
+    "conclusion": "SUCCESS",
+    "verified_runtime_matrix": ["3.11", "3.12", "3.13", "3.14"],
+    "source_date_epoch": 1787076737
+  },
+  "resolved_release_prerequisites": [
+    "INSTALLABLE_PACKAGE_CANDIDATE_EVIDENCE",
+    "PYTHON_3_11_TO_3_14_PACKAGE_LEVEL_CI"
+  ],
   "hard_blockers_retained": [
     "IP_AND_COPYRIGHT_CLEARANCE",
     "PACKAGE_NAME_LIVE_AVAILABILITY_AND_OWNERSHIP",
