@@ -229,22 +229,61 @@ SDK PUBLICATION: NOT AUTHORIZED
 
 ---
 
-## 8. Machine-readable current state
+## 8. Inspect support and security productization contracts
+
+The future production-supported SDK now has two explicit **pre-activation** operating contracts:
+
+- [`AX-PUB-SUP-001`](./AX-PUB-SUP-001_SDK_SUPPORT_COMPATIBILITY_MAINTENANCE_CONTRACT.md) — support, compatibility and maintenance contract candidate;
+- [`AX-PUB-SEC-001`](./AX-PUB-SEC-001_SDK_SECURITY_OPERATIONS_READINESS_CONTRACT.md) — security-operations readiness contract candidate;
+- [`AX-PUB-CI-013`](../evidence/AX-PUB-CI-013_SDK_SUPPORT_SECURITY_CONTRACT_VALIDATION.md) — direct validation evidence across CPython 3.11–3.14 plus closed Gate-03 identity preservation.
+
+Current state:
+
+```text
+SUPPORT CONTRACT CANDIDATE: VALIDATED / NOT ACTIVATED
+TARGET NORMAL DEPRECATION WINDOW: LATER OF 90 DAYS OR ONE SUPPORTED MINOR / NOT ACTIVE
+SUPPORT COMMITMENT: NOT ESTABLISHED
+COMMERCIAL SLA: NOT ESTABLISHED
+
+SECURITY OPERATIONS CONTRACT CANDIDATE: VALIDATED / NOT READY
+DEDICATED SECURITY CHANNEL: NOT ESTABLISHED
+SECURITY RESPONSE OWNER: NOT ESTABLISHED
+SECURITY RESPONSE SLA: NOT ESTABLISHED
+BUG BOUNTY: NOT ESTABLISHED
+SECURITY OPERATIONS READY: NO
+
+SUPPORTED SDK: NOT ESTABLISHED
+SDK PUBLICATION: NOT AUTHORIZED
+```
+
+The candidate target window is a future activation condition, not a current promise.
+
+`CONTRACT VALIDATION ≠ CONTRACT ACTIVATION`
+
+---
+
+## 9. Machine-readable current state
 
 Canonical moving compatibility/governance index:
 
 ```text
-AX-PUB-MANIFEST-001 v1.23
+AX-PUB-MANIFEST-001 v1.24
 AX-PUB-POL-001 v1.6
 ```
 
 Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json) for machine-readable artifact relationships and current gate state.
 
-The manifest now includes the first live release-control baseline (`AX-PUB-CI-011`) and the validated public API contract candidate (`AX-PUB-API-001` + `AX-PUB-CI-012`).
+The manifest records:
+
+```text
+AX-PUB-CI-011 — first live release-control baseline
+AX-PUB-API-001 + AX-PUB-CI-012 — validated API contract candidate
+AX-PUB-SUP-001 + AX-PUB-SEC-001 + AX-PUB-CI-013 — validated pre-activation support/security contracts
+```
 
 ---
 
-## 9. Production SDK target
+## 10. Production SDK target
 
 The program target is not merely to place a package on a registry. The target is an official production-supported developer product:
 
@@ -270,7 +309,7 @@ Live release-control audit semantics and the current baseline are in [`RELEASE_C
 
 ---
 
-## 10. Recommended reading order
+## 11. Recommended reading order
 
 ```text
 README.md
@@ -281,6 +320,7 @@ README.md
 → AX-PUB-DEV-007 / 008 / 009
 → AX-PUB-CI-008 / 009 / 010
 → AX-PUB-API-001 / AX-PUB-CI-012
+→ AX-PUB-SUP-001 / AX-PUB-SEC-001 / AX-PUB-CI-013
 → AX-PUB-CI-011 / RELEASE_CONTROL_AUDIT.md
 → PRODUCTION_SDK_DEFINITION_OF_DONE.md
 → RELEASE_CONTROL_PLANE.md
@@ -297,6 +337,9 @@ REFERENCE CODE ≠ PRODUCTION CODE
 CI PASS ≠ EXTERNAL CERTIFICATION
 INSTALLABLE CANDIDATE ≠ SUPPORTED SDK
 VALIDATED API CONTRACT CANDIDATE ≠ STABLE 1.0 GUARANTEE
+VALIDATED SUPPORT CONTRACT ≠ SUPPORT COMMITMENT ACTIVATED
+VALIDATED SECURITY CONTRACT ≠ SECURITY OPERATIONS READY
+TARGET DEPRECATION WINDOW ≠ CURRENT SUPPORT PROMISE
 LIVE RELEASE-CONTROL AUDIT ≠ RELEASE-CONTROL READY
 LOCAL INDEX PASS ≠ EXTERNAL REGISTRY VALIDATION
 TARGET LICENCE ≠ LICENCE GRANT
