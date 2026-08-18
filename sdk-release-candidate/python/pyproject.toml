@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling>=1.31,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aetherxglobal-governed-intelligence"
+version = "0.1.0rc1"
+description = "Bounded offline validation SDK candidate for AETHER X governed-intelligence public contracts"
+readme = "README.md"
+requires-python = ">=3.11,<3.15"
+authors = [
+  { name = "AETHER X GLOBAL" }
+]
+dependencies = []
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Operating System :: OS Independent"
+]
+
+[project.urls]
+Homepage = "https://aetherxglobal.com"
+Repository = "https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aetherxglobal"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+  "/tests",
+  "/README.md",
+  "/pyproject.toml"
+]
