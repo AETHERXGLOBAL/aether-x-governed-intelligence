@@ -165,7 +165,7 @@ Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json
 Current moving state:
 
 ```text
-AX-PUB-MANIFEST-001 v1.12
+AX-PUB-MANIFEST-001 v1.13
 AX-PUB-POL-001 v1.6
 ```
 
@@ -237,12 +237,13 @@ The established developer-facing contract baseline is:
 - [Machine-readable `AX-PUB-DEV-002.json`](../artifacts/AX-PUB-DEV-002.json)
 - [`AX-PUB-CI-003 — DEV-GATE-00 validation evidence`](../evidence/AX-PUB-CI-003_DEVELOPER_CONTRACT_BASELINE_VALIDATION.md)
 
-Current state:
+Current program context:
 
 ```text
 DEV-GATE-00: CLOSED
 PUBLIC DEVELOPER CONTRACT BASELINE: ESTABLISHED
-NEXT GATE: DEV-GATE-01 — Reproducible Developer Experience
+DEV-GATE-01: CLOSED
+CURRENT PROGRAM GATE: DEV-GATE-02 — SDK Candidate
 SDK PUBLICATION: NOT AUTHORIZED
 ```
 
@@ -288,7 +289,6 @@ VERIFIED RUNTIME MATRIX: Python 3.10, 3.11, 3.12, 3.13
 SUCCESS MARKER: AX_DEVELOPER_EXPERIENCE_PASS
 CLOSED-STATE MARKER: AX_DEV_GATE_01_CLOSED_STATE_PASS
 NEXT GATE: DEV-GATE-02 — SDK Candidate
-SDK CANDIDATE: NOT ESTABLISHED
 ```
 
 `AX-PUB-CI-004` records successful dedicated runtime jobs for Python 3.10, 3.11, 3.12 and 3.13, plus successful public-artifact governance validation for the candidate state used for closure.
@@ -298,7 +298,66 @@ The verified matrix applies to this bounded public reference experience. It does
 `DEV-GATE-01 CLOSED ≠ SDK CANDIDATE`  
 `REPRODUCIBLE DEVELOPER EXPERIENCE ≠ PRODUCTION READINESS`
 
-## 14. SDK Publication Readiness
+## 14. SDK Candidate Engineering Baseline
+
+The current Gate-02 engineering baseline is:
+
+- [`AX-PUB-DEV-004 — SDK Candidate Engineering Baseline`](./AX-PUB-DEV-004_SDK_CANDIDATE_ENGINEERING_BASELINE.md)
+- [Machine-readable `AX-PUB-DEV-004.json`](../artifacts/AX-PUB-DEV-004.json)
+- repository-local candidate module: [`sdk-candidate/python/aetherx_sdk_candidate.py`](../sdk-candidate/python/aetherx_sdk_candidate.py)
+
+Current state:
+
+```text
+DEV-GATE-02: CANDIDATE ENGINEERING IN PROGRESS
+SDK CANDIDATE: NOT YET ESTABLISHED
+CANDIDATE VERSION: 0.1.0-candidate
+PACKAGE IDENTITY: NOT APPROVED
+PACKAGE REGISTRY: NOT AUTHORIZED
+PUBLIC SDK LICENCE: NOT DECIDED
+SDK PUBLICATION: NOT AUTHORIZED
+```
+
+The candidate surface is deliberately repository-local. It does not contain distribution metadata and does not create a package name, package-registry presence, installation contract, support commitment, or public SDK release.
+
+Run the candidate unit tests:
+
+```bash
+python3 -m unittest discover -s sdk-candidate/python/tests -v
+```
+
+Run the candidate example:
+
+```bash
+python3 sdk-candidate/python/example.py
+```
+
+Run candidate conformance:
+
+```bash
+python3 sdk-candidate/python/run_candidate_conformance.py
+```
+
+Run the candidate boundary checker:
+
+```bash
+python3 tools/check_sdk_candidate_boundary.py
+```
+
+Run the candidate state checker:
+
+```bash
+python3 tools/check_sdk_candidate_state.py
+```
+
+The Gate-02 candidate surface is intended to preserve the three published developer-contract paths and map bounded reference findings into the declared `AXDEV-*` semantic taxonomy. Candidate implementation or CI success alone does not authorize promotion; promotion requires recorded verification evidence and a separate governance state change.
+
+`CANDIDATE IMPLEMENTATION ≠ SDK CANDIDATE ESTABLISHED`  
+`SDK CANDIDATE ≠ SUPPORTED SDK`  
+`REPOSITORY-LOCAL MODULE ≠ APPROVED PACKAGE IDENTITY`  
+`SDK CANDIDATE VALIDATION ≠ PRODUCTION READINESS`
+
+## 15. SDK Publication Readiness
 
 This repository does **not** currently publish or imply an officially supported SDK.
 
@@ -318,13 +377,13 @@ The gate requires explicit evidence and authority for licence/IP terms, interfac
 `PUBLIC ENGINEERING RELEASE ≠ SDK RELEASE`  
 `SDK READINESS GATE ≠ SDK COMMITMENT`
 
-## 15. Private-Project Boundary
+## 16. Private-Project Boundary
 
-The public schemas, reference validators, examples, conformance kits and Gate-01 runners/checkers are self-contained in this public repository.
+The public schemas, reference validators, examples, conformance kits, Gate-01 runners/checkers and current Gate-02 repository-local candidate surface are self-contained in this public repository.
 
 They do not checkout, import, execute, package, or depend on private AETHER X project repositories. Public examples are synthetic. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside the public disclosure boundary.
 
-## 16. Public Claim Boundary
+## 17. Public Claim Boundary
 
 `PUBLIC ARTIFACT ≠ PRODUCT IMPLEMENTATION`  
 `PUBLIC SPECIFICATION ≠ INTERNAL CONTROL IMPLEMENTATION`  
@@ -336,8 +395,10 @@ They do not checkout, import, execute, package, or depend on private AETHER X pr
 `DEVELOPER ADOPTION PROGRAM ≠ SDK RELEASE`  
 `DEV-GATE-00 CLOSED ≠ SDK CANDIDATE`  
 `DEV-GATE-01 CLOSED ≠ SDK CANDIDATE`  
+`CANDIDATE IMPLEMENTATION ≠ SDK CANDIDATE ESTABLISHED`  
 `VERIFIED RUNTIME MATRIX ≠ GENERAL SDK SUPPORT COMMITMENT`  
-`REPRODUCIBLE DEVELOPER EXPERIENCE ≠ PRODUCTION READINESS`
+`REPRODUCIBLE DEVELOPER EXPERIENCE ≠ PRODUCTION READINESS`  
+`SDK PUBLICATION NOT AUTHORIZED`
 
 ---
 
