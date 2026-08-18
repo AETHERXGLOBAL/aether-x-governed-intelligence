@@ -1,0 +1,108 @@
+name: External evaluation feedback
+description: Report a reproducible, non-sensitive finding on the bounded public developer surface.
+title: "[External Evaluation] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for public-safe evaluation findings only.
+
+        Do not submit credentials, secrets, private data or exploitable security details here. Follow SECURITY.md for sensitive reports.
+
+        This repository contains non-production public engineering. Submitting an issue does not create a support SLA or SDK publication commitment.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Finding category
+      options:
+        - Reproducibility defect
+        - Documentation friction
+        - Contract/specification ambiguity
+        - SDK-candidate behavior defect
+        - Compatibility observation
+        - Conformance/test discrepancy
+        - Feature request / future direction
+    validations:
+      required: true
+
+  - type: input
+    id: ref
+    attributes:
+      label: Repository commit or ref
+      description: Commit SHA, tag or branch used for the evaluation.
+      placeholder: 5159266679affe92234e1d56cc83181bcaaf95ec
+    validations:
+      required: true
+
+  - type: dropdown
+    id: python
+    attributes:
+      label: Python runtime
+      description: The directly verified candidate matrix is Python 3.10–3.13.
+      options:
+        - Python 3.10
+        - Python 3.11
+        - Python 3.12
+        - Python 3.13
+        - Other / not applicable
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system / environment
+      placeholder: Ubuntu 24.04, macOS, Windows, container, etc.
+    validations:
+      required: true
+
+  - type: textarea
+    id: path
+    attributes:
+      label: Command or public path exercised
+      description: Include the exact public command, file or candidate interface you evaluated.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Minimal reproduction steps
+      description: Provide the smallest public-safe sequence that reproduces the finding.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Relevant public-safe output
+      description: Include only output safe for public disclosure. Remove secrets and private information.
+      render: text
+
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Submission boundaries
+      options:
+        - label: I have not included credentials, secrets, private/customer data or exploitable security details.
+          required: true
+        - label: I understand this is a non-production public engineering surface and not a supported SDK.
+          required: true
+        - label: I understand issue submission does not create a support or response-time SLA.
+          required: true
