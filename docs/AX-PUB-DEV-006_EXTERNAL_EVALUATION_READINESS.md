@@ -2,7 +2,7 @@
 
 **Artifact ID:** `AX-PUB-DEV-006`  
 **Version:** `1.0`  
-**Status:** `DEV-GATE-04 CANDIDATE · EXTERNAL EVALUATION READINESS NOT YET ESTABLISHED · SDK PUBLICATION NOT AUTHORIZED`  
+**Status:** `DEV-GATE-04 CLOSED · EXTERNAL EVALUATION READINESS ESTABLISHED · HUMAN EXTERNAL EVALUATION NOT ESTABLISHED · SDK PUBLICATION NOT AUTHORIZED`  
 **Scope:** `AETHERXGLOBAL/aether-x-governed-intelligence`  
 **Governing program:** `AX-PUB-DEV-001`  
 **Governing publication gate:** `AX-PUB-GATE-001`
@@ -11,7 +11,7 @@
 
 DEV-GATE-04 exists to make the bounded public developer surface understandable, runnable and evaluable by a technically competent person who has no internal AETHER X context.
 
-The gate does **not** prove that an external evaluator has participated, adopted the candidate, integrated it into a product or endorsed AETHER X.
+Gate-04 closure establishes **readiness of that public evaluation surface**. It does **not** prove that a human external evaluator has participated, adopted the candidate, integrated it into a product or endorsed AETHER X.
 
 ```text
 EXTERNAL EVALUATION READINESS
@@ -23,9 +23,9 @@ EXTERNAL ADOPTION
 SUPPORTED SDK
 ```
 
-## 2. Gate-04 Candidate Surface
+## 2. Established Readiness Surface
 
-The candidate readiness surface consists of:
+The closed Gate-04 readiness surface consists of:
 
 - [`EXTERNAL_EVALUATOR_GUIDE.md`](./EXTERNAL_EVALUATOR_GUIDE.md) — clean, self-service evaluation and repository-local integration path;
 - [`LIMITATIONS_AND_UNSUPPORTED_USES.md`](./LIMITATIONS_AND_UNSUPPORTED_USES.md) — explicit technical and claim boundaries;
@@ -39,7 +39,7 @@ The candidate readiness surface consists of:
 
 ## 3. Evaluator Contract
 
-An evaluator should be able to answer, using public repository material only:
+The public readiness surface is designed so a technically competent evaluator can answer, using public repository material only:
 
 1. What is this public engineering surface?
 2. What is the exact bounded SDK-candidate surface?
@@ -52,11 +52,11 @@ An evaluator should be able to answer, using public repository material only:
 9. Which changes would require migration or deprecation communication?
 10. Which claims must **not** be inferred from a successful evaluation?
 
-If any of these require internal assistance, the Gate-04 readiness candidate is incomplete.
+`AX-PUB-CI-007` directly validates the automated self-service readiness path. Human usability remains a separate empirical question until actual external evaluation is conducted and recorded.
 
 ## 4. Testable Compatibility Boundary
 
-The current bounded candidate has direct CI evidence on:
+The bounded readiness path has direct CI evidence on:
 
 ```text
 Python 3.10
@@ -65,13 +65,13 @@ Python 3.12
 Python 3.13
 ```
 
-That evidence applies to the declared repository-local public candidate and its tests. It is not a general Python support policy and does not imply package-distribution support.
+That evidence applies to the declared repository-local public candidate, its tests and the Gate-04 readiness runner/report contract. It is not a general Python support policy and does not imply package-distribution support.
 
-Gate-04 must not claim compatibility outside the directly tested matrix.
+Gate-04 does not claim compatibility outside the directly tested matrix.
 
 ## 5. Repository-Local Integration Boundary
 
-The evaluator guide may demonstrate importing the candidate from the checked-out repository. It must not instruct users to:
+The evaluator guide demonstrates importing the candidate from the checked-out repository. It does not instruct users to:
 
 - `pip install` an AETHER X package that does not exist;
 - depend on a private package index;
@@ -89,7 +89,7 @@ and covers only the three declared public contract paths.
 
 ## 6. Known-Limitations Requirement
 
-The public readiness surface must clearly disclose, at minimum:
+The public readiness surface explicitly discloses, at minimum:
 
 - non-production maturity;
 - repository-local / non-distributable status;
@@ -104,9 +104,9 @@ The public readiness surface must clearly disclose, at minimum:
 
 ## 7. Migration & Deprecation Requirement
 
-Gate-04 requires a draft migration/deprecation mechanism, not a support promise.
+Gate-04 establishes a public migration/deprecation **draft mechanism**, not a support promise.
 
-The draft must separate:
+The draft separates:
 
 ```text
 CURRENT CANDIDATE BEHAVIOR
@@ -117,13 +117,13 @@ CURRENT CANDIDATE BEHAVIOR
 → LATER REMOVAL / REPLACEMENT ONLY UNDER APPROVED POLICY
 ```
 
-No fixed support window, notice period or stable `1.0.0` commitment is created by Gate-04.
+No fixed support window, notice period or stable `1.0.0` commitment is created by Gate-04 closure.
 
 ## 8. Feedback & Triage Requirement
 
-External feedback must be classifiable without implying support SLA.
+External feedback is classifiable without implying support SLA.
 
-At minimum, the process distinguishes:
+The process distinguishes:
 
 - reproducibility defect;
 - contract/specification ambiguity;
@@ -148,36 +148,47 @@ The runner validates only the bounded public repository surface. It does not acc
 
 The CI-generated report is **readiness evidence**, not evidence that a human external evaluator performed the run.
 
-## 10. Gate-04 Exit Criteria
+## 10. Gate-04 Exit Criteria — Evidence Disposition
 
-Gate-04 may be proposed for closure only when all of the following are directly evidenced:
+The Gate-04 closure decision is supported by direct evidence that:
 
 - self-service setup/run/integration instructions require no internal AETHER X information;
 - limitations and unsupported uses are explicit;
 - migration/deprecation draft exists and creates no unsupported support commitment;
 - feedback/triage process and structured issue intake exist;
-- all declared compatibility claims are testable and bounded to direct evidence;
-- the evaluation runner succeeds in clean CI across the declared Python 3.10–3.13 matrix;
-- the generated evaluation report passes machine validation;
-- the Gate-04 governance checker passes;
-- prior Gate-00/01/02/03 controls remain valid;
-- `SDK PUBLICATION NOT AUTHORIZED` remains unchanged unless separately decided under `AX-PUB-GATE-001`.
+- all declared compatibility claims are bounded to the directly tested Python 3.10–3.13 matrix;
+- the evaluation runner succeeded in clean GitHub Actions across Python 3.10, 3.11, 3.12 and 3.13;
+- the generated machine-readable evaluation report passed validation on all four runtimes;
+- the Gate-04 governance checker passed;
+- prior Gate-00/01/02/03 controls remained valid;
+- `SDK PUBLICATION NOT AUTHORIZED` remained unchanged.
 
-## 11. Evidence State
+Direct validation evidence is recorded in:
 
-Current state while this document is a candidate:
+**[`AX-PUB-CI-007 — External Evaluation Readiness Validation Evidence`](../evidence/AX-PUB-CI-007_EXTERNAL_EVALUATION_READINESS_VALIDATION.md)**
+
+## 11. Closed State
 
 ```text
-DEV-GATE-04: CANDIDATE
-EXTERNAL EVALUATION READINESS: NOT YET ESTABLISHED
+DEV-GATE-04: CLOSED
+EXTERNAL EVALUATION READINESS: ESTABLISHED
 EXTERNAL EVALUATION OCCURRED: NOT ESTABLISHED
 EXTERNAL ADOPTION: NOT ESTABLISHED
 SUPPORTED SDK: NOT ESTABLISHED
+PACKAGE IDENTITY: NOT APPROVED
+PACKAGE REGISTRY: NOT AUTHORIZED
+PUBLIC SDK LICENCE: NOT DECIDED
 SDK PUBLICATION: NOT AUTHORIZED
+NEXT ENGINEERING GATE: DEV-GATE-05 — SDK RELEASE DECISION
 ```
 
-A later CI evidence record may support Gate-04 closure. The existence of this document alone does not.
+This state means the public engineering surface is prepared for bounded external evaluation under its declared constraints. It does not create a claim that such human evaluation has already happened.
 
 ---
+
+`READINESS ESTABLISHED ≠ EXTERNAL EVALUATION OCCURRED`  
+`EXTERNAL EVALUATION READINESS ≠ EXTERNAL ADOPTION`  
+`SUPPORTED SDK: NOT ESTABLISHED`  
+`SDK PUBLICATION NOT AUTHORIZED`
 
 **AETHER X GLOBAL — Institutional Intelligence. Governed Autonomy.**

@@ -124,7 +124,7 @@ Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json
 Current moving state:
 
 ```text
-AX-PUB-MANIFEST-001 v1.17
+AX-PUB-MANIFEST-001 v1.18
 AX-PUB-POL-001 v1.6
 ```
 
@@ -173,8 +173,9 @@ DEV-GATE-00: CLOSED
 DEV-GATE-01: CLOSED
 DEV-GATE-02: CLOSED
 DEV-GATE-03: CLOSED
-CURRENT ENGINEERING OBJECTIVE: DEV-GATE-04 — EXTERNAL EVALUATION READINESS
-EXTERNAL EVALUATION READINESS: CANDIDATE / NOT YET ESTABLISHED
+DEV-GATE-04: CLOSED
+CURRENT ENGINEERING / DECISION OBJECTIVE: DEV-GATE-05 — SDK RELEASE DECISION
+EXTERNAL EVALUATION READINESS: ESTABLISHED
 EXTERNAL EVALUATION OCCURRED: NOT ESTABLISHED
 EXTERNAL ADOPTION: NOT ESTABLISHED
 SDK CANDIDATE: ESTABLISHED
@@ -314,10 +315,11 @@ The dedicated CI workflow additionally checks byte-identical rebuilds, extracted
 
 ## 16. External Evaluation Readiness
 
-Gate-04 candidate:
+Gate-04 artifacts and evidence:
 
 - [`AX-PUB-DEV-006 — External Evaluation Readiness`](./AX-PUB-DEV-006_EXTERNAL_EVALUATION_READINESS.md)
 - [`AX-PUB-DEV-006.json`](../artifacts/AX-PUB-DEV-006.json)
+- [`AX-PUB-CI-007`](../evidence/AX-PUB-CI-007_EXTERNAL_EVALUATION_READINESS_VALIDATION.md)
 - [`External Evaluator Guide`](./EXTERNAL_EVALUATOR_GUIDE.md)
 - [`Limitations & Unsupported Uses`](./LIMITATIONS_AND_UNSUPPORTED_USES.md)
 - [`Migration & Deprecation Draft`](./MIGRATION_AND_DEPRECATION_DRAFT.md)
@@ -326,15 +328,16 @@ Gate-04 candidate:
 Current state:
 
 ```text
-DEV-GATE-04: CANDIDATE
-EXTERNAL EVALUATION READINESS: NOT YET ESTABLISHED
+DEV-GATE-04: CLOSED
+EXTERNAL EVALUATION READINESS: ESTABLISHED
+VERIFIED READINESS RUNTIME MATRIX: Python 3.10, 3.11, 3.12, 3.13
 EXTERNAL EVALUATION OCCURRED: NOT ESTABLISHED
 EXTERNAL ADOPTION: NOT ESTABLISHED
 SUPPORTED SDK: NOT ESTABLISHED
 SDK PUBLICATION: NOT AUTHORIZED
 ```
 
-For a self-service evaluation on a directly verified candidate runtime (Python 3.10–3.13):
+For a self-service evaluation on a directly verified readiness runtime:
 
 ```bash
 python3 tools/run_external_evaluation.py --json-out external-evaluation-report.json
@@ -348,9 +351,9 @@ AX_EXTERNAL_EVALUATION_RUN_PASS
 AX_EXTERNAL_EVALUATION_REPORT_PASS
 ```
 
-The evaluation runner executes eight bounded public checks and records a machine-readable environment/check report. Gate-04 CI runs this path across Python 3.10, 3.11, 3.12 and 3.13 and uploads the generated reports as short-lived CI-only artifacts.
+`AX-PUB-CI-007` directly records successful readiness execution across Python 3.10, 3.11, 3.12 and 3.13. The evaluation runner executes eight bounded public checks and records a machine-readable environment/check report.
 
-This CI is evidence about **readiness and reproducibility**, not evidence that a human external evaluator participated or that anyone adopted the candidate.
+This evidence establishes **readiness and reproducibility**, not evidence that a human external evaluator participated or that anyone adopted the candidate.
 
 For repository-local candidate integration, limitations, failure paths and feedback instructions, follow the [`External Evaluator Guide`](./EXTERNAL_EVALUATOR_GUIDE.md).
 
@@ -358,21 +361,30 @@ For repository-local candidate integration, limitations, failure paths and feedb
 `EXTERNAL EVALUATION READINESS ≠ EXTERNAL ADOPTION`  
 `ISSUE INTAKE ≠ SUPPORT SLA`
 
-## 17. SDK Publication Readiness
+## 17. SDK Release Decision / Publication Readiness
 
 - [`AX-PUB-GATE-001`](./AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md)
+- [`AX-PUB-DEV-001`](./AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md)
 
-Current disposition:
+Current engineering/decision objective:
+
+```text
+DEV-GATE-05 — SDK RELEASE DECISION
+```
+
+Current disposition remains:
 
 ```text
 SDK PUBLICATION NOT AUTHORIZED
 ```
 
-The gate still requires explicit licence/IP authority, package identity and distribution, supported compatibility commitments, security and credential boundaries, documentation, maintenance/support ownership and release authority before publication can be represented as approved.
+Gate-05 must resolve explicit licence/IP authority, package identity and distribution, supported compatibility commitments, security and credential boundaries, documentation, maintenance/support ownership and release authority before publication can be represented as approved.
+
+`DEV-GATE-05 ACTIVE ≠ SDK RELEASE AUTHORIZED`
 
 ## 18. Private-Project Boundary
 
-The public schemas, reference validators, examples, conformance kits, Gate-01 developer experience, Gate-02 SDK candidate, validated Gate-03 engineering release candidate and Gate-04 readiness candidate are designed to remain self-contained in this public repository.
+The public schemas, reference validators, examples, conformance kits, Gate-01 developer experience, Gate-02 SDK candidate, validated Gate-03 engineering release candidate and closed Gate-04 readiness surface are designed to remain self-contained in this public repository.
 
 They do not require private AETHER X project repositories, private package indexes, private endpoints or private credentials.
 
@@ -385,6 +397,7 @@ They do not require private AETHER X project repositories, private package index
 `RELEASE-CANDIDATE VALIDATED ≠ SDK RELEASE`  
 `READINESS CI PASS ≠ HUMAN EXTERNAL EVALUATION`  
 `EXTERNAL EVALUATION READINESS ≠ EXTERNAL ADOPTION`  
+`DEV-GATE-05 ACTIVE ≠ SDK PUBLICATION AUTHORIZED`  
 `CI ARTIFACT ≠ PACKAGE PUBLICATION`  
 `ATTESTED BUILD ≠ SECURITY CERTIFICATION`  
 `SBOM ≠ SOFTWARE REUSE LICENCE`  

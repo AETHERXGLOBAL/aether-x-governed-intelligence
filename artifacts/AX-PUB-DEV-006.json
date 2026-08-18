@@ -2,10 +2,10 @@
   "artifact_id": "AX-PUB-DEV-006",
   "version": "1.0",
   "gate": "DEV-GATE-04",
-  "state": "CANDIDATE",
-  "public_maturity": "EXTERNAL EVALUATION READINESS NOT YET ESTABLISHED",
+  "state": "CLOSED",
+  "public_maturity": "EXTERNAL EVALUATION READINESS ESTABLISHED / HUMAN EXTERNAL EVALUATION NOT ESTABLISHED / SDK PUBLICATION NOT AUTHORIZED",
   "sdk_publication": "NOT_AUTHORIZED",
-  "external_evaluation_readiness": "NOT_YET_ESTABLISHED",
+  "external_evaluation_readiness": "ESTABLISHED",
   "external_evaluation_occurred": false,
   "external_adoption_established": false,
   "supported_sdk_established": false,
@@ -13,6 +13,12 @@
   "package_registry_authorized": false,
   "public_sdk_licence_decided": false,
   "declared_candidate_runtime_matrix": [
+    "3.10",
+    "3.11",
+    "3.12",
+    "3.13"
+  ],
+  "verified_readiness_runtime_matrix": [
     "3.10",
     "3.11",
     "3.12",
@@ -34,6 +40,19 @@
     "gate_checker": "tools/check_external_evaluation_readiness.py",
     "workflow": ".github/workflows/validate-external-evaluation-readiness.yml"
   },
+  "closure_evidence": {
+    "id": "AX-PUB-CI-007",
+    "version": "1.0",
+    "path": "evidence/AX-PUB-CI-007_EXTERNAL_EVALUATION_READINESS_VALIDATION.md",
+    "validated_base_commit": "e237e4baaf378e5ebabe0cc2cd95a6c5cceb5676",
+    "verified_head_commit": "7cb9f46ddf281821f4c0f2d538fdb125c166916c",
+    "workflow_run_id": 32162256262,
+    "workflow_run_number": 6,
+    "governance_workflow_run_id": 32162256504,
+    "governance_workflow_run_number": 145,
+    "conclusion": "SUCCESS"
+  },
+  "next_gate": "DEV-GATE-05 — SDK Release Decision",
   "claim_boundaries": [
     "READINESS CI PASS DOES NOT ESTABLISH HUMAN EXTERNAL EVALUATION",
     "EXTERNAL EVALUATION READINESS DOES NOT ESTABLISH ADOPTION",

@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Validate AX-PUB-MANIFEST-001 repository consistency."""
+"""Validate AX-PUB-MANIFEST-001 repository consistency.
+
+The checker preserves the closed Gate-00→04 governance chain while avoiding
+hard-coding a previously active gate as a permanent invariant.
+"""
 from __future__ import annotations
 
 import json
@@ -8,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-MANIFEST_PATH = ROOT / "artifacts" / "AX-PUB-MANIFEST-001.json"
+MANIFEST_PATH = ROOT / "artifacts/AX-PUB-MANIFEST-001.json"
 VERSION_RE = re.compile(r"^[0-9]+\.[0-9]+(?:\.[0-9]+(?:-[0-9A-Za-z.-]+)?)?$")
 STATES = {"CURRENT", "COMPATIBLE", "SUPERSEDED", "DEPRECATED", "WITHDRAWN"}
 EXPECTED_RUNTIMES = ["3.10", "3.11", "3.12", "3.13"]
@@ -72,6 +76,33 @@ REQUIRED_RELATIONS = {
     ("AX-PUB-RC-001", "0.1.0-rc1", "CANDIDATE_ARTIFACT_OF", "AX-PUB-DEV-005", "1.0"),
 }
 
+REQUIRED_CLAIM_BOUNDARIES = {
+    "PUBLIC COMPATIBILITY DOES NOT ESTABLISH PRODUCT INTEGRATION",
+    "SDK CANDIDATE ESTABLISHED DOES NOT ESTABLISH A SUPPORTED SDK OR PACKAGE RELEASE",
+    "RELEASE-CANDIDATE VALIDATED DOES NOT ESTABLISH A SUPPORTED SDK OR PACKAGE RELEASE",
+    "EXTERNAL EVALUATION READINESS ESTABLISHED DOES NOT ESTABLISH HUMAN EXTERNAL EVALUATION OR ADOPTION",
+    "PACKAGE IDENTITY AND REGISTRY REMAIN UNAPPROVED OR UNAUTHORIZED",
+    "SDK PUBLICATION REMAINS NOT AUTHORIZED",
+}
+
+
+def fail(findings: list[str]) -> int:
+    for item in findings:
+        print(f"AX_MANIFEST_FAIL: {item}")
+    return 1
+
+
+def load_json(path: Path, findings: list[str]) -> dict[str, Any] | None:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        findings.append(f"cannot parse {path.relative_to(ROOT)}: {exc}")
+        return None
+    if not isinstance(value, dict):
+        findings.append(f"{path.relative_to(ROOT)} must contain an object")
+        return None
+    return value
+
 
 def safe_path(raw: Any, findings: list[str], label: str) -> Path | None:
     if not isinstance(raw, str) or not raw.strip():
@@ -84,16 +115,14 @@ def safe_path(raw: Any, findings: list[str], label: str) -> Path | None:
     return ROOT / path
 
 
-def load_json(path: Path, findings: list[str]) -> dict[str, Any] | None:
+def version_at_least(raw: Any, major: int, minor: int) -> bool:
+    if not isinstance(raw, str) or VERSION_RE.fullmatch(raw) is None:
+        return False
+    base = raw.split("-", 1)[0].split(".")
     try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        findings.append(f"cannot parse {path.relative_to(ROOT)}: {exc}")
-        return None
-    if not isinstance(data, dict):
-        findings.append(f"{path.relative_to(ROOT)} must contain an object")
-        return None
-    return data
+        return (int(base[0]), int(base[1])) >= (major, minor)
+    except (ValueError, IndexError):
+        return False
 
 
 def check_artifact(path: Path, artifact_id: str, version: str, findings: list[str]) -> None:
@@ -119,21 +148,15 @@ def check_artifact(path: Path, artifact_id: str, version: str, findings: list[st
             findings.append(f"{path.relative_to(ROOT)} does not declare version {version}")
 
 
-def version_at_least(raw: Any, major: int, minor: int) -> bool:
-    if not isinstance(raw, str) or VERSION_RE.fullmatch(raw) is None:
-        return False
-    parts = raw.split("-", 1)[0].split(".")
-    try:
-        current = (int(parts[0]), int(parts[1]))
-    except (ValueError, IndexError):
-        return False
-    return current >= (major, minor)
+def require_path(obj: dict[str, Any], field: str, findings: list[str], label: str) -> None:
+    target = safe_path(obj.get(field), findings, f"{label}.{field}")
+    if target is not None and not target.is_file():
+        findings.append(f"{label}.{field} missing: {obj.get(field)}")
 
 
-def fail(findings: list[str]) -> int:
-    for item in findings:
-        print(f"AX_MANIFEST_FAIL: {item}")
-    return 1
+def expect(obj: dict[str, Any], field: str, expected: Any, findings: list[str], label: str) -> None:
+    if obj.get(field) != expected:
+        findings.append(f"{label}.{field} mismatch: expected={expected!r} actual={obj.get(field)!r}")
 
 
 def main() -> int:
@@ -142,40 +165,40 @@ def main() -> int:
     if manifest is None:
         return fail(findings)
 
-    if manifest.get("manifest_id") != "AX-PUB-MANIFEST-001":
-        findings.append("manifest_id mismatch")
-    if not version_at_least(manifest.get("manifest_version"), 1, 17):
-        findings.append("manifest_version must be >= 1.17")
-    if manifest.get("repository") != "AETHERXGLOBAL/aether-x-governed-intelligence":
-        findings.append("repository identity mismatch")
+    expect(manifest, "manifest_id", "AX-PUB-MANIFEST-001", findings, "manifest")
+    if not version_at_least(manifest.get("manifest_version"), 1, 18):
+        findings.append("manifest_version must be >= 1.18")
+    expect(manifest, "repository", "AETHERXGLOBAL/aether-x-governed-intelligence", findings, "manifest")
 
     policy = manifest.get("versioning_policy")
-    if not isinstance(policy, dict) or policy.get("id") != "AX-PUB-POL-001" or policy.get("version") != "1.6":
-        findings.append("versioning policy must be AX-PUB-POL-001 v1.6")
+    if not isinstance(policy, dict):
+        findings.append("versioning_policy must be object")
     else:
-        path = safe_path(policy.get("path"), findings, "versioning_policy")
-        if path is not None and not path.is_file():
-            findings.append("versioning policy path missing")
+        expect(policy, "id", "AX-PUB-POL-001", findings, "versioning_policy")
+        expect(policy, "version", "1.6", findings, "versioning_policy")
+        require_path(policy, "path", findings, "versioning_policy")
 
-    artifacts = manifest.get("artifacts") if isinstance(manifest.get("artifacts"), list) else []
+    artifacts_raw = manifest.get("artifacts")
+    artifacts = artifacts_raw if isinstance(artifacts_raw, list) else []
     if not artifacts:
         findings.append("artifacts must be a non-empty array")
     by_pair: dict[tuple[str, str], dict[str, Any]] = {}
-    ids: set[str] = set()
+    seen_ids: set[str] = set()
     for index, artifact in enumerate(artifacts):
         if not isinstance(artifact, dict):
             findings.append(f"artifacts[{index}] must be object")
             continue
-        artifact_id, version = artifact.get("id"), artifact.get("version")
+        artifact_id = artifact.get("id")
+        version = artifact.get("version")
         if not isinstance(artifact_id, str) or not artifact_id.startswith("AX-PUB-"):
             findings.append(f"artifacts[{index}].id invalid")
             continue
         if not isinstance(version, str) or VERSION_RE.fullmatch(version) is None:
             findings.append(f"artifacts[{index}].version invalid")
             continue
-        if artifact_id in ids:
+        if artifact_id in seen_ids:
             findings.append(f"duplicate current artifact id: {artifact_id}")
-        ids.add(artifact_id)
+        seen_ids.add(artifact_id)
         by_pair[(artifact_id, version)] = artifact
         if artifact.get("state") not in STATES:
             findings.append(f"artifacts[{index}].state invalid")
@@ -183,284 +206,277 @@ def main() -> int:
         if path is not None:
             check_artifact(path, artifact_id, version, findings)
         for field in ("entrypoint", "machine_readable_companion"):
-            if artifact.get(field) is not None:
-                target = safe_path(artifact.get(field), findings, f"artifacts[{index}].{field}")
-                if target is not None and not target.is_file():
-                    findings.append(f"{field} missing: {artifact.get(field)}")
+            if field in artifact:
+                require_path(artifact, field, findings, f"artifacts[{index}]")
 
     for pair in sorted(REQUIRED_PAIRS - set(by_pair)):
         findings.append(f"required current artifact missing: {pair}")
 
+    dev001_artifact = by_pair.get(("AX-PUB-DEV-001", "1.0"), {})
+    dev001_maturity = str(dev001_artifact.get("public_maturity", ""))
+    for marker in ("DEV-GATE-04 CLOSED", "DEV-GATE-05 ACTIVE", "SDK PUBLICATION NOT AUTHORIZED"):
+        if marker not in dev001_maturity:
+            findings.append(f"AX-PUB-DEV-001 public_maturity missing: {marker}")
+
+    dev006_artifact = by_pair.get(("AX-PUB-DEV-006", "1.0"), {})
+    dev006_maturity = str(dev006_artifact.get("public_maturity", ""))
+    for marker in (
+        "DEV-GATE-04 CLOSED",
+        "EXTERNAL EVALUATION READINESS ESTABLISHED",
+        "HUMAN EXTERNAL EVALUATION NOT ESTABLISHED",
+        "SDK PUBLICATION NOT AUTHORIZED",
+    ):
+        if marker not in dev006_maturity:
+            findings.append(f"AX-PUB-DEV-006 public_maturity missing: {marker}")
+
     relations: set[tuple[str, str, str, str, str]] = set()
-    raw_relations = manifest.get("relationships") if isinstance(manifest.get("relationships"), list) else []
-    for index, relation in enumerate(raw_relations):
+    for index, relation in enumerate(manifest.get("relationships", [])):
         if not isinstance(relation, dict):
             findings.append(f"relationships[{index}] must be object")
             continue
         source = (relation.get("from_id"), relation.get("from_version"))
         target = (relation.get("to_id"), relation.get("to_version"))
-        kind = relation.get("relationship")
         if source not in by_pair:
             findings.append(f"relationship source missing: {source}")
         if target not in by_pair:
             findings.append(f"relationship target missing: {target}")
         if relation.get("state") not in STATES - {"CURRENT"}:
             findings.append(f"relationships[{index}].state invalid")
-        relations.add((str(source[0]), str(source[1]), str(kind), str(target[0]), str(target[1])))
+        relations.add((str(source[0]), str(source[1]), str(relation.get("relationship")), str(target[0]), str(target[1])))
     for relation in sorted(REQUIRED_RELATIONS - relations):
         findings.append(f"required compatibility relationship missing: {relation}")
 
-    evidence = manifest.get("validation_evidence")
-    if not isinstance(evidence, list):
+    evidence_raw = manifest.get("validation_evidence")
+    evidence = evidence_raw if isinstance(evidence_raw, list) else []
+    if not isinstance(evidence_raw, list):
         findings.append("validation_evidence must be an array")
-        evidence = []
-    evidence_by_id: dict[Any, dict[str, Any]] = {}
+    evidence_by_id: dict[str, dict[str, Any]] = {}
     for index, item in enumerate(evidence):
         if not isinstance(item, dict):
             findings.append(f"validation_evidence[{index}] invalid")
             continue
-        evidence_by_id[item.get("id")] = item
+        evidence_id = item.get("id")
+        if isinstance(evidence_id, str):
+            evidence_by_id[evidence_id] = item
         path = safe_path(item.get("path"), findings, f"validation_evidence[{index}]")
         if path is not None and not path.is_file():
             findings.append(f"validation evidence path missing: {item.get('path')}")
-        if not isinstance(item.get("verified_head_commit"), str) or len(item.get("verified_head_commit", "")) != 40:
+        head = item.get("verified_head_commit")
+        if not isinstance(head, str) or len(head) != 40:
             findings.append(f"validation_evidence[{index}].verified_head_commit invalid")
-    for evidence_id in ("AX-PUB-CI-001", "AX-PUB-CI-002", "AX-PUB-CI-003", "AX-PUB-CI-004", "AX-PUB-CI-005", "AX-PUB-CI-006"):
+
+    for evidence_id in (
+        "AX-PUB-CI-001", "AX-PUB-CI-002", "AX-PUB-CI-003", "AX-PUB-CI-004",
+        "AX-PUB-CI-005", "AX-PUB-CI-006", "AX-PUB-CI-007",
+    ):
         if evidence_id not in evidence_by_id:
             findings.append(f"required validation evidence missing: {evidence_id}")
 
-    ci006 = evidence_by_id.get("AX-PUB-CI-006")
-    if isinstance(ci006, dict):
-        if ci006.get("version") != "1.1":
-            findings.append("AX-PUB-CI-006 evidence version must be 1.1")
-        if ci006.get("workflow_run_id") != 32150126557 or ci006.get("workflow_run_number") != 7:
-            findings.append("AX-PUB-CI-006 supply-chain workflow identity mismatch")
-        if ci006.get("governance_workflow_run_id") != 32150126711 or ci006.get("governance_workflow_run_number") != 135:
-            findings.append("AX-PUB-CI-006 governance workflow identity mismatch")
-        if ci006.get("verified_build_digest") != EXPECTED_GATE_03_DIGEST:
-            findings.append("AX-PUB-CI-006 verified build digest mismatch")
-        if ci006.get("source_date_epoch") != EXPECTED_GATE_03_EPOCH:
-            findings.append("AX-PUB-CI-006 source epoch mismatch")
-        if ci006.get("conclusion") != "SUCCESS":
-            findings.append("AX-PUB-CI-006 conclusion must be SUCCESS")
+    ci006 = evidence_by_id.get("AX-PUB-CI-006", {})
+    expect(ci006, "version", "1.1", findings, "CI006")
+    expect(ci006, "workflow_run_id", 32150126557, findings, "CI006")
+    expect(ci006, "workflow_run_number", 7, findings, "CI006")
+    expect(ci006, "governance_workflow_run_id", 32150126711, findings, "CI006")
+    expect(ci006, "governance_workflow_run_number", 135, findings, "CI006")
+    expect(ci006, "verified_build_digest", EXPECTED_GATE_03_DIGEST, findings, "CI006")
+    expect(ci006, "source_date_epoch", EXPECTED_GATE_03_EPOCH, findings, "CI006")
+    expect(ci006, "conclusion", "SUCCESS", findings, "CI006")
+
+    ci007 = evidence_by_id.get("AX-PUB-CI-007", {})
+    expect(ci007, "version", "1.0", findings, "CI007")
+    expect(ci007, "workflow_run_id", 32162256262, findings, "CI007")
+    expect(ci007, "workflow_run_number", 6, findings, "CI007")
+    expect(ci007, "governance_workflow_run_id", 32162256504, findings, "CI007")
+    expect(ci007, "governance_workflow_run_number", 145, findings, "CI007")
+    expect(ci007, "verified_runtime_matrix", EXPECTED_RUNTIMES, findings, "CI007")
+    expect(ci007, "human_external_evaluation", False, findings, "CI007")
+    expect(ci007, "external_adoption_established", False, findings, "CI007")
+    expect(ci007, "conclusion", "SUCCESS", findings, "CI007")
 
     snapshot = manifest.get("current_snapshot")
-    if not isinstance(snapshot, dict) or snapshot.get("id") != "AX-PUB-SNAP-002" or snapshot.get("version") != "1.0":
-        findings.append("current_snapshot must identify AX-PUB-SNAP-002 v1.0")
-    elif snapshot.get("anchor_commit") != "6dfdec04a4d8375bc2da0bb6a3830ff07eeb1711":
-        findings.append("current snapshot anchor mismatch")
+    if not isinstance(snapshot, dict):
+        findings.append("current_snapshot must be object")
+    else:
+        expect(snapshot, "id", "AX-PUB-SNAP-002", findings, "current_snapshot")
+        expect(snapshot, "version", "1.0", findings, "current_snapshot")
+        expect(snapshot, "anchor_commit", "6dfdec04a4d8375bc2da0bb6a3830ff07eeb1711", findings, "current_snapshot")
+        require_path(snapshot, "path", findings, "current_snapshot")
 
     release = manifest.get("current_release")
-    if not isinstance(release, dict) or release.get("id") != "AX-PUB-REL-001" or release.get("version") != "1.0":
-        findings.append("current_release must identify AX-PUB-REL-001 v1.0")
+    if not isinstance(release, dict):
+        findings.append("current_release must be object")
     else:
-        if release.get("tag") != "public-engineering-vnext-1.0":
-            findings.append("current release tag mismatch")
-        if release.get("tag_target_commit") != "4f067c9fd3d3ac065ac50b10faf1abd1bdb91bb6":
-            findings.append("current release tag target mismatch")
+        expect(release, "id", "AX-PUB-REL-001", findings, "current_release")
+        expect(release, "version", "1.0", findings, "current_release")
+        expect(release, "tag", "public-engineering-vnext-1.0", findings, "current_release")
+        expect(release, "tag_target_commit", "4f067c9fd3d3ac065ac50b10faf1abd1bdb91bb6", findings, "current_release")
+        require_path(release, "path", findings, "current_release")
 
     gate = manifest.get("current_readiness_gate")
-    if not isinstance(gate, dict) or gate.get("id") != "AX-PUB-GATE-001" or gate.get("version") != "1.0":
-        findings.append("current_readiness_gate must identify AX-PUB-GATE-001 v1.0")
+    if not isinstance(gate, dict):
+        findings.append("current_readiness_gate must be object")
     else:
-        path = safe_path(gate.get("path"), findings, "current_readiness_gate")
-        if path is not None and not path.is_file():
-            findings.append("current readiness gate path missing")
-        if gate.get("disposition") != "SDK PUBLICATION NOT AUTHORIZED":
-            findings.append("SDK readiness disposition mismatch")
+        expect(gate, "id", "AX-PUB-GATE-001", findings, "current_readiness_gate")
+        expect(gate, "version", "1.0", findings, "current_readiness_gate")
+        expect(gate, "disposition", "SDK PUBLICATION NOT AUTHORIZED", findings, "current_readiness_gate")
+        require_path(gate, "path", findings, "current_readiness_gate")
 
-    developer_program = manifest.get("current_developer_program")
-    if not isinstance(developer_program, dict) or developer_program.get("id") != "AX-PUB-DEV-001" or developer_program.get("version") != "1.0":
-        findings.append("current_developer_program must identify AX-PUB-DEV-001 v1.0")
+    program = manifest.get("current_developer_program")
+    if not isinstance(program, dict):
+        findings.append("current_developer_program must be object")
     else:
-        path = safe_path(developer_program.get("path"), findings, "current_developer_program")
-        if path is not None and not path.is_file():
-            findings.append("current developer program path missing")
-        if developer_program.get("state") != "UNDER DEVELOPMENT":
-            findings.append("developer program state mismatch")
-        if developer_program.get("closed_gate") != "DEV-GATE-03 — Supply-Chain & Release Candidate":
-            findings.append("developer program latest closed gate mismatch")
-        if developer_program.get("active_gate") != "DEV-GATE-04 — External Evaluation Readiness":
-            findings.append("developer program active gate mismatch")
-        if developer_program.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
-            findings.append("developer program SDK disposition mismatch")
+        expect(program, "id", "AX-PUB-DEV-001", findings, "current_developer_program")
+        expect(program, "version", "1.0", findings, "current_developer_program")
+        expect(program, "state", "UNDER DEVELOPMENT", findings, "current_developer_program")
+        expect(program, "closed_gate", "DEV-GATE-04 — External Evaluation Readiness", findings, "current_developer_program")
+        expect(program, "active_gate", "DEV-GATE-05 — SDK Release Decision", findings, "current_developer_program")
+        expect(program, "sdk_publication_disposition", "SDK PUBLICATION NOT AUTHORIZED", findings, "current_developer_program")
+        require_path(program, "path", findings, "current_developer_program")
 
     baseline = manifest.get("current_developer_contract_baseline")
-    if not isinstance(baseline, dict) or baseline.get("id") != "AX-PUB-DEV-002" or baseline.get("version") != "1.0":
-        findings.append("current_developer_contract_baseline must identify AX-PUB-DEV-002 v1.0")
+    if not isinstance(baseline, dict):
+        findings.append("current_developer_contract_baseline must be object")
     else:
-        if baseline.get("gate") != "DEV-GATE-00" or baseline.get("state") != "CLOSED":
-            findings.append("developer contract baseline state mismatch")
-        if baseline.get("closure_evidence") != "AX-PUB-CI-003":
-            findings.append("developer contract baseline closure evidence mismatch")
+        expect(baseline, "id", "AX-PUB-DEV-002", findings, "DEV002")
+        expect(baseline, "version", "1.0", findings, "DEV002")
+        expect(baseline, "gate", "DEV-GATE-00", findings, "DEV002")
+        expect(baseline, "state", "CLOSED", findings, "DEV002")
+        expect(baseline, "closure_evidence", "AX-PUB-CI-003", findings, "DEV002")
         for field in ("path", "machine_readable_companion"):
-            target = safe_path(baseline.get(field), findings, f"current_developer_contract_baseline.{field}")
-            if target is not None and not target.is_file():
-                findings.append(f"current developer contract baseline {field} missing")
+            require_path(baseline, field, findings, "DEV002")
 
-    developer_experience = manifest.get("current_developer_experience")
-    if not isinstance(developer_experience, dict) or developer_experience.get("id") != "AX-PUB-DEV-003" or developer_experience.get("version") != "1.0":
-        findings.append("current_developer_experience must identify AX-PUB-DEV-003 v1.0")
+    experience = manifest.get("current_developer_experience")
+    if not isinstance(experience, dict):
+        findings.append("current_developer_experience must be object")
     else:
+        expect(experience, "id", "AX-PUB-DEV-003", findings, "DEV003")
+        expect(experience, "version", "1.0", findings, "DEV003")
+        expect(experience, "gate", "DEV-GATE-01", findings, "DEV003")
+        expect(experience, "state", "CLOSED", findings, "DEV003")
+        expect(experience, "verified_runtime_matrix", EXPECTED_RUNTIMES, findings, "DEV003")
+        expect(experience, "closure_evidence", "AX-PUB-CI-004", findings, "DEV003")
         for field in ("path", "machine_readable_companion", "runner", "state_checker"):
-            target = safe_path(developer_experience.get(field), findings, f"current_developer_experience.{field}")
-            if target is not None and not target.is_file():
-                findings.append(f"current developer experience {field} missing")
-        if developer_experience.get("gate") != "DEV-GATE-01" or developer_experience.get("state") != "CLOSED":
-            findings.append("developer experience state mismatch")
-        if developer_experience.get("verified_runtime_matrix") != EXPECTED_RUNTIMES:
-            findings.append("developer experience verified runtime matrix mismatch")
-        if developer_experience.get("closure_evidence") != "AX-PUB-CI-004":
-            findings.append("developer experience closure evidence mismatch")
+            require_path(experience, field, findings, "DEV003")
 
-    sdk_candidate = manifest.get("current_sdk_candidate")
-    if not isinstance(sdk_candidate, dict) or sdk_candidate.get("id") != "AX-PUB-DEV-004" or sdk_candidate.get("version") != "1.0":
-        findings.append("current_sdk_candidate must identify AX-PUB-DEV-004 v1.0")
+    sdk = manifest.get("current_sdk_candidate")
+    if not isinstance(sdk, dict):
+        findings.append("current_sdk_candidate must be object")
     else:
+        expect(sdk, "id", "AX-PUB-DEV-004", findings, "DEV004")
+        expect(sdk, "version", "1.0", findings, "DEV004")
+        expect(sdk, "gate", "DEV-GATE-02", findings, "DEV004")
+        expect(sdk, "state", "CLOSED", findings, "DEV004")
+        expect(sdk, "candidate_version", "0.1.0-candidate", findings, "DEV004")
+        expect(sdk, "candidate_runtime_matrix", EXPECTED_RUNTIMES, findings, "DEV004")
+        expect(sdk, "verified_runtime_matrix", EXPECTED_RUNTIMES, findings, "DEV004")
+        expect(sdk, "closure_evidence", "AX-PUB-CI-005", findings, "DEV004")
+        expect(sdk, "package_identity_status", "NOT APPROVED", findings, "DEV004")
+        expect(sdk, "registry_status", "NOT AUTHORIZED", findings, "DEV004")
+        expect(sdk, "sdk_publication_disposition", "SDK PUBLICATION NOT AUTHORIZED", findings, "DEV004")
         for field in ("path", "machine_readable_companion", "candidate_module"):
-            target = safe_path(sdk_candidate.get(field), findings, f"current_sdk_candidate.{field}")
-            if target is not None and not target.is_file():
-                findings.append(f"current SDK candidate {field} missing")
-        if sdk_candidate.get("gate") != "DEV-GATE-02" or sdk_candidate.get("state") != "CLOSED":
-            findings.append("SDK candidate closed state mismatch")
-        if sdk_candidate.get("candidate_version") != "0.1.0-candidate":
-            findings.append("SDK candidate version mismatch")
-        if sdk_candidate.get("candidate_runtime_matrix") != EXPECTED_RUNTIMES:
-            findings.append("SDK candidate runtime matrix mismatch")
-        if sdk_candidate.get("verified_runtime_matrix") != EXPECTED_RUNTIMES:
-            findings.append("SDK candidate verified runtime matrix mismatch")
-        if sdk_candidate.get("closure_evidence") != "AX-PUB-CI-005":
-            findings.append("SDK candidate closure evidence mismatch")
-        if sdk_candidate.get("package_identity_status") != "NOT APPROVED":
-            findings.append("SDK package identity must remain NOT APPROVED")
-        if sdk_candidate.get("registry_status") != "NOT AUTHORIZED":
-            findings.append("SDK registry must remain NOT AUTHORIZED")
-        if sdk_candidate.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
-            findings.append("SDK candidate publication disposition mismatch")
+            require_path(sdk, field, findings, "DEV004")
 
-    supply_chain = manifest.get("current_supply_chain_release_candidate")
-    if not isinstance(supply_chain, dict) or supply_chain.get("id") != "AX-PUB-DEV-005" or supply_chain.get("version") != "1.0":
-        findings.append("current_supply_chain_release_candidate must identify AX-PUB-DEV-005 v1.0")
+    supply = manifest.get("current_supply_chain_release_candidate")
+    if not isinstance(supply, dict):
+        findings.append("current_supply_chain_release_candidate must be object")
     else:
-        for field in ("path", "machine_readable_companion"):
-            target = safe_path(supply_chain.get(field), findings, f"current_supply_chain_release_candidate.{field}")
-            if target is not None and not target.is_file():
-                findings.append(f"current supply-chain candidate {field} missing")
-        if supply_chain.get("release_candidate_id") != "AX-PUB-RC-001" or supply_chain.get("release_candidate_version") != "0.1.0-rc1":
-            findings.append("release-candidate descriptor identity mismatch")
-        if supply_chain.get("gate") != "DEV-GATE-03" or supply_chain.get("state") != "CLOSED":
-            findings.append("DEV-GATE-03 manifest state must be CLOSED")
+        expect(supply, "id", "AX-PUB-DEV-005", findings, "DEV005")
+        expect(supply, "version", "1.0", findings, "DEV005")
+        expect(supply, "gate", "DEV-GATE-03", findings, "DEV005")
+        expect(supply, "state", "CLOSED", findings, "DEV005")
+        expect(supply, "release_candidate_id", "AX-PUB-RC-001", findings, "DEV005")
+        expect(supply, "release_candidate_version", "0.1.0-rc1", findings, "DEV005")
         for field in ("deterministic_build", "build_provenance_attestation", "sbom_attestation", "extracted_bundle_validation"):
-            if supply_chain.get(field) != "VERIFIED":
-                findings.append(f"closed Gate-03 requires {field}=VERIFIED")
-        if supply_chain.get("closure_evidence") != "AX-PUB-CI-006":
-            findings.append("Gate-03 closure evidence mismatch")
-        if supply_chain.get("verified_build_digest") != EXPECTED_GATE_03_DIGEST:
-            findings.append("Gate-03 verified build digest mismatch")
-        if supply_chain.get("verified_source_date_epoch") != EXPECTED_GATE_03_EPOCH:
-            findings.append("Gate-03 verified source epoch mismatch")
-        if supply_chain.get("artifact_upload_scope") != "CI_ONLY":
-            findings.append("Gate-03 artifact upload scope must remain CI_ONLY")
-        if supply_chain.get("package_identity_status") != "NOT APPROVED":
-            findings.append("Gate-03 package identity must remain NOT APPROVED")
-        if supply_chain.get("registry_status") != "NOT AUTHORIZED":
-            findings.append("Gate-03 registry must remain NOT AUTHORIZED")
-        if supply_chain.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
-            findings.append("Gate-03 SDK publication disposition mismatch")
+            expect(supply, field, "VERIFIED", findings, "DEV005")
+        expect(supply, "closure_evidence", "AX-PUB-CI-006", findings, "DEV005")
+        expect(supply, "verified_build_digest", EXPECTED_GATE_03_DIGEST, findings, "DEV005")
+        expect(supply, "verified_source_date_epoch", EXPECTED_GATE_03_EPOCH, findings, "DEV005")
+        expect(supply, "artifact_upload_scope", "CI_ONLY", findings, "DEV005")
+        expect(supply, "package_identity_status", "NOT APPROVED", findings, "DEV005")
+        expect(supply, "registry_status", "NOT AUTHORIZED", findings, "DEV005")
+        expect(supply, "sdk_publication_disposition", "SDK PUBLICATION NOT AUTHORIZED", findings, "DEV005")
+        for field in ("path", "machine_readable_companion"):
+            require_path(supply, field, findings, "DEV005")
 
-    external_readiness = manifest.get("current_external_evaluation_readiness")
-    if not isinstance(external_readiness, dict) or external_readiness.get("id") != "AX-PUB-DEV-006" or external_readiness.get("version") != "1.0":
-        findings.append("current_external_evaluation_readiness must identify AX-PUB-DEV-006 v1.0")
+    external = manifest.get("current_external_evaluation_readiness")
+    if not isinstance(external, dict):
+        findings.append("current_external_evaluation_readiness must be object")
     else:
+        expect(external, "id", "AX-PUB-DEV-006", findings, "DEV006")
+        expect(external, "version", "1.0", findings, "DEV006")
+        expect(external, "gate", "DEV-GATE-04", findings, "DEV006")
+        expect(external, "state", "CLOSED", findings, "DEV006")
+        expect(external, "external_evaluation_readiness", "ESTABLISHED", findings, "DEV006")
+        expect(external, "external_evaluation_occurred", False, findings, "DEV006")
+        expect(external, "external_adoption_established", False, findings, "DEV006")
+        expect(external, "declared_candidate_runtime_matrix", EXPECTED_RUNTIMES, findings, "DEV006")
+        expect(external, "verified_readiness_runtime_matrix", EXPECTED_RUNTIMES, findings, "DEV006")
+        expect(external, "closure_evidence", "AX-PUB-CI-007", findings, "DEV006")
+        expect(external, "sdk_publication_disposition", "SDK PUBLICATION NOT AUTHORIZED", findings, "DEV006")
         for field in ("path", "machine_readable_companion", "runner", "report_checker", "state_checker"):
-            target = safe_path(external_readiness.get(field), findings, f"current_external_evaluation_readiness.{field}")
-            if target is not None and not target.is_file():
-                findings.append(f"current external evaluation readiness {field} missing")
-        if external_readiness.get("gate") != "DEV-GATE-04":
-            findings.append("external evaluation readiness gate mismatch")
-        if external_readiness.get("declared_candidate_runtime_matrix") != EXPECTED_RUNTIMES:
-            findings.append("external evaluation readiness runtime matrix mismatch")
-        if external_readiness.get("external_evaluation_occurred") is not False:
-            findings.append("external evaluation occurred must remain false unless separately evidenced")
-        if external_readiness.get("external_adoption_established") is not False:
-            findings.append("external adoption must remain false unless separately evidenced")
-        if external_readiness.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
-            findings.append("Gate-04 SDK publication disposition mismatch")
-        ext_state = external_readiness.get("state")
-        if ext_state == "CANDIDATE":
-            if external_readiness.get("external_evaluation_readiness") != "NOT_YET_ESTABLISHED":
-                findings.append("Gate-04 candidate readiness must be NOT_YET_ESTABLISHED")
-        elif ext_state == "CLOSED":
-            if external_readiness.get("external_evaluation_readiness") != "ESTABLISHED":
-                findings.append("Gate-04 closed readiness must be ESTABLISHED")
-            if external_readiness.get("closure_evidence") != "AX-PUB-CI-007":
-                findings.append("Gate-04 closed state requires AX-PUB-CI-007")
-            if "AX-PUB-CI-007" not in evidence_by_id:
-                findings.append("Gate-04 closed state requires AX-PUB-CI-007 validation evidence")
-        else:
-            findings.append("Gate-04 state must be CANDIDATE or CLOSED")
+            require_path(external, field, findings, "DEV006")
 
-    dev005 = load_json(ROOT / "artifacts" / "AX-PUB-DEV-005.json", findings)
+    dev005 = load_json(ROOT / "artifacts/AX-PUB-DEV-005.json", findings)
     if dev005 is not None:
-        if dev005.get("state") != "DEV-GATE-03_CLOSED" or dev005.get("release_candidate_established") is not True:
-            findings.append("AX-PUB-DEV-005 machine-readable state must be closed/established")
-        if dev005.get("verified_build_digest") != EXPECTED_GATE_03_DIGEST:
-            findings.append("AX-PUB-DEV-005 digest mismatch")
-        if dev005.get("verified_source_date_epoch") != EXPECTED_GATE_03_EPOCH:
-            findings.append("AX-PUB-DEV-005 source epoch mismatch")
+        expect(dev005, "state", "DEV-GATE-03_CLOSED", findings, "AX-PUB-DEV-005.json")
+        expect(dev005, "release_candidate_established", True, findings, "AX-PUB-DEV-005.json")
+        expect(dev005, "verified_build_digest", EXPECTED_GATE_03_DIGEST, findings, "AX-PUB-DEV-005.json")
+        expect(dev005, "verified_source_date_epoch", EXPECTED_GATE_03_EPOCH, findings, "AX-PUB-DEV-005.json")
         closure = dev005.get("closure_evidence")
         if not isinstance(closure, dict) or closure.get("id") != "AX-PUB-CI-006" or closure.get("version") != "1.1":
-            findings.append("AX-PUB-DEV-005 closure evidence must be AX-PUB-CI-006 v1.1")
-        if dev005.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
-            findings.append("AX-PUB-DEV-005 publication boundary mismatch")
+            findings.append("AX-PUB-DEV-005.json closure evidence must be AX-PUB-CI-006 v1.1")
+        expect(dev005, "sdk_publication_disposition", "SDK PUBLICATION NOT AUTHORIZED", findings, "AX-PUB-DEV-005.json")
 
-    dev006 = load_json(ROOT / "artifacts" / "AX-PUB-DEV-006.json", findings)
+    dev006 = load_json(ROOT / "artifacts/AX-PUB-DEV-006.json", findings)
     if dev006 is not None:
-        if dev006.get("artifact_id") != "AX-PUB-DEV-006" or dev006.get("version") != "1.0":
-            findings.append("AX-PUB-DEV-006 descriptor identity mismatch")
-        if dev006.get("gate") != "DEV-GATE-04":
-            findings.append("AX-PUB-DEV-006 gate mismatch")
-        if dev006.get("sdk_publication") != "NOT_AUTHORIZED":
-            findings.append("AX-PUB-DEV-006 SDK publication boundary mismatch")
-        if dev006.get("external_evaluation_occurred") is not False:
-            findings.append("AX-PUB-DEV-006 external evaluation claim boundary mismatch")
-        if dev006.get("external_adoption_established") is not False:
-            findings.append("AX-PUB-DEV-006 external adoption boundary mismatch")
-        if dev006.get("supported_sdk_established") is not False:
-            findings.append("AX-PUB-DEV-006 supported SDK boundary mismatch")
-        if dev006.get("declared_candidate_runtime_matrix") != EXPECTED_RUNTIMES:
-            findings.append("AX-PUB-DEV-006 runtime matrix mismatch")
-        if dev006.get("state") == "CANDIDATE":
-            if dev006.get("external_evaluation_readiness") != "NOT_YET_ESTABLISHED":
-                findings.append("AX-PUB-DEV-006 candidate readiness mismatch")
-        elif dev006.get("state") == "CLOSED":
-            if dev006.get("external_evaluation_readiness") != "ESTABLISHED":
-                findings.append("AX-PUB-DEV-006 closed readiness mismatch")
-        else:
-            findings.append("AX-PUB-DEV-006 state must be CANDIDATE or CLOSED")
+        expect(dev006, "artifact_id", "AX-PUB-DEV-006", findings, "AX-PUB-DEV-006.json")
+        expect(dev006, "version", "1.0", findings, "AX-PUB-DEV-006.json")
+        expect(dev006, "gate", "DEV-GATE-04", findings, "AX-PUB-DEV-006.json")
+        expect(dev006, "state", "CLOSED", findings, "AX-PUB-DEV-006.json")
+        expect(dev006, "external_evaluation_readiness", "ESTABLISHED", findings, "AX-PUB-DEV-006.json")
+        expect(dev006, "external_evaluation_occurred", False, findings, "AX-PUB-DEV-006.json")
+        expect(dev006, "external_adoption_established", False, findings, "AX-PUB-DEV-006.json")
+        expect(dev006, "supported_sdk_established", False, findings, "AX-PUB-DEV-006.json")
+        expect(dev006, "package_identity_approved", False, findings, "AX-PUB-DEV-006.json")
+        expect(dev006, "package_registry_authorized", False, findings, "AX-PUB-DEV-006.json")
+        expect(dev006, "public_sdk_licence_decided", False, findings, "AX-PUB-DEV-006.json")
+        expect(dev006, "declared_candidate_runtime_matrix", EXPECTED_RUNTIMES, findings, "AX-PUB-DEV-006.json")
+        expect(dev006, "verified_readiness_runtime_matrix", EXPECTED_RUNTIMES, findings, "AX-PUB-DEV-006.json")
+        closure = dev006.get("closure_evidence")
+        if not isinstance(closure, dict) or closure.get("id") != "AX-PUB-CI-007" or closure.get("version") != "1.0":
+            findings.append("AX-PUB-DEV-006.json closure evidence must be AX-PUB-CI-007 v1.0")
+        expect(dev006, "next_gate", "DEV-GATE-05 — SDK Release Decision", findings, "AX-PUB-DEV-006.json")
+        expect(dev006, "sdk_publication", "NOT_AUTHORIZED", findings, "AX-PUB-DEV-006.json")
 
-    rc = load_json(ROOT / "release-candidate" / "AX-PUB-RC-001.json", findings)
+    rc = load_json(ROOT / "release-candidate/AX-PUB-RC-001.json", findings)
     if rc is not None:
-        if rc.get("artifact_id") != "AX-PUB-RC-001" or rc.get("version") != "0.1.0-rc1":
-            findings.append("AX-PUB-RC-001 descriptor identity mismatch")
-        if rc.get("state") != "DEV-GATE-03_VALIDATED" or rc.get("release_candidate_established") is not True:
-            findings.append("AX-PUB-RC-001 must be validated/established after Gate-03 closure")
-        if rc.get("verified_build_digest") != EXPECTED_GATE_03_DIGEST:
-            findings.append("AX-PUB-RC-001 verified digest mismatch")
-        if rc.get("verified_source_date_epoch") != EXPECTED_GATE_03_EPOCH:
-            findings.append("AX-PUB-RC-001 verified source epoch mismatch")
+        expect(rc, "artifact_id", "AX-PUB-RC-001", findings, "AX-PUB-RC-001")
+        expect(rc, "version", "0.1.0-rc1", findings, "AX-PUB-RC-001")
+        expect(rc, "state", "DEV-GATE-03_VALIDATED", findings, "AX-PUB-RC-001")
+        expect(rc, "release_candidate_established", True, findings, "AX-PUB-RC-001")
+        expect(rc, "verified_build_digest", EXPECTED_GATE_03_DIGEST, findings, "AX-PUB-RC-001")
+        expect(rc, "verified_source_date_epoch", EXPECTED_GATE_03_EPOCH, findings, "AX-PUB-RC-001")
         closure = rc.get("closure_evidence")
         if not isinstance(closure, dict) or closure.get("id") != "AX-PUB-CI-006" or closure.get("version") != "1.1":
             findings.append("AX-PUB-RC-001 closure evidence must be AX-PUB-CI-006 v1.1")
-        if rc.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
-            findings.append("AX-PUB-RC-001 publication boundary mismatch")
+        expect(rc, "sdk_publication_disposition", "SDK PUBLICATION NOT AUTHORIZED", findings, "AX-PUB-RC-001")
 
-    if not isinstance(manifest.get("claim_boundary"), list) or not manifest.get("claim_boundary"):
+    boundaries = manifest.get("claim_boundary")
+    if not isinstance(boundaries, list) or not boundaries:
         findings.append("claim_boundary must be non-empty array")
+    else:
+        missing_boundaries = REQUIRED_CLAIM_BOUNDARIES - set(boundaries)
+        for item in sorted(missing_boundaries):
+            findings.append(f"required claim boundary missing: {item}")
 
     if findings:
         return fail(findings)
-    print("AX_PUBLIC_ARTIFACT_MANIFEST_PASS")
+
+    print(
+        "AX_PUBLIC_ARTIFACT_MANIFEST_PASS "
+        f"manifest={manifest['manifest_version']} closed_gate=DEV-GATE-04 "
+        "active_gate=DEV-GATE-05 sdk_publication=NOT_AUTHORIZED"
+    )
     return 0
 
 
