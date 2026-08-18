@@ -23,7 +23,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-ROOT = Path(__file__).resolve().parents[1]
 PROJECT = "aetherxglobal-governed-intelligence"
 VERSION = "0.1.0rc1"
 IMPORT = "aetherxglobal.governed_intelligence"
@@ -34,6 +33,7 @@ SDIST_SHA256 = "2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99
 REPORT_FORMAT = "AX-PUB-DIST-REPORT-001"
 REPORT_VERSION = "1.0"
 VERIFIED_PYTHON = {"3.11", "3.12", "3.13", "3.14"}
+EXPECTED_CONTRACTS = ["AX-PUB-SPEC-002", "AX-PUB-SPEC-003", "AX-PUB-SPEC-004"]
 
 
 def sha256(path: Path) -> str:
@@ -137,9 +137,10 @@ def validate(dist_dir: Path) -> dict[str, Any]:
                 f"import {IMPORT} as sdk; "
                 f"assert m.version('{PROJECT}') == '{VERSION}'; "
                 "contracts=sdk.supported_contracts(); "
-                "assert tuple(contracts)==('AX-PUB-SPEC-002','AX-PUB-SPEC-003','AX-PUB-SPEC-004'); "
+                "ids=[item['contract_id'] for item in contracts]; "
+                f"assert ids=={EXPECTED_CONTRACTS!r}; "
                 "assert getattr(sdk,'SDK_VERSION')=='0.1.0rc1'; "
-                "print(json.dumps({'version':m.version('aetherxglobal-governed-intelligence'),'contracts':list(contracts),'sdk_version':sdk.SDK_VERSION}, sort_keys=True))"
+                "print(json.dumps({'version':m.version('aetherxglobal-governed-intelligence'),'contract_ids':ids,'sdk_version':sdk.SDK_VERSION}, sort_keys=True))"
             )
             verify = run([str(vpython), "-c", verify_code], cwd=outside, env=env)
         finally:
