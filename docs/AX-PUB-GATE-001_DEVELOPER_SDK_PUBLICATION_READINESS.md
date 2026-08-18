@@ -234,3 +234,4 @@ This gate is a public engineering control for future publication decisions, not 
 ---
 
 **AETHER X GLOBAL — Institutional Intelligence. Governed Autonomy.**
+
