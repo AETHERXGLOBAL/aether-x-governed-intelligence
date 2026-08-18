@@ -208,7 +208,7 @@ def main() -> int:
             "DEV-GATE-02: CLOSED",
             "SDK CANDIDATE: ESTABLISHED",
             "AX-PUB-CI-005",
-            "DEV-GATE-03 — Supply-Chain & Release Candidate",
+            "CURRENT ENGINEERING OBJECTIVE: DEV-GATE-03",
         ),
         findings,
     )
