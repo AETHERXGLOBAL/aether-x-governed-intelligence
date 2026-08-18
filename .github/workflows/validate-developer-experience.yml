@@ -79,8 +79,8 @@ jobs:
           expected = '.'.join(sys.version.split()[0].split('.')[:2])
           observed = f"{report['runtime']['major']}.{report['runtime']['minor']}"
           assert report['status'] == 'PASS', report
-          assert report['check_count'] == 8, report
-          assert report['conforming_checks'] == 8, report
+          assert report['check_count'] == 9, report
+          assert report['conforming_checks'] == 9, report
           assert report['runtime']['declared_candidate_runtime'] is True, report
           assert observed == expected, (observed, expected)
           print(f"AX_DEVELOPER_EXPERIENCE_JSON_PASS python={observed}")
