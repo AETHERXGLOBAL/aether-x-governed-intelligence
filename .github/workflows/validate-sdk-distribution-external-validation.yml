@@ -1,0 +1,120 @@
+name: Validate SDK Distribution & External Validation Baseline
+
+on:
+  pull_request:
+    paths:
+      - 'artifacts/AX-PUB-DEV-009.json'
+      - 'docs/AX-PUB-DEV-009_DISTRIBUTION_EXTERNAL_VALIDATION_BASELINE.md'
+      - 'docs/INSTALLABLE_EXTERNAL_EVALUATOR_GUIDE.md'
+      - 'examples/external-evaluation/AX-PUB-EVAL-REPORT-002.template.json'
+      - 'tools/run_sdk_local_index_validation.py'
+      - 'tools/run_gate05c_ci.py'
+      - 'tools/check_sdk_distribution_external_validation.py'
+      - 'tools/check_installable_external_evaluation_report.py'
+      - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - '.github/workflows/validate-sdk-distribution-external-validation.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'artifacts/AX-PUB-DEV-009.json'
+      - 'docs/AX-PUB-DEV-009_DISTRIBUTION_EXTERNAL_VALIDATION_BASELINE.md'
+      - 'docs/INSTALLABLE_EXTERNAL_EVALUATOR_GUIDE.md'
+      - 'examples/external-evaluation/AX-PUB-EVAL-REPORT-002.template.json'
+      - 'tools/run_sdk_local_index_validation.py'
+      - 'tools/run_gate05c_ci.py'
+      - 'tools/check_sdk_distribution_external_validation.py'
+      - 'tools/check_installable_external_evaluation_report.py'
+      - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - '.github/workflows/validate-sdk-distribution-external-validation.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sdk-distribution-external-validation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-distribution-baseline:
+    name: Local index distribution / CPython 3.11-3.14
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PIP_DISABLE_PIP_VERSION_CHECK: '1'
+      PIP_NO_CACHE_DIR: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+      SOURCE_DATE_EPOCH: '1787076737'
+
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+
+      - name: Set up CPython 3.11
+        id: py311
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.11'
+
+      - name: Set up CPython 3.12
+        id: py312
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.12'
+
+      - name: Set up CPython 3.13
+        id: py313
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.13'
+
+      - name: Set up CPython 3.14
+        id: py314
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.14'
+
+      - name: Bootstrap or run full Gate-05C engineering validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          py='${{ steps.py314.outputs.python-path }}'
+          if [[ ! -f artifacts/AX-PUB-DEV-009.json ]]; then
+            "$py" - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('artifacts/AX-PUB-DEV-007.json').read_text())
+          phases=d['gate_05_phases']
+          assert phases['DEV-GATE-05B']=='CLOSED'
+          assert phases['DEV-GATE-05C']=='ACTIVE_ENGINEERING_OBJECTIVE'
+          assert phases['DEV-GATE-05D']=='NOT_AUTHORIZED'
+          assert d['release_authorized'] is False
+          assert d['publication_disposition']=='SDK PUBLICATION NOT AUTHORIZED'
+          print('AX_DEV_GATE_05C_CI_BOOTSTRAP_PASS state=PRE_BASELINE')
+          PY
+            exit 0
+          fi
+
+          "$py" -m py_compile tools/run_gate05c_ci.py
+          "$py" tools/run_gate05c_ci.py \
+            --py311 '${{ steps.py311.outputs.python-path }}' \
+            --py312 '${{ steps.py312.outputs.python-path }}' \
+            --py313 '${{ steps.py313.outputs.python-path }}' \
+            --py314 '${{ steps.py314.outputs.python-path }}'
+
+      - name: Preserve local-index reports as short-lived CI evidence
+        if: ${{ hashFiles('gate05c-reports/*.json') != '' }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: ax-pub-dev-009-local-index-${{ github.sha }}
+          path: gate05c-reports/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Explicit authority boundary
+        run: |
+          echo 'TESTPYPI UPLOAD NOT AUTHORIZED'
+          echo 'PYPI UPLOAD NOT AUTHORIZED'
+          echo 'HUMAN EXTERNAL EVALUATION NOT ESTABLISHED BY CI'
+          echo 'SDK PUBLICATION NOT AUTHORIZED'
