@@ -39,19 +39,20 @@ Current program state:
 
 ```text
 PROGRAM: ACTIVE / UNDER DEVELOPMENT
-CURRENT GATE: DEV-GATE-00 — Contract Baseline
+DEV-GATE-00: CLOSED
+CURRENT ENGINEERING OBJECTIVE: DEV-GATE-01 — Reproducible Developer Experience
 SDK CANDIDATE: NOT YET ESTABLISHED
 PUBLIC SDK: NOT PUBLISHED
 ```
 
-The program defines the governed path from inspectable public engineering toward a reproducible developer contract, bounded SDK candidate, supply-chain evidence, external evaluation readiness and a later explicit SDK release decision.
+The program defines the governed path from inspectable public engineering toward a reproducible developer experience, bounded SDK candidate, supply-chain evidence, external evaluation readiness and a later explicit SDK release decision.
 
 **[AX-PUB-DEV-002 — Developer Contract Baseline](./docs/AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md)**  
-`DEV-GATE-00 CANDIDATE · SDK PUBLICATION NOT AUTHORIZED`
+`DEV-GATE-00 CLOSED · PUBLIC DEVELOPER CONTRACT BASELINE ESTABLISHED · SDK PUBLICATION NOT AUTHORIZED`
 
-The baseline establishes the initial developer problem, canonical contract inventory, non-goals, semantic error taxonomy, compatibility rules, fail-closed behavior and public/private dependency boundary. Its machine-readable companion is [`artifacts/AX-PUB-DEV-002.json`](./artifacts/AX-PUB-DEV-002.json).
+The baseline establishes the initial developer problem, canonical contract inventory, non-goals, semantic error taxonomy, compatibility rules, fail-closed behavior and public/private dependency boundary. Its machine-readable companion is [`artifacts/AX-PUB-DEV-002.json`](./artifacts/AX-PUB-DEV-002.json), with candidate-validation evidence recorded in [`AX-PUB-CI-003`](./evidence/AX-PUB-CI-003_DEVELOPER_CONTRACT_BASELINE_VALIDATION.md).
 
-`DEVELOPER ADOPTION PROGRAM ≠ SDK RELEASE`  
+`DEV-GATE-00 CLOSED ≠ SDK CANDIDATE`  
 `DEVELOPER CONTRACT BASELINE ≠ SUPPORTED SDK`
 
 ### Formal Public Engineering Release
@@ -82,10 +83,11 @@ The repository publishes reference engineering, not a supported SDK. The gate re
 
 Current moving public governance:
 
-- **[AX-PUB-MANIFEST-001 v1.9](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state including release, readiness-gate, developer-program and developer-contract-baseline registration.
+- **[AX-PUB-MANIFEST-001 v1.10](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state including developer-program and closed DEV-GATE-00 contract-baseline registration.
 - **[AX-PUB-POL-001 v1.6](./docs/COMPATIBILITY_AND_VERSIONING.md)** — compatibility, snapshot, release and publication-readiness semantics.
 - **[AX-PUB-CI-001](./evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md)** — verified agent-authority schema/reference/conformance CI evidence.
 - **[AX-PUB-CI-002](./evidence/AX-PUB-CI-002_VNEXT_SNAPSHOT_VALIDATION.md)** — verified vNext snapshot and manifest closure evidence.
+- **[AX-PUB-CI-003](./evidence/AX-PUB-CI-003_DEVELOPER_CONTRACT_BASELINE_VALIDATION.md)** — verified DEV-GATE-00 candidate-validation evidence.
 - **[AX-PUB-SNAP-002](./snapshots/AX-PUB-SNAP-002_GOVERNED_INTELLIGENCE_PUBLIC_VNEXT.md)** — current fixed `CI-VALIDATED` vNext reproducibility snapshot.
 - **[AX-PUB-SNAP-001](./snapshots/AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md)** — historical reproducibility snapshot.
 
@@ -106,8 +108,8 @@ Current moving public governance:
 | `AX-PUB-TEST-001` | [Governed Intelligence Conformance Test Kit](./conformance/AX-PUB-TEST-001/README.md) | `REPRODUCIBLY VERIFIED · CI RUN UNVERIFIED · NON-PRODUCTION` |
 | `AX-PUB-TEST-002` | [Agent Authority Conformance Test Kit](./conformance/AX-PUB-TEST-002/README.md) | `CI-TESTED · NON-PRODUCTION` |
 | `AX-PUB-GATE-001` | [Developer SDK Publication Readiness Gate](./docs/AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md) | `ACTIVE · SDK PUBLICATION NOT AUTHORIZED` |
-| `AX-PUB-DEV-001` | [Developer Adoption & SDK Readiness Program](./docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md) | `UNDER DEVELOPMENT · SDK PUBLICATION NOT AUTHORIZED` |
-| `AX-PUB-DEV-002` | [Developer Contract Baseline](./docs/AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md) | `DEV-GATE-00 CANDIDATE · SDK PUBLICATION NOT AUTHORIZED` |
+| `AX-PUB-DEV-001` | [Developer Adoption & SDK Readiness Program](./docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md) | `UNDER DEVELOPMENT · DEV-GATE-00 CLOSED · SDK PUBLICATION NOT AUTHORIZED` |
+| `AX-PUB-DEV-002` | [Developer Contract Baseline](./docs/AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md) | `DEV-GATE-00 CLOSED · PUBLIC DEVELOPER CONTRACT BASELINE ESTABLISHED` |
 
 ## Three Public Evidence Paths
 
@@ -117,7 +119,7 @@ AX-PUB-SPEC-003 → AX-PUB-SCHEMA-002 → AX-PUB-REF-002 → AX-PUB-TEST-001
 AX-PUB-SPEC-004 → AX-PUB-SCHEMA-003 → AX-PUB-REF-003 → AX-PUB-TEST-002
 ```
 
-The third path has direct GitHub Actions evidence recorded by `AX-PUB-CI-001`. The vNext reproducibility state is independently validated and recorded by `AX-PUB-CI-002`.
+The third path has direct GitHub Actions evidence recorded by `AX-PUB-CI-001`. The vNext reproducibility state is independently validated and recorded by `AX-PUB-CI-002`. The developer contract baseline candidate-validation evidence is recorded by `AX-PUB-CI-003`.
 
 ```text
 PUBLIC ENGINEERING vNext
@@ -162,6 +164,7 @@ Publication here does **not** establish or imply product implementation, a share
 `PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`  
 `PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`  
 `DEVELOPER ADOPTION PROGRAM ≠ SDK RELEASE`  
+`DEV-GATE-00 CLOSED ≠ SDK CANDIDATE`  
 `DEVELOPER CONTRACT BASELINE ≠ SUPPORTED SDK`  
 `PUBLIC VISIBILITY ≠ OPEN-SOURCE LICENCE`
 
