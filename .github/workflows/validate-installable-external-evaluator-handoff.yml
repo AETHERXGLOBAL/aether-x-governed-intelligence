@@ -6,8 +6,10 @@ on:
       - 'artifacts/AX-PUB-EVAL-PACK-001.json'
       - 'docs/INSTALLABLE_EXTERNAL_EVALUATOR_GUIDE.md'
       - 'examples/external-evaluation/AX-PUB-EVAL-REPORT-002.template.json'
+      - 'evidence/AX-PUB-CI-014_INSTALLABLE_EXTERNAL_EVALUATOR_HANDOFF_VALIDATION.md'
       - 'tools/build_installable_evaluator_handoff.py'
       - 'tools/check_installable_evaluator_handoff.py'
+      - 'tools/check_installable_evaluator_handoff_evidence.py'
       - 'tools/check_installable_external_evaluation_report.py'
       - 'tools/run_installable_evaluator_handoff_ci.py'
       - 'artifacts/AX-PUB-API-001.json'
@@ -23,8 +25,10 @@ on:
       - 'artifacts/AX-PUB-EVAL-PACK-001.json'
       - 'docs/INSTALLABLE_EXTERNAL_EVALUATOR_GUIDE.md'
       - 'examples/external-evaluation/AX-PUB-EVAL-REPORT-002.template.json'
+      - 'evidence/AX-PUB-CI-014_INSTALLABLE_EXTERNAL_EVALUATOR_HANDOFF_VALIDATION.md'
       - 'tools/build_installable_evaluator_handoff.py'
       - 'tools/check_installable_evaluator_handoff.py'
+      - 'tools/check_installable_evaluator_handoff_evidence.py'
       - 'tools/check_installable_external_evaluation_report.py'
       - 'tools/run_installable_evaluator_handoff_ci.py'
       - 'artifacts/AX-PUB-API-001.json'
@@ -86,6 +90,12 @@ jobs:
             --py312 '${{ steps.py312.outputs.python-path }}' \
             --py313 '${{ steps.py313.outputs.python-path }}' \
             --py314 '${{ steps.py314.outputs.python-path }}'
+
+      - name: Validate AX-PUB-CI-014 evidence when present
+        if: ${{ hashFiles('evidence/AX-PUB-CI-014_INSTALLABLE_EXTERNAL_EVALUATOR_HANDOFF_VALIDATION.md') != '' }}
+        run: |
+          '${{ steps.py314.outputs.python-path }}' -m py_compile tools/check_installable_evaluator_handoff_evidence.py
+          '${{ steps.py314.outputs.python-path }}' tools/check_installable_evaluator_handoff_evidence.py
 
       - name: Preserve deterministic handoff as short-lived CI evidence
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
