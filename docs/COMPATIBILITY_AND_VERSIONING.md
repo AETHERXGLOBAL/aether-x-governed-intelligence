@@ -1,15 +1,15 @@
 # AETHER X Public Artifact Compatibility & Versioning Policy
 
 **Policy ID:** `AX-PUB-POL-001`  
-**Version:** `1.5`  
+**Version:** `1.6`  
 **Status:** `PUBLIC ENGINEERING POLICY · ACTIVE FOR THIS REPOSITORY`  
 **Scope:** `AETHERXGLOBAL/aether-x-governed-intelligence`
 
 ## 1. Purpose
 
-This policy defines how public AETHER X governed-intelligence artifacts are identified, versioned, related, validated, snapshotted and released inside this repository.
+This policy defines how public AETHER X governed-intelligence artifacts are identified, versioned, related, validated, snapshotted, released and promoted toward supported developer surfaces inside this repository.
 
-It applies to public reference architecture, specifications, machine-readable schemas, non-production reference implementations, public conformance artifacts, CI evidence records, reproducibility snapshots and public engineering release records.
+It applies to public reference architecture, specifications, machine-readable schemas, non-production reference implementations, public conformance artifacts, CI evidence records, reproducibility snapshots, public engineering release records and publication-readiness gates.
 
 It is **not** a product-release, SDK-compatibility or production-API policy.
 
@@ -26,6 +26,7 @@ AX-PUB-TEST-001
 AX-PUB-CI-001
 AX-PUB-SNAP-001
 AX-PUB-REL-001
+AX-PUB-GATE-001
 ```
 
 The artifact ID identifies the public artifact family. The version identifies a published revision within that family.
@@ -53,7 +54,7 @@ Increase `MINOR` for additive or clarifying changes intended to preserve prior c
 - new validation for already-declared behavior;
 - new independently identified public artifacts;
 - new public evidence records;
-- new snapshots or release records;
+- new snapshots, release records or readiness gates;
 - documentation or metadata changes that alter the published current-state description.
 
 A version increment does not establish product adoption or implementation by any AETHER X initiative.
@@ -129,6 +130,9 @@ Preserves a fixed commit-anchored public-review state with recorded Git object i
 ### Public Engineering Release Record
 Preserves the identity of an intentionally published Git tag / GitHub Release and separates that publication event from product-release semantics.
 
+### Publication Readiness Gate
+Defines evidence and authority conditions that must be satisfied before a new supported public developer surface is represented as approved for publication.
+
 Therefore:
 
 `SCHEMA VALID ≠ SEMANTICALLY VALID`  
@@ -136,7 +140,8 @@ Therefore:
 `CONFORMANCE PASS ≠ PRODUCT IMPLEMENTATION`  
 `PUBLIC CI PASS ≠ PRODUCT IMPLEMENTATION`  
 `PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`  
-`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`
+`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`  
+`PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`
 
 ## 7. Change Discipline
 
@@ -149,8 +154,9 @@ A material public change should preserve a traceable answer to:
 5. Were examples/tests updated where applicable?
 6. What public validation or reproducible evidence applies?
 7. Does the change alter a public claim boundary?
+8. Does the change create a new support, compatibility, licensing or publication commitment?
 
-Changes should fail closed when artifact paths, versions, declared relationships, evidence references, snapshot references or release references become internally inconsistent.
+Changes should fail closed when artifact paths, versions, declared relationships, evidence references, snapshot references, release references or readiness-gate references become internally inconsistent.
 
 A public workflow MUST NOT be represented as a successfully verified CI run unless the run itself is directly evidenced.
 
@@ -211,17 +217,41 @@ A public engineering release does **not** establish a product release, productio
 
 `PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`
 
-## 10. Snapshot & Release Immutability
+## 10. Developer SDK Publication Readiness
+
+The current public SDK publication gate is:
+
+[`AX-PUB-GATE-001 — Developer SDK Publication Readiness Gate`](./AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md)
+
+Current disposition:
+
+```text
+SDK PUBLICATION: NOT AUTHORIZED
+```
+
+This disposition applies only to the public repository and does not describe private product maturity.
+
+An official supported SDK must not be inferred from reference implementations, machine-readable schemas, conformance evidence, CI results or a public engineering release.
+
+Promotion to an SDK publication state requires explicit evidence and authority across the gate dimensions, including licence/IP terms, interface compatibility, package identity/distribution, security/credential boundaries, failure semantics, SDK-specific conformance, supply-chain controls, documentation and maintenance/support commitments.
+
+`PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`  
+`PUBLIC ENGINEERING RELEASE ≠ SDK RELEASE`  
+`SDK READINESS GATE ≠ SDK COMMITMENT`
+
+## 11. Snapshot, Release & Gate Immutability
 
 A published snapshot must not be silently redefined. A later public state uses a new snapshot identifier or version.
 
 A published release tag must not be silently moved to a different commit. A later public engineering release should use a new tag and release identity.
 
+A readiness gate state must not be promoted without the evidence and authority required by the gate. A later change to the gate itself must remain version-traceable.
+
 The publication of `AX-PUB-SNAP-002` does not alter the historical contents or meaning of `AX-PUB-SNAP-001`.
 
-## 11. No Product Adoption Inference
+## 12. No Product Adoption Inference
 
-A public artifact relationship, CI result, conformance result, snapshot or public engineering release does **not** establish:
+A public artifact relationship, CI result, conformance result, snapshot, public engineering release or readiness gate does **not** establish:
 
 - implementation by AETHER X Quantum, AX-OS, AIC or AETHER X Research;
 - a shared company-wide runtime, agent framework, authorization plane or data model;
@@ -235,13 +265,14 @@ Product adoption requires separate implementation evidence and explicit disclosu
 `PUBLIC COMPATIBILITY ≠ PRODUCT INTEGRATION`  
 `PUBLIC CONFORMANCE ≠ PRODUCT IMPLEMENTATION`  
 `PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`  
-`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`
+`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`  
+`SDK READINESS GATE ≠ SDK COMMITMENT`
 
-## 12. Current Public Compatibility Set
+## 13. Current Public Compatibility Set
 
 The authoritative moving compatibility list is the machine-readable artifact manifest.
 
-At policy version `1.5`, the current public paths are:
+At policy version `1.6`, the current public paths are:
 
 ```text
 AX-PUB-ARCH-001 v1.0
@@ -262,7 +293,7 @@ AX-PUB-SPEC-004 v1.0
 → AX-PUB-TEST-002 v1.0
 ```
 
-The current fixed technical-review state is preserved by `AX-PUB-SNAP-002`. The formal public engineering publication is recorded by `AX-PUB-REL-001` and tag `public-engineering-vnext-1.0`.
+The current fixed technical-review state is preserved by `AX-PUB-SNAP-002`. The formal public engineering publication is recorded by `AX-PUB-REL-001` and tag `public-engineering-vnext-1.0`. Future supported SDK publication is governed separately by `AX-PUB-GATE-001` and is currently **not authorized**.
 
 ---
 
