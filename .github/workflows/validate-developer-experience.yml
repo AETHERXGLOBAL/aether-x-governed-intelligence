@@ -1,0 +1,93 @@
+name: Validate Developer Experience
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/QUICKSTART.md'
+      - 'docs/AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md'
+      - 'docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md'
+      - 'artifacts/AX-PUB-DEV-002.json'
+      - 'artifacts/AX-PUB-DEV-003.json'
+      - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'reference-implementations/**'
+      - 'conformance/**'
+      - 'tools/check_developer_experience.py'
+      - 'tools/check_developer_contract_baseline.py'
+      - 'tools/check_public_conformance_boundary.py'
+      - '.github/workflows/validate-developer-experience.yml'
+  pull_request:
+    paths:
+      - 'docs/QUICKSTART.md'
+      - 'docs/AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md'
+      - 'docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md'
+      - 'artifacts/AX-PUB-DEV-002.json'
+      - 'artifacts/AX-PUB-DEV-003.json'
+      - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'reference-implementations/**'
+      - 'conformance/**'
+      - 'tools/check_developer_experience.py'
+      - 'tools/check_developer_contract_baseline.py'
+      - 'tools/check_public_conformance_boundary.py'
+      - '.github/workflows/validate-developer-experience.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  clean-environment-developer-experience:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.11', '3.12', '3.13']
+
+    steps:
+      - name: Checkout public repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Confirm runtime
+        run: python --version
+
+      - name: Parse Gate-01 machine-readable state
+        run: python -m json.tool artifacts/AX-PUB-DEV-003.json > /dev/null
+
+      - name: Compile public developer checks
+        run: |
+          python -m py_compile tools/check_developer_experience.py
+          python -m py_compile tools/check_developer_contract_baseline.py
+          python -m py_compile tools/check_public_conformance_boundary.py
+
+      - name: Validate clean-environment developer experience
+        run: python tools/check_developer_experience.py
+
+      - name: Validate machine-readable developer experience report
+        run: |
+          python tools/check_developer_experience.py --json > /tmp/ax-devex.json
+          python - <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+          report = json.loads(Path('/tmp/ax-devex.json').read_text())
+          expected = '.'.join(sys.version.split()[0].split('.')[:2])
+          observed = f"{report['runtime']['major']}.{report['runtime']['minor']}"
+          assert report['status'] == 'PASS', report
+          assert report['check_count'] == 8, report
+          assert report['conforming_checks'] == 8, report
+          assert report['runtime']['declared_candidate_runtime'] is True, report
+          assert observed == expected, (observed, expected)
+          print(f"AX_DEVELOPER_EXPERIENCE_JSON_PASS python={observed}")
+          PY
+
+      - name: Re-validate closed contract baseline
+        run: python tools/check_developer_contract_baseline.py
+
+      - name: Re-validate public-only boundary
+        run: python tools/check_public_conformance_boundary.py
