@@ -2,11 +2,12 @@
 
 **Artifact ID:** `AX-PUB-DEV-002`  
 **Version:** `1.0`  
-**Status:** `PUBLIC DEVELOPER CONTRACT BASELINE · DEV-GATE-00 CANDIDATE · SDK PUBLICATION NOT AUTHORIZED`  
+**Status:** `PUBLIC DEVELOPER CONTRACT BASELINE · DEV-GATE-00 CLOSED · SDK PUBLICATION NOT AUTHORIZED`  
 **Scope:** `AETHERXGLOBAL/aether-x-governed-intelligence`  
 **Program:** `AX-PUB-DEV-001`  
 **Governing publication gate:** `AX-PUB-GATE-001`  
-**Machine-readable companion:** `artifacts/AX-PUB-DEV-002.json`
+**Machine-readable companion:** `artifacts/AX-PUB-DEV-002.json`  
+**Closure evidence:** `AX-PUB-CI-003`
 
 ## 1. Purpose
 
@@ -32,7 +33,7 @@ This baseline does not publish an SDK, package, production API, support commitme
 
 ## 2. Developer Problem Definition
 
-The public engineering repository currently contains specifications, schemas, reference validators and conformance kits that can be inspected and reproduced. The developer-adoption problem is to make the supported public meaning of those artifacts explicit enough that an external engineer can build a compatible implementation without relying on private AETHER X knowledge.
+The public engineering repository contains specifications, schemas, reference validators and conformance kits that can be inspected and reproduced. The developer-adoption problem is to make the public meaning of those artifacts explicit enough that an external engineer can build a compatible implementation without relying on private AETHER X knowledge.
 
 The initial developer problem is therefore:
 
@@ -158,82 +159,43 @@ DEV-GATE-00 does **not** establish:
 The developer surface needs stable failure meaning before it needs stable exception classes. The following taxonomy defines semantic categories for future SDK candidate mapping.
 
 ### `AXDEV-CONTRACT-INVALID`
-
 The submitted structure is not valid for the declared public contract or required structural information is absent.
 
-Typical source: JSON Schema or required contract structure.
-
 ### `AXDEV-VERSION-UNSUPPORTED`
-
-The caller requests a contract/artifact version that is not declared supported by the active developer contract inventory.
-
-Behavior: fail explicitly; do not silently reinterpret as another version.
+The caller requests a contract/artifact version that is not declared supported by the active developer contract inventory. Fail explicitly; do not silently reinterpret as another version.
 
 ### `AXDEV-EVIDENCE-INSUFFICIENT`
-
-Material evidence required for the declared evaluation is missing, stale, unavailable or otherwise insufficient.
-
-Behavior: preserve uncertainty, abstain or escalate according to the applicable reference contract; never manufacture evidence.
+Material evidence required for the declared evaluation is missing, stale, unavailable or otherwise insufficient. Preserve uncertainty, abstain or escalate; never manufacture evidence.
 
 ### `AXDEV-AUTHORITY-UNESTABLISHED`
-
-Required authority cannot be established because it is missing, ambiguous, unverifiable or not attributable.
-
-Behavior: fail closed for consequential action.
+Required authority cannot be established because it is missing, ambiguous, unverifiable or not attributable. Fail closed for consequential action.
 
 ### `AXDEV-AUTHORITY-INACTIVE`
-
-The applicable authority is expired, revoked, not yet valid or otherwise inactive.
-
-Behavior: block new consequential execution.
+The applicable authority is expired, revoked, not yet valid or otherwise inactive. Block new consequential execution.
 
 ### `AXDEV-AUTHORITY-SCOPE-VIOLATION`
-
-The principal, tool, action, resource, data scope, material parameter, approval or consequence exceeds the applicable authority boundary.
-
-Behavior: fail closed or require new authority; never silently widen scope.
+The principal, tool, action, resource, data scope, material parameter, approval or consequence exceeds the applicable authority boundary. Fail closed or require new authority; never silently widen scope.
 
 ### `AXDEV-TEMPORAL-CUTOFF-VIOLATION`
-
-A point-in-time evaluation would use information unavailable after the declared knowledge cutoff or otherwise violate the declared temporal policy.
-
-Behavior: exclude the information or explicitly enter a separately labelled hindsight/revised-history mode; do not claim point-in-time reproducibility.
+A point-in-time evaluation would use information unavailable after the declared knowledge cutoff or otherwise violate the temporal policy. Do not claim point-in-time reproducibility.
 
 ### `AXDEV-PROVENANCE-INCOMPLETE`
-
-Required source, version, transformation or lineage information is unavailable for a claim that depends on recoverable provenance.
-
-Behavior: preserve incomplete lineage and avoid a false reproducibility claim.
+Required source, version, transformation or lineage information is unavailable for a claim that depends on recoverable provenance. Preserve incomplete lineage and avoid a false reproducibility claim.
 
 ### `AXDEV-CONFLICT-UNRESOLVED`
-
-Material source or evidence conflict remains unresolved under the declared policy.
-
-Behavior: preserve conflict/uncertainty unless a documented resolution rule applies.
+Material source or evidence conflict remains unresolved under the declared policy. Preserve conflict/uncertainty unless a documented resolution rule applies.
 
 ### `AXDEV-VERIFICATION-FAILED`
-
-Applicable verification criteria were evaluated and failed.
-
-Behavior: do not create or represent a verified outcome.
+Applicable verification criteria were evaluated and failed. Do not create or represent a verified outcome.
 
 ### `AXDEV-VERIFICATION-INCONCLUSIVE`
-
-Verification was performed but cannot establish pass/fail with the required confidence or evidence.
-
-Behavior: preserve `INCONCLUSIVE`; do not treat as pass.
+Verification was performed but cannot establish pass/fail with the required evidence. Preserve `INCONCLUSIVE`; do not treat as pass.
 
 ### `AXDEV-EXECUTION-NOT-VERIFIED`
-
-Execution or tool invocation may have completed or returned success, but applicable verification/acceptance has not established the required outcome.
-
-Behavior: preserve execution state separately from verified outcome state.
+Execution or tool invocation may have completed or returned success, but applicable verification/acceptance has not established the required outcome. Preserve execution state separately from verified outcome state.
 
 ### `AXDEV-UNSUPPORTED-OPERATION`
-
-The requested behavior is outside the declared developer contract surface.
-
-Behavior: fail explicitly rather than infer product/runtime capability.
+The requested behavior is outside the declared developer contract surface. Fail explicitly rather than infer product/runtime capability.
 
 These identifiers are **developer-contract taxonomy identifiers**, not yet public Python exception class names, HTTP status codes or wire-protocol error codes. SDK-specific mapping belongs to DEV-GATE-02.
 
@@ -273,17 +235,7 @@ A future SDK candidate may use a pre-stable `0.y.z` line, but that is governed l
 
 The initial developer contract surface MUST remain independently usable for inspection, validation and conformance without any private AETHER X repository.
 
-It must not require:
-
-- private source code;
-- private Git submodules;
-- private package indexes;
-- private endpoints;
-- private credentials;
-- unpublished schemas;
-- proprietary product algorithms;
-- unpublished research records;
-- customer or licensed private datasets.
+It must not require private source code, private Git submodules, private package indexes, private endpoints, private credentials, unpublished schemas, proprietary product algorithms, unpublished research records, or customer/licensed private datasets.
 
 Public examples must remain synthetic or otherwise explicitly authorized for publication.
 
@@ -291,21 +243,13 @@ A future public SDK candidate must preserve this boundary unless a later explici
 
 ## 11. Product and Initiative Boundary
 
-This baseline is intentionally non-product-specific.
-
-It does not establish implementation or technical integration inside:
-
-- AETHER X Quantum;
-- AX-OS;
-- AETHER Intelligence Core (AIC);
-- AETHER X Research;
-- any future private AETHER X initiative.
+This baseline is intentionally non-product-specific. It does not establish implementation or technical integration inside AETHER X Quantum, AX-OS, AETHER Intelligence Core (AIC), AETHER X Research, or any future private AETHER X initiative.
 
 Product adoption requires separate implementation evidence and explicit public-disclosure authority.
 
-## 12. DEV-GATE-00 Exit Criteria
+## 12. DEV-GATE-00 Exit Evidence
 
-DEV-GATE-00 may be closed only when the public repository establishes all of the following:
+DEV-GATE-00 is closed because the public repository now establishes:
 
 - [x] developer-facing problem definition;
 - [x] bounded initial developer-facing scope;
@@ -316,14 +260,26 @@ DEV-GATE-00 may be closed only when the public repository establishes all of the
 - [x] fail-closed behavior for material unsupported/unknown states;
 - [x] public/private dependency boundary;
 - [x] machine-readable companion for the baseline;
-- [ ] repository-level automated validation of this baseline and its manifest registration;
-- [ ] successful directly observed CI evidence for that validation state.
+- [x] repository-level automated validation of the baseline and manifest registration;
+- [x] successful directly observed CI evidence for the candidate validation state.
 
-Until the final two items are evidenced, the gate remains `CANDIDATE / NOT CLOSED`.
+Direct closure evidence:
 
-## 13. Promotion Boundary
+```text
+AX-PUB-CI-003
+Verification PR: #8 (closed without merge)
+Workflow: Validate Public Artifact Manifest
+Run: #97 / 32134148610
+Conclusion: SUCCESS
+Validated base commit: 8e821f9debc27ce8924e1480852b047a8ecf6f02
+Verification head: ae72355968f64997242b770457634fe4f3bf021c
+```
 
-Closing DEV-GATE-00 means only:
+The verification branch was reset to `main` after the verification PR was closed.
+
+## 13. Closed-Gate Meaning
+
+`DEV-GATE-00 CLOSED` means only:
 
 ```text
 PUBLIC DEVELOPER CONTRACT BASELINE ESTABLISHED
@@ -340,11 +296,13 @@ SUPPORT COMMITMENT ACTIVE
 LICENCE GRANTED
 ```
 
-The next gate after verified closure is:
+The next active engineering objective is:
 
 ```text
 DEV-GATE-01 — REPRODUCIBLE DEVELOPER EXPERIENCE
 ```
+
+A final repository-state verification is required after publishing this closed-gate metadata. That verification confirms the integrity of the closed state; it does not re-open DEV-GATE-00 unless a failure is found.
 
 ---
 
