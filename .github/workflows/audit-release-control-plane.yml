@@ -1,0 +1,94 @@
+name: Audit Release Control Plane
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'docs/RELEASE_CONTROL_PLANE.md'
+      - 'docs/PRODUCTION_SDK_DEFINITION_OF_DONE.md'
+      - 'tools/audit_release_control_plane.py'
+      - '.github/workflows/audit-release-control-plane.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/RELEASE_CONTROL_PLANE.md'
+      - 'docs/PRODUCTION_SDK_DEFINITION_OF_DONE.md'
+      - 'tools/audit_release_control_plane.py'
+      - '.github/workflows/audit-release-control-plane.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: release-control-audit-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: Read-only GitHub release-control audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+
+      - name: Set up CPython 3.14
+        id: python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.14'
+
+      - name: Compile auditor
+        run: |
+          '${{ steps.python.outputs.python-path }}' -m py_compile tools/audit_release_control_plane.py
+
+      - name: Audit live GitHub release controls
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          '${{ steps.python.outputs.python-path }}' tools/audit_release_control_plane.py \
+            --repository '${{ github.repository }}' \
+            --branch main \
+            --environment pypi \
+            --json-out release-control-audit.json
+
+      - name: Validate bounded audit semantics
+        run: |
+          '${{ steps.python.outputs.python-path }}' - <<'PY'
+          import json
+          from pathlib import Path
+
+          report=json.loads(Path('release-control-audit.json').read_text())
+          assert report['report_format']=='AX-PUB-RELEASE-CONTROL-AUDIT-001'
+          assert report['audit_mode']=='READ_ONLY_GITHUB_API'
+          assert report['repository']=='${{ github.repository }}'
+          assert report['branch']=='main'
+          assert report['production_environment']=='pypi'
+          assert report['external_controls_not_audited_here']['final_release_authority']=='NOT_AUTHORIZED'
+          assert 'SDK PUBLICATION NOT AUTHORIZED' in report['claim_boundaries']
+          print(
+              'AX_RELEASE_CONTROL_REPORT_PASS '
+              f"github_ready={str(report['github_controls_ready_for_release_promotion']).lower()} "
+              'sdk_publication=NOT_AUTHORIZED'
+          )
+          PY
+
+      - name: Preserve audit report as short-lived CI evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: ax-release-control-audit-${{ github.sha }}
+          path: release-control-audit.json
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Explicit non-mutation boundary
+        run: |
+          echo 'AUDIT MODE: READ ONLY'
+          echo 'NO BRANCH/RULESET/ENVIRONMENT MUTATION PERFORMED'
+          echo 'NO TESTPYPI/PYPI WRITE PERFORMED'
+          echo 'NO LICENCE GRANT PERFORMED'
+          echo 'SDK PUBLICATION NOT AUTHORIZED'
