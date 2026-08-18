@@ -1,6 +1,6 @@
 {
   "manifest_id": "AX-PUB-MANIFEST-001",
-  "manifest_version": "1.12",
+  "manifest_version": "1.13",
   "repository": "AETHERXGLOBAL/aether-x-governed-intelligence",
   "scope": "PUBLIC_ENGINEERING_ARTIFACT_COMPATIBILITY",
   "public_state": "CURRENT",
@@ -24,7 +24,8 @@
     {"id":"AX-PUB-GATE-001","version":"1.0","type":"DEVELOPER_SDK_PUBLICATION_READINESS_GATE","path":"docs/AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md","state":"CURRENT","public_maturity":"ACTIVE / SDK PUBLICATION NOT AUTHORIZED"},
     {"id":"AX-PUB-DEV-001","version":"1.0","type":"DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM","path":"docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md","state":"CURRENT","public_maturity":"UNDER DEVELOPMENT / DEV-GATE-00 CLOSED / DEV-GATE-01 CLOSED / DEV-GATE-02 ACTIVE / SDK PUBLICATION NOT AUTHORIZED"},
     {"id":"AX-PUB-DEV-002","version":"1.0","type":"DEVELOPER_CONTRACT_BASELINE","path":"docs/AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md","machine_readable_companion":"artifacts/AX-PUB-DEV-002.json","state":"CURRENT","public_maturity":"DEV-GATE-00 CLOSED / PUBLIC DEVELOPER CONTRACT BASELINE ESTABLISHED / SDK PUBLICATION NOT AUTHORIZED"},
-    {"id":"AX-PUB-DEV-003","version":"1.0","type":"REPRODUCIBLE_DEVELOPER_EXPERIENCE","path":"docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md","machine_readable_companion":"artifacts/AX-PUB-DEV-003.json","entrypoint":"tools/check_developer_experience.py","state":"CURRENT","public_maturity":"DEV-GATE-01 CLOSED / VERIFIED RUNTIME MATRIX PYTHON 3.10-3.13 / REPRODUCIBLE PUBLIC DEVELOPER EXPERIENCE ESTABLISHED / SDK PUBLICATION NOT AUTHORIZED"}
+    {"id":"AX-PUB-DEV-003","version":"1.0","type":"REPRODUCIBLE_DEVELOPER_EXPERIENCE","path":"docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md","machine_readable_companion":"artifacts/AX-PUB-DEV-003.json","entrypoint":"tools/check_developer_experience.py","state":"CURRENT","public_maturity":"DEV-GATE-01 CLOSED / VERIFIED RUNTIME MATRIX PYTHON 3.10-3.13 / REPRODUCIBLE PUBLIC DEVELOPER EXPERIENCE ESTABLISHED / SDK PUBLICATION NOT AUTHORIZED"},
+    {"id":"AX-PUB-DEV-004","version":"1.0","type":"SDK_CANDIDATE_ENGINEERING_BASELINE","path":"docs/AX-PUB-DEV-004_SDK_CANDIDATE_ENGINEERING_BASELINE.md","machine_readable_companion":"artifacts/AX-PUB-DEV-004.json","entrypoint":"sdk-candidate/python/aetherx_sdk_candidate.py","state":"CURRENT","public_maturity":"DEV-GATE-02 CANDIDATE / SDK CANDIDATE NOT YET ESTABLISHED / SDK PUBLICATION NOT AUTHORIZED"}
   ],
   "relationships": [
     {"from_id":"AX-PUB-SPEC-002","from_version":"1.0","relationship":"ALIGNS_WITH_ARCHITECTURE","to_id":"AX-PUB-ARCH-001","to_version":"1.0","state":"COMPATIBLE"},
@@ -49,7 +50,10 @@
     {"from_id":"AX-PUB-DEV-002","from_version":"1.0","relationship":"GOVERNED_BY","to_id":"AX-PUB-GATE-001","to_version":"1.0","state":"COMPATIBLE"},
     {"from_id":"AX-PUB-DEV-003","from_version":"1.0","relationship":"IMPLEMENTS_PROGRAM_GATE_OF","to_id":"AX-PUB-DEV-001","to_version":"1.0","state":"COMPATIBLE"},
     {"from_id":"AX-PUB-DEV-003","from_version":"1.0","relationship":"BUILDS_ON","to_id":"AX-PUB-DEV-002","to_version":"1.0","state":"COMPATIBLE"},
-    {"from_id":"AX-PUB-DEV-003","from_version":"1.0","relationship":"GOVERNED_BY","to_id":"AX-PUB-GATE-001","to_version":"1.0","state":"COMPATIBLE"}
+    {"from_id":"AX-PUB-DEV-003","from_version":"1.0","relationship":"GOVERNED_BY","to_id":"AX-PUB-GATE-001","to_version":"1.0","state":"COMPATIBLE"},
+    {"from_id":"AX-PUB-DEV-004","from_version":"1.0","relationship":"IMPLEMENTS_PROGRAM_GATE_OF","to_id":"AX-PUB-DEV-001","to_version":"1.0","state":"COMPATIBLE"},
+    {"from_id":"AX-PUB-DEV-004","from_version":"1.0","relationship":"BUILDS_ON","to_id":"AX-PUB-DEV-003","to_version":"1.0","state":"COMPATIBLE"},
+    {"from_id":"AX-PUB-DEV-004","from_version":"1.0","relationship":"GOVERNED_BY","to_id":"AX-PUB-GATE-001","to_version":"1.0","state":"COMPATIBLE"}
   ],
   "validation_evidence": [
     {"id":"AX-PUB-CI-001","path":"evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md","scope":"AGENT_AUTHORITY_PATH","verified_head_commit":"f07bfb55eb45924f9ee62024f144064506d4be48"},
@@ -75,6 +79,9 @@
   "current_developer_experience": {
     "id":"AX-PUB-DEV-003","version":"1.0","path":"docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md","machine_readable_companion":"artifacts/AX-PUB-DEV-003.json","runner":"tools/check_developer_experience.py","state_checker":"tools/check_developer_experience_state.py","gate":"DEV-GATE-01","state":"CLOSED","candidate_runtime_matrix":["3.10","3.11","3.12","3.13"],"verified_runtime_matrix":["3.10","3.11","3.12","3.13"],"closure_evidence":"AX-PUB-CI-004","sdk_publication_disposition":"SDK PUBLICATION NOT AUTHORIZED"
   },
+  "current_sdk_candidate": {
+    "id":"AX-PUB-DEV-004","version":"1.0","path":"docs/AX-PUB-DEV-004_SDK_CANDIDATE_ENGINEERING_BASELINE.md","machine_readable_companion":"artifacts/AX-PUB-DEV-004.json","candidate_module":"sdk-candidate/python/aetherx_sdk_candidate.py","gate":"DEV-GATE-02","state":"CANDIDATE_NOT_ESTABLISHED","candidate_version":"0.1.0-candidate","candidate_runtime_matrix":["3.10","3.11","3.12","3.13"],"verified_runtime_matrix":[],"package_identity_status":"NOT APPROVED","registry_status":"NOT AUTHORIZED","sdk_publication_disposition":"SDK PUBLICATION NOT AUTHORIZED"
+  },
   "claim_boundary": [
     "PUBLIC COMPATIBILITY DOES NOT ESTABLISH PRODUCT INTEGRATION",
     "REFERENCE VALIDATOR PASS DOES NOT ESTABLISH PRODUCTION APPROVAL OR AUTHORIZATION",
@@ -90,6 +97,8 @@
     "DEV-GATE-01 CLOSURE ESTABLISHES A REPRODUCIBLE PUBLIC REFERENCE DEVELOPER EXPERIENCE ONLY",
     "VERIFIED GATE-01 RUNTIME MATRIX DOES NOT ESTABLISH A GENERAL SDK SUPPORT COMMITMENT",
     "DEV-GATE-01 CLOSED DOES NOT ESTABLISH AN SDK CANDIDATE",
+    "DEV-GATE-02 CANDIDATE IMPLEMENTATION DOES NOT ESTABLISH SDK CANDIDATE PROMOTION",
+    "REPOSITORY-LOCAL SDK CANDIDATE MODULE DOES NOT ESTABLISH APPROVED PACKAGE IDENTITY OR REGISTRY PUBLICATION",
     "PUBLIC ARTIFACTS DO NOT ESTABLISH IMPLEMENTATION INSIDE AETHER X PORTFOLIO INITIATIVES"
   ]
 }

@@ -1,0 +1,81 @@
+{
+  "artifact_id": "AX-PUB-DEV-004",
+  "version": "1.0",
+  "type": "SDK_CANDIDATE_ENGINEERING_BASELINE",
+  "state": "DEV-GATE-02_CANDIDATE_NOT_ESTABLISHED",
+  "sdk_publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
+  "program": {"id": "AX-PUB-DEV-001", "version": "1.0"},
+  "contract_baseline": {"id": "AX-PUB-DEV-002", "version": "1.0", "state": "DEV-GATE-00_CLOSED"},
+  "developer_experience": {"id": "AX-PUB-DEV-003", "version": "1.0", "state": "DEV-GATE-01_CLOSED"},
+  "governing_gate": {"id": "AX-PUB-GATE-001", "version": "1.0"},
+  "candidate_version": "0.1.0-candidate",
+  "candidate_module": "sdk-candidate/python/aetherx_sdk_candidate.py",
+  "package_identity_status": "NOT APPROVED",
+  "registry_status": "NOT AUTHORIZED",
+  "distribution_metadata_present": false,
+  "licence_decided": false,
+  "sdk_candidate_established": false,
+  "supported_candidate_operations": [
+    "supported_contracts",
+    "validate",
+    "validate_eav",
+    "validate_point_in_time",
+    "validate_agent_authority"
+  ],
+  "contract_mapping": [
+    {
+      "operation": "validate_eav",
+      "contract_id": "AX-PUB-SPEC-002",
+      "contract_version": "1.0",
+      "schema_id": "AX-PUB-SCHEMA-001",
+      "reference_validator_id": "AX-PUB-REF-001"
+    },
+    {
+      "operation": "validate_point_in_time",
+      "contract_id": "AX-PUB-SPEC-003",
+      "contract_version": "1.0",
+      "schema_id": "AX-PUB-SCHEMA-002",
+      "reference_validator_id": "AX-PUB-REF-002"
+    },
+    {
+      "operation": "validate_agent_authority",
+      "contract_id": "AX-PUB-SPEC-004",
+      "contract_version": "1.0",
+      "schema_id": "AX-PUB-SCHEMA-003",
+      "reference_validator_id": "AX-PUB-REF-003"
+    }
+  ],
+  "developer_error_categories": [
+    "AXDEV-CONTRACT-INVALID",
+    "AXDEV-VERSION-UNSUPPORTED",
+    "AXDEV-EVIDENCE-INSUFFICIENT",
+    "AXDEV-AUTHORITY-UNESTABLISHED",
+    "AXDEV-AUTHORITY-INACTIVE",
+    "AXDEV-AUTHORITY-SCOPE-VIOLATION",
+    "AXDEV-TEMPORAL-CUTOFF-VIOLATION",
+    "AXDEV-PROVENANCE-INCOMPLETE",
+    "AXDEV-CONFLICT-UNRESOLVED",
+    "AXDEV-VERIFICATION-FAILED",
+    "AXDEV-VERIFICATION-INCONCLUSIVE",
+    "AXDEV-EXECUTION-NOT-VERIFIED",
+    "AXDEV-UNSUPPORTED-OPERATION"
+  ],
+  "fallback_error_category": "AXDEV-CONTRACT-INVALID",
+  "candidate_runtime_matrix": ["3.10", "3.11", "3.12", "3.13"],
+  "verified_runtime_matrix": [],
+  "unit_tests": "sdk-candidate/python/tests/test_sdk_candidate.py",
+  "conformance_runner": "sdk-candidate/python/run_candidate_conformance.py",
+  "candidate_boundary_checker": "tools/check_sdk_candidate_boundary.py",
+  "candidate_state_checker": "tools/check_sdk_candidate_state.py",
+  "candidate_conformance_marker": "AX_SDK_CANDIDATE_CONFORMANCE_PASS cases=9 conforming=9",
+  "candidate_boundary_marker": "AX_SDK_CANDIDATE_BOUNDARY_PASS",
+  "candidate_state_marker": "AX_DEV_GATE_02_CANDIDATE_STATE_PASS",
+  "next_gate_after_verified_closure": "DEV-GATE-03 — Supply-Chain & Release Candidate",
+  "claim_boundary": [
+    "CANDIDATE IMPLEMENTATION EXISTS DOES NOT ESTABLISH SDK CANDIDATE PROMOTION",
+    "SDK CANDIDATE DOES NOT MEAN SUPPORTED SDK",
+    "REPOSITORY-LOCAL MODULE DOES NOT ESTABLISH APPROVED PACKAGE IDENTITY",
+    "SDK PUBLICATION IS NOT AUTHORIZED",
+    "SDK CANDIDATE VALIDATION DOES NOT ESTABLISH PRODUCT IMPLEMENTATION OR PRODUCTION READINESS"
+  ]
+}

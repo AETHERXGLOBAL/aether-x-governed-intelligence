@@ -33,6 +33,7 @@ REQUIRED_PAIRS = {
     ("AX-PUB-DEV-001", "1.0"),
     ("AX-PUB-DEV-002", "1.0"),
     ("AX-PUB-DEV-003", "1.0"),
+    ("AX-PUB-DEV-004", "1.0"),
 }
 
 REQUIRED_RELATIONS = {
@@ -54,6 +55,9 @@ REQUIRED_RELATIONS = {
     ("AX-PUB-DEV-003", "1.0", "IMPLEMENTS_PROGRAM_GATE_OF", "AX-PUB-DEV-001", "1.0"),
     ("AX-PUB-DEV-003", "1.0", "BUILDS_ON", "AX-PUB-DEV-002", "1.0"),
     ("AX-PUB-DEV-003", "1.0", "GOVERNED_BY", "AX-PUB-GATE-001", "1.0"),
+    ("AX-PUB-DEV-004", "1.0", "IMPLEMENTS_PROGRAM_GATE_OF", "AX-PUB-DEV-001", "1.0"),
+    ("AX-PUB-DEV-004", "1.0", "BUILDS_ON", "AX-PUB-DEV-003", "1.0"),
+    ("AX-PUB-DEV-004", "1.0", "GOVERNED_BY", "AX-PUB-GATE-001", "1.0"),
 }
 
 
@@ -117,8 +121,8 @@ def main() -> int:
 
     if manifest.get("manifest_id") != "AX-PUB-MANIFEST-001":
         findings.append("manifest_id mismatch")
-    if manifest.get("manifest_version") != "1.12":
-        findings.append("manifest_version must be 1.12")
+    if manifest.get("manifest_version") != "1.13":
+        findings.append("manifest_version must be 1.13")
     if manifest.get("repository") != "AETHERXGLOBAL/aether-x-governed-intelligence":
         findings.append("repository identity mismatch")
 
@@ -247,14 +251,10 @@ def main() -> int:
     if not isinstance(baseline, dict) or baseline.get("id") != "AX-PUB-DEV-002" or baseline.get("version") != "1.0":
         findings.append("current_developer_contract_baseline must identify AX-PUB-DEV-002 v1.0")
     else:
-        if baseline.get("gate") != "DEV-GATE-00":
-            findings.append("developer contract baseline gate mismatch")
-        if baseline.get("state") != "CLOSED":
-            findings.append("developer contract baseline must be CLOSED")
+        if baseline.get("gate") != "DEV-GATE-00" or baseline.get("state") != "CLOSED":
+            findings.append("developer contract baseline state mismatch")
         if baseline.get("closure_evidence") != "AX-PUB-CI-003":
             findings.append("developer contract baseline closure evidence mismatch")
-        if baseline.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
-            findings.append("developer contract baseline SDK disposition mismatch")
         for field in ("path", "machine_readable_companion"):
             target = safe_path(baseline.get(field), findings, f"current_developer_contract_baseline.{field}")
             if target is not None and not target.is_file():
@@ -268,51 +268,37 @@ def main() -> int:
             target = safe_path(developer_experience.get(field), findings, f"current_developer_experience.{field}")
             if target is not None and not target.is_file():
                 findings.append(f"current developer experience {field} missing")
-        if developer_experience.get("gate") != "DEV-GATE-01":
-            findings.append("developer experience gate mismatch")
-        if developer_experience.get("state") != "CLOSED":
-            findings.append("developer experience state must be CLOSED")
-        if developer_experience.get("candidate_runtime_matrix") != EXPECTED_RUNTIMES:
-            findings.append("developer experience candidate runtime matrix mismatch")
+        if developer_experience.get("gate") != "DEV-GATE-01" or developer_experience.get("state") != "CLOSED":
+            findings.append("developer experience state mismatch")
         if developer_experience.get("verified_runtime_matrix") != EXPECTED_RUNTIMES:
             findings.append("developer experience verified runtime matrix mismatch")
         if developer_experience.get("closure_evidence") != "AX-PUB-CI-004":
             findings.append("developer experience closure evidence mismatch")
-        if developer_experience.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
-            findings.append("developer experience SDK disposition mismatch")
 
-    quickstart = ROOT / "docs" / "QUICKSTART.md"
-    if not quickstart.is_file():
-        findings.append("docs/QUICKSTART.md missing")
+    sdk_candidate = manifest.get("current_sdk_candidate")
+    if not isinstance(sdk_candidate, dict) or sdk_candidate.get("id") != "AX-PUB-DEV-004" or sdk_candidate.get("version") != "1.0":
+        findings.append("current_sdk_candidate must identify AX-PUB-DEV-004 v1.0")
     else:
-        text = quickstart.read_text(encoding="utf-8")
-        for marker in (
-            "AX-PUB-MANIFEST-001 v1.12",
-            "COMPATIBILITY_AND_VERSIONING.md",
-            "AX-PUB-SNAP-001.json",
-            "AX-PUB-SNAP-002.json",
-            "AX-PUB-SCHEMA-003",
-            "AX-PUB-REF-003",
-            "AX-PUB-TEST-002",
-            "AX-PUB-REL-001",
-            "public-engineering-vnext-1.0",
-            "AX-PUB-GATE-001",
-            "AX-PUB-DEV-001",
-            "AX-PUB-DEV-002",
-            "AX-PUB-CI-003",
-            "DEV-GATE-00: CLOSED",
-            "AX-PUB-DEV-003",
-            "AX-PUB-CI-004",
-            "check_developer_experience.py",
-            "check_developer_experience_state.py",
-            "DEV-GATE-01: CLOSED",
-            "VERIFIED RUNTIME MATRIX: Python 3.10, 3.11, 3.12, 3.13",
-            "NEXT GATE: DEV-GATE-02 — SDK Candidate",
-            "AX_DEVELOPER_EXPERIENCE_PASS",
-            "AX_DEV_GATE_01_CLOSED_STATE_PASS",
-        ):
-            if marker not in text:
-                findings.append(f"quickstart missing reference: {marker}")
+        for field in ("path", "machine_readable_companion", "candidate_module"):
+            target = safe_path(sdk_candidate.get(field), findings, f"current_sdk_candidate.{field}")
+            if target is not None and not target.is_file():
+                findings.append(f"current SDK candidate {field} missing")
+        if sdk_candidate.get("gate") != "DEV-GATE-02":
+            findings.append("SDK candidate gate mismatch")
+        if sdk_candidate.get("state") != "CANDIDATE_NOT_ESTABLISHED":
+            findings.append("SDK candidate must remain CANDIDATE_NOT_ESTABLISHED before direct CI evidence")
+        if sdk_candidate.get("candidate_version") != "0.1.0-candidate":
+            findings.append("SDK candidate version mismatch")
+        if sdk_candidate.get("candidate_runtime_matrix") != EXPECTED_RUNTIMES:
+            findings.append("SDK candidate runtime matrix mismatch")
+        if sdk_candidate.get("verified_runtime_matrix") != []:
+            findings.append("SDK candidate runtime matrix must remain unverified")
+        if sdk_candidate.get("package_identity_status") != "NOT APPROVED":
+            findings.append("SDK package identity must remain NOT APPROVED")
+        if sdk_candidate.get("registry_status") != "NOT AUTHORIZED":
+            findings.append("SDK registry must remain NOT AUTHORIZED")
+        if sdk_candidate.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
+            findings.append("SDK candidate publication disposition mismatch")
 
     if not isinstance(manifest.get("claim_boundary"), list) or not manifest.get("claim_boundary"):
         findings.append("claim_boundary must be non-empty array")
