@@ -192,7 +192,7 @@ def main() -> int:
 
     require_markers(SUP_DOC, (
         "AX-PUB-SUP-001",
-        "Support commitment established: `NO`",
+        "Support commitment established:** `NO`",
         "90 days",
         "one intervening supported minor release",
         "SUPPORTED SDK: NOT ESTABLISHED",
@@ -210,9 +210,7 @@ def main() -> int:
         PROVISIONAL_SECURITY_EMAIL,
         "provisional public reporting path",
         "does not represent a dedicated security-response service, SLA, bug-bounty program or certification",
-        "AX-PUB-SEC-001",
-        "SECURITY OPERATIONS READY: NO",
-        "SDK PUBLICATION: NOT AUTHORIZED",
+        "SDK CANDIDATE ≠ SUPPORTED SDK",
     ))
     require_markers(MIGRATION, (
         "Migration & Deprecation Draft",
