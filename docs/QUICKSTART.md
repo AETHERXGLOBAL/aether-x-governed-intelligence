@@ -201,20 +201,50 @@ SDK PUBLICATION: NOT AUTHORIZED
 
 ---
 
-## 7. Machine-readable current state
+## 7. Inspect the public API contract candidate
+
+The current candidate public API is explicitly governed by:
+
+- [`AX-PUB-API-001`](./AX-PUB-API-001_PYTHON_SDK_PUBLIC_API_CONTRACT.md) — candidate public API contract;
+- [`AX-PUB-CI-012`](../evidence/AX-PUB-CI-012_SDK_PUBLIC_API_CONTRACT_VALIDATION.md) — direct CPython 3.11–3.14 validation evidence.
+
+The contract covers:
+
+```text
+TOP-LEVEL EXPORT INVENTORY
+CALLABLE PARAMETER SEMANTICS
+FROZEN RESULT-TYPE FIELD ORDER
+ERROR CATEGORY VALUES
+SUPPORTED CONTRACT INVENTORY
+FAIL-CLOSED UNSUPPORTED CONTRACT / VERSION BEHAVIOR
+OFFLINE / NO-EXECUTION PRODUCT BOUNDARY
+```
+
+```text
+API CONTRACT CANDIDATE: VALIDATED
+STABLE 1.0 GUARANTEE: NOT ESTABLISHED
+SUPPORTED SDK: NOT ESTABLISHED
+SDK PUBLICATION: NOT AUTHORIZED
+```
+
+---
+
+## 8. Machine-readable current state
 
 Canonical moving compatibility/governance index:
 
 ```text
-AX-PUB-MANIFEST-001 v1.22
+AX-PUB-MANIFEST-001 v1.23
 AX-PUB-POL-001 v1.6
 ```
 
 Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json) for machine-readable artifact relationships and current gate state.
 
+The manifest now includes the first live release-control baseline (`AX-PUB-CI-011`) and the validated public API contract candidate (`AX-PUB-API-001` + `AX-PUB-CI-012`).
+
 ---
 
-## 8. Production SDK target
+## 9. Production SDK target
 
 The program target is not merely to place a package on a registry. The target is an official production-supported developer product:
 
@@ -236,9 +266,11 @@ The exact Definition of Done is in [`PRODUCTION_SDK_DEFINITION_OF_DONE.md`](./PR
 
 Release-control requirements are in [`RELEASE_CONTROL_PLANE.md`](./RELEASE_CONTROL_PLANE.md).
 
+Live release-control audit semantics and the current baseline are in [`RELEASE_CONTROL_AUDIT.md`](./RELEASE_CONTROL_AUDIT.md).
+
 ---
 
-## 9. Recommended reading order
+## 10. Recommended reading order
 
 ```text
 README.md
@@ -248,6 +280,8 @@ README.md
 → AX-PUB-SPEC-002 / 003 / 004
 → AX-PUB-DEV-007 / 008 / 009
 → AX-PUB-CI-008 / 009 / 010
+→ AX-PUB-API-001 / AX-PUB-CI-012
+→ AX-PUB-CI-011 / RELEASE_CONTROL_AUDIT.md
 → PRODUCTION_SDK_DEFINITION_OF_DONE.md
 → RELEASE_CONTROL_PLANE.md
 → LIMITATIONS_AND_UNSUPPORTED_USES.md
@@ -262,6 +296,8 @@ PUBLIC ENGINEERING ≠ PRODUCT IMPLEMENTATION
 REFERENCE CODE ≠ PRODUCTION CODE
 CI PASS ≠ EXTERNAL CERTIFICATION
 INSTALLABLE CANDIDATE ≠ SUPPORTED SDK
+VALIDATED API CONTRACT CANDIDATE ≠ STABLE 1.0 GUARANTEE
+LIVE RELEASE-CONTROL AUDIT ≠ RELEASE-CONTROL READY
 LOCAL INDEX PASS ≠ EXTERNAL REGISTRY VALIDATION
 TARGET LICENCE ≠ LICENCE GRANT
 SDK PUBLICATION NOT AUTHORIZED
