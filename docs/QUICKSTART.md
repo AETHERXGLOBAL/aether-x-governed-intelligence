@@ -124,7 +124,7 @@ Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json
 Current moving state:
 
 ```text
-AX-PUB-MANIFEST-001 v1.15
+AX-PUB-MANIFEST-001 v1.16
 AX-PUB-POL-001 v1.6
 ```
 
@@ -172,10 +172,10 @@ PROGRAM: ACTIVE / UNDER DEVELOPMENT
 DEV-GATE-00: CLOSED
 DEV-GATE-01: CLOSED
 DEV-GATE-02: CLOSED
-DEV-GATE-03: CANDIDATE / UNDER VALIDATION
-CURRENT ENGINEERING OBJECTIVE: DEV-GATE-03 — SUPPLY-CHAIN & RELEASE CANDIDATE
+DEV-GATE-03: CLOSED
+CURRENT ENGINEERING OBJECTIVE: DEV-GATE-04 — EXTERNAL EVALUATION READINESS
 SDK CANDIDATE: ESTABLISHED
-RELEASE CANDIDATE: NOT YET ESTABLISHED
+RELEASE CANDIDATE: VALIDATED / NON-PUBLISHED
 PUBLIC SDK: NOT PUBLISHED
 PACKAGE IDENTITY: NOT APPROVED
 PACKAGE REGISTRY: NOT AUTHORIZED
@@ -247,37 +247,40 @@ SDK PUBLICATION: NOT AUTHORIZED
 
 `SDK CANDIDATE ESTABLISHED ≠ SUPPORTED SDK`
 
-## 15. Supply-Chain & Release-Candidate Engineering
+## 15. Supply-Chain & Release-Candidate Validation
 
-Current Gate-03 artifacts:
+Gate-03 artifacts and evidence:
 
 - [`AX-PUB-DEV-005 — Supply-Chain & Release Candidate`](./AX-PUB-DEV-005_SUPPLY_CHAIN_RELEASE_CANDIDATE.md)
 - [`AX-PUB-DEV-005.json`](../artifacts/AX-PUB-DEV-005.json)
 - [`AX-PUB-RC-001`](../release-candidate/AX-PUB-RC-001.json)
 - [`release-candidate/README.md`](../release-candidate/README.md)
+- [`AX-PUB-CI-006 v1.1`](../evidence/AX-PUB-CI-006_SUPPLY_CHAIN_RELEASE_CANDIDATE_VALIDATION.md)
 
 Current state:
 
 ```text
-DEV-GATE-03: CANDIDATE / UNDER VALIDATION
-RELEASE CANDIDATE: NOT YET ESTABLISHED
+DEV-GATE-03: CLOSED
+RELEASE CANDIDATE: VALIDATED / NON-PUBLISHED
 ENGINEERING BUNDLE: AX-PUB-RC-001.zip
+VERIFIED SHA-256: 8444e7c01621f3d63019b407d9379bc82176f892dce64760cc93e84064ac8c21
+VERIFIED SOURCE_DATE_EPOCH: 1787064230
 ARTIFACT UPLOAD SCOPE: CI_ONLY
 PACKAGE IDENTITY: NOT APPROVED
 PACKAGE REGISTRY: NOT AUTHORIZED
 PUBLIC SDK LICENCE: NOT DECIDED
 SDK PUBLICATION: NOT AUTHORIZED
-AX-PUB-CI-006: NOT YET RECORDED
+AX-PUB-CI-006: VERIFIED EVIDENCE v1.1
 ```
 
-Local deterministic candidate build:
+Reproduce the validated engineering build while the declared source set remains unchanged:
 
 ```bash
-SOURCE_DATE_EPOCH=315532800 \
+SOURCE_DATE_EPOCH=1787064230 \
 python3 tools/build_release_candidate.py --output-dir dist
 ```
 
-Validate candidate state and built artifact:
+Validate closed Gate-03 state and the built artifact:
 
 ```bash
 python3 tools/check_supply_chain_release_candidate.py
@@ -293,14 +296,32 @@ dist/AX-PUB-RC-001_BUILD_MANIFEST.json
 dist/AX-PUB-RC-001.spdx.json
 ```
 
-The dedicated CI workflow additionally tests byte-identical rebuilds, extracted-bundle unit/conformance execution, GitHub build-provenance attestation, SPDX SBOM attestation and `gh attestation verify`.
+For the validated source state, `AX-PUB-RC-001.zip` must hash to:
 
-`DEV-GATE-03 CANDIDATE ≠ RELEASE-CANDIDATE VALIDATED`  
+```text
+8444e7c01621f3d63019b407d9379bc82176f892dce64760cc93e84064ac8c21
+```
+
+The dedicated CI workflow additionally checks byte-identical rebuilds, extracted-bundle unit/conformance execution, GitHub build-provenance attestation, SPDX SBOM attestation and `gh attestation verify`.
+
+`RELEASE-CANDIDATE VALIDATED ≠ SUPPORTED SDK`  
 `CI ARTIFACT ≠ PUBLIC PACKAGE RELEASE`  
 `ATTESTED BUILD ≠ SECURITY CERTIFICATION`  
 `SPDX SBOM ≠ SOFTWARE REUSE LICENCE`
 
-## 16. SDK Publication Readiness
+## 16. External Evaluation Readiness
+
+Current engineering objective:
+
+```text
+DEV-GATE-04 — EXTERNAL EVALUATION READINESS
+```
+
+Gate-04 is the next engineering gate. Its activation does **not** mean external evaluation has occurred, that external developers have adopted the candidate, or that support/publication authority exists.
+
+The Gate-04 exit criteria are governed by [`AX-PUB-DEV-001`](./AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md).
+
+## 17. SDK Publication Readiness
 
 - [`AX-PUB-GATE-001`](./AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md)
 
@@ -310,21 +331,21 @@ Current disposition:
 SDK PUBLICATION NOT AUTHORIZED
 ```
 
-The gate still requires explicit licence/IP authority, package identity and distribution, supported compatibility commitments, supply-chain controls, documentation, maintenance/support ownership and release authority before publication can be represented as approved.
+The gate still requires explicit licence/IP authority, package identity and distribution, supported compatibility commitments, security and credential boundaries, documentation, maintenance/support ownership and release authority before publication can be represented as approved.
 
-## 17. Private-Project Boundary
+## 18. Private-Project Boundary
 
-The public schemas, reference validators, examples, conformance kits, Gate-01 developer experience, Gate-02 SDK candidate and Gate-03 engineering candidate are designed to remain self-contained in this public repository.
+The public schemas, reference validators, examples, conformance kits, Gate-01 developer experience, Gate-02 SDK candidate and validated Gate-03 engineering release candidate are designed to remain self-contained in this public repository.
 
 They do not require private AETHER X project repositories, private package indexes, private endpoints or private credentials.
 
-## 18. Public Claim Boundary
+## 19. Public Claim Boundary
 
 `PUBLIC ARTIFACT ≠ PRODUCT IMPLEMENTATION`  
 `REFERENCE VALIDATOR PASS ≠ PRODUCTION APPROVAL`  
 `PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`  
 `SDK CANDIDATE ESTABLISHED ≠ SUPPORTED SDK`  
-`DEV-GATE-03 CANDIDATE ≠ RELEASE-CANDIDATE VALIDATED`  
+`RELEASE-CANDIDATE VALIDATED ≠ SDK RELEASE`  
 `CI ARTIFACT ≠ PACKAGE PUBLICATION`  
 `ATTESTED BUILD ≠ SECURITY CERTIFICATION`  
 `SBOM ≠ SOFTWARE REUSE LICENCE`  
