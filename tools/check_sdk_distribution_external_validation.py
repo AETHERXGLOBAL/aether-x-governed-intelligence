@@ -14,9 +14,14 @@ MANIFEST = ROOT / "artifacts" / "AX-PUB-MANIFEST-001.json"
 DOC = ROOT / "docs" / "AX-PUB-DEV-009_DISTRIBUTION_EXTERNAL_VALIDATION_BASELINE.md"
 LOCAL_RUNNER = ROOT / "tools" / "run_sdk_local_index_validation.py"
 CI009 = ROOT / "evidence" / "AX-PUB-CI-009_INSTALLABLE_PACKAGE_CANDIDATE_VALIDATION.md"
+CI010 = ROOT / "evidence" / "AX-PUB-CI-010_DISTRIBUTION_EXTERNAL_VALIDATION_BASELINE_VALIDATION.md"
 
 WHEEL_SHA = "bd3c3bfc7306c9b45659e3e0533ea1ac24b065a4c577f08cbe987cc10a4d1fac"
 SDIST_SHA = "2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99"
+LOCAL_ARTIFACT_SHA = "cc5a56aff2c0052169bc8dd4b4816039cad66838c5a4d009e79378df52000f35"
+LOCAL_REVIEWED_HEAD = "779bfe5813c7794ba04ca1f2efe35ec69155d88c"
+LOCAL_RUN_ID = 32177559732
+LOCAL_JOB_ID = 95842861606
 REQUIRED_BLOCKERS = {
     "IP_AND_COPYRIGHT_CLEARANCE",
     "PACKAGE_NAME_LIVE_AVAILABILITY_AND_OWNERSHIP",
@@ -65,9 +70,28 @@ def version_at_least(raw: Any, major: int, minor: int) -> bool:
         return False
 
 
+def check_ci010() -> None:
+    require(CI010.is_file(), "AX-PUB-CI-010 evidence missing")
+    text = CI010.read_text(encoding="utf-8")
+    for marker in (
+        "AX-PUB-CI-010",
+        str(LOCAL_RUN_ID),
+        str(LOCAL_JOB_ID),
+        LOCAL_REVIEWED_HEAD,
+        WHEEL_SHA,
+        SDIST_SHA,
+        LOCAL_ARTIFACT_SHA,
+        "LOCAL INDEX DISTRIBUTION VALIDATION: VERIFIED / LOCAL ONLY",
+        "EXTERNAL REGISTRY VALIDATION: NOT ESTABLISHED / NOT AUTHORIZED",
+        "HUMAN EXTERNAL EVALUATION: NOT ESTABLISHED",
+        "SDK PUBLICATION: NOT AUTHORIZED",
+    ):
+        require(marker in text, f"AX-PUB-CI-010 missing marker: {marker}")
+
+
 def check_manifest(manifest: dict[str, Any]) -> None:
     require(manifest.get("manifest_id") == "AX-PUB-MANIFEST-001", "manifest ID mismatch")
-    require(version_at_least(manifest.get("manifest_version"), 1, 21), "manifest version must be >=1.21 for DEV-009")
+    require(version_at_least(manifest.get("manifest_version"), 1, 22), "manifest version must be >=1.22 for promoted DEV-009 local validation")
 
     artifacts = manifest.get("artifacts")
     require(isinstance(artifacts, list), "manifest artifacts must be an array")
@@ -85,7 +109,7 @@ def check_manifest(manifest: dict[str, Any]) -> None:
     maturity = str(entry.get("public_maturity", ""))
     for marker in (
         "DEV-GATE-05C ACTIVE ENGINEERING CANDIDATE",
-        "LOCAL INDEX VALIDATION PENDING",
+        "LOCAL INDEX VALIDATION VERIFIED LOCAL ONLY",
         "EXTERNAL REGISTRY WRITE NOT AUTHORIZED",
         "HUMAN EXTERNAL EVALUATION NOT ESTABLISHED",
         "SDK PUBLICATION NOT AUTHORIZED",
@@ -108,6 +132,22 @@ def check_manifest(manifest: dict[str, Any]) -> None:
     ):
         require(required_relation in relset, f"missing DEV-009 manifest relation: {required_relation[2]}")
 
+    evidence = manifest.get("validation_evidence")
+    require(isinstance(evidence, list), "manifest validation_evidence must be an array")
+    ci010 = [item for item in evidence if isinstance(item, dict) and item.get("id") == "AX-PUB-CI-010"]
+    require(len(ci010) == 1, "manifest must contain exactly one AX-PUB-CI-010 evidence entry")
+    ev = ci010[0]
+    require(ev.get("scope") == "DEV_GATE_05C_LOCAL_INDEX_DISTRIBUTION_VALIDATION", "CI-010 scope mismatch")
+    require(ev.get("verified_head_commit") == LOCAL_REVIEWED_HEAD, "CI-010 reviewed head mismatch")
+    require(ev.get("workflow_run_id") == LOCAL_RUN_ID, "CI-010 workflow run mismatch")
+    require(ev.get("job_id") == LOCAL_JOB_ID, "CI-010 job mismatch")
+    require(ev.get("actions_artifact_sha256") == LOCAL_ARTIFACT_SHA, "CI-010 artifact digest mismatch")
+    require(ev.get("verified_runtime_matrix") == ["3.11", "3.12", "3.13", "3.14"], "CI-010 runtime matrix mismatch")
+    require(ev.get("external_registry_validation") is False, "CI-010 must not establish external registry validation")
+    require(ev.get("human_external_evaluation") is False, "CI-010 must not establish human evaluation")
+    require(ev.get("sdk_publication_authorized") is False, "CI-010 must not authorize publication")
+    require(ev.get("conclusion") == "SUCCESS", "CI-010 conclusion mismatch")
+
     current = manifest.get("current_distribution_external_validation")
     require(isinstance(current, dict), "current_distribution_external_validation missing")
     expected = {
@@ -121,7 +161,8 @@ def check_manifest(manifest: dict[str, Any]) -> None:
         "gate": "DEV-GATE-05",
         "phase": "DEV-GATE-05C",
         "state": "ACTIVE_ENGINEERING_CANDIDATE",
-        "local_index_validation": "PENDING",
+        "local_index_validation": "VERIFIED_LOCAL_ONLY",
+        "local_index_validation_evidence": "AX-PUB-CI-010",
         "external_registry_validation": "NOT_AUTHORIZED",
         "human_external_evaluation_occurred": False,
         "registry_ownership_established": False,
@@ -208,7 +249,15 @@ def main() -> None:
 
     distribution = dev009.get("distribution_validation")
     require(isinstance(distribution, dict), "distribution validation state missing")
-    require(distribution.get("local_simple_index_simulation") == "REQUIRED_ENGINEERING_EVIDENCE", "local-index engineering evidence must remain required")
+    require(distribution.get("local_simple_index_simulation") == "DIRECT_CI_VALIDATED_LOCAL_ONLY", "local-index validation state mismatch")
+    require(distribution.get("local_simple_index_validation_evidence") == "AX-PUB-CI-010", "local-index evidence linkage mismatch")
+    require(distribution.get("local_simple_index_reviewed_head") == LOCAL_REVIEWED_HEAD, "local-index reviewed head mismatch")
+    require(distribution.get("local_simple_index_workflow_run_id") == LOCAL_RUN_ID, "local-index run mismatch")
+    require(distribution.get("local_simple_index_workflow_run_number") == 3, "local-index run number mismatch")
+    require(distribution.get("local_simple_index_job_id") == LOCAL_JOB_ID, "local-index job mismatch")
+    require(distribution.get("local_simple_index_actions_artifact_id") == 9339582392, "local-index artifact ID mismatch")
+    require(distribution.get("local_simple_index_actions_artifact_sha256") == LOCAL_ARTIFACT_SHA, "local-index artifact digest mismatch")
+    require(distribution.get("local_simple_index_verified_runtime_matrix") == ["3.11", "3.12", "3.13", "3.14"], "local-index runtime matrix mismatch")
     require(distribution.get("local_simple_index_is_external_registry_validation") is False, "local index must not be represented as external validation")
     require(distribution.get("install_from_index_required") is True, "install-from-index validation must remain required")
     require(distribution.get("exact_artifact_hash_verification_required") is True, "exact artifact hashing must remain required")
@@ -260,10 +309,11 @@ def main() -> None:
         require(token in text, f"DEV-009 document missing marker: {token}")
     require(LOCAL_RUNNER.is_file(), "local-index validation runner missing")
     require(CI009.is_file(), "AX-PUB-CI-009 evidence missing")
+    check_ci010()
 
     check_manifest(manifest)
 
-    print("AX_DEV_GATE_05C_BASELINE_PASS manifest=1.21 external_write=false human_evaluation=false sdk_publication=NOT_AUTHORIZED")
+    print("AX_DEV_GATE_05C_BASELINE_PASS manifest>=1.22 local_index=VERIFIED_LOCAL_ONLY external_write=false human_evaluation=false sdk_publication=NOT_AUTHORIZED")
 
 
 if __name__ == "__main__":

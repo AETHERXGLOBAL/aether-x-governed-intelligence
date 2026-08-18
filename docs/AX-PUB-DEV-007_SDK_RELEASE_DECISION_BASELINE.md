@@ -2,7 +2,7 @@
 
 **Artifact ID:** `AX-PUB-DEV-007`  
 **Version:** `0.1`  
-**Status:** `DEV-GATE-05A CLOSED · DEV-GATE-05B ACTIVE · SDK PUBLICATION NOT AUTHORIZED`  
+**Status:** `DEV-GATE-05A CLOSED · DEV-GATE-05B CLOSED · DEV-GATE-05C ACTIVE · SDK PUBLICATION NOT AUTHORIZED`  
 **Scope:** `AETHERXGLOBAL/aether-x-governed-intelligence`  
 **Governing gate:** `AX-PUB-GATE-001`
 
@@ -10,7 +10,7 @@
 
 This artifact establishes the bounded release strategy and engineering decision baseline for `DEV-GATE-05 — SDK Release Decision`.
 
-`DEV-GATE-05A` is now closed on direct CI evidence recorded in `AX-PUB-CI-008`. The current engineering objective is `DEV-GATE-05B — Installable Package Candidate`.
+`DEV-GATE-05A` is closed on direct CI evidence recorded in `AX-PUB-CI-008`. `DEV-GATE-05B — Installable Package Candidate` is also closed on `AX-PUB-CI-009`. The current engineering objective is `DEV-GATE-05C — Distribution & External Validation`.
 
 This does **not** authorize package publication.
 
@@ -19,16 +19,17 @@ The objective is to convert the validated repository-local SDK candidate into a 
 ```text
 GATE-04 READINESS
 → RELEASE STRATEGY                  [DEV-GATE-05A CLOSED]
-→ PACKAGE CANDIDATE                 [DEV-GATE-05B ACTIVE]
-→ DISTRIBUTION VALIDATION
-→ HUMAN EXTERNAL EVALUATION
-→ RELEASE EVIDENCE PACK
-→ EXPLICIT RELEASE AUTHORITY
-→ PUBLICATION
+→ PACKAGE CANDIDATE                 [DEV-GATE-05B CLOSED]
+→ DISTRIBUTION VALIDATION           [DEV-GATE-05C ACTIVE]
+→ HUMAN EXTERNAL EVALUATION         [NOT ESTABLISHED]
+→ RELEASE EVIDENCE PACK             [NOT ESTABLISHED]
+→ EXPLICIT RELEASE AUTHORITY        [DEV-GATE-05D NOT AUTHORIZED]
+→ PUBLICATION                       [NOT AUTHORIZED]
 ```
 
 `DEV-GATE-05A CLOSED ≠ DEV-GATE-05 CLOSED`  
-`DEV-GATE-05 ACTIVE ≠ SDK RELEASE AUTHORIZED`
+`DEV-GATE-05B CLOSED ≠ SDK RELEASE AUTHORIZED`  
+`DEV-GATE-05C ACTIVE ≠ SDK RELEASE AUTHORIZED`
 
 ## 2. Decision Summary
 
@@ -320,32 +321,44 @@ Closing Gate-05A establishes only the SDK release-decision baseline. It does not
 
 ### DEV-GATE-05B — Installable Package Candidate
 
-**Current state:** `ACTIVE ENGINEERING OBJECTIVE`
+**Current state:** `CLOSED`
 
 Goal: create a self-contained wheel/sdist candidate.
 
-Required evidence includes:
+Established by:
 
-- `pyproject.toml`;
-- installable `src/` package;
-- exact public API declaration;
-- zero-runtime-dependency evidence;
-- package-level tests from installed distributions;
-- source inventory and package-data verification.
+- `AX-PUB-DEV-008 — Installable Package Candidate`;
+- exact deterministic wheel/sdist identities;
+- installed-package validation on CPython 3.11–3.14;
+- direct evidence [`AX-PUB-CI-009`](../evidence/AX-PUB-CI-009_INSTALLABLE_PACKAGE_CANDIDATE_VALIDATION.md).
+
+Gate-05B closure establishes a deterministic installable package candidate only. It does not establish registry ownership, a public software licence, a supported SDK, external adoption or publication authority.
 
 ### DEV-GATE-05C — Distribution & External Validation
 
-**Current state:** `NOT ESTABLISHED`
+**Current state:** `ACTIVE ENGINEERING OBJECTIVE`
 
 Goal: validate the exact distribution path without production release authority.
 
-Required evidence includes:
+Current evidence state:
 
-- package-name availability check;
-- TestPyPI or equivalent controlled distribution validation after authorization;
-- install-from-index verification;
-- at least one human external evaluation;
-- issue disposition.
+- local Python Simple Repository API-compatible distribution simulation: `VERIFIED / LOCAL ONLY`;
+- direct evidence: [`AX-PUB-CI-010`](../evidence/AX-PUB-CI-010_DISTRIBUTION_EXTERNAL_VALIDATION_BASELINE_VALIDATION.md);
+- exact candidate installed through index semantics on CPython 3.11–3.14;
+- external registry validation: `NOT ESTABLISHED / NOT AUTHORIZED`;
+- human external evaluation: `NOT ESTABLISHED`;
+- external adoption: `NOT ESTABLISHED`.
+
+Remaining closure evidence includes:
+
+- fresh package-name availability/ownership check at the authorized action time;
+- release controls sufficient for controlled external registry action;
+- separately authorized TestPyPI or equivalent external distribution validation;
+- install-from-external-index verification;
+- at least one independent human external evaluation;
+- complete finding/issue disposition.
+
+`LOCAL INDEX PASS ≠ TESTPYPI PASS`.
 
 ### DEV-GATE-05D — Final Release Authority
 
@@ -376,9 +389,18 @@ Only Gate-05D may change the publication disposition.
 ```text
 DEV-GATE-05: ACTIVE
 DEV-GATE-05A: CLOSED
-DEV-GATE-05B: ACTIVE ENGINEERING OBJECTIVE
-DEV-GATE-05C: NOT ESTABLISHED
+DEV-GATE-05B: CLOSED
+DEV-GATE-05C: ACTIVE ENGINEERING OBJECTIVE
 DEV-GATE-05D: NOT AUTHORIZED
+
+INSTALLABLE PACKAGE CANDIDATE: ESTABLISHED / DETERMINISTIC
+LOCAL INDEX DISTRIBUTION VALIDATION: VERIFIED / LOCAL ONLY
+EXTERNAL REGISTRY VALIDATION: NOT ESTABLISHED / NOT AUTHORIZED
+HUMAN EXTERNAL EVALUATION: NOT ESTABLISHED
+EXTERNAL ADOPTION: NOT ESTABLISHED
+REGISTRY OWNERSHIP: NOT ESTABLISHED
+PUBLIC SDK LICENCE: NOT GRANTED
+SUPPORTED SDK: NOT ESTABLISHED
 SDK PUBLICATION: NOT AUTHORIZED
 ```
 
@@ -407,12 +429,14 @@ The verification-only PR used one disposable trigger and was closed without merg
 
 `OPEN-SOURCE DIRECTION ≠ LICENCE GRANTED`  
 `PACKAGE NAME CANDIDATE ≠ REGISTRY OWNERSHIP`  
-`PYTHON TARGET MATRIX ≠ VERIFIED PACKAGE SUPPORT`  
+`PYTHON TARGET MATRIX ≠ SUPPORTED SDK CLAIM`  
+`LOCAL INDEX PASS ≠ TESTPYPI PASS`  
 `TESTPYPI ≠ PRODUCTION RELEASE`  
 `PEP 740 ATTESTATION ≠ SECURITY CERTIFICATION`  
 `EXTERNAL EVALUATION ≠ EXTERNAL ADOPTION`  
 `DEV-GATE-05A CLOSED ≠ DEV-GATE-05 CLOSED`  
-`DEV-GATE-05B ACTIVE ≠ INSTALLABLE PACKAGE VALIDATED`  
+`DEV-GATE-05B CLOSED ≠ SDK RELEASE`  
+`DEV-GATE-05C ACTIVE ≠ SDK PUBLICATION AUTHORIZED`  
 `SDK PUBLICATION NOT AUTHORIZED`
 
 ---

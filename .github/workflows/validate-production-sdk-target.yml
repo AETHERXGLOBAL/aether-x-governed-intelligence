@@ -1,0 +1,75 @@
+name: Validate Production SDK Productization Target
+
+on:
+  pull_request:
+    paths:
+      - 'artifacts/AX-PUB-DEV-009.json'
+      - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'docs/QUICKSTART.md'
+      - 'docs/PUBLIC_ENGINEERING_STATE.md'
+      - 'docs/PRODUCTION_SDK_DEFINITION_OF_DONE.md'
+      - 'docs/RELEASE_CONTROL_PLANE.md'
+      - 'docs/AX-PUB-DEV-007_SDK_RELEASE_DECISION_BASELINE.md'
+      - 'evidence/AX-PUB-CI-010_DISTRIBUTION_EXTERNAL_VALIDATION_BASELINE_VALIDATION.md'
+      - 'tools/check_sdk_distribution_external_validation.py'
+      - 'tools/check_production_sdk_target.py'
+      - '.github/workflows/validate-production-sdk-target.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'artifacts/AX-PUB-DEV-009.json'
+      - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'docs/QUICKSTART.md'
+      - 'docs/PUBLIC_ENGINEERING_STATE.md'
+      - 'docs/PRODUCTION_SDK_DEFINITION_OF_DONE.md'
+      - 'docs/RELEASE_CONTROL_PLANE.md'
+      - 'docs/AX-PUB-DEV-007_SDK_RELEASE_DECISION_BASELINE.md'
+      - 'evidence/AX-PUB-CI-010_DISTRIBUTION_EXTERNAL_VALIDATION_BASELINE_VALIDATION.md'
+      - 'tools/check_sdk_distribution_external_validation.py'
+      - 'tools/check_production_sdk_target.py'
+      - '.github/workflows/validate-production-sdk-target.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-sdk-target-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-productization-contract:
+    name: Production SDK target / fail-closed state consistency
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+
+      - name: Set up CPython 3.14
+        id: python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.14'
+
+      - name: Validate productization target and current Gate-05C state
+        shell: bash
+        run: |
+          set -euo pipefail
+          py='${{ steps.python.outputs.python-path }}'
+          "$py" -m py_compile \
+            tools/check_production_sdk_target.py \
+            tools/check_sdk_distribution_external_validation.py
+          "$py" tools/check_sdk_distribution_external_validation.py
+          "$py" tools/check_production_sdk_target.py
+
+      - name: Explicit release boundary
+        run: |
+          echo 'PRODUCTION SDK TARGET DEFINED'
+          echo 'PRODUCTION SDK NOT ESTABLISHED'
+          echo 'TESTPYPI/PYPI WRITE NOT AUTHORIZED'
+          echo 'PUBLIC SDK LICENCE NOT GRANTED'
+          echo 'DEV-GATE-05D NOT AUTHORIZED'
+          echo 'SDK PUBLICATION NOT AUTHORIZED'
