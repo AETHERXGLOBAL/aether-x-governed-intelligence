@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEV007 = ROOT / "artifacts" / "AX-PUB-DEV-007.json"
 DEV008 = ROOT / "artifacts" / "AX-PUB-DEV-008.json"
 DEV009 = ROOT / "artifacts" / "AX-PUB-DEV-009.json"
+MANIFEST = ROOT / "artifacts" / "AX-PUB-MANIFEST-001.json"
 DOC = ROOT / "docs" / "AX-PUB-DEV-009_DISTRIBUTION_EXTERNAL_VALIDATION_BASELINE.md"
 LOCAL_RUNNER = ROOT / "tools" / "run_sdk_local_index_validation.py"
 CI009 = ROOT / "evidence" / "AX-PUB-CI-009_INSTALLABLE_PACKAGE_CANDIDATE_VALIDATION.md"
@@ -25,6 +26,13 @@ REQUIRED_BLOCKERS = {
     "HUMAN_EXTERNAL_EVALUATION",
     "FINAL_RELEASE_EVIDENCE_PACK",
     "EXPLICIT_RELEASE_AUTHORITY",
+}
+MANIFEST_BOUNDARIES = {
+    "LOCAL INDEX VALIDATION DOES NOT ESTABLISH TESTPYPI OR PYPI VALIDATION",
+    "PACKAGE NAME SEARCH ABSENCE DOES NOT ESTABLISH REGISTRY OWNERSHIP OR RESERVATION",
+    "HUMAN EXTERNAL EVALUATION MUST NOT BE INFERRED FROM CI OR TEMPLATE VALIDATION",
+    "DEV-GATE-05C ENGINEERING DOES NOT ESTABLISH DEV-GATE-05D RELEASE AUTHORITY",
+    "SDK PUBLICATION REMAINS NOT AUTHORIZED",
 }
 
 
@@ -47,10 +55,99 @@ def load(path: Path) -> dict[str, Any]:
     return data
 
 
+def version_at_least(raw: Any, major: int, minor: int) -> bool:
+    if not isinstance(raw, str):
+        return False
+    try:
+        parts = raw.split("-", 1)[0].split(".")
+        return (int(parts[0]), int(parts[1])) >= (major, minor)
+    except (ValueError, IndexError):
+        return False
+
+
+def check_manifest(manifest: dict[str, Any]) -> None:
+    require(manifest.get("manifest_id") == "AX-PUB-MANIFEST-001", "manifest ID mismatch")
+    require(version_at_least(manifest.get("manifest_version"), 1, 21), "manifest version must be >=1.21 for DEV-009")
+
+    artifacts = manifest.get("artifacts")
+    require(isinstance(artifacts, list), "manifest artifacts must be an array")
+    dev009_entries = [
+        item for item in artifacts
+        if isinstance(item, dict) and item.get("id") == "AX-PUB-DEV-009" and item.get("version") == "0.1"
+    ]
+    require(len(dev009_entries) == 1, "manifest must contain exactly one AX-PUB-DEV-009 v0.1 entry")
+    entry = dev009_entries[0]
+    require(entry.get("state") == "CURRENT", "DEV-009 manifest state must be CURRENT")
+    require(entry.get("type") == "DISTRIBUTION_EXTERNAL_VALIDATION_BASELINE", "DEV-009 manifest type mismatch")
+    require(entry.get("path") == "docs/AX-PUB-DEV-009_DISTRIBUTION_EXTERNAL_VALIDATION_BASELINE.md", "DEV-009 manifest path mismatch")
+    require(entry.get("machine_readable_companion") == "artifacts/AX-PUB-DEV-009.json", "DEV-009 manifest machine companion mismatch")
+    require(entry.get("entrypoint") == "tools/run_sdk_local_index_validation.py", "DEV-009 manifest entrypoint mismatch")
+    maturity = str(entry.get("public_maturity", ""))
+    for marker in (
+        "DEV-GATE-05C ACTIVE ENGINEERING CANDIDATE",
+        "LOCAL INDEX VALIDATION PENDING",
+        "EXTERNAL REGISTRY WRITE NOT AUTHORIZED",
+        "HUMAN EXTERNAL EVALUATION NOT ESTABLISHED",
+        "SDK PUBLICATION NOT AUTHORIZED",
+    ):
+        require(marker in maturity, f"DEV-009 manifest maturity missing {marker}")
+
+    relations = manifest.get("relationships")
+    require(isinstance(relations, list), "manifest relationships must be an array")
+    relset = {
+        (
+            item.get("from_id"), item.get("from_version"), item.get("relationship"),
+            item.get("to_id"), item.get("to_version"), item.get("state"),
+        )
+        for item in relations if isinstance(item, dict)
+    }
+    for required_relation in (
+        ("AX-PUB-DEV-009", "0.1", "IMPLEMENTS_PROGRAM_GATE_OF", "AX-PUB-DEV-001", "1.0", "COMPATIBLE"),
+        ("AX-PUB-DEV-009", "0.1", "BUILDS_ON", "AX-PUB-DEV-008", "0.1", "COMPATIBLE"),
+        ("AX-PUB-DEV-009", "0.1", "GOVERNED_BY", "AX-PUB-GATE-001", "1.0", "COMPATIBLE"),
+    ):
+        require(required_relation in relset, f"missing DEV-009 manifest relation: {required_relation[2]}")
+
+    current = manifest.get("current_distribution_external_validation")
+    require(isinstance(current, dict), "current_distribution_external_validation missing")
+    expected = {
+        "id": "AX-PUB-DEV-009",
+        "version": "0.1",
+        "path": "docs/AX-PUB-DEV-009_DISTRIBUTION_EXTERNAL_VALIDATION_BASELINE.md",
+        "machine_readable_companion": "artifacts/AX-PUB-DEV-009.json",
+        "runner": "tools/run_sdk_local_index_validation.py",
+        "state_checker": "tools/check_sdk_distribution_external_validation.py",
+        "human_evaluation_report_checker": "tools/check_installable_external_evaluation_report.py",
+        "gate": "DEV-GATE-05",
+        "phase": "DEV-GATE-05C",
+        "state": "ACTIVE_ENGINEERING_CANDIDATE",
+        "local_index_validation": "PENDING",
+        "external_registry_validation": "NOT_AUTHORIZED",
+        "human_external_evaluation_occurred": False,
+        "registry_ownership_established": False,
+        "main_release_protection_established": False,
+        "sdk_publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
+    }
+    for key, value in expected.items():
+        require(current.get(key) == value, f"current DEV-009 manifest field mismatch: {key}")
+
+    program = manifest.get("current_developer_program")
+    require(isinstance(program, dict), "current developer program missing")
+    require(program.get("active_gate") == "DEV-GATE-05 — SDK Release Decision", "top-level Gate-05 must remain active")
+    require(program.get("closed_phase") == "DEV-GATE-05B — Installable Package Candidate", "closed phase mismatch")
+    require(program.get("active_phase") == "DEV-GATE-05C — Distribution & External Validation", "active phase mismatch")
+    require(program.get("sdk_publication_disposition") == "SDK PUBLICATION NOT AUTHORIZED", "program publication boundary changed")
+
+    boundaries = manifest.get("claim_boundary")
+    require(isinstance(boundaries, list), "manifest claim_boundary must be an array")
+    require(MANIFEST_BOUNDARIES <= set(boundaries), "one or more DEV-009 claim boundaries missing")
+
+
 def main() -> None:
     dev007 = load(DEV007)
     dev008 = load(DEV008)
     dev009 = load(DEV009)
+    manifest = load(MANIFEST)
 
     phases = dev007.get("gate_05_phases")
     require(isinstance(phases, dict), "DEV-007 phase state missing")
@@ -164,7 +261,9 @@ def main() -> None:
     require(LOCAL_RUNNER.is_file(), "local-index validation runner missing")
     require(CI009.is_file(), "AX-PUB-CI-009 evidence missing")
 
-    print("AX_DEV_GATE_05C_BASELINE_PASS external_write=false human_evaluation=false sdk_publication=NOT_AUTHORIZED")
+    check_manifest(manifest)
+
+    print("AX_DEV_GATE_05C_BASELINE_PASS manifest=1.21 external_write=false human_evaluation=false sdk_publication=NOT_AUTHORIZED")
 
 
 if __name__ == "__main__":
