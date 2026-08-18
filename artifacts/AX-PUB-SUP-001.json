@@ -1,0 +1,82 @@
+{
+  "artifact_id": "AX-PUB-SUP-001",
+  "version": "0.1",
+  "type": "SDK_SUPPORT_COMPATIBILITY_MAINTENANCE_CONTRACT_CANDIDATE",
+  "state": "DEV_GATE_05C_SUPPORT_CONTRACT_CANDIDATE",
+  "sdk_distribution_candidate": "aetherxglobal-governed-intelligence",
+  "sdk_version_candidate": "0.1.0rc1",
+  "import_namespace": "aetherxglobal.governed_intelligence",
+  "public_api_contract": "AX-PUB-API-001",
+  "public_api_validation_evidence": "AX-PUB-CI-012",
+  "support_commitment_established": false,
+  "production_support_activated": false,
+  "stable_1_0_semver_commitment": false,
+  "commercial_sla_established": false,
+  "sdk_publication_authorized": false,
+  "candidate_runtime_matrix": ["3.11", "3.12", "3.13", "3.14"],
+  "versioning_model_after_activation": {
+    "scheme": "SEMANTIC_VERSIONING",
+    "patch": "NO_INTENTIONAL_BREAKING_CHANGE_TO_DECLARED_PUBLIC_API; CORRECTNESS_SECURITY_DOCUMENTATION_FIXES_ALLOWED",
+    "minor": "ADDITIVE_PUBLIC_API_AND_DEPRECATION_ALLOWED; DECLARED_DEPRECATED_PUBLIC_API_NOT_REMOVED WITHIN SAME MAJOR UNDER NORMAL CONDITIONS",
+    "major": "INCOMPATIBLE_PUBLIC_API_CHANGE_ALLOWED WITH EXPLICIT MIGRATION GUIDANCE",
+    "pre_1_0": "CANDIDATE ENGINEERING; BREAKING CHANGE POSSIBLE WITH EXPLICIT CHANGE CLASSIFICATION AND MIGRATION RECORD"
+  },
+  "candidate_deprecation_policy": {
+    "normal_removal_requires_prior_deprecation": true,
+    "target_minimum_notice_days_after_activation": 90,
+    "target_minimum_intervening_minor_release": 1,
+    "effective_rule_after_activation": "LATER_OF_90_DAYS_OR_ONE_INTERVENING_MINOR_RELEASE_UNDER_NORMAL_CONDITIONS",
+    "emergency_exception_allowed": true,
+    "emergency_exception_reasons": ["SECURITY", "LEGAL", "MATERIAL_CORRECTNESS", "GOVERNANCE_OR_SAFETY"],
+    "emergency_exception_requires_public_safe_rationale": true
+  },
+  "candidate_maintenance_model": {
+    "primary_maintained_line": "LATEST_SUPPORTED_MINOR_WITHIN_CURRENT_SUPPORTED_MAJOR",
+    "previous_minor_security_correctness_window_days": 90,
+    "previous_minor_window_is_target_until_release_authority": true,
+    "long_term_support_line_established": false,
+    "end_of_support_notice_required": true,
+    "end_of_support_notice_period_committed": false,
+    "upstream_python_eol_handling": "REVIEW_AND_EXPLICITLY_UPDATE_SUPPORTED_RUNTIME_MATRIX; NO_AUTOMATIC_PERMANENT_SUPPORT"
+  },
+  "support_scope_candidate": {
+    "included": [
+      "DECLARED_PUBLIC_API",
+      "DECLARED_SUPPORTED_CONTRACTS",
+      "PACKAGE_INSTALLATION_FROM_CANONICAL_REGISTRY_AFTER_AUTHORIZATION",
+      "DOCUMENTED_SUPPORTED_PYTHON_RUNTIME_MATRIX",
+      "CORRECTNESS_AND_SECURITY_FIXES_WITHIN_ACTIVE_SUPPORT_POLICY",
+      "MIGRATION_AND_DEPRECATION_GUIDANCE"
+    ],
+    "excluded_without_separate_contract": [
+      "PRIVATE_AETHER_X_PRODUCT_INTEGRATION",
+      "REMOTE_AETHER_X_SERVICE_AVAILABILITY",
+      "PRODUCTION_AUTHORIZATION_DECISIONS",
+      "AGENT_OR_TOOL_EXECUTION",
+      "BROKERAGE_OR_FINANCIAL_EXECUTION",
+      "CUSTOMER_SPECIFIC_INTEGRATION",
+      "COMMERCIAL_RESPONSE_TIME_SLA"
+    ]
+  },
+  "activation_requirements": [
+    "AX_PUB_API_001_VALIDATED_AND_RELEASE_BOUND",
+    "RELEASE_CONTROL_READINESS_ESTABLISHED",
+    "REGISTRY_OWNERSHIP_ESTABLISHED",
+    "PYPI_TRUSTED_PUBLISHER_ESTABLISHED",
+    "IP_COPYRIGHT_CLEARANCE_ESTABLISHED",
+    "PUBLIC_SDK_LICENCE_GRANTED",
+    "DEDICATED_SECURITY_INTAKE_ESTABLISHED",
+    "SECURITY_RESPONSE_OWNER_ASSIGNED",
+    "INDEPENDENT_HUMAN_EXTERNAL_EVALUATION_COMPLETE",
+    "FINAL_RELEASE_EVIDENCE_PACK_COMPLETE",
+    "EXPLICIT_DEV_GATE_05D_RELEASE_AUTHORITY"
+  ],
+  "claim_boundaries": [
+    "SUPPORT CONTRACT CANDIDATE DOES NOT ESTABLISH A SUPPORT COMMITMENT",
+    "TARGET DEPRECATION WINDOW DOES NOT APPLY UNTIL EXPLICIT RELEASE AUTHORITY ADOPTS IT",
+    "TESTED RUNTIME MATRIX DOES NOT CREATE PERMANENT RUNTIME SUPPORT",
+    "NO COMMERCIAL SLA IS ESTABLISHED",
+    "SUPPORTED SDK NOT ESTABLISHED",
+    "SDK PUBLICATION NOT AUTHORIZED"
+  ]
+}
