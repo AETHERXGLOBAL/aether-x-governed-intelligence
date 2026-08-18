@@ -2,6 +2,7 @@
   "artifact_id": "AX-PUB-DEV-008",
   "version": "0.1",
   "status": "DEV-GATE-05B INSTALLABLE PACKAGE CANDIDATE / ENGINEERING CANDIDATE / NOT YET DIRECTLY VALIDATED",
+  "verification_trigger": "VERIFY_PUBLISHED_GATE_05B_BASELINE_ONLY",
   "parent_decision_artifact": "AX-PUB-DEV-007",
   "parent_phase_state": "DEV-GATE-05A CLOSED",
   "gate": "DEV-GATE-05",
