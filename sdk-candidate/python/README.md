@@ -1,22 +1,22 @@
 # AETHER X Python SDK Candidate Surface
 
-`DEV-GATE-02 CANDIDATE · REPOSITORY-LOCAL · NON-DISTRIBUTABLE · NON-PRODUCTION`
+`DEV-GATE-02 CLOSED · SDK CANDIDATE ESTABLISHED · REPOSITORY-LOCAL · NON-DISTRIBUTABLE · NON-PRODUCTION`
 
-This directory contains the bounded Python developer-surface candidate being evaluated under `DEV-GATE-02 — SDK Candidate`.
+This directory contains the bounded Python developer-surface candidate established under `DEV-GATE-02 — SDK Candidate`.
 
-It is intentionally **not** a package release:
+It remains intentionally **not** a package release:
 
 - no `pyproject.toml`;
 - no `setup.py` / `setup.cfg`;
-- no package-registry identity;
-- no installation contract;
+- no approved package-registry identity;
+- no installation support contract;
 - no reuse licence granted by this directory;
 - no remote service or credential dependency;
 - no production execution or authorization API.
 
-`SDK CANDIDATE CODE PRESENT ≠ SDK CANDIDATE ESTABLISHED`  
+`SDK CANDIDATE ESTABLISHED ≠ SUPPORTED SDK`  
 `REPOSITORY-LOCAL MODULE ≠ APPROVED PACKAGE IDENTITY`  
-`DEV-GATE-02 CANDIDATE ≠ SUPPORTED SDK`
+`DEV-GATE-02 CLOSED ≠ SDK RELEASE`
 
 ## Candidate Surface
 
@@ -41,6 +41,19 @@ AX-PUB-SPEC-004 v1.0 → AX-PUB-REF-003
 ```
 
 The candidate facade preserves the original reference-validator finding code and maps it to a developer-facing `AXDEV-*` semantic category. Unmapped reference findings fail to the conservative `AXDEV-CONTRACT-INVALID` category rather than inventing a more specific semantic interpretation.
+
+## Verified Candidate Runtime Matrix
+
+`AX-PUB-CI-005` directly records successful candidate validation across:
+
+```text
+Python 3.10
+Python 3.11
+Python 3.12
+Python 3.13
+```
+
+This matrix applies to the bounded repository-local candidate. It is not a general support policy for a future published package.
 
 ## Run the Candidate Example
 
@@ -88,4 +101,10 @@ The governing publication gate remains `AX-PUB-GATE-001`:
 SDK PUBLICATION NOT AUTHORIZED
 ```
 
-No package or registry publication should be inferred or performed from this candidate directory.
+No package name, registry publication, reuse licence, support commitment or production deployment should be inferred or performed from this candidate directory.
+
+The next developer-program gate is:
+
+```text
+DEV-GATE-03 — Supply-Chain & Release Candidate
+```

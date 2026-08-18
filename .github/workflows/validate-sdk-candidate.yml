@@ -1,26 +1,36 @@
 name: Validate SDK Candidate
 
-# Candidate runtime matrix: Python 3.10, Python 3.11, Python 3.12, Python 3.13
+# Verified candidate runtime matrix: Python 3.10, Python 3.11, Python 3.12, Python 3.13
 on:
   push:
     branches: [main]
     paths:
+      - 'README.md'
+      - 'docs/QUICKSTART.md'
+      - 'docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md'
       - 'docs/AX-PUB-DEV-004_SDK_CANDIDATE_ENGINEERING_BASELINE.md'
       - 'artifacts/AX-PUB-DEV-004.json'
       - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'evidence/AX-PUB-CI-005_SDK_CANDIDATE_VALIDATION.md'
       - 'sdk-candidate/**'
       - 'tools/check_sdk_candidate_boundary.py'
       - 'tools/check_sdk_candidate_state.py'
+      - 'tools/check_developer_experience_state.py'
       - 'tools/check_artifact_manifest.py'
       - '.github/workflows/validate-sdk-candidate.yml'
   pull_request:
     paths:
+      - 'README.md'
+      - 'docs/QUICKSTART.md'
+      - 'docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md'
       - 'docs/AX-PUB-DEV-004_SDK_CANDIDATE_ENGINEERING_BASELINE.md'
       - 'artifacts/AX-PUB-DEV-004.json'
       - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'evidence/AX-PUB-CI-005_SDK_CANDIDATE_VALIDATION.md'
       - 'sdk-candidate/**'
       - 'tools/check_sdk_candidate_boundary.py'
       - 'tools/check_sdk_candidate_state.py'
+      - 'tools/check_developer_experience_state.py'
       - 'tools/check_artifact_manifest.py'
       - '.github/workflows/validate-sdk-candidate.yml'
 
@@ -60,6 +70,8 @@ jobs:
           python -m py_compile sdk-candidate/python/tests/test_sdk_candidate.py
           python -m py_compile tools/check_sdk_candidate_boundary.py
           python -m py_compile tools/check_sdk_candidate_state.py
+          python -m py_compile tools/check_developer_experience_state.py
+          python -m py_compile tools/check_artifact_manifest.py
 
       - name: Run SDK candidate unit tests
         run: python -m unittest discover -s sdk-candidate/python/tests -v
@@ -73,7 +85,7 @@ jobs:
       - name: Validate SDK candidate public boundary
         run: python tools/check_sdk_candidate_boundary.py
 
-      - name: Validate DEV-GATE-02 candidate state
+      - name: Validate closed DEV-GATE-02 governance state
         run: python tools/check_sdk_candidate_state.py
 
       - name: Re-validate closed DEV-GATE-01 state

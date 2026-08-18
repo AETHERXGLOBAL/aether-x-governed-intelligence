@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate AX-PUB-DEV-004 candidate-state governance coherence."""
+"""Validate the durable closed state for AX-PUB-DEV-004 / DEV-GATE-02."""
 from __future__ import annotations
 
 import json
@@ -8,7 +8,11 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACT = ROOT / "artifacts" / "AX-PUB-DEV-004.json"
+MANIFEST = ROOT / "artifacts" / "AX-PUB-MANIFEST-001.json"
 DOC = ROOT / "docs" / "AX-PUB-DEV-004_SDK_CANDIDATE_ENGINEERING_BASELINE.md"
+PROGRAM = ROOT / "docs" / "AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md"
+QUICKSTART = ROOT / "docs" / "QUICKSTART.md"
+EVIDENCE = ROOT / "evidence" / "AX-PUB-CI-005_SDK_CANDIDATE_VALIDATION.md"
 MODULE = ROOT / "sdk-candidate" / "python" / "aetherx_sdk_candidate.py"
 README = ROOT / "sdk-candidate" / "python" / "README.md"
 TESTS = ROOT / "sdk-candidate" / "python" / "tests" / "test_sdk_candidate.py"
@@ -43,6 +47,16 @@ def load_json(path: Path, findings: list[str]) -> dict[str, Any] | None:
     return data
 
 
+def version_at_least(raw: Any, minimum: tuple[int, int]) -> bool:
+    if not isinstance(raw, str):
+        return False
+    try:
+        major, minor = raw.split(".", 1)
+        return (int(major), int(minor)) >= minimum
+    except (ValueError, TypeError):
+        return False
+
+
 def require_file(path: Path, findings: list[str]) -> None:
     if not path.is_file():
         findings.append(f"missing file: {path.relative_to(ROOT)}")
@@ -66,12 +80,12 @@ def main() -> int:
             findings.append("artifact_id mismatch")
         if data.get("version") != "1.0":
             findings.append("artifact version mismatch")
-        if data.get("state") != "DEV-GATE-02_CANDIDATE_NOT_ESTABLISHED":
-            findings.append("candidate state must remain DEV-GATE-02_CANDIDATE_NOT_ESTABLISHED")
+        if data.get("state") != "DEV-GATE-02_CLOSED":
+            findings.append("DEV-GATE-02 machine-readable state must be CLOSED")
         if data.get("candidate_version") != "0.1.0-candidate":
             findings.append("candidate version mismatch")
-        if data.get("sdk_candidate_established") is not False:
-            findings.append("SDK candidate must not yet be established")
+        if data.get("sdk_candidate_established") is not True:
+            findings.append("SDK candidate must be established after Gate-02 closure")
         if data.get("package_identity_status") != "NOT APPROVED":
             findings.append("package identity must remain NOT APPROVED")
         if data.get("registry_status") != "NOT AUTHORIZED":
@@ -86,36 +100,114 @@ def main() -> int:
             findings.append("candidate operation inventory mismatch")
         if data.get("candidate_runtime_matrix") != EXPECTED_RUNTIMES:
             findings.append("candidate runtime matrix mismatch")
-        if data.get("verified_runtime_matrix") != []:
-            findings.append("candidate runtime matrix must remain unverified before CI evidence")
+        if data.get("verified_runtime_matrix") != EXPECTED_RUNTIMES:
+            findings.append("verified candidate runtime matrix mismatch")
 
         mappings = data.get("contract_mapping")
         observed: set[tuple[str, str, str, str]] = set()
         if isinstance(mappings, list):
             for item in mappings:
                 if isinstance(item, dict):
-                    observed.add(
-                        (
-                            str(item.get("contract_id")),
-                            str(item.get("contract_version")),
-                            str(item.get("schema_id")),
-                            str(item.get("reference_validator_id")),
-                        )
-                    )
+                    observed.add((
+                        str(item.get("contract_id")),
+                        str(item.get("contract_version")),
+                        str(item.get("schema_id")),
+                        str(item.get("reference_validator_id")),
+                    ))
         if observed != EXPECTED_CONTRACTS:
             findings.append("candidate contract mapping mismatch")
 
-    for path in (MODULE, README, TESTS, CONFORMANCE, BOUNDARY, WORKFLOW):
+        closure = data.get("closure_evidence")
+        if not isinstance(closure, dict) or closure.get("id") != "AX-PUB-CI-005":
+            findings.append("closure evidence must identify AX-PUB-CI-005")
+        else:
+            if closure.get("validated_base_commit") != "4d4bb5e3bc7c4a104361e2950618badb15d9ff1f":
+                findings.append("closure validated base mismatch")
+            if closure.get("verified_head_commit") != "74285009eb7ba151291e56490f60e483cc8dba85":
+                findings.append("closure verified head mismatch")
+            if closure.get("sdk_candidate_workflow_run_id") != 32144445255:
+                findings.append("SDK candidate workflow run mismatch")
+            if closure.get("manifest_workflow_run_id") != 32144445221:
+                findings.append("manifest workflow run mismatch")
+            if closure.get("conclusion") != "SUCCESS":
+                findings.append("closure evidence conclusion must be SUCCESS")
+
+    manifest = load_json(MANIFEST, findings)
+    if manifest is not None:
+        if not version_at_least(manifest.get("manifest_version"), (1, 14)):
+            findings.append("manifest version must be at least 1.14 for DEV-GATE-02 closure")
+        evidence_items = manifest.get("validation_evidence")
+        ci005 = None
+        if isinstance(evidence_items, list):
+            ci005 = next((item for item in evidence_items if isinstance(item, dict) and item.get("id") == "AX-PUB-CI-005"), None)
+        if not isinstance(ci005, dict):
+            findings.append("manifest missing AX-PUB-CI-005 validation evidence")
+        else:
+            if ci005.get("verified_head_commit") != "74285009eb7ba151291e56490f60e483cc8dba85":
+                findings.append("manifest AX-PUB-CI-005 verification head mismatch")
+            if ci005.get("workflow_run_id") != 32144445255:
+                findings.append("manifest AX-PUB-CI-005 SDK candidate run mismatch")
+            if ci005.get("governance_workflow_run_id") != 32144445221:
+                findings.append("manifest AX-PUB-CI-005 governance run mismatch")
+            if ci005.get("conclusion") != "SUCCESS":
+                findings.append("manifest AX-PUB-CI-005 conclusion must be SUCCESS")
+
+        program = manifest.get("current_developer_program")
+        if not isinstance(program, dict):
+            findings.append("manifest current_developer_program missing")
+        else:
+            if program.get("closed_gate") != "DEV-GATE-02 — SDK Candidate":
+                findings.append("manifest latest closed developer gate mismatch")
+            if program.get("active_gate") != "DEV-GATE-03 — Supply-Chain & Release Candidate":
+                findings.append("manifest active developer gate must be DEV-GATE-03")
+
+        candidate = manifest.get("current_sdk_candidate")
+        if not isinstance(candidate, dict):
+            findings.append("manifest current_sdk_candidate missing")
+        else:
+            if candidate.get("state") != "CLOSED":
+                findings.append("manifest current SDK candidate state must be CLOSED")
+            if candidate.get("verified_runtime_matrix") != EXPECTED_RUNTIMES:
+                findings.append("manifest verified SDK candidate runtime matrix mismatch")
+            if candidate.get("closure_evidence") != "AX-PUB-CI-005":
+                findings.append("manifest SDK candidate closure evidence mismatch")
+
+    for path in (MODULE, README, TESTS, CONFORMANCE, BOUNDARY, WORKFLOW, EVIDENCE):
         require_file(path, findings)
 
     require_markers(
         DOC,
         (
-            "DEV-GATE-02 CANDIDATE",
-            "SDK CANDIDATE NOT YET ESTABLISHED",
+            "DEV-GATE-02 CLOSED",
+            "SDK CANDIDATE ESTABLISHED",
+            "AX-PUB-CI-005",
+            "Python 3.10",
+            "Python 3.11",
+            "Python 3.12",
+            "Python 3.13",
+            "AX_DEV_GATE_02_CLOSED_STATE_PASS",
+            "DEV-GATE-03 — Supply-Chain & Release Candidate",
             "SDK PUBLICATION NOT AUTHORIZED",
-            "0.1.0-candidate",
-            "AX_SDK_CANDIDATE_CONFORMANCE_PASS cases=9 conforming=9",
+        ),
+        findings,
+    )
+    require_markers(
+        PROGRAM,
+        (
+            "DEV-GATE-02: CLOSED",
+            "CURRENT ENGINEERING OBJECTIVE: DEV-GATE-03 — SUPPLY-CHAIN & RELEASE CANDIDATE",
+            "SDK CANDIDATE: ESTABLISHED",
+            "AX-PUB-CI-005",
+            "CANDIDATE",
+        ),
+        findings,
+    )
+    require_markers(
+        QUICKSTART,
+        (
+            "DEV-GATE-02: CLOSED",
+            "SDK CANDIDATE: ESTABLISHED",
+            "AX-PUB-CI-005",
             "DEV-GATE-03 — Supply-Chain & Release Candidate",
         ),
         findings,
@@ -125,7 +217,7 @@ def main() -> int:
         (
             "REPOSITORY-LOCAL",
             "NON-DISTRIBUTABLE",
-            "SDK CANDIDATE CODE PRESENT ≠ SDK CANDIDATE ESTABLISHED",
+            "SDK CANDIDATE ESTABLISHED ≠ SUPPORTED SDK",
             "AX_SDK_CANDIDATE_BOUNDARY_PASS",
         ),
         findings,
@@ -143,6 +235,20 @@ def main() -> int:
         findings,
     )
     require_markers(
+        EVIDENCE,
+        (
+            "AX-PUB-CI-005",
+            "32144445255",
+            "32144445221",
+            "Python 3.10",
+            "Python 3.11",
+            "Python 3.12",
+            "Python 3.13",
+            "SUCCESS",
+        ),
+        findings,
+    )
+    require_markers(
         WORKFLOW,
         (
             "Python 3.10",
@@ -152,16 +258,16 @@ def main() -> int:
             "Run SDK candidate unit tests",
             "Run SDK candidate conformance",
             "Validate SDK candidate public boundary",
-            "Validate DEV-GATE-02 candidate state",
+            "Validate closed DEV-GATE-02 governance state",
         ),
         findings,
     )
 
     if findings:
         for item in findings:
-            print(f"AX_DEV_GATE_02_CANDIDATE_STATE_FAIL: {item}")
+            print(f"AX_DEV_GATE_02_STATE_FAIL: {item}")
         return 1
-    print("AX_DEV_GATE_02_CANDIDATE_STATE_PASS")
+    print("AX_DEV_GATE_02_CLOSED_STATE_PASS")
     return 0
 
 
