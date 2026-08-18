@@ -12,7 +12,15 @@ The target statement is:
 
 > A developer can install the official AETHER X Governed Intelligence SDK from PyPI using `pip`, verify its release origin and provenance, rely on a documented public API and compatibility contract, use it inside its declared production scope, receive security and maintenance guidance, and upgrade through a governed release process.
 
-No single CI pass, package upload, release tag or licence file is sufficient to establish this state.
+No single CI pass, package upload, release tag, contract file or licence file is sufficient to establish this state.
+
+Current contract candidates that make this target machine-checkable are:
+
+- `AX-PUB-API-001` — public API contract candidate;
+- `AX-PUB-SUP-001` — support / compatibility / maintenance contract candidate;
+- `AX-PUB-SEC-001` — security-operations readiness contract candidate.
+
+Their validation evidence is `AX-PUB-CI-012` and `AX-PUB-CI-013`. Validation does not activate support, security operations or release authority.
 
 ---
 
@@ -97,11 +105,21 @@ from aetherxglobal.governed_intelligence import (
 )
 ```
 
-This list is not promoted to a stable `1.0.0` compatibility guarantee merely by appearing here.
+Current binding:
+
+```text
+PUBLIC API CONTRACT: AX-PUB-API-001 v0.1
+VALIDATION EVIDENCE: AX-PUB-CI-012
+VALIDATED RUNTIMES: CPython 3.11–3.14
+STABLE 1.0 GUARANTEE: NOT ESTABLISHED
+SUPPORT COMMITMENT: NOT ESTABLISHED
+```
+
+This list is not promoted to a stable `1.0.0` compatibility guarantee merely by appearing here or by passing candidate CI.
 
 ---
 
-## 4. Runtime and compatibility contract
+## 4. Runtime, compatibility and support contract
 
 Current target runtime line:
 
@@ -123,7 +141,30 @@ Production-supported status requires:
 - a defined response when an upstream Python version reaches end of life;
 - compatibility evidence for the exact artifact being released.
 
-`TESTED ON A RUNTIME ≠ PERMANENT SUPPORT COMMITMENT`
+The pre-activation model is defined by:
+
+[`AX-PUB-SUP-001 — SDK Support, Compatibility & Maintenance Contract Candidate`](./AX-PUB-SUP-001_SDK_SUPPORT_COMPATIBILITY_MAINTENANCE_CONTRACT.md)
+
+Current candidate target under normal conditions, **after explicit activation only**:
+
+```text
+NORMAL REMOVAL REQUIRES PRIOR DEPRECATION
+TARGET NOTICE: 90 DAYS
+TARGET INTERVENING RELEASE: ONE SUPPORTED MINOR
+TARGET RULE: LATER OF 90 DAYS OR ONE INTERVENING SUPPORTED MINOR
+```
+
+Current actual state:
+
+```text
+SUPPORT CONTRACT CANDIDATE: VALIDATED
+SUPPORT COMMITMENT: NOT ESTABLISHED
+PRODUCTION SUPPORT: NOT ACTIVATED
+COMMERCIAL SLA: NOT ESTABLISHED
+```
+
+`TESTED ON A RUNTIME ≠ PERMANENT SUPPORT COMMITMENT`  
+`TARGET DEPRECATION WINDOW ≠ CURRENT SUPPORT PROMISE`
 
 ---
 
@@ -147,6 +188,8 @@ The release path must establish all of the following:
 
 Attestation, SBOM and Trusted Publishing are controls; none alone is a security certification.
 
+Closed historical release-candidate evidence must not be silently rewritten by later productization work. `AX-PUB-CI-013` directly revalidated the Gate-03 deterministic candidate identity while validating the support/security contract candidates.
+
 ---
 
 ## 6. Repository and release-control requirements
@@ -165,7 +208,7 @@ Before any production publication:
 
 Current observed `main` protection is insufficient and remains a blocker until a later evidence record proves otherwise.
 
-See [`RELEASE_CONTROL_PLANE.md`](./RELEASE_CONTROL_PLANE.md).
+See [`RELEASE_CONTROL_PLANE.md`](./RELEASE_CONTROL_PLANE.md) and [`RELEASE_CONTROL_AUDIT.md`](./RELEASE_CONTROL_AUDIT.md).
 
 ---
 
@@ -198,7 +241,24 @@ Production-supported status requires a functioning security process, including:
 - release revocation/yank guidance when a published artifact is unsafe;
 - consumer guidance for identifying fixed versions.
 
-A security policy without an operating owner does not satisfy this gate.
+The pre-activation operating model is defined by:
+
+[`AX-PUB-SEC-001 — SDK Security Operations Readiness Contract Candidate`](./AX-PUB-SEC-001_SDK_SECURITY_OPERATIONS_READINESS_CONTRACT.md)
+
+Current actual state:
+
+```text
+SECURITY OPERATIONS CONTRACT CANDIDATE: VALIDATED
+DEDICATED SECURITY CHANNEL: NOT ESTABLISHED
+SECURITY RESPONSE OWNER: NOT ESTABLISHED
+SECURITY RESPONSE SLA: NOT ESTABLISHED
+BUG BOUNTY: NOT ESTABLISHED
+SECURITY OPERATIONS READY: NO
+```
+
+A security policy or contract document without an operating owner, private intake path and executable remediation/release process does not satisfy this gate.
+
+`VALIDATED SECURITY CONTRACT ≠ SECURITY OPERATIONS READY`
 
 ---
 
@@ -248,15 +308,16 @@ The documentation and package metadata must describe the same release state.
 
 The first supported `0.x` release line may remain pre-1.0, but support commitments must be explicit.
 
-Current engineering direction:
+The current candidate direction is encoded in `AX-PUB-SUP-001` rather than left as prose-only policy:
 
-- no commercial SLA is implied;
-- the latest minor line is the primary maintained line;
-- the immediately previous minor may receive security/correctness fixes for up to 90 days after a successor minor, where technically feasible;
-- material planned removals should receive migration guidance;
+- no commercial SLA is established;
+- the latest supported minor is the target primary maintained line after activation;
+- the immediately previous minor has a **target** security/correctness window of 90 days after a successor minor, where technically feasible;
+- normal planned removals have a target rule of the later of 90 days or one intervening supported minor after activation;
+- material planned removals should include migration guidance;
 - support scope excludes private product integration and production execution systems unless separately contracted.
 
-This direction becomes a support commitment only when final release authority explicitly adopts it.
+These targets become a support commitment only when final release authority explicitly adopts/activates the contract.
 
 ---
 
@@ -269,7 +330,7 @@ REPOSITORY + SOURCE COMMIT
 EXACT DISTRIBUTION NAME
 EXACT VERSION
 WHEEL + SDIST DIGESTS
-PUBLIC API INVENTORY
+PUBLIC API INVENTORY + AX-PUB-API-001 STATE
 SUPPORTED PYTHON MATRIX
 CONFORMANCE RESULTS
 BUILD / PROVENANCE EVIDENCE
@@ -278,6 +339,8 @@ RELEASE-CONTROL AUDIT
 REGISTRY OWNERSHIP / TRUSTED PUBLISHER STATE
 LICENCE + IP CLEARANCE
 EXTERNAL EVALUATION RESULT
+AX-PUB-SUP-001 ACTIVATION STATE
+AX-PUB-SEC-001 READINESS STATE
 SECURITY + SUPPORT BOUNDARY
 MATERIAL LIMITATIONS
 RELEASE OWNER
@@ -295,11 +358,17 @@ INSTALLABLE CANDIDATE
     ↓
 DISTRIBUTION-VALIDATED CANDIDATE
     ↓
+API CONTRACT VALIDATED CANDIDATE
+    ↓
+SUPPORT / SECURITY CONTRACTS VALIDATED CANDIDATE
+    ↓
 EXTERNALLY EVALUATED CANDIDATE
     ↓
 RELEASE-CONTROL READY
     ↓
 LICENCE / IP CLEARED
+    ↓
+SUPPORT ACTIVATED + SECURITY OPERATIONS READY
     ↓
 DEV-GATE-05D AUTHORIZED
     ↓
@@ -308,7 +377,7 @@ OFFICIAL PUBLISHED SDK
 PRODUCTION-SUPPORTED DECLARED SCOPE
 ```
 
-No stage may be inferred from a later-looking filename or package version.
+No stage may be inferred from a later-looking filename, CI result or package version.
 
 ---
 
@@ -316,6 +385,11 @@ No stage may be inferred from a later-looking filename or package version.
 
 ```text
 PRODUCTION SDK DEFINITION OF DONE: DEFINED
+PUBLIC API CONTRACT CANDIDATE: VALIDATED
+SUPPORT CONTRACT CANDIDATE: VALIDATED / NOT ACTIVATED
+SECURITY OPERATIONS CONTRACT CANDIDATE: VALIDATED / NOT READY
+SUPPORT COMMITMENT: NOT ESTABLISHED
+SECURITY OPERATIONS READY: NO
 PRODUCTION SDK: NOT ESTABLISHED
 PYPI DISTRIBUTION: NOT ESTABLISHED
 PUBLIC SDK LICENCE: NOT GRANTED
