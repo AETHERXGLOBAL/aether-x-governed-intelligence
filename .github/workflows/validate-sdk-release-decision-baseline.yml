@@ -3,18 +3,24 @@ name: Validate SDK Release Decision Baseline
 on:
   push:
     branches:
-      - dev-gate-05-release-decision-baseline
+      - main
     paths:
       - 'docs/AX-PUB-DEV-007_SDK_RELEASE_DECISION_BASELINE.md'
       - 'artifacts/AX-PUB-DEV-007.json'
+      - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'evidence/AX-PUB-CI-008_SDK_RELEASE_DECISION_BASELINE_VALIDATION.md'
       - 'tools/check_sdk_release_decision_baseline.py'
+      - 'tools/check_sdk_release_decision_manifest_state.py'
       - 'sdk-candidate/**'
       - '.github/workflows/validate-sdk-release-decision-baseline.yml'
   pull_request:
     paths:
       - 'docs/AX-PUB-DEV-007_SDK_RELEASE_DECISION_BASELINE.md'
       - 'artifacts/AX-PUB-DEV-007.json'
+      - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'evidence/AX-PUB-CI-008_SDK_RELEASE_DECISION_BASELINE_VALIDATION.md'
       - 'tools/check_sdk_release_decision_baseline.py'
+      - 'tools/check_sdk_release_decision_manifest_state.py'
       - 'sdk-candidate/**'
       - '.github/workflows/validate-sdk-release-decision-baseline.yml'
 
@@ -37,26 +43,37 @@ jobs:
 
     steps:
       - name: Checkout reviewed source
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # immutable commit pin
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           persist-credentials: false
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # immutable commit pin
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Confirm runtime
         run: python --version
 
-      - name: Parse machine-readable Gate-05A state
-        run: python -m json.tool artifacts/AX-PUB-DEV-007.json > /dev/null
+      - name: Parse machine-readable Gate-05A and manifest state
+        run: |
+          python -m json.tool artifacts/AX-PUB-DEV-007.json > /dev/null
+          python -m json.tool artifacts/AX-PUB-MANIFEST-001.json > /dev/null
 
-      - name: Compile Gate-05A checker
-        run: python -m py_compile tools/check_sdk_release_decision_baseline.py
+      - name: Compile Gate-05A governance checkers
+        run: |
+          python -m py_compile tools/check_sdk_release_decision_baseline.py
+          python -m py_compile tools/check_sdk_release_decision_manifest_state.py
+          python -m py_compile tools/check_artifact_manifest.py
 
       - name: Validate Gate-05A decision invariants
         run: python tools/check_sdk_release_decision_baseline.py
+
+      - name: Validate Gate-05A manifest closure state
+        run: python tools/check_sdk_release_decision_manifest_state.py
+
+      - name: Validate public artifact manifest
+        run: python tools/check_artifact_manifest.py
 
       - name: Compile existing bounded SDK candidate
         run: |

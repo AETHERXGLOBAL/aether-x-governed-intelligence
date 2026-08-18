@@ -2,7 +2,7 @@
 
 **Artifact ID:** `AX-PUB-DEV-007`  
 **Version:** `0.1`  
-**Status:** `DEV-GATE-05 DECISION BASELINE · ENGINEERING CANDIDATE · SDK PUBLICATION NOT AUTHORIZED`  
+**Status:** `DEV-GATE-05A CLOSED · DEV-GATE-05B ACTIVE · SDK PUBLICATION NOT AUTHORIZED`  
 **Scope:** `AETHERXGLOBAL/aether-x-governed-intelligence`  
 **Governing gate:** `AX-PUB-GATE-001`
 
@@ -10,14 +10,16 @@
 
 This artifact establishes the bounded release strategy and engineering decision baseline for `DEV-GATE-05 — SDK Release Decision`.
 
-It does **not** authorize package publication.
+`DEV-GATE-05A` is now closed on direct CI evidence recorded in `AX-PUB-CI-008`. The current engineering objective is `DEV-GATE-05B — Installable Package Candidate`.
+
+This does **not** authorize package publication.
 
 The objective is to convert the validated repository-local SDK candidate into a release-capable package candidate without silently creating production, support, licensing, security or compatibility commitments.
 
 ```text
 GATE-04 READINESS
-→ RELEASE STRATEGY
-→ PACKAGE CANDIDATE
+→ RELEASE STRATEGY                  [DEV-GATE-05A CLOSED]
+→ PACKAGE CANDIDATE                 [DEV-GATE-05B ACTIVE]
 → DISTRIBUTION VALIDATION
 → HUMAN EXTERNAL EVALUATION
 → RELEASE EVIDENCE PACK
@@ -25,6 +27,7 @@ GATE-04 READINESS
 → PUBLICATION
 ```
 
+`DEV-GATE-05A CLOSED ≠ DEV-GATE-05 CLOSED`  
 `DEV-GATE-05 ACTIVE ≠ SDK RELEASE AUTHORIZED`
 
 ## 2. Decision Summary
@@ -302,16 +305,22 @@ Final publication requires a separate explicit release decision tied to the exac
 
 ### DEV-GATE-05A — Release Decision Baseline
 
+**Current state:** `CLOSED`
+
 Goal: establish the release strategy, boundaries and hard gates.
 
-Required evidence:
+Closure is established by:
 
 - this artifact;
-- machine-readable companion;
-- Gate-05 decision-baseline checker;
-- direct CI over the target Python 3.11–3.14 matrix.
+- machine-readable companion `artifacts/AX-PUB-DEV-007.json`;
+- fail-closed checker `tools/check_sdk_release_decision_baseline.py`;
+- direct CI evidence [`AX-PUB-CI-008`](../evidence/AX-PUB-CI-008_SDK_RELEASE_DECISION_BASELINE_VALIDATION.md) across CPython 3.11–3.14.
+
+Closing Gate-05A establishes only the SDK release-decision baseline. It does not grant a software licence, establish package ownership, establish an installable supported SDK, close DEV-GATE-05 or authorize publication.
 
 ### DEV-GATE-05B — Installable Package Candidate
+
+**Current state:** `ACTIVE ENGINEERING OBJECTIVE`
 
 Goal: create a self-contained wheel/sdist candidate.
 
@@ -326,6 +335,8 @@ Required evidence includes:
 
 ### DEV-GATE-05C — Distribution & External Validation
 
+**Current state:** `NOT ESTABLISHED`
+
 Goal: validate the exact distribution path without production release authority.
 
 Required evidence includes:
@@ -337,6 +348,8 @@ Required evidence includes:
 - issue disposition.
 
 ### DEV-GATE-05D — Final Release Authority
+
+**Current state:** `NOT AUTHORIZED`
 
 Goal: make the explicit publish / do-not-publish decision.
 
@@ -362,14 +375,35 @@ Only Gate-05D may change the publication disposition.
 
 ```text
 DEV-GATE-05: ACTIVE
-DEV-GATE-05A: DECISION BASELINE CANDIDATE
-DEV-GATE-05B: NOT YET ESTABLISHED
-DEV-GATE-05C: NOT YET ESTABLISHED
+DEV-GATE-05A: CLOSED
+DEV-GATE-05B: ACTIVE ENGINEERING OBJECTIVE
+DEV-GATE-05C: NOT ESTABLISHED
 DEV-GATE-05D: NOT AUTHORIZED
 SDK PUBLICATION: NOT AUTHORIZED
 ```
 
-## 5. Claim Boundary
+## 5. Gate-05A Closure Evidence
+
+Direct closure evidence is recorded in:
+
+**[`AX-PUB-CI-008 — SDK Release Decision Baseline Validation Evidence`](../evidence/AX-PUB-CI-008_SDK_RELEASE_DECISION_BASELINE_VALIDATION.md)**
+
+Verified baseline and CI identity:
+
+```text
+PUBLISHED CANDIDATE BASE: fa1e2d132071ddff195fb998d0d27a6b5b9d4e40
+VERIFICATION HEAD:        7877abceda8fa6a372300fceb1ae0c124853d2b6
+VERIFICATION PR:          #31 — CLOSED WITHOUT MERGE
+GATE-05A WORKFLOW RUN:    32168696722 — SUCCESS
+MANIFEST WORKFLOW RUN:    32168696655 — SUCCESS
+VERIFIED RUNTIMES:        CPython 3.11 / 3.12 / 3.13 / 3.14
+```
+
+The verification-only PR used one disposable trigger and was closed without merge after evidence capture. The branch was reset to the exact published candidate baseline.
+
+`DIRECT CI EVIDENCE ≠ SDK RELEASE AUTHORITY`
+
+## 6. Claim Boundary
 
 `OPEN-SOURCE DIRECTION ≠ LICENCE GRANTED`  
 `PACKAGE NAME CANDIDATE ≠ REGISTRY OWNERSHIP`  
@@ -377,7 +411,8 @@ SDK PUBLICATION: NOT AUTHORIZED
 `TESTPYPI ≠ PRODUCTION RELEASE`  
 `PEP 740 ATTESTATION ≠ SECURITY CERTIFICATION`  
 `EXTERNAL EVALUATION ≠ EXTERNAL ADOPTION`  
-`DEV-GATE-05A ≠ DEV-GATE-05 CLOSED`  
+`DEV-GATE-05A CLOSED ≠ DEV-GATE-05 CLOSED`  
+`DEV-GATE-05B ACTIVE ≠ INSTALLABLE PACKAGE VALIDATED`  
 `SDK PUBLICATION NOT AUTHORIZED`
 
 ---
