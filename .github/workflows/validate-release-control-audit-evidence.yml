@@ -1,0 +1,62 @@
+name: Validate Release-Control Audit Evidence
+
+on:
+  pull_request:
+    paths:
+      - 'evidence/AX-PUB-RELEASE-CONTROL-AUDIT-001.json'
+      - 'evidence/AX-PUB-CI-011_RELEASE_CONTROL_LIVE_AUDIT.md'
+      - 'docs/RELEASE_CONTROL_AUDIT.md'
+      - 'tools/check_release_control_audit_evidence.py'
+      - '.github/workflows/validate-release-control-audit-evidence.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'evidence/AX-PUB-RELEASE-CONTROL-AUDIT-001.json'
+      - 'evidence/AX-PUB-CI-011_RELEASE_CONTROL_LIVE_AUDIT.md'
+      - 'docs/RELEASE_CONTROL_AUDIT.md'
+      - 'tools/check_release_control_audit_evidence.py'
+      - '.github/workflows/validate-release-control-audit-evidence.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-control-audit-evidence-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: AX-PUB-CI-011 evidence integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+
+      - name: Set up CPython 3.14
+        id: python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.14'
+
+      - name: Parse preserved audit record
+        run: |
+          '${{ steps.python.outputs.python-path }}' -m json.tool \
+            evidence/AX-PUB-RELEASE-CONTROL-AUDIT-001.json > /dev/null
+
+      - name: Validate evidence integrity
+        run: |
+          '${{ steps.python.outputs.python-path }}' -m py_compile \
+            tools/check_release_control_audit_evidence.py
+          '${{ steps.python.outputs.python-path }}' \
+            tools/check_release_control_audit_evidence.py
+
+      - name: Explicit evidence boundary
+        run: |
+          echo 'AX-PUB-CI-011 IS A LIVE-AUDIT BASELINE'
+          echo 'AUDIT PASS DOES NOT ESTABLISH RELEASE CONTROL READINESS'
+          echo 'NO PLATFORM CONTROL MUTATION PERFORMED'
+          echo 'SDK PUBLICATION NOT AUTHORIZED'
