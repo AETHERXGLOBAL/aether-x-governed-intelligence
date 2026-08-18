@@ -23,27 +23,9 @@
     "validate_agent_authority"
   ],
   "contract_mapping": [
-    {
-      "operation": "validate_eav",
-      "contract_id": "AX-PUB-SPEC-002",
-      "contract_version": "1.0",
-      "schema_id": "AX-PUB-SCHEMA-001",
-      "reference_validator_id": "AX-PUB-REF-001"
-    },
-    {
-      "operation": "validate_point_in_time",
-      "contract_id": "AX-PUB-SPEC-003",
-      "contract_version": "1.0",
-      "schema_id": "AX-PUB-SCHEMA-002",
-      "reference_validator_id": "AX-PUB-REF-002"
-    },
-    {
-      "operation": "validate_agent_authority",
-      "contract_id": "AX-PUB-SPEC-004",
-      "contract_version": "1.0",
-      "schema_id": "AX-PUB-SCHEMA-003",
-      "reference_validator_id": "AX-PUB-REF-003"
-    }
+    {"operation":"validate_eav","contract_id":"AX-PUB-SPEC-002","contract_version":"1.0","schema_id":"AX-PUB-SCHEMA-001","reference_validator_id":"AX-PUB-REF-001"},
+    {"operation":"validate_point_in_time","contract_id":"AX-PUB-SPEC-003","contract_version":"1.0","schema_id":"AX-PUB-SCHEMA-002","reference_validator_id":"AX-PUB-REF-002"},
+    {"operation":"validate_agent_authority","contract_id":"AX-PUB-SPEC-004","contract_version":"1.0","schema_id":"AX-PUB-SCHEMA-003","reference_validator_id":"AX-PUB-REF-003"}
   ],
   "developer_error_categories": [
     "AXDEV-CONTRACT-INVALID",
@@ -89,5 +71,6 @@
     "REPOSITORY-LOCAL MODULE DOES NOT ESTABLISH APPROVED PACKAGE IDENTITY",
     "SDK PUBLICATION IS NOT AUTHORIZED",
     "SDK CANDIDATE VALIDATION DOES NOT ESTABLISH PRODUCT IMPLEMENTATION OR PRODUCTION READINESS"
-  ]
+  ],
+  "_verification_trigger": "FINAL-CLOSED-STATE-2026-08-18"
 }
