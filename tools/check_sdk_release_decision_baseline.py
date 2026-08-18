@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Fail-closed validation for AX-PUB-DEV-007 / DEV-GATE-05A.
 
-This checker validates the release-decision baseline only. It does not establish
-an installable package, registry ownership, a software licence grant, human
-external evaluation, release authority, or SDK publication.
+The checker accepts the published candidate state and the evidence-backed closed
+state. It never establishes an installable package, registry ownership, a
+software licence grant, human external evaluation, release authority or SDK
+publication.
 """
 from __future__ import annotations
 
@@ -13,6 +14,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACT = ROOT / "artifacts" / "AX-PUB-DEV-007.json"
+EXPECTED_EVIDENCE = ROOT / "evidence" / "AX-PUB-CI-008_SDK_RELEASE_DECISION_BASELINE_VALIDATION.md"
 
 
 def fail(message: str) -> None:
@@ -50,7 +52,7 @@ def main() -> None:
     data = load()
 
     require(data.get("artifact_id") == "AX-PUB-DEV-007", "artifact_id must be AX-PUB-DEV-007")
-    require(data.get("version") == "0.1", "version must remain 0.1 for this baseline candidate")
+    require(data.get("version") == "0.1", "version must remain 0.1 for this baseline")
     require(data.get("gate") == "DEV-GATE-05", "gate must be DEV-GATE-05")
     require(
         data.get("publication_disposition") == "SDK PUBLICATION NOT AUTHORIZED",
@@ -76,7 +78,7 @@ def main() -> None:
     licensing = require_dict(data, "licensing")
     require(licensing.get("strategy") == "OPEN_SDK_CONTROLLED_CORE", "licensing strategy changed without a new decision")
     require(licensing.get("target_sdk_license") == "Apache-2.0", "target SDK licence must be Apache-2.0")
-    require(licensing.get("license_granted_now") is False, "candidate baseline must not grant a licence")
+    require(licensing.get("license_granted_now") is False, "Gate-05A must not grant a licence")
     require(licensing.get("ip_clearance_required") is True, "IP clearance must remain mandatory")
     require(licensing.get("repository_wide_relicense") is False, "Gate-05 must not relicense the whole repository")
     require(licensing.get("trademark_rights_included") is False, "software licence must not imply trademark rights")
@@ -123,7 +125,7 @@ def main() -> None:
     require(architecture.get("build_metadata") == "pyproject.toml / PEP 621", "package metadata must use pyproject.toml / PEP 621")
 
     security = require_dict(data, "release_security")
-    security_true = (
+    for key in (
         "ci_build_required",
         "build_once_test_exact_artifacts",
         "full_commit_sha_pinning_required_for_release_actions",
@@ -132,8 +134,7 @@ def main() -> None:
         "pypi_digital_attestations_required",
         "protected_pypi_environment_required",
         "human_release_approval_required",
-    )
-    for key in security_true:
+    ):
         require(security.get(key) is True, f"release security control {key} must remain required")
     require(
         security.get("long_lived_pypi_token_as_primary_release_credential_allowed") is False,
@@ -171,10 +172,44 @@ def main() -> None:
     require(maintenance.get("private_product_integration_support_implied") is False, "SDK support must not imply private-product support")
 
     phases = require_dict(data, "gate_05_phases")
-    require(phases.get("DEV-GATE-05A") == "DECISION_BASELINE_CANDIDATE", "DEV-GATE-05A state mismatch")
-    require(phases.get("DEV-GATE-05B") == "NOT_ESTABLISHED", "DEV-GATE-05B must not be promoted yet")
+    phase_a = phases.get("DEV-GATE-05A")
+    require(phase_a in {"DECISION_BASELINE_CANDIDATE", "CLOSED"}, "DEV-GATE-05A state mismatch")
     require(phases.get("DEV-GATE-05C") == "NOT_ESTABLISHED", "DEV-GATE-05C must not be promoted yet")
     require(phases.get("DEV-GATE-05D") == "NOT_AUTHORIZED", "DEV-GATE-05D must remain unauthorized")
+
+    if phase_a == "DECISION_BASELINE_CANDIDATE":
+        require(data.get("verification_state") in {"PR_VALIDATION_PENDING", "CI_PENDING"}, "candidate verification state mismatch")
+        require(phases.get("DEV-GATE-05B") == "NOT_ESTABLISHED", "DEV-GATE-05B must not be promoted before Gate-05A closure")
+        marker = "AX_SDK_RELEASE_DECISION_BASELINE_PASS"
+    else:
+        require(data.get("verification_state") == "DIRECT_CI_VALIDATED", "closed Gate-05A requires direct CI validation")
+        require(phases.get("DEV-GATE-05B") == "ACTIVE_ENGINEERING_OBJECTIVE", "closed Gate-05A must advance Gate-05B")
+        require(data.get("next_phase") == "DEV-GATE-05B — Installable Package Candidate", "next phase mismatch")
+        closure = require_dict(data, "closure_evidence")
+        require(closure.get("id") == "AX-PUB-CI-008", "closed Gate-05A must cite AX-PUB-CI-008")
+        require(closure.get("version") == "1.0", "closure evidence version mismatch")
+        require(closure.get("path") == "evidence/AX-PUB-CI-008_SDK_RELEASE_DECISION_BASELINE_VALIDATION.md", "closure evidence path mismatch")
+        require(closure.get("validated_base_commit") == "fa1e2d132071ddff195fb998d0d27a6b5b9d4e40", "validated base commit mismatch")
+        require(closure.get("verified_head_commit") == "7877abceda8fa6a372300fceb1ae0c124853d2b6", "verified head commit mismatch")
+        require(closure.get("verification_pr") == 31, "verification PR mismatch")
+        require(closure.get("workflow_run_id") == 32168696722, "Gate-05A workflow run mismatch")
+        require(closure.get("governance_workflow_run_id") == 32168696655, "governance workflow run mismatch")
+        require(closure.get("conclusion") == "SUCCESS", "closure evidence must be SUCCESS")
+        require(closure.get("verified_runtime_matrix") == ["3.11", "3.12", "3.13", "3.14"], "verified runtime matrix mismatch")
+        require(EXPECTED_EVIDENCE.is_file(), "AX-PUB-CI-008 evidence file is missing")
+        evidence_text = EXPECTED_EVIDENCE.read_text(encoding="utf-8")
+        for token in (
+            "AX-PUB-CI-008",
+            "32168696722",
+            "32168696655",
+            "95814358240",
+            "95814357868",
+            "95814357940",
+            "95814358020",
+            "SDK PUBLICATION NOT AUTHORIZED",
+        ):
+            require(token in evidence_text, f"closure evidence file missing token: {token}")
+        marker = "AX_SDK_RELEASE_DECISION_BASELINE_CLOSED_STATE_PASS"
 
     blockers = set(require_list(data, "hard_blockers_before_publication"))
     required_blockers = {
@@ -190,7 +225,7 @@ def main() -> None:
     }
     require(required_blockers <= blockers, "one or more hard release blockers were removed")
 
-    print("AX_SDK_RELEASE_DECISION_BASELINE_PASS")
+    print(marker)
 
 
 if __name__ == "__main__":
