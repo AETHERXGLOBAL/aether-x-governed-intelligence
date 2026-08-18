@@ -1,6 +1,6 @@
 # AETHER X Gate-03 Release-Candidate Engineering
 
-`NON-PUBLISHED ENGINEERING ARTIFACT · SUPPLY-CHAIN VALIDATION ONLY`
+`VALIDATED NON-PUBLISHED ENGINEERING ARTIFACT · CI-ONLY DISTRIBUTION BOUNDARY`
 
 This directory defines the bounded release-candidate engineering surface for `DEV-GATE-03 — Supply-Chain & Release Candidate`.
 
@@ -9,7 +9,10 @@ The current descriptor is:
 ```text
 AX-PUB-RC-001
 version: 0.1.0-rc1
-state: DEV-GATE-03 CANDIDATE
+state: DEV-GATE-03 VALIDATED
+verified SHA-256: 8444e7c01621f3d63019b407d9379bc82176f892dce64760cc93e84064ac8c21
+verified SOURCE_DATE_EPOCH: 1787064230
+closure evidence: AX-PUB-CI-006 v1.1
 ```
 
 The candidate is built as a deterministic CI-only archive named:
@@ -30,15 +33,17 @@ PUBLIC SDK: NOT PUBLISHED
 SDK PUBLICATION: NOT AUTHORIZED
 ```
 
-The Gate-03 workflow may build, inspect, attest and temporarily upload a CI artifact for supply-chain validation. It must not publish to PyPI, GitHub Packages or another package registry.
+Gate-03 closure validates the bounded engineering artifact and its supply-chain evidence. It does not publish to PyPI, GitHub Packages or another package registry and does not create a supported SDK contract.
 
-## Supply-Chain Controls Under Test
+## Verified Supply-Chain Controls
 
-- deterministic source selection;
+`AX-PUB-CI-006 v1.1` records successful validation of:
+
+- fixed public source selection;
 - deterministic ZIP construction;
 - SHA-256 build digest;
 - machine-readable build manifest;
-- SPDX 2.3 SBOM document with software licence fields left `NOASSERTION`;
+- SPDX 2.3 SBOM with software licence fields left `NOASSERTION`;
 - GitHub build-provenance attestation;
 - GitHub SBOM attestation;
 - `gh attestation verify` verification;
@@ -48,12 +53,13 @@ The Gate-03 workflow may build, inspect, attest and temporarily upload a CI arti
 
 The SBOM describes the engineering bundle. It does not grant an open-source, commercial or other reuse licence.
 
-## Local Build
+## Reproduce the Validated Build
 
-From repository root:
+From repository root, while the declared source set remains unchanged:
 
 ```bash
-SOURCE_DATE_EPOCH=315532800 python3 tools/build_release_candidate.py --output-dir dist
+SOURCE_DATE_EPOCH=1787064230 \
+python3 tools/build_release_candidate.py --output-dir dist
 ```
 
 The build creates:
@@ -65,15 +71,22 @@ dist/AX-PUB-RC-001_BUILD_MANIFEST.json
 dist/AX-PUB-RC-001.spdx.json
 ```
 
-Validate the built state:
+Validate the closed state and built artifact:
 
 ```bash
+python3 tools/check_supply_chain_release_candidate.py
 python3 tools/check_supply_chain_release_candidate.py --dist dist
+```
+
+For the validated source state, the bundle digest must be:
+
+```text
+8444e7c01621f3d63019b407d9379bc82176f892dce64760cc93e84064ac8c21
 ```
 
 ## Attestation Verification
 
-When a GitHub Actions run has generated attestations for the candidate artifact, the intended verification commands are:
+When a GitHub Actions run has generated attestations for the candidate artifact, verification uses:
 
 ```bash
 gh attestation verify dist/AX-PUB-RC-001.zip \
@@ -86,7 +99,8 @@ gh attestation verify dist/AX-PUB-RC-001.zip \
 
 These commands verify artifact provenance or the associated SBOM attestation. Verification does not convert the artifact into a supported or published SDK.
 
-`ATTESTED BUILD ≠ SUPPORTED SDK`  
+`RELEASE-CANDIDATE VALIDATED ≠ SUPPORTED SDK`  
+`ATTESTED BUILD ≠ SECURITY CERTIFICATION`  
 `CI ARTIFACT ≠ PUBLIC PACKAGE RELEASE`  
 `SBOM ≠ REUSE LICENCE`  
 `SDK PUBLICATION NOT AUTHORIZED`
