@@ -2,7 +2,7 @@
 
 **Artifact ID:** `AX-PUB-DEV-001`  
 **Version:** `1.0`  
-**Status:** `PUBLIC ENGINEERING PROGRAM · UNDER DEVELOPMENT · DEV-GATE-00 CLOSED · SDK PUBLICATION NOT AUTHORIZED`  
+**Status:** `PUBLIC ENGINEERING PROGRAM · UNDER DEVELOPMENT · DEV-GATE-00 CLOSED · DEV-GATE-01 CLOSED · SDK PUBLICATION NOT AUTHORIZED`  
 **Scope:** `AETHERXGLOBAL/aether-x-governed-intelligence`  
 **Governing readiness gate:** `AX-PUB-GATE-001`
 
@@ -50,7 +50,7 @@ The program must not create an implicit production commitment, product integrati
 
 ## 3. Current Baseline
 
-The repository already provides:
+The repository now provides:
 
 - conceptual governed-intelligence specifications;
 - machine-readable JSON Schema contracts;
@@ -61,11 +61,13 @@ The repository already provides:
 - commit-anchored reproducibility snapshots;
 - a formal non-product public engineering release;
 - `AX-PUB-GATE-001` as the controlling SDK publication gate;
-- `AX-PUB-DEV-002` as the closed DEV-GATE-00 developer contract baseline.
+- `AX-PUB-DEV-002` as the closed DEV-GATE-00 developer contract baseline;
+- `AX-PUB-DEV-003` as the closed DEV-GATE-01 reproducible developer experience;
+- directly observed Gate-01 runtime-matrix evidence recorded by `AX-PUB-CI-004`.
 
-The current Quickstart uses Python 3.10+ and the reference validators use the Python standard library only.
+The public reference developer path uses the Python standard library only. `AX-PUB-CI-004` directly validates the declared Gate-01 reference experience across Python 3.10, 3.11, 3.12 and 3.13.
 
-The contract baseline is established. The developer experience is not yet independently validated as a supported clean-environment path, and no supported SDK exists.
+This establishes reproducibility of the public reference path only. No supported SDK exists.
 
 ## 4. Non-Negotiable Boundaries
 
@@ -97,26 +99,26 @@ If a network API is later approved, its externally supported HTTP surface should
 
 ### Layer B — Developer Experience
 
-The developer path should include:
+The public developer path now includes:
 
 - one canonical Quickstart;
 - minimal runnable examples;
-- task-oriented guides;
+- deterministic success and failure behavior;
 - contract/reference documentation;
-- failure and error examples;
-- migration guidance;
-- explicit supported/unsupported-use boundaries;
-- machine-testable documentation examples where practical.
+- conformance paths;
+- a public/private dependency-boundary checker;
+- a clean-environment developer-experience runner;
+- a directly verified Python 3.10–3.13 reference-experience matrix.
 
-The target is a clean-room developer being able to reproduce the supported public path without private knowledge.
+DEV-GATE-01 closure establishes reproducibility of this bounded public reference experience. It does not create SDK support commitments.
 
 ### Layer C — SDK Candidate
 
 The first SDK candidate should minimize new architectural surface.
 
-**Preferred first-language candidate:** Python, because the current public reference implementations and Quickstart already use Python 3.10+.
+**Preferred first-language candidate:** Python, because the current public reference implementations and Quickstart already use Python and Gate-01 has directly validated the public reference experience across Python 3.10–3.13.
 
-This is a design preference, not package publication authority.
+This is a design preference, not package publication authority and not a final SDK runtime-support decision.
 
 A future second language should be demand-driven after the language-neutral contract and compatibility surface are stable. Multi-language expansion must not multiply inconsistent semantics.
 
@@ -209,27 +211,41 @@ Closing this gate establishes only the public developer contract baseline. It do
 
 ### DEV-GATE-01 — Reproducible Developer Experience
 
-**Current state:** `ACTIVE ENGINEERING OBJECTIVE`
+**Current state:** `CLOSED`
 
-Exit requires:
+Closure is established by:
 
-- clean-environment Quickstart validation;
-- automated documentation/example smoke tests where practical;
-- supported runtime matrix;
-- deterministic expected outputs for declared examples;
-- failure-path documentation.
+- [`AX-PUB-DEV-003 — Reproducible Developer Experience`](./AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md);
+- machine-readable companion `artifacts/AX-PUB-DEV-003.json`;
+- canonical runner `tools/check_developer_experience.py`;
+- closed-state checker `tools/check_developer_experience_state.py`;
+- [`AX-PUB-CI-004`](../evidence/AX-PUB-CI-004_REPRODUCIBLE_DEVELOPER_EXPERIENCE_VALIDATION.md).
+
+The directly verified Gate-01 reference-experience runtime matrix is:
+
+```text
+Python 3.10
+Python 3.11
+Python 3.12
+Python 3.13
+```
+
+Closing this gate establishes only a reproducible public reference developer experience. It does not establish an SDK candidate, supported package, production API or general Python support commitment.
 
 ### DEV-GATE-02 — SDK Candidate
+
+**Current state:** `ACTIVE ENGINEERING OBJECTIVE`
 
 Exit requires:
 
 - one bounded SDK candidate implementation;
 - no package-registry publication;
-- supported surface mapped to contracts;
+- supported candidate surface mapped to contracts;
 - typed/explicit public interfaces;
-- stable error model candidate;
+- stable error-model candidate;
 - unit and conformance tests;
-- compatibility matrix.
+- compatibility matrix;
+- no representation of the candidate as a supported SDK.
 
 Passing this gate means `SDK CANDIDATE`, not `SUPPORTED SDK`.
 
@@ -279,7 +295,7 @@ Only an explicit authorized decision may change the public state from `SDK PUBLI
 
 ## 7. Proposed Engineering Quality Targets
 
-The following are program targets, not claims of current achievement:
+The following are program targets, not claims of current achievement except where a separate artifact explicitly records verified evidence:
 
 - clean-environment time-to-first-success measured and kept intentionally low;
 - `100%` of declared supported SDK behaviors mapped to a normative contract or explicitly documented extension;
@@ -368,7 +384,8 @@ The program must actively prevent:
 ```text
 PROGRAM: ACTIVE / UNDER DEVELOPMENT
 DEV-GATE-00: CLOSED
-CURRENT ENGINEERING OBJECTIVE: DEV-GATE-01 — REPRODUCIBLE DEVELOPER EXPERIENCE
+DEV-GATE-01: CLOSED
+CURRENT ENGINEERING OBJECTIVE: DEV-GATE-02 — SDK CANDIDATE
 DEVELOPER PLATFORM: NOT RELEASED
 SDK CANDIDATE: NOT YET ESTABLISHED
 PUBLIC SDK: NOT PUBLISHED
@@ -377,7 +394,17 @@ PUBLIC SDK LICENCE: NOT DECIDED
 AX-PUB-GATE-001: SDK PUBLICATION NOT AUTHORIZED
 ```
 
-`AX-PUB-CI-003` records the directly observed candidate-validation evidence used to close DEV-GATE-00. The closed state itself remains subject to the repository's normal manifest validation.
+`AX-PUB-CI-003` records the directly observed candidate-validation evidence used to close DEV-GATE-00.
+
+`AX-PUB-CI-004` records the directly observed clean-environment runtime-matrix and public-governance evidence used to close DEV-GATE-01.
+
+The current program position is:
+
+```text
+REPRODUCIBLE
+```
+
+This means the bounded public reference developer experience is independently reproducible within its evidenced runtime matrix. It does not mean an SDK candidate has been established.
 
 ## 14. Promotion Principle
 
@@ -398,10 +425,10 @@ REFERENCE
 Current position:
 
 ```text
-CONTRACTED
+REPRODUCIBLE
 ```
 
-No later state may be inferred from an earlier one.
+The next promotion target is `CANDIDATE`, governed by DEV-GATE-02. No later state may be inferred from an earlier one.
 
 ---
 

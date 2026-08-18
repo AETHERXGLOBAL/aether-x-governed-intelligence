@@ -49,7 +49,9 @@ git clone https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence.git
 cd aether-x-governed-intelligence
 ```
 
-The public reference validators and conformance runners use the Python standard library only. Python 3.10+ is recommended for the current reference materials. The Gate-01 candidate matrix is tested separately and must not be inferred from this recommendation until CI evidence exists.
+The public reference validators and conformance runners use the Python standard library only.
+
+The directly verified Gate-01 **public reference developer-experience** matrix is Python 3.10, 3.11, 3.12 and 3.13. This matrix is evidenced by `AX-PUB-CI-004` and does not create a general SDK support commitment.
 
 ## 3. Run the EAV Reference Path
 
@@ -163,7 +165,7 @@ Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json
 Current moving state:
 
 ```text
-AX-PUB-MANIFEST-001 v1.11
+AX-PUB-MANIFEST-001 v1.12
 AX-PUB-POL-001 v1.6
 ```
 
@@ -217,7 +219,8 @@ Current program state:
 ```text
 PROGRAM: ACTIVE / UNDER DEVELOPMENT
 DEV-GATE-00: CLOSED
-CURRENT ENGINEERING OBJECTIVE: DEV-GATE-01 — Reproducible Developer Experience
+DEV-GATE-01: CLOSED
+CURRENT ENGINEERING OBJECTIVE: DEV-GATE-02 — SDK CANDIDATE
 SDK CANDIDATE: NOT YET ESTABLISHED
 PUBLIC SDK: NOT PUBLISHED
 ```
@@ -251,10 +254,11 @@ The baseline defines the bounded initial developer problem, canonical contract i
 
 ## 13. Reproducible Developer Experience
 
-The Gate-01 candidate is:
+The established Gate-01 public reference experience is:
 
 - [`AX-PUB-DEV-003 — Reproducible Developer Experience`](./AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md)
 - [Machine-readable `AX-PUB-DEV-003.json`](../artifacts/AX-PUB-DEV-003.json)
+- [`AX-PUB-CI-004 — Gate-01 runtime-matrix validation evidence`](../evidence/AX-PUB-CI-004_REPRODUCIBLE_DEVELOPER_EXPERIENCE_VALIDATION.md)
 
 Canonical runner:
 
@@ -268,22 +272,31 @@ Machine-readable report:
 python3 tools/check_developer_experience.py --json
 ```
 
+Closed-state governance checker:
+
+```bash
+python3 tools/check_developer_experience_state.py
+```
+
 The runner evaluates **nine declared checks** using the active Python interpreter and public repository files only: three valid public reference examples, three intentionally invalid fixtures, two conformance suites, and the separate public-only conformance-boundary check.
 
 Current Gate-01 state:
 
 ```text
-DEV-GATE-01: CANDIDATE / NOT CLOSED
-CANDIDATE RUNTIMES: Python 3.10, 3.11, 3.12, 3.13
-VERIFIED RUNTIME MATRIX: NOT YET ESTABLISHED
+DEV-GATE-01: CLOSED
+VERIFIED RUNTIME MATRIX: Python 3.10, 3.11, 3.12, 3.13
 SUCCESS MARKER: AX_DEVELOPER_EXPERIENCE_PASS
+CLOSED-STATE MARKER: AX_DEV_GATE_01_CLOSED_STATE_PASS
+NEXT GATE: DEV-GATE-02 — SDK Candidate
 SDK CANDIDATE: NOT ESTABLISHED
 ```
 
-The runtime matrix becomes verified only after the dedicated clean-environment CI matrix completes successfully. No untested Python version is implied to be supported by this gate.
+`AX-PUB-CI-004` records successful dedicated runtime jobs for Python 3.10, 3.11, 3.12 and 3.13, plus successful public-artifact governance validation for the candidate state used for closure.
 
-`REPRODUCIBLE DEVELOPER EXPERIENCE ≠ SDK CANDIDATE`  
-`CLEAN-ENVIRONMENT PASS ≠ PRODUCTION READINESS`
+The verified matrix applies to this bounded public reference experience. It does not establish a supported SDK runtime policy for a future package.
+
+`DEV-GATE-01 CLOSED ≠ SDK CANDIDATE`  
+`REPRODUCIBLE DEVELOPER EXPERIENCE ≠ PRODUCTION READINESS`
 
 ## 14. SDK Publication Readiness
 
@@ -307,7 +320,7 @@ The gate requires explicit evidence and authority for licence/IP terms, interfac
 
 ## 15. Private-Project Boundary
 
-The public schemas, reference validators, examples, conformance kits and Gate-01 runner are self-contained in this public repository.
+The public schemas, reference validators, examples, conformance kits and Gate-01 runners/checkers are self-contained in this public repository.
 
 They do not checkout, import, execute, package, or depend on private AETHER X project repositories. Public examples are synthetic. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside the public disclosure boundary.
 
@@ -322,7 +335,8 @@ They do not checkout, import, execute, package, or depend on private AETHER X pr
 `PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`  
 `DEVELOPER ADOPTION PROGRAM ≠ SDK RELEASE`  
 `DEV-GATE-00 CLOSED ≠ SDK CANDIDATE`  
-`DEV-GATE-01 CANDIDATE ≠ SDK CANDIDATE`  
+`DEV-GATE-01 CLOSED ≠ SDK CANDIDATE`  
+`VERIFIED RUNTIME MATRIX ≠ GENERAL SDK SUPPORT COMMITMENT`  
 `REPRODUCIBLE DEVELOPER EXPERIENCE ≠ PRODUCTION READINESS`
 
 ---

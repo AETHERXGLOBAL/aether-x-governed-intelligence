@@ -40,7 +40,8 @@ Current program state:
 ```text
 PROGRAM: ACTIVE / UNDER DEVELOPMENT
 DEV-GATE-00: CLOSED
-CURRENT ENGINEERING OBJECTIVE: DEV-GATE-01 — Reproducible Developer Experience
+DEV-GATE-01: CLOSED
+CURRENT ENGINEERING OBJECTIVE: DEV-GATE-02 — SDK CANDIDATE
 SDK CANDIDATE: NOT YET ESTABLISHED
 PUBLIC SDK: NOT PUBLISHED
 ```
@@ -53,12 +54,13 @@ The program defines the governed path from inspectable public engineering toward
 The baseline establishes the initial developer problem, canonical contract inventory, non-goals, semantic error taxonomy, compatibility rules, fail-closed behavior and public/private dependency boundary. Its machine-readable companion is [`artifacts/AX-PUB-DEV-002.json`](./artifacts/AX-PUB-DEV-002.json), with candidate-validation evidence recorded in [`AX-PUB-CI-003`](./evidence/AX-PUB-CI-003_DEVELOPER_CONTRACT_BASELINE_VALIDATION.md).
 
 **[AX-PUB-DEV-003 — Reproducible Developer Experience](./docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md)**  
-`DEV-GATE-01 CANDIDATE · RUNTIME MATRIX NOT YET VERIFIED · SDK PUBLICATION NOT AUTHORIZED`
+`DEV-GATE-01 CLOSED · VERIFIED REFERENCE RUNTIME MATRIX PYTHON 3.10–3.13 · SDK PUBLICATION NOT AUTHORIZED`
 
-The Gate-01 candidate defines a clean-checkout developer path, deterministic success/failure behavior, a standard-library-only runner and a candidate Python runtime matrix (`3.10`–`3.13`). The matrix is not represented as verified until dedicated CI evidence exists.
+Gate-01 establishes a clean-checkout, standard-library-only public reference developer path with deterministic valid/fail behavior, two public conformance suites, a separate public-only boundary control and direct clean-environment CI evidence across Python 3.10, 3.11, 3.12 and 3.13. Closure evidence is recorded in [`AX-PUB-CI-004`](./evidence/AX-PUB-CI-004_REPRODUCIBLE_DEVELOPER_EXPERIENCE_VALIDATION.md).
 
 `DEV-GATE-00 CLOSED ≠ SDK CANDIDATE`  
-`DEV-GATE-01 CANDIDATE ≠ SDK CANDIDATE`  
+`DEV-GATE-01 CLOSED ≠ SDK CANDIDATE`  
+`VERIFIED RUNTIME MATRIX ≠ GENERAL SDK SUPPORT COMMITMENT`  
 `REPRODUCIBLE DEVELOPER EXPERIENCE ≠ PRODUCTION READINESS`
 
 ### Formal Public Engineering Release
@@ -87,13 +89,14 @@ The repository publishes reference engineering, not a supported SDK. The gate re
 `PUBLIC ENGINEERING RELEASE ≠ SDK RELEASE`  
 `SDK READINESS GATE ≠ SDK COMMITMENT`
 
-Current moving public governance:
+## Current Moving Public Governance
 
-- **[AX-PUB-MANIFEST-001 v1.11](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state including the closed developer-contract baseline and DEV-GATE-01 candidate.
+- **[AX-PUB-MANIFEST-001 v1.12](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state including closed DEV-GATE-00 and DEV-GATE-01 registration.
 - **[AX-PUB-POL-001 v1.6](./docs/COMPATIBILITY_AND_VERSIONING.md)** — compatibility, snapshot, release and publication-readiness semantics.
 - **[AX-PUB-CI-001](./evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md)** — verified agent-authority schema/reference/conformance CI evidence.
 - **[AX-PUB-CI-002](./evidence/AX-PUB-CI-002_VNEXT_SNAPSHOT_VALIDATION.md)** — verified vNext snapshot and manifest closure evidence.
 - **[AX-PUB-CI-003](./evidence/AX-PUB-CI-003_DEVELOPER_CONTRACT_BASELINE_VALIDATION.md)** — verified DEV-GATE-00 candidate-validation evidence.
+- **[AX-PUB-CI-004](./evidence/AX-PUB-CI-004_REPRODUCIBLE_DEVELOPER_EXPERIENCE_VALIDATION.md)** — verified DEV-GATE-01 clean-environment runtime-matrix evidence across Python 3.10–3.13.
 - **[AX-PUB-SNAP-002](./snapshots/AX-PUB-SNAP-002_GOVERNED_INTELLIGENCE_PUBLIC_VNEXT.md)** — current fixed `CI-VALIDATED` vNext reproducibility snapshot.
 - **[AX-PUB-SNAP-001](./snapshots/AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md)** — historical reproducibility snapshot.
 
@@ -114,9 +117,9 @@ Current moving public governance:
 | `AX-PUB-TEST-001` | [Governed Intelligence Conformance Test Kit](./conformance/AX-PUB-TEST-001/README.md) | `REPRODUCIBLY VERIFIED · CI RUN UNVERIFIED · NON-PRODUCTION` |
 | `AX-PUB-TEST-002` | [Agent Authority Conformance Test Kit](./conformance/AX-PUB-TEST-002/README.md) | `CI-TESTED · NON-PRODUCTION` |
 | `AX-PUB-GATE-001` | [Developer SDK Publication Readiness Gate](./docs/AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md) | `ACTIVE · SDK PUBLICATION NOT AUTHORIZED` |
-| `AX-PUB-DEV-001` | [Developer Adoption & SDK Readiness Program](./docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md) | `UNDER DEVELOPMENT · DEV-GATE-00 CLOSED · DEV-GATE-01 ACTIVE` |
+| `AX-PUB-DEV-001` | [Developer Adoption & SDK Readiness Program](./docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md) | `UNDER DEVELOPMENT · DEV-GATE-00 CLOSED · DEV-GATE-01 CLOSED · DEV-GATE-02 ACTIVE` |
 | `AX-PUB-DEV-002` | [Developer Contract Baseline](./docs/AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md) | `DEV-GATE-00 CLOSED · PUBLIC DEVELOPER CONTRACT BASELINE ESTABLISHED` |
-| `AX-PUB-DEV-003` | [Reproducible Developer Experience](./docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md) | `DEV-GATE-01 CANDIDATE · RUNTIME MATRIX NOT YET VERIFIED` |
+| `AX-PUB-DEV-003` | [Reproducible Developer Experience](./docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md) | `DEV-GATE-01 CLOSED · VERIFIED RUNTIME MATRIX PYTHON 3.10–3.13` |
 
 ## Three Public Evidence Paths
 
@@ -126,7 +129,7 @@ AX-PUB-SPEC-003 → AX-PUB-SCHEMA-002 → AX-PUB-REF-002 → AX-PUB-TEST-001
 AX-PUB-SPEC-004 → AX-PUB-SCHEMA-003 → AX-PUB-REF-003 → AX-PUB-TEST-002
 ```
 
-The third path has direct GitHub Actions evidence recorded by `AX-PUB-CI-001`. The vNext reproducibility state is independently validated and recorded by `AX-PUB-CI-002`. The developer contract baseline candidate-validation evidence is recorded by `AX-PUB-CI-003`.
+The third path has direct GitHub Actions evidence recorded by `AX-PUB-CI-001`. The vNext reproducibility state is independently validated and recorded by `AX-PUB-CI-002`. The developer contract baseline evidence is recorded by `AX-PUB-CI-003`. The clean-environment developer-experience runtime matrix is recorded by `AX-PUB-CI-004`.
 
 ```text
 PUBLIC ENGINEERING vNext
@@ -158,11 +161,11 @@ A future open-source, SDK or other reuse licence may be considered only through 
 
 This repository is intentionally self-contained. Public examples and conformance vectors are generic or synthetic.
 
-No private AETHER X project repository is a runtime, checkout, submodule or package dependency of the public schemas, validators, conformance kits, readiness gate, developer-adoption program, developer-contract baseline or Gate-01 developer-experience runner. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside this repository's disclosure boundary.
+No private AETHER X project repository is a runtime, checkout, submodule or package dependency of the public schemas, validators, conformance kits, readiness gate, developer-adoption program, developer-contract baseline or Gate-01 developer-experience path. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside this repository's disclosure boundary.
 
 ## What This Repository Does Not Establish
 
-Publication here does **not** establish or imply product implementation, a shared company runtime or authorization plane, production readiness, customer deployment, production API/SDK status, autonomous authority, security certification, regulatory approval, predictive/investment performance, an open-source/reuse licence, a supported developer platform, or external developer adoption.
+Publication here does **not** establish or imply product implementation, a shared company runtime or authorization plane, production readiness, customer deployment, production API/SDK status, autonomous authority, security certification, regulatory approval, predictive/investment performance, an open-source/reuse licence, a supported developer platform, external developer adoption, or an SDK candidate.
 
 `PUBLIC SPECIFICATION ≠ PRODUCT IMPLEMENTATION`  
 `MACHINE-READABLE SCHEMA ≠ PRODUCT DATA MODEL`  
@@ -172,7 +175,8 @@ Publication here does **not** establish or imply product implementation, a share
 `PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`  
 `DEVELOPER ADOPTION PROGRAM ≠ SDK RELEASE`  
 `DEV-GATE-00 CLOSED ≠ SDK CANDIDATE`  
-`DEV-GATE-01 CANDIDATE ≠ SDK CANDIDATE`  
+`DEV-GATE-01 CLOSED ≠ SDK CANDIDATE`  
+`VERIFIED RUNTIME MATRIX ≠ GENERAL SDK SUPPORT COMMITMENT`  
 `REPRODUCIBLE DEVELOPER EXPERIENCE ≠ PRODUCTION READINESS`  
 `PUBLIC VISIBILITY ≠ OPEN-SOURCE LICENCE`
 

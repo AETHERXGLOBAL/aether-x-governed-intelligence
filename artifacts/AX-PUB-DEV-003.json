@@ -2,7 +2,7 @@
   "artifact_id": "AX-PUB-DEV-003",
   "version": "1.0",
   "type": "REPRODUCIBLE_DEVELOPER_EXPERIENCE",
-  "state": "DEV-GATE-01_CANDIDATE",
+  "state": "DEV-GATE-01_CLOSED",
   "sdk_publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
   "program": {"id": "AX-PUB-DEV-001", "version": "1.0"},
   "contract_baseline": {"id": "AX-PUB-DEV-002", "version": "1.0", "state": "DEV-GATE-00_CLOSED"},
@@ -16,8 +16,9 @@
     "third_party_runtime_dependency_required": false
   },
   "candidate_runtime_matrix": ["3.10", "3.11", "3.12", "3.13"],
-  "verified_runtime_matrix": [],
+  "verified_runtime_matrix": ["3.10", "3.11", "3.12", "3.13"],
   "runner": "tools/check_developer_experience.py",
+  "state_checker": "tools/check_developer_experience_state.py",
   "checks": [
     {
       "id": "EAV_VALID",
@@ -78,12 +79,24 @@
     }
   ],
   "success_marker": "AX_DEVELOPER_EXPERIENCE_PASS",
+  "closure_evidence": {
+    "id": "AX-PUB-CI-004",
+    "path": "evidence/AX-PUB-CI-004_REPRODUCIBLE_DEVELOPER_EXPERIENCE_VALIDATION.md",
+    "validated_base_commit": "91907334ea993c8111b77b6fce83c360c7db95f1",
+    "verified_head_commit": "8cb092ead19a5a116d51b939845da193ce91c984",
+    "developer_experience_workflow_run_id": 32136562796,
+    "developer_experience_workflow_run_number": 10,
+    "manifest_workflow_run_id": 32136562828,
+    "manifest_workflow_run_number": 118,
+    "conclusion": "SUCCESS"
+  },
   "sdk_candidate_established": false,
   "package_identity_approved": false,
   "registry_publication_authorized": false,
   "licence_decided": false,
-  "next_gate_after_verified_closure": "DEV-GATE-02 — SDK Candidate",
+  "next_gate": "DEV-GATE-02 — SDK Candidate",
   "claim_boundary": [
+    "DEV-GATE-01 CLOSURE ESTABLISHES A REPRODUCIBLE PUBLIC REFERENCE DEVELOPER EXPERIENCE ONLY",
     "REPRODUCIBLE DEVELOPER EXPERIENCE DOES NOT ESTABLISH AN SDK CANDIDATE",
     "CLEAN ENVIRONMENT CI PASS DOES NOT ESTABLISH PRODUCTION READINESS",
     "RUNTIME MATRIX VALIDATION DOES NOT CREATE A GENERAL SDK SUPPORT COMMITMENT"

@@ -5,28 +5,34 @@ on:
     branches: [main]
     paths:
       - 'docs/QUICKSTART.md'
+      - 'docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md'
       - 'docs/AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md'
       - 'docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md'
       - 'artifacts/AX-PUB-DEV-002.json'
       - 'artifacts/AX-PUB-DEV-003.json'
       - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'evidence/AX-PUB-CI-004_REPRODUCIBLE_DEVELOPER_EXPERIENCE_VALIDATION.md'
       - 'reference-implementations/**'
       - 'conformance/**'
       - 'tools/check_developer_experience.py'
+      - 'tools/check_developer_experience_state.py'
       - 'tools/check_developer_contract_baseline.py'
       - 'tools/check_public_conformance_boundary.py'
       - '.github/workflows/validate-developer-experience.yml'
   pull_request:
     paths:
       - 'docs/QUICKSTART.md'
+      - 'docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md'
       - 'docs/AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md'
       - 'docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md'
       - 'artifacts/AX-PUB-DEV-002.json'
       - 'artifacts/AX-PUB-DEV-003.json'
       - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'evidence/AX-PUB-CI-004_REPRODUCIBLE_DEVELOPER_EXPERIENCE_VALIDATION.md'
       - 'reference-implementations/**'
       - 'conformance/**'
       - 'tools/check_developer_experience.py'
+      - 'tools/check_developer_experience_state.py'
       - 'tools/check_developer_contract_baseline.py'
       - 'tools/check_public_conformance_boundary.py'
       - '.github/workflows/validate-developer-experience.yml'
@@ -62,6 +68,7 @@ jobs:
       - name: Compile public developer checks
         run: |
           python -m py_compile tools/check_developer_experience.py
+          python -m py_compile tools/check_developer_experience_state.py
           python -m py_compile tools/check_developer_contract_baseline.py
           python -m py_compile tools/check_public_conformance_boundary.py
 
@@ -91,3 +98,6 @@ jobs:
 
       - name: Re-validate public-only boundary
         run: python tools/check_public_conformance_boundary.py
+
+      - name: Validate closed Gate-01 governance state
+        run: python tools/check_developer_experience_state.py
