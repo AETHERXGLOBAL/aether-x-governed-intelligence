@@ -9,7 +9,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "artifacts" / "AX-PUB-MANIFEST-001.json"
-VERSION_RE = re.compile(r"^[1-9][0-9]*\.[0-9]+$")
+VERSION_RE = re.compile(r"^[0-9]+\.[0-9]+(?:\.[0-9]+(?:-[0-9A-Za-z.-]+)?)?$")
 STATES = {"CURRENT", "COMPATIBLE", "SUPERSEDED", "DEPRECATED", "WITHDRAWN"}
 EXPECTED_RUNTIMES = ["3.10", "3.11", "3.12", "3.13"]
 
@@ -34,6 +34,8 @@ REQUIRED_PAIRS = {
     ("AX-PUB-DEV-002", "1.0"),
     ("AX-PUB-DEV-003", "1.0"),
     ("AX-PUB-DEV-004", "1.0"),
+    ("AX-PUB-DEV-005", "1.0"),
+    ("AX-PUB-RC-001", "0.1.0-rc1"),
 }
 
 REQUIRED_RELATIONS = {
@@ -58,6 +60,10 @@ REQUIRED_RELATIONS = {
     ("AX-PUB-DEV-004", "1.0", "IMPLEMENTS_PROGRAM_GATE_OF", "AX-PUB-DEV-001", "1.0"),
     ("AX-PUB-DEV-004", "1.0", "BUILDS_ON", "AX-PUB-DEV-003", "1.0"),
     ("AX-PUB-DEV-004", "1.0", "GOVERNED_BY", "AX-PUB-GATE-001", "1.0"),
+    ("AX-PUB-DEV-005", "1.0", "IMPLEMENTS_PROGRAM_GATE_OF", "AX-PUB-DEV-001", "1.0"),
+    ("AX-PUB-DEV-005", "1.0", "BUILDS_ON", "AX-PUB-DEV-004", "1.0"),
+    ("AX-PUB-DEV-005", "1.0", "GOVERNED_BY", "AX-PUB-GATE-001", "1.0"),
+    ("AX-PUB-RC-001", "0.1.0-rc1", "CANDIDATE_ARTIFACT_OF", "AX-PUB-DEV-005", "1.0"),
 }
 
 
@@ -121,8 +127,8 @@ def main() -> int:
 
     if manifest.get("manifest_id") != "AX-PUB-MANIFEST-001":
         findings.append("manifest_id mismatch")
-    if manifest.get("manifest_version") != "1.14":
-        findings.append("manifest_version must be 1.14")
+    if manifest.get("manifest_version") != "1.15":
+        findings.append("manifest_version must be 1.15")
     if manifest.get("repository") != "AETHERXGLOBAL/aether-x-governed-intelligence":
         findings.append("repository identity mismatch")
 
@@ -205,6 +211,8 @@ def main() -> int:
     for evidence_id in ("AX-PUB-CI-001", "AX-PUB-CI-002", "AX-PUB-CI-003", "AX-PUB-CI-004", "AX-PUB-CI-005"):
         if evidence_id not in evidence_ids:
             findings.append(f"required validation evidence missing: {evidence_id}")
+    if "AX-PUB-CI-006" in evidence_ids:
+        findings.append("AX-PUB-CI-006 must not be registered before DEV-GATE-03 candidate validation evidence exists")
 
     snapshot = manifest.get("current_snapshot")
     if not isinstance(snapshot, dict) or snapshot.get("id") != "AX-PUB-SNAP-002" or snapshot.get("version") != "1.0":
@@ -283,10 +291,8 @@ def main() -> int:
             target = safe_path(sdk_candidate.get(field), findings, f"current_sdk_candidate.{field}")
             if target is not None and not target.is_file():
                 findings.append(f"current SDK candidate {field} missing")
-        if sdk_candidate.get("gate") != "DEV-GATE-02":
-            findings.append("SDK candidate gate mismatch")
-        if sdk_candidate.get("state") != "CLOSED":
-            findings.append("SDK candidate state must be CLOSED")
+        if sdk_candidate.get("gate") != "DEV-GATE-02" or sdk_candidate.get("state") != "CLOSED":
+            findings.append("SDK candidate closed state mismatch")
         if sdk_candidate.get("candidate_version") != "0.1.0-candidate":
             findings.append("SDK candidate version mismatch")
         if sdk_candidate.get("candidate_runtime_matrix") != EXPECTED_RUNTIMES:
@@ -301,6 +307,41 @@ def main() -> int:
             findings.append("SDK registry must remain NOT AUTHORIZED")
         if sdk_candidate.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
             findings.append("SDK candidate publication disposition mismatch")
+
+    supply_chain = manifest.get("current_supply_chain_release_candidate")
+    if not isinstance(supply_chain, dict) or supply_chain.get("id") != "AX-PUB-DEV-005" or supply_chain.get("version") != "1.0":
+        findings.append("current_supply_chain_release_candidate must identify AX-PUB-DEV-005 v1.0")
+    else:
+        for field in ("path", "machine_readable_companion"):
+            target = safe_path(supply_chain.get(field), findings, f"current_supply_chain_release_candidate.{field}")
+            if target is not None and not target.is_file():
+                findings.append(f"current supply-chain candidate {field} missing")
+        if supply_chain.get("release_candidate_id") != "AX-PUB-RC-001" or supply_chain.get("release_candidate_version") != "0.1.0-rc1":
+            findings.append("release-candidate descriptor identity mismatch")
+        if supply_chain.get("gate") != "DEV-GATE-03":
+            findings.append("supply-chain candidate gate mismatch")
+        if supply_chain.get("state") != "CANDIDATE_NOT_ESTABLISHED":
+            findings.append("DEV-GATE-03 must remain candidate/not established before validation evidence")
+        for field in ("deterministic_build", "build_provenance_attestation", "sbom_attestation", "extracted_bundle_validation"):
+            if supply_chain.get(field) != "NOT YET VERIFIED":
+                findings.append(f"{field} must remain NOT YET VERIFIED before Gate-03 evidence")
+        if supply_chain.get("artifact_upload_scope") != "CI_ONLY":
+            findings.append("Gate-03 artifact upload scope must remain CI_ONLY")
+        if supply_chain.get("package_identity_status") != "NOT APPROVED":
+            findings.append("Gate-03 package identity must remain NOT APPROVED")
+        if supply_chain.get("registry_status") != "NOT AUTHORIZED":
+            findings.append("Gate-03 registry must remain NOT AUTHORIZED")
+        if supply_chain.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
+            findings.append("Gate-03 SDK publication disposition mismatch")
+
+    rc = load_json(ROOT / "release-candidate" / "AX-PUB-RC-001.json", findings)
+    if rc is not None:
+        if rc.get("artifact_id") != "AX-PUB-RC-001" or rc.get("version") != "0.1.0-rc1":
+            findings.append("AX-PUB-RC-001 descriptor identity mismatch")
+        if rc.get("state") != "DEV-GATE-03_CANDIDATE" or rc.get("release_candidate_established") is not False:
+            findings.append("AX-PUB-RC-001 must remain unestablished candidate before CI evidence")
+        if rc.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
+            findings.append("AX-PUB-RC-001 publication boundary mismatch")
 
     if not isinstance(manifest.get("claim_boundary"), list) or not manifest.get("claim_boundary"):
         findings.append("claim_boundary must be non-empty array")
