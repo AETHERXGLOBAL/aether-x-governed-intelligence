@@ -112,7 +112,37 @@ These are bounded synthetic conformance checks, not production certification.
 
 ---
 
-## 4. Inspect the installable SDK candidate
+## 4. Durable closed-gate evidence
+
+The moving Quickstart preserves the exact closure markers consumed by the fail-closed governance checkers for earlier gates:
+
+```text
+DEV-GATE-01: CLOSED
+AX-PUB-CI-004
+VERIFIED RUNTIME MATRIX: Python 3.10, 3.11, 3.12, 3.13
+
+DEV-GATE-02: CLOSED
+SDK CANDIDATE: ESTABLISHED
+AX-PUB-CI-005
+OBJECTIVE: DEV-GATE-05 — SDK RELEASE DECISION
+SDK PUBLICATION: NOT AUTHORIZED
+
+DEV-GATE-03: CLOSED
+RELEASE CANDIDATE: VALIDATED / NON-PUBLISHED
+AX-PUB-CI-006
+
+DEV-GATE-04: CLOSED
+EXTERNAL EVALUATION READINESS: ESTABLISHED
+AX-PUB-CI-007
+HUMAN EXTERNAL EVALUATION: NOT ESTABLISHED
+EXTERNAL ADOPTION: NOT ESTABLISHED
+```
+
+These markers preserve historical gate closure while the active engineering objective advances. They do not override the more specific current Gate-05 state below.
+
+---
+
+## 5. Inspect the installable SDK candidate
 
 Candidate source:
 
@@ -150,7 +180,7 @@ Direct evidence: [`AX-PUB-CI-009`](../evidence/AX-PUB-CI-009_INSTALLABLE_PACKAGE
 
 ---
 
-## 5. Understand distribution validation
+## 6. Understand distribution validation
 
 `DEV-GATE-05C` has directly validated the exact candidate through a loopback-only Python Simple Repository API-compatible index. The exact candidate was discovered with pip index semantics, installed into a clean environment and verified on CPython 3.11–3.14.
 
@@ -171,7 +201,7 @@ SDK PUBLICATION: NOT AUTHORIZED
 
 ---
 
-## 6. Machine-readable current state
+## 7. Machine-readable current state
 
 Canonical moving compatibility/governance index:
 
@@ -184,7 +214,7 @@ Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json
 
 ---
 
-## 7. Production SDK target
+## 8. Production SDK target
 
 The program target is not merely to place a package on a registry. The target is an official production-supported developer product:
 
@@ -208,7 +238,7 @@ Release-control requirements are in [`RELEASE_CONTROL_PLANE.md`](./RELEASE_CONTR
 
 ---
 
-## 8. Recommended reading order
+## 9. Recommended reading order
 
 ```text
 README.md
