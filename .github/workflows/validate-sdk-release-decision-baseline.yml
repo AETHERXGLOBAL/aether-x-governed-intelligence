@@ -1,0 +1,81 @@
+name: Validate SDK Release Decision Baseline
+
+on:
+  push:
+    branches:
+      - dev-gate-05-release-decision-baseline
+    paths:
+      - 'docs/AX-PUB-DEV-007_SDK_RELEASE_DECISION_BASELINE.md'
+      - 'artifacts/AX-PUB-DEV-007.json'
+      - 'tools/check_sdk_release_decision_baseline.py'
+      - 'sdk-candidate/**'
+      - '.github/workflows/validate-sdk-release-decision-baseline.yml'
+  pull_request:
+    paths:
+      - 'docs/AX-PUB-DEV-007_SDK_RELEASE_DECISION_BASELINE.md'
+      - 'artifacts/AX-PUB-DEV-007.json'
+      - 'tools/check_sdk_release_decision_baseline.py'
+      - 'sdk-candidate/**'
+      - '.github/workflows/validate-sdk-release-decision-baseline.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sdk-release-decision-baseline-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate-05a:
+    name: Gate-05A / Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12', '3.13', '3.14']
+
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # immutable commit pin
+        with:
+          persist-credentials: false
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # immutable commit pin
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Confirm runtime
+        run: python --version
+
+      - name: Parse machine-readable Gate-05A state
+        run: python -m json.tool artifacts/AX-PUB-DEV-007.json > /dev/null
+
+      - name: Compile Gate-05A checker
+        run: python -m py_compile tools/check_sdk_release_decision_baseline.py
+
+      - name: Validate Gate-05A decision invariants
+        run: python tools/check_sdk_release_decision_baseline.py
+
+      - name: Compile existing bounded SDK candidate
+        run: |
+          python -m py_compile sdk-candidate/python/aetherx_sdk_candidate.py
+          python -m py_compile sdk-candidate/python/example.py
+          python -m py_compile sdk-candidate/python/run_candidate_conformance.py
+          python -m py_compile sdk-candidate/python/tests/test_sdk_candidate.py
+
+      - name: Run existing SDK candidate unit tests on target runtime
+        run: python -m unittest discover -s sdk-candidate/python/tests -v
+
+      - name: Run existing SDK candidate example on target runtime
+        run: python sdk-candidate/python/example.py
+
+      - name: Run existing SDK candidate conformance on target runtime
+        run: python sdk-candidate/python/run_candidate_conformance.py
+
+      - name: Re-validate candidate public/private boundary
+        run: python tools/check_sdk_candidate_boundary.py
+
+      - name: Re-validate closed Gate-04 state
+        run: python tools/check_external_evaluation_readiness.py
