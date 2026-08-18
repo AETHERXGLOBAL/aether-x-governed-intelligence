@@ -42,10 +42,10 @@ PROGRAM: ACTIVE / UNDER DEVELOPMENT
 DEV-GATE-00: CLOSED
 DEV-GATE-01: CLOSED
 DEV-GATE-02: CLOSED
-DEV-GATE-03: CANDIDATE / UNDER VALIDATION
-CURRENT ENGINEERING OBJECTIVE: DEV-GATE-03 — SUPPLY-CHAIN & RELEASE CANDIDATE
+DEV-GATE-03: CLOSED
+CURRENT ENGINEERING OBJECTIVE: DEV-GATE-04 — EXTERNAL EVALUATION READINESS
 SDK CANDIDATE: ESTABLISHED
-RELEASE CANDIDATE: NOT YET ESTABLISHED
+RELEASE CANDIDATE: VALIDATED / NON-PUBLISHED
 PUBLIC SDK: NOT PUBLISHED
 PACKAGE IDENTITY: NOT APPROVED
 PACKAGE REGISTRY: NOT AUTHORIZED
@@ -71,15 +71,25 @@ Gate-01 establishes a clean-checkout, standard-library-only public reference dev
 Gate-02 establishes a **bounded repository-local Python SDK candidate** over the three declared public contract paths. Direct validation evidence is recorded in [`AX-PUB-CI-005`](./evidence/AX-PUB-CI-005_SDK_CANDIDATE_VALIDATION.md).
 
 **[AX-PUB-DEV-005 — Supply-Chain & Release Candidate](./docs/AX-PUB-DEV-005_SUPPLY_CHAIN_RELEASE_CANDIDATE.md)**  
-`DEV-GATE-03 CANDIDATE · RELEASE CANDIDATE NOT YET ESTABLISHED · SDK PUBLICATION NOT AUTHORIZED`
+`DEV-GATE-03 CLOSED · RELEASE-CANDIDATE VALIDATED · SDK PUBLICATION NOT AUTHORIZED`
 
-Gate-03 candidate engineering introduces the non-published engineering descriptor [`AX-PUB-RC-001`](./release-candidate/AX-PUB-RC-001.json) and tests a deterministic CI-only build, SHA-256 digest, build manifest, SPDX 2.3 SBOM, GitHub artifact attestations, attestation verification, extracted-bundle tests/conformance and public/private supply-chain boundaries.
+Gate-03 establishes a validated **non-published engineering release candidate** [`AX-PUB-RC-001 v0.1.0-rc1`](./release-candidate/AX-PUB-RC-001.json) over the bounded Gate-02 candidate. Direct evidence is recorded in [`AX-PUB-CI-006 v1.1`](./evidence/AX-PUB-CI-006_SUPPLY_CHAIN_RELEASE_CANDIDATE_VALIDATION.md).
 
-The Gate-03 artifact remains a temporary CI engineering object. It is not a public package, GitHub Release asset, supported SDK or approved distribution identity.
+Verified engineering-bundle identity:
 
-`RELEASE-CANDIDATE ENGINEERING ≠ RELEASE-CANDIDATE VALIDATED`  
+```text
+AX-PUB-RC-001.zip
+SHA-256: 8444e7c01621f3d63019b407d9379bc82176f892dce64760cc93e84064ac8c21
+SOURCE_DATE_EPOCH: 1787064230
+```
+
+The validated Gate-03 path includes byte-identical deterministic rebuilds, a build manifest, SPDX 2.3 SBOM, GitHub build-provenance and SBOM attestations, attestation verification, extracted-bundle unit/conformance execution and public/private supply-chain boundary checks.
+
+The Gate-03 artifact remains a CI-only, non-published engineering object. It is not a public package, GitHub Release asset, supported SDK or approved distribution identity.
+
+`RELEASE-CANDIDATE VALIDATED ≠ SUPPORTED SDK`  
 `CI ARTIFACT ≠ PUBLIC PACKAGE RELEASE`  
-`ATTESTED BUILD ≠ SUPPORTED SDK`  
+`ATTESTED BUILD ≠ SECURITY CERTIFICATION`  
 `SBOM ≠ SOFTWARE REUSE LICENCE`
 
 ### Formal Public Engineering Release
@@ -102,22 +112,22 @@ Current public disposition:
 SDK PUBLICATION NOT AUTHORIZED
 ```
 
-The repository contains a bounded SDK candidate and Gate-03 supply-chain candidate engineering, not a supported or published SDK. The gate still requires explicit licensing/IP authority, interface compatibility, package/distribution identity, security and credential boundaries, supply-chain controls, documentation and maintenance/support commitments before SDK publication can be represented as approved.
+The repository contains a bounded SDK candidate and a validated non-published engineering release candidate, not a supported or published SDK. The gate still requires explicit licensing/IP authority, interface compatibility, package/distribution identity, security and credential boundaries, documentation and maintenance/support commitments, and explicit release authority before SDK publication can be represented as approved.
 
 `SDK CANDIDATE ≠ SUPPORTED SDK`  
-`RELEASE-CANDIDATE ENGINEERING ≠ SDK RELEASE`  
+`RELEASE-CANDIDATE VALIDATED ≠ SDK RELEASE`  
 `SDK READINESS GATE ≠ SDK COMMITMENT`
 
 ## Current Moving Public Governance
 
-- **[AX-PUB-MANIFEST-001 v1.15](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state including closed DEV-GATE-00/01/02 and DEV-GATE-03 candidate registration.
+- **[AX-PUB-MANIFEST-001 v1.16](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state including closed DEV-GATE-00/01/02/03 and DEV-GATE-04 as the active engineering objective.
 - **[AX-PUB-POL-001 v1.6](./docs/COMPATIBILITY_AND_VERSIONING.md)** — compatibility, snapshot, release and publication-readiness semantics.
 - **[AX-PUB-CI-001](./evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md)** — verified agent-authority schema/reference/conformance CI evidence.
 - **[AX-PUB-CI-002](./evidence/AX-PUB-CI-002_VNEXT_SNAPSHOT_VALIDATION.md)** — verified vNext snapshot and manifest closure evidence.
 - **[AX-PUB-CI-003](./evidence/AX-PUB-CI-003_DEVELOPER_CONTRACT_BASELINE_VALIDATION.md)** — DEV-GATE-00 validation evidence.
 - **[AX-PUB-CI-004](./evidence/AX-PUB-CI-004_REPRODUCIBLE_DEVELOPER_EXPERIENCE_VALIDATION.md)** — DEV-GATE-01 clean-environment runtime-matrix evidence.
 - **[AX-PUB-CI-005](./evidence/AX-PUB-CI-005_SDK_CANDIDATE_VALIDATION.md)** — DEV-GATE-02 SDK-candidate validation evidence.
-- **`AX-PUB-CI-006`** — `NOT YET RECORDED`; no Gate-03 validation evidence is registered until the candidate state is validated and explicitly recorded.
+- **[AX-PUB-CI-006 v1.1](./evidence/AX-PUB-CI-006_SUPPLY_CHAIN_RELEASE_CANDIDATE_VALIDATION.md)** — DEV-GATE-03 deterministic-build, SBOM, provenance, attestation-verification, extracted-bundle and public-boundary evidence.
 - **[AX-PUB-SNAP-002](./snapshots/AX-PUB-SNAP-002_GOVERNED_INTELLIGENCE_PUBLIC_VNEXT.md)** — current fixed vNext reproducibility snapshot.
 
 ## Public Technical Series
@@ -137,12 +147,12 @@ The repository contains a bounded SDK candidate and Gate-03 supply-chain candida
 | `AX-PUB-TEST-001` | Governed Intelligence Conformance Test Kit | `REPRODUCIBLY VERIFIED · CI RUN UNVERIFIED · NON-PRODUCTION` |
 | `AX-PUB-TEST-002` | Agent Authority Conformance Test Kit | `CI-TESTED · NON-PRODUCTION` |
 | `AX-PUB-GATE-001` | [Developer SDK Publication Readiness Gate](./docs/AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md) | `ACTIVE · SDK PUBLICATION NOT AUTHORIZED` |
-| `AX-PUB-DEV-001` | Developer Adoption & SDK Readiness Program | `UNDER DEVELOPMENT · DEV-GATE-03 ACTIVE` |
+| `AX-PUB-DEV-001` | Developer Adoption & SDK Readiness Program | `UNDER DEVELOPMENT · DEV-GATE-04 ACTIVE` |
 | `AX-PUB-DEV-002` | Developer Contract Baseline | `DEV-GATE-00 CLOSED` |
 | `AX-PUB-DEV-003` | Reproducible Developer Experience | `DEV-GATE-01 CLOSED · PYTHON 3.10–3.13` |
 | `AX-PUB-DEV-004` | SDK Candidate Engineering Baseline | `DEV-GATE-02 CLOSED · SDK CANDIDATE ESTABLISHED` |
-| `AX-PUB-DEV-005` | Supply-Chain & Release Candidate | `DEV-GATE-03 CANDIDATE · NOT YET ESTABLISHED` |
-| `AX-PUB-RC-001` | Non-published engineering release candidate | `CI-ONLY CANDIDATE · NOT YET VALIDATED` |
+| `AX-PUB-DEV-005` | Supply-Chain & Release Candidate | `DEV-GATE-03 CLOSED · RELEASE-CANDIDATE VALIDATED` |
+| `AX-PUB-RC-001` | Non-published engineering release candidate | `VALIDATED · CI-ONLY · NON-PUBLISHED` |
 
 ## Three Public Evidence Paths
 
@@ -166,7 +176,7 @@ Public availability is provided for inspection, technical review and reproducibi
 
 This repository is intentionally self-contained. Public examples and conformance vectors are generic or synthetic.
 
-No private AETHER X project repository is a runtime, checkout, submodule, package or hidden service dependency of the public engineering path, including the current Gate-03 candidate build. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside this repository's disclosure boundary.
+No private AETHER X project repository is a runtime, checkout, submodule, package or hidden service dependency of the public engineering path, including the validated Gate-03 engineering release candidate. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside this repository's disclosure boundary.
 
 ## What This Repository Does Not Establish
 
@@ -174,7 +184,7 @@ Publication here does **not** establish or imply product implementation, a share
 
 `PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`  
 `SDK CANDIDATE ESTABLISHED ≠ SUPPORTED SDK`  
-`DEV-GATE-03 CANDIDATE ≠ RELEASE-CANDIDATE VALIDATED`  
+`RELEASE-CANDIDATE VALIDATED ≠ SDK RELEASE`  
 `ATTESTED BUILD ≠ SECURITY CERTIFICATION`  
 `SDK PUBLICATION NOT AUTHORIZED`
 

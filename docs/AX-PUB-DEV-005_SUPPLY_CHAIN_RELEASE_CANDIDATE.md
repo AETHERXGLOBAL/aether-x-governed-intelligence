@@ -2,18 +2,19 @@
 
 **Artifact ID:** `AX-PUB-DEV-005`  
 **Version:** `1.0`  
-**Status:** `DEV-GATE-03 CANDIDATE · RELEASE CANDIDATE NOT YET ESTABLISHED · SDK PUBLICATION NOT AUTHORIZED`  
+**Status:** `DEV-GATE-03 CLOSED · RELEASE-CANDIDATE VALIDATED · SDK PUBLICATION NOT AUTHORIZED`  
 **Program:** `AX-PUB-DEV-001`  
 **Builds on:** `AX-PUB-DEV-004 — DEV-GATE-02 CLOSED`  
 **Engineering release-candidate descriptor:** `AX-PUB-RC-001 v0.1.0-rc1`  
+**Closure evidence:** [`AX-PUB-CI-006 v1.1`](../evidence/AX-PUB-CI-006_SUPPLY_CHAIN_RELEASE_CANDIDATE_VALIDATION.md)  
 **Governing publication gate:** `AX-PUB-GATE-001`  
 **Machine-readable companion:** `artifacts/AX-PUB-DEV-005.json`
 
 ## 1. Purpose
 
-DEV-GATE-03 tests whether the bounded repository-local SDK candidate can be transformed into a **traceable, deterministic, supply-chain-verifiable engineering release candidate** without publishing a package or creating unsupported distribution commitments.
+DEV-GATE-03 determines whether the bounded repository-local SDK candidate can be transformed into a **traceable, deterministic, supply-chain-verifiable engineering release candidate** without publishing a package or creating unsupported distribution commitments.
 
-The candidate chain is:
+The validated chain is:
 
 ```text
 DEV-GATE-02 SDK CANDIDATE
@@ -27,14 +28,15 @@ DEV-GATE-02 SDK CANDIDATE
 → ATTESTATION VERIFICATION
 → EXTRACTED-BUNDLE TEST / CONFORMANCE
 → CI-ONLY ARTIFACT
+→ RELEASE-CANDIDATE VALIDATED
 ```
 
-`SUPPLY-CHAIN CANDIDATE ≠ SDK RELEASE`  
+`RELEASE-CANDIDATE VALIDATED ≠ SDK RELEASE`  
 `ATTESTED ARTIFACT ≠ SUPPORTED SDK`
 
 ## 2. Explicit Non-Goals
 
-DEV-GATE-03 does **not** establish or authorize:
+DEV-GATE-03 closure does **not** establish or authorize:
 
 - a public package name;
 - a PyPI, GitHub Packages or other registry publication;
@@ -53,21 +55,28 @@ Current publication boundary:
 PACKAGE IDENTITY: NOT APPROVED
 PACKAGE REGISTRY: NOT AUTHORIZED
 PUBLIC SDK LICENCE: NOT DECIDED
+PUBLIC SDK: NOT PUBLISHED
 SDK PUBLICATION: NOT AUTHORIZED
 ```
 
-## 3. Engineering Release Candidate — AX-PUB-RC-001
+## 3. Validated Engineering Release Candidate — AX-PUB-RC-001
 
-`AX-PUB-RC-001` is a non-published engineering artifact identifier.
+`AX-PUB-RC-001` remains a non-published engineering artifact identifier.
 
 ```text
 Artifact: AX-PUB-RC-001
 Version: 0.1.0-rc1
 Bundle: AX-PUB-RC-001.zip
-State: DEV-GATE-03 CANDIDATE
+State: DEV-GATE-03 VALIDATED
+Canonical build runtime: Python 3.13
+Verified SOURCE_DATE_EPOCH: 1787064230
+Verified bundle SHA-256:
+8444e7c01621f3d63019b407d9379bc82176f892dce64760cc93e84064ac8c21
 ```
 
-The identifier exists so the build, digest, SBOM, attestation and verification evidence can refer to one bounded object. It is not an approved registry/package identity.
+The identifier exists so build, digest, SBOM, attestation and verification evidence can refer to one bounded object. It is not an approved registry/package identity.
+
+The outer GitHub Actions artifact archive is a separate object and has a separate digest. `AX-PUB-CI-006 v1.1` records this distinction explicitly.
 
 ## 4. Deterministic Build Contract
 
@@ -77,9 +86,9 @@ The canonical builder is:
 tools/build_release_candidate.py
 ```
 
-The builder uses only Python standard-library capabilities and a fixed source inventory declared by `release-candidate/AX-PUB-RC-001.json`.
+The builder uses Python standard-library capabilities and the fixed source inventory declared by `release-candidate/AX-PUB-RC-001.json`.
 
-The build is designed to be deterministic by controlling:
+The build controls:
 
 - source inventory and ordering;
 - archive entry ordering;
@@ -88,9 +97,11 @@ The build is designed to be deterministic by controlling:
 - generated JSON key ordering;
 - ZIP compression mode.
 
-The CI candidate must build twice from the same checkout and compare the resulting bundle bytes directly.
+The Gate-03 CI path builds twice and compares the resulting bundle bytes directly.
 
-Determinism here means identical bytes under the declared build procedure for the same public source state. It is not a broader reproducible-build certification.
+For the validated candidate, the workflow reuses the evidence-bound `SOURCE_DATE_EPOCH` so later governance-only commits can verify the same artifact bytes rather than silently redefine the candidate.
+
+`DETERMINISTIC BUILD RESULT ≠ GENERAL REPRODUCIBLE-BUILD CERTIFICATION`
 
 ## 5. Build Digest & Manifest
 
@@ -100,7 +111,13 @@ The canonical bundle receives a SHA-256 digest recorded in:
 AX-PUB-RC-001.sha256
 ```
 
-A generated build manifest records:
+The verified digest is:
+
+```text
+8444e7c01621f3d63019b407d9379bc82176f892dce64760cc93e84064ac8c21
+```
+
+The generated build manifest records:
 
 - source paths;
 - source SHA-256 digests;
@@ -109,7 +126,7 @@ A generated build manifest records:
 - declared runtime-dependency boundary;
 - package/registry/licence/publication states.
 
-The build manifest does not create release authority.
+The validated build manifest records `21` public source files and zero declared third-party runtime dependencies for the bounded candidate.
 
 ## 6. SPDX 2.3 SBOM
 
@@ -119,21 +136,28 @@ The build creates:
 AX-PUB-RC-001.spdx.json
 ```
 
-The candidate SBOM uses `SPDX 2.3` document structure and describes the bounded engineering candidate.
+The candidate SBOM uses `SPDX 2.3` structure and describes the bounded engineering candidate.
 
-Software licence fields are deliberately represented as `NOASSERTION` because no public SDK reuse licence has been decided. The SPDX document data licence does not grant a licence to the bundled software.
+Software licence fields remain:
+
+```text
+licenseConcluded: NOASSERTION
+licenseDeclared: NOASSERTION
+```
+
+No public SDK reuse licence has been decided. The SPDX document data licence does not grant a licence to the bundled software.
 
 `SBOM ≠ SOFTWARE LICENCE`  
 `SBOM ≠ SECURITY CERTIFICATION`
 
 ## 7. GitHub Artifact Attestations
 
-The candidate workflow is designed to generate GitHub artifact attestations for:
+`AX-PUB-CI-006 v1.1` records successful generation and verification of:
 
-1. build provenance for `AX-PUB-RC-001.zip`;
-2. the associated SPDX SBOM.
+1. GitHub build-provenance attestation for `AX-PUB-RC-001.zip`;
+2. SPDX SBOM attestation for the same subject artifact.
 
-The workflow uses GitHub OIDC-backed attestation permissions only inside the bounded CI job:
+The workflow uses bounded GitHub Actions permissions:
 
 ```text
 contents: read
@@ -141,20 +165,18 @@ id-token: write
 attestations: write
 ```
 
-This provides verifiable provenance for the CI artifact. It does not imply AETHER X has obtained an external supply-chain or security certification.
+The evidence does not claim an external supply-chain or security certification.
 
 ## 8. Attestation Verification
 
-The workflow must verify the generated attestations using GitHub CLI.
-
-Build provenance verification:
+Verification uses GitHub CLI:
 
 ```bash
 gh attestation verify dist/AX-PUB-RC-001.zip \
   -R AETHERXGLOBAL/aether-x-governed-intelligence
 ```
 
-SPDX predicate verification:
+and for the SPDX predicate:
 
 ```bash
 gh attestation verify dist/AX-PUB-RC-001.zip \
@@ -166,26 +188,22 @@ gh attestation verify dist/AX-PUB-RC-001.zip \
 
 ## 9. Extracted-Bundle Verification
 
-The CI artifact must be extracted into a clean directory and execute the bounded candidate validation directly from the extracted bundle:
+The CI-created ZIP was extracted into a separate directory and exercised from the extracted artifact itself.
 
-```bash
-python -m unittest discover -s sdk-candidate/python/tests -v
-python sdk-candidate/python/run_candidate_conformance.py
-```
-
-The expected candidate conformance marker remains:
+The verified results recorded by `AX-PUB-CI-006` are:
 
 ```text
+UNIT TESTS: 9 PASS
 AX_SDK_CANDIDATE_CONFORMANCE_PASS cases=9 conforming=9
 ```
 
-This tests that the engineering bundle contains a usable copy of the declared public candidate rather than merely packaging files that were tested elsewhere.
+This establishes bounded usability of the declared candidate payload after packaging. It does not establish a supported installation contract or production fitness.
 
 ## 10. Public / Private Boundary
 
-The release-candidate source set must remain entirely inside the public repository.
+The release-candidate source set remains entirely inside the public repository.
 
-It must not require:
+It does not require:
 
 - private AETHER X repositories;
 - private package indexes;
@@ -196,18 +214,18 @@ It must not require:
 - customer data;
 - hidden production schemas.
 
-The declared third-party runtime dependency list for the current candidate is empty.
+The declared third-party runtime dependency list for this candidate is empty.
 
 ## 11. CI-Only Artifact Boundary
 
-The workflow may upload the generated engineering files as a temporary GitHub Actions artifact for review.
+The workflow may upload generated engineering files as a temporary GitHub Actions artifact for review.
 
 ```text
 ARTIFACT UPLOAD SCOPE: CI_ONLY
 RETENTION: 7 DAYS
 ```
 
-The CI artifact must not be represented as a GitHub Release asset, PyPI package, GitHub Packages package or another public distribution channel.
+The CI artifact is not a GitHub Release asset, PyPI package, GitHub Packages package or another public distribution channel.
 
 `CI ARTIFACT ≠ PUBLIC PACKAGE`
 
@@ -215,11 +233,11 @@ The CI artifact must not be represented as a GitHub Release asset, PyPI package,
 
 The public repository's `SECURITY.md` remains the public reporting boundary for security issues.
 
-DEV-GATE-03 may strengthen release-integrity and provenance evidence, but it does not establish a new security certification or expose private security implementation details.
+Gate-03 strengthens release-integrity and provenance evidence. It does not establish a security certification or expose private security implementation details.
 
 ## 13. Protected Future Publication Design
 
-A later publication design should preserve:
+A later publication decision must separately resolve and preserve:
 
 - least-privilege release permissions;
 - protected release events;
@@ -231,57 +249,58 @@ A later publication design should preserve:
 - supported compatibility policy;
 - maintenance ownership.
 
-DEV-GATE-03 candidate work intentionally stops before registry publishing.
+DEV-GATE-03 intentionally stops before registry publishing.
 
 ## 14. DEV-GATE-03 Exit Criteria
 
-Gate-03 may be promoted to `RELEASE-CANDIDATE VALIDATED` only after direct CI evidence establishes all applicable criteria:
+Direct evidence in `AX-PUB-CI-006 v1.1` establishes the applicable exit criteria:
 
-- [ ] fixed public source inventory validated;
-- [ ] deterministic canonical build succeeds;
-- [ ] second build is byte-identical;
-- [ ] SHA-256 digest is generated and validated;
-- [ ] build manifest is generated and validated;
-- [ ] SPDX 2.3 SBOM is generated and validated;
-- [ ] build-provenance attestation is generated;
-- [ ] SBOM attestation is generated;
-- [ ] build-provenance attestation is verified with `gh attestation verify`;
-- [ ] SPDX attestation is verified with `gh attestation verify`;
-- [ ] extracted-bundle unit tests pass;
-- [ ] extracted-bundle candidate conformance passes;
-- [ ] public/private dependency boundary passes;
-- [ ] no package-distribution metadata is present;
-- [ ] no registry publication occurs;
-- [ ] candidate state is recorded in public artifact governance;
-- [ ] verification evidence is recorded before closure.
+- [x] fixed public source inventory validated;
+- [x] deterministic canonical build succeeds;
+- [x] second build is byte-identical;
+- [x] SHA-256 digest is generated and validated;
+- [x] build manifest is generated and validated;
+- [x] SPDX 2.3 SBOM is generated and validated;
+- [x] build-provenance attestation is generated;
+- [x] SBOM attestation is generated;
+- [x] build-provenance attestation is verified with `gh attestation verify`;
+- [x] SPDX attestation is verified with `gh attestation verify`;
+- [x] extracted-bundle unit tests pass;
+- [x] extracted-bundle candidate conformance passes;
+- [x] public/private dependency boundary passes;
+- [x] no package-distribution metadata is present;
+- [x] no registry publication occurs;
+- [x] candidate state is recorded in public artifact governance;
+- [x] verification evidence was recorded before closure.
 
-Until these checks have direct evidence:
-
-```text
-DEV-GATE-03: CANDIDATE
-RELEASE CANDIDATE: NOT YET ESTABLISHED
-```
-
-## 15. Current Candidate State
+## 15. Closure State
 
 ```text
 DEV-GATE-00: CLOSED
 DEV-GATE-01: CLOSED
 DEV-GATE-02: CLOSED
-DEV-GATE-03: CANDIDATE / UNDER VALIDATION
+DEV-GATE-03: CLOSED
 SDK CANDIDATE: ESTABLISHED
-RELEASE CANDIDATE: NOT YET ESTABLISHED
+RELEASE CANDIDATE: VALIDATED
 PACKAGE IDENTITY: NOT APPROVED
 PACKAGE REGISTRY: NOT AUTHORIZED
 PUBLIC SDK LICENCE: NOT DECIDED
+PUBLIC SDK: NOT PUBLISHED
 SDK PUBLICATION NOT AUTHORIZED
+CURRENT ENGINEERING OBJECTIVE: DEV-GATE-04 — EXTERNAL EVALUATION READINESS
 ```
 
-The next gate after verified DEV-GATE-03 closure is:
+Closure evidence:
 
 ```text
-DEV-GATE-04 — External Evaluation Readiness
+AX-PUB-CI-006 v1.1
+Supply-chain workflow run: 32150126557 / #7 / SUCCESS
+Manifest workflow run: 32150126711 / #135 / SUCCESS
 ```
+
+`DEV-GATE-03 CLOSED` means only that the bounded non-published engineering release candidate has verified supply-chain/release-integrity evidence under this public program.
+
+It does not authorize SDK publication.
 
 ---
 

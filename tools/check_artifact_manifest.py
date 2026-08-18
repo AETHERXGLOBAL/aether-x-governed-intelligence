@@ -12,6 +12,8 @@ MANIFEST_PATH = ROOT / "artifacts" / "AX-PUB-MANIFEST-001.json"
 VERSION_RE = re.compile(r"^[0-9]+\.[0-9]+(?:\.[0-9]+(?:-[0-9A-Za-z.-]+)?)?$")
 STATES = {"CURRENT", "COMPATIBLE", "SUPERSEDED", "DEPRECATED", "WITHDRAWN"}
 EXPECTED_RUNTIMES = ["3.10", "3.11", "3.12", "3.13"]
+EXPECTED_GATE_03_DIGEST = "8444e7c01621f3d63019b407d9379bc82176f892dce64760cc93e84064ac8c21"
+EXPECTED_GATE_03_EPOCH = 1787064230
 
 REQUIRED_PAIRS = {
     ("AX-PUB-ARCH-001", "1.0"),
@@ -113,6 +115,17 @@ def check_artifact(path: Path, artifact_id: str, version: str, findings: list[st
             findings.append(f"{path.relative_to(ROOT)} does not declare version {version}")
 
 
+def version_at_least(raw: Any, major: int, minor: int) -> bool:
+    if not isinstance(raw, str) or VERSION_RE.fullmatch(raw) is None:
+        return False
+    parts = raw.split("-", 1)[0].split(".")
+    try:
+        current = (int(parts[0]), int(parts[1]))
+    except (ValueError, IndexError):
+        return False
+    return current >= (major, minor)
+
+
 def fail(findings: list[str]) -> int:
     for item in findings:
         print(f"AX_MANIFEST_FAIL: {item}")
@@ -127,8 +140,8 @@ def main() -> int:
 
     if manifest.get("manifest_id") != "AX-PUB-MANIFEST-001":
         findings.append("manifest_id mismatch")
-    if manifest.get("manifest_version") != "1.15":
-        findings.append("manifest_version must be 1.15")
+    if not version_at_least(manifest.get("manifest_version"), 1, 16):
+        findings.append("manifest_version must be >= 1.16")
     if manifest.get("repository") != "AETHERXGLOBAL/aether-x-governed-intelligence":
         findings.append("repository identity mismatch")
 
@@ -197,22 +210,35 @@ def main() -> int:
     if not isinstance(evidence, list):
         findings.append("validation_evidence must be an array")
         evidence = []
-    evidence_ids: set[Any] = set()
+    evidence_by_id: dict[Any, dict[str, Any]] = {}
     for index, item in enumerate(evidence):
         if not isinstance(item, dict):
             findings.append(f"validation_evidence[{index}] invalid")
             continue
-        evidence_ids.add(item.get("id"))
+        evidence_by_id[item.get("id")] = item
         path = safe_path(item.get("path"), findings, f"validation_evidence[{index}]")
         if path is not None and not path.is_file():
             findings.append(f"validation evidence path missing: {item.get('path')}")
         if not isinstance(item.get("verified_head_commit"), str) or len(item.get("verified_head_commit", "")) != 40:
             findings.append(f"validation_evidence[{index}].verified_head_commit invalid")
-    for evidence_id in ("AX-PUB-CI-001", "AX-PUB-CI-002", "AX-PUB-CI-003", "AX-PUB-CI-004", "AX-PUB-CI-005"):
-        if evidence_id not in evidence_ids:
+    for evidence_id in ("AX-PUB-CI-001", "AX-PUB-CI-002", "AX-PUB-CI-003", "AX-PUB-CI-004", "AX-PUB-CI-005", "AX-PUB-CI-006"):
+        if evidence_id not in evidence_by_id:
             findings.append(f"required validation evidence missing: {evidence_id}")
-    if "AX-PUB-CI-006" in evidence_ids:
-        findings.append("AX-PUB-CI-006 must not be registered before DEV-GATE-03 candidate validation evidence exists")
+
+    ci006 = evidence_by_id.get("AX-PUB-CI-006")
+    if isinstance(ci006, dict):
+        if ci006.get("version") != "1.1":
+            findings.append("AX-PUB-CI-006 evidence version must be 1.1")
+        if ci006.get("workflow_run_id") != 32150126557 or ci006.get("workflow_run_number") != 7:
+            findings.append("AX-PUB-CI-006 supply-chain workflow identity mismatch")
+        if ci006.get("governance_workflow_run_id") != 32150126711 or ci006.get("governance_workflow_run_number") != 135:
+            findings.append("AX-PUB-CI-006 governance workflow identity mismatch")
+        if ci006.get("verified_build_digest") != EXPECTED_GATE_03_DIGEST:
+            findings.append("AX-PUB-CI-006 verified build digest mismatch")
+        if ci006.get("source_date_epoch") != EXPECTED_GATE_03_EPOCH:
+            findings.append("AX-PUB-CI-006 source epoch mismatch")
+        if ci006.get("conclusion") != "SUCCESS":
+            findings.append("AX-PUB-CI-006 conclusion must be SUCCESS")
 
     snapshot = manifest.get("current_snapshot")
     if not isinstance(snapshot, dict) or snapshot.get("id") != "AX-PUB-SNAP-002" or snapshot.get("version") != "1.0":
@@ -248,9 +274,9 @@ def main() -> int:
             findings.append("current developer program path missing")
         if developer_program.get("state") != "UNDER DEVELOPMENT":
             findings.append("developer program state mismatch")
-        if developer_program.get("closed_gate") != "DEV-GATE-02 — SDK Candidate":
+        if developer_program.get("closed_gate") != "DEV-GATE-03 — Supply-Chain & Release Candidate":
             findings.append("developer program latest closed gate mismatch")
-        if developer_program.get("active_gate") != "DEV-GATE-03 — Supply-Chain & Release Candidate":
+        if developer_program.get("active_gate") != "DEV-GATE-04 — External Evaluation Readiness":
             findings.append("developer program active gate mismatch")
         if developer_program.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
             findings.append("developer program SDK disposition mismatch")
@@ -318,13 +344,17 @@ def main() -> int:
                 findings.append(f"current supply-chain candidate {field} missing")
         if supply_chain.get("release_candidate_id") != "AX-PUB-RC-001" or supply_chain.get("release_candidate_version") != "0.1.0-rc1":
             findings.append("release-candidate descriptor identity mismatch")
-        if supply_chain.get("gate") != "DEV-GATE-03":
-            findings.append("supply-chain candidate gate mismatch")
-        if supply_chain.get("state") != "CANDIDATE_NOT_ESTABLISHED":
-            findings.append("DEV-GATE-03 must remain candidate/not established before validation evidence")
+        if supply_chain.get("gate") != "DEV-GATE-03" or supply_chain.get("state") != "CLOSED":
+            findings.append("DEV-GATE-03 manifest state must be CLOSED")
         for field in ("deterministic_build", "build_provenance_attestation", "sbom_attestation", "extracted_bundle_validation"):
-            if supply_chain.get(field) != "NOT YET VERIFIED":
-                findings.append(f"{field} must remain NOT YET VERIFIED before Gate-03 evidence")
+            if supply_chain.get(field) != "VERIFIED":
+                findings.append(f"closed Gate-03 requires {field}=VERIFIED")
+        if supply_chain.get("closure_evidence") != "AX-PUB-CI-006":
+            findings.append("Gate-03 closure evidence mismatch")
+        if supply_chain.get("verified_build_digest") != EXPECTED_GATE_03_DIGEST:
+            findings.append("Gate-03 verified build digest mismatch")
+        if supply_chain.get("verified_source_date_epoch") != EXPECTED_GATE_03_EPOCH:
+            findings.append("Gate-03 verified source epoch mismatch")
         if supply_chain.get("artifact_upload_scope") != "CI_ONLY":
             findings.append("Gate-03 artifact upload scope must remain CI_ONLY")
         if supply_chain.get("package_identity_status") != "NOT APPROVED":
@@ -334,12 +364,33 @@ def main() -> int:
         if supply_chain.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
             findings.append("Gate-03 SDK publication disposition mismatch")
 
+    dev005 = load_json(ROOT / "artifacts" / "AX-PUB-DEV-005.json", findings)
+    if dev005 is not None:
+        if dev005.get("state") != "DEV-GATE-03_CLOSED" or dev005.get("release_candidate_established") is not True:
+            findings.append("AX-PUB-DEV-005 machine-readable state must be closed/established")
+        if dev005.get("verified_build_digest") != EXPECTED_GATE_03_DIGEST:
+            findings.append("AX-PUB-DEV-005 digest mismatch")
+        if dev005.get("verified_source_date_epoch") != EXPECTED_GATE_03_EPOCH:
+            findings.append("AX-PUB-DEV-005 source epoch mismatch")
+        closure = dev005.get("closure_evidence")
+        if not isinstance(closure, dict) or closure.get("id") != "AX-PUB-CI-006" or closure.get("version") != "1.1":
+            findings.append("AX-PUB-DEV-005 closure evidence must be AX-PUB-CI-006 v1.1")
+        if dev005.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
+            findings.append("AX-PUB-DEV-005 publication boundary mismatch")
+
     rc = load_json(ROOT / "release-candidate" / "AX-PUB-RC-001.json", findings)
     if rc is not None:
         if rc.get("artifact_id") != "AX-PUB-RC-001" or rc.get("version") != "0.1.0-rc1":
             findings.append("AX-PUB-RC-001 descriptor identity mismatch")
-        if rc.get("state") != "DEV-GATE-03_CANDIDATE" or rc.get("release_candidate_established") is not False:
-            findings.append("AX-PUB-RC-001 must remain unestablished candidate before CI evidence")
+        if rc.get("state") != "DEV-GATE-03_VALIDATED" or rc.get("release_candidate_established") is not True:
+            findings.append("AX-PUB-RC-001 must be validated/established after Gate-03 closure")
+        if rc.get("verified_build_digest") != EXPECTED_GATE_03_DIGEST:
+            findings.append("AX-PUB-RC-001 verified digest mismatch")
+        if rc.get("verified_source_date_epoch") != EXPECTED_GATE_03_EPOCH:
+            findings.append("AX-PUB-RC-001 verified source epoch mismatch")
+        closure = rc.get("closure_evidence")
+        if not isinstance(closure, dict) or closure.get("id") != "AX-PUB-CI-006" or closure.get("version") != "1.1":
+            findings.append("AX-PUB-RC-001 closure evidence must be AX-PUB-CI-006 v1.1")
         if rc.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
             findings.append("AX-PUB-RC-001 publication boundary mismatch")
 

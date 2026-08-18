@@ -33,6 +33,14 @@ EXPECTED_CONTRACTS = {
     ("AX-PUB-SPEC-003", "1.0", "AX-PUB-SCHEMA-002", "AX-PUB-REF-002"),
     ("AX-PUB-SPEC-004", "1.0", "AX-PUB-SCHEMA-003", "AX-PUB-REF-003"),
 }
+GATE_RANK = {
+    "DEV-GATE-00 — Contract Baseline": 0,
+    "DEV-GATE-01 — Reproducible Developer Experience": 1,
+    "DEV-GATE-02 — SDK Candidate": 2,
+    "DEV-GATE-03 — Supply-Chain & Release Candidate": 3,
+    "DEV-GATE-04 — External Evaluation Readiness": 4,
+    "DEV-GATE-05 — SDK Release Decision": 5,
+}
 
 
 def load_json(path: Path, findings: list[str]) -> dict[str, Any] | None:
@@ -51,9 +59,10 @@ def version_at_least(raw: Any, minimum: tuple[int, int]) -> bool:
     if not isinstance(raw, str):
         return False
     try:
-        major, minor = raw.split(".", 1)
-        return (int(major), int(minor)) >= minimum
-    except (ValueError, TypeError):
+        base = raw.split("-", 1)[0]
+        parts = base.split(".")
+        return (int(parts[0]), int(parts[1])) >= minimum
+    except (ValueError, TypeError, IndexError):
         return False
 
 
@@ -156,10 +165,14 @@ def main() -> int:
         if not isinstance(program, dict):
             findings.append("manifest current_developer_program missing")
         else:
-            if program.get("closed_gate") != "DEV-GATE-02 — SDK Candidate":
-                findings.append("manifest latest closed developer gate mismatch")
-            if program.get("active_gate") != "DEV-GATE-03 — Supply-Chain & Release Candidate":
-                findings.append("manifest active developer gate must be DEV-GATE-03")
+            closed_gate = program.get("closed_gate")
+            active_gate = program.get("active_gate")
+            if GATE_RANK.get(str(closed_gate), -1) < 2:
+                findings.append("developer program must preserve DEV-GATE-02 as closed or later")
+            if GATE_RANK.get(str(active_gate), -1) < 3:
+                findings.append("developer program active gate must be DEV-GATE-03 or later")
+            if program.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
+                findings.append("developer program SDK publication boundary mismatch")
 
         candidate = manifest.get("current_sdk_candidate")
         if not isinstance(candidate, dict):
@@ -195,10 +208,10 @@ def main() -> int:
         PROGRAM,
         (
             "DEV-GATE-02: CLOSED",
-            "CURRENT ENGINEERING OBJECTIVE: DEV-GATE-03 — SUPPLY-CHAIN & RELEASE CANDIDATE",
             "SDK CANDIDATE: ESTABLISHED",
             "AX-PUB-CI-005",
-            "CANDIDATE",
+            "CURRENT ENGINEERING OBJECTIVE: DEV-GATE-",
+            "SDK PUBLICATION NOT AUTHORIZED",
         ),
         findings,
     )
@@ -208,7 +221,8 @@ def main() -> int:
             "DEV-GATE-02: CLOSED",
             "SDK CANDIDATE: ESTABLISHED",
             "AX-PUB-CI-005",
-            "CURRENT ENGINEERING OBJECTIVE: DEV-GATE-03",
+            "CURRENT ENGINEERING OBJECTIVE: DEV-GATE-",
+            "SDK PUBLICATION: NOT AUTHORIZED",
         ),
         findings,
     )

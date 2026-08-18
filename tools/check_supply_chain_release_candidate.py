@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate DEV-GATE-03 supply-chain/release-candidate engineering state."""
+"""Validate DEV-GATE-03 supply-chain/release-candidate governance state."""
 from __future__ import annotations
 
 import argparse
@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DESCRIPTOR = ROOT / "release-candidate" / "AX-PUB-RC-001.json"
 DEV005 = ROOT / "artifacts" / "AX-PUB-DEV-005.json"
 DOC = ROOT / "docs" / "AX-PUB-DEV-005_SUPPLY_CHAIN_RELEASE_CANDIDATE.md"
+EVIDENCE = ROOT / "evidence" / "AX-PUB-CI-006_SUPPLY_CHAIN_RELEASE_CANDIDATE_VALIDATION.md"
 SECURITY = ROOT / "SECURITY.md"
 BUILD = ROOT / "tools" / "build_release_candidate.py"
 WORKFLOW = ROOT / ".github" / "workflows" / "validate-supply-chain-release-candidate.yml"
@@ -22,6 +23,8 @@ EXPECTED_GENERATED = {
     "release-candidate/AX-PUB-RC-001_BUILD_MANIFEST.json",
     "release-candidate/AX-PUB-RC-001.spdx.json",
 }
+EXPECTED_DIGEST = "8444e7c01621f3d63019b407d9379bc82176f892dce64760cc93e84064ac8c21"
+EXPECTED_SOURCE_DATE_EPOCH = 1787064230
 
 
 def load_json(path: Path, findings: list[str]) -> dict[str, Any] | None:
@@ -62,24 +65,30 @@ def validate_dist(dist: Path, descriptor: dict[str, Any], findings: list[str]) -
     for path in (bundle, digest_file, manifest_file, sbom_file):
         if not path.is_file():
             findings.append(f"built artifact missing: {path}")
-    if findings:
+    if any(not path.is_file() for path in (bundle, digest_file, manifest_file, sbom_file)):
         return
 
     actual = digest(bundle)
     parts = digest_file.read_text(encoding="utf-8").strip().split()
     if len(parts) != 2 or parts[0] != actual or parts[1] != "AX-PUB-RC-001.zip":
         findings.append("SHA-256 digest file does not match built bundle")
+    if descriptor.get("release_candidate_established") is True and actual != descriptor.get("verified_build_digest"):
+        findings.append("built bundle digest does not match verified closed-state digest")
 
     manifest = load_json(manifest_file, findings)
     if manifest is not None:
         if manifest.get("artifact_id") != "AX-PUB-RC-001":
             findings.append("build manifest artifact_id mismatch")
+        if manifest.get("artifact_version") != "0.1.0-rc1":
+            findings.append("build manifest artifact version mismatch")
         if manifest.get("third_party_runtime_dependencies") != []:
             findings.append("build manifest must declare zero third-party runtime dependencies")
         if manifest.get("package_identity_status") != "NOT APPROVED":
             findings.append("build manifest package identity boundary mismatch")
         if manifest.get("registry_status") != "NOT AUTHORIZED":
             findings.append("build manifest registry boundary mismatch")
+        if descriptor.get("release_candidate_established") is True and manifest.get("source_date_epoch") != descriptor.get("verified_source_date_epoch"):
+            findings.append("build manifest source_date_epoch does not match verified closed-state epoch")
         observed_sources = [item.get("path") for item in manifest.get("source_files", []) if isinstance(item, dict)]
         if observed_sources != sorted(descriptor.get("source_files", [])):
             findings.append("build manifest source set mismatch")
@@ -98,6 +107,8 @@ def validate_dist(dist: Path, descriptor: dict[str, Any], findings: list[str]) -
             else:
                 if package.get("name") != "AX-PUB-RC-001":
                     findings.append("SBOM candidate name mismatch")
+                if package.get("versionInfo") != "0.1.0-rc1":
+                    findings.append("SBOM candidate version mismatch")
                 if package.get("licenseConcluded") != "NOASSERTION" or package.get("licenseDeclared") != "NOASSERTION":
                     findings.append("SBOM must not invent software licence terms")
 
@@ -119,21 +130,25 @@ def validate_dist(dist: Path, descriptor: dict[str, Any], findings: list[str]) -
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Validate AX-PUB-DEV-005 / AX-PUB-RC-001 candidate state")
+    parser = argparse.ArgumentParser(description="Validate AX-PUB-DEV-005 / AX-PUB-RC-001 Gate-03 state")
     parser.add_argument("--dist", type=Path)
     args = parser.parse_args()
     findings: list[str] = []
 
     descriptor = load_json(DESCRIPTOR, findings)
+    dev = load_json(DEV005, findings)
+
+    state = dev.get("state") if dev is not None else None
+    closed = state == "DEV-GATE-03_CLOSED"
+    candidate = state == "DEV-GATE-03_CANDIDATE_NOT_ESTABLISHED"
+    if dev is not None and not (closed or candidate):
+        findings.append("DEV-005 state must be candidate/not-established or closed")
+
     if descriptor is not None:
         if descriptor.get("artifact_id") != "AX-PUB-RC-001":
             findings.append("release-candidate artifact_id mismatch")
         if descriptor.get("version") != "0.1.0-rc1":
             findings.append("release-candidate version mismatch")
-        if descriptor.get("state") != "DEV-GATE-03_CANDIDATE":
-            findings.append("release-candidate descriptor must remain DEV-GATE-03_CANDIDATE before closure")
-        if descriptor.get("release_candidate_established") is not False:
-            findings.append("release candidate must remain not established before closure evidence")
         if descriptor.get("package_identity_status") != "NOT APPROVED":
             findings.append("package identity must remain NOT APPROVED")
         if descriptor.get("registry_status") != "NOT AUTHORIZED":
@@ -165,16 +180,52 @@ def main() -> int:
                 if path.name in FORBIDDEN_METADATA:
                     findings.append(f"forbidden package metadata selected: {raw}")
 
-    dev = load_json(DEV005, findings)
+        if closed:
+            if descriptor.get("state") != "DEV-GATE-03_VALIDATED":
+                findings.append("closed Gate-03 requires validated release-candidate descriptor state")
+            if descriptor.get("release_candidate_established") is not True:
+                findings.append("closed Gate-03 requires release_candidate_established=true")
+            if descriptor.get("verified_build_digest") != EXPECTED_DIGEST:
+                findings.append("closed Gate-03 verified build digest mismatch")
+            if descriptor.get("verified_source_date_epoch") != EXPECTED_SOURCE_DATE_EPOCH:
+                findings.append("closed Gate-03 verified source epoch mismatch")
+            closure = descriptor.get("closure_evidence")
+            if not isinstance(closure, dict) or closure.get("id") != "AX-PUB-CI-006" or closure.get("version") != "1.1":
+                findings.append("closed Gate-03 descriptor must cite AX-PUB-CI-006 v1.1")
+        elif candidate:
+            if descriptor.get("state") != "DEV-GATE-03_CANDIDATE":
+                findings.append("candidate Gate-03 requires candidate descriptor state")
+            if descriptor.get("release_candidate_established") is not False:
+                findings.append("release candidate must remain not established before closure evidence")
+
     if dev is not None:
         if dev.get("artifact_id") != "AX-PUB-DEV-005":
             findings.append("DEV-005 artifact_id mismatch")
-        if dev.get("state") != "DEV-GATE-03_CANDIDATE_NOT_ESTABLISHED":
-            findings.append("DEV-GATE-03 machine-readable state must remain candidate/not established")
-        if dev.get("release_candidate_established") is not False:
-            findings.append("DEV-005 must not establish release candidate before CI evidence")
         if dev.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
             findings.append("DEV-005 SDK publication boundary mismatch")
+        if closed:
+            if dev.get("release_candidate_established") is not True:
+                findings.append("closed DEV-005 must establish the bounded release candidate")
+            if dev.get("verified_build_digest") != EXPECTED_DIGEST:
+                findings.append("DEV-005 verified build digest mismatch")
+            if dev.get("verified_source_date_epoch") != EXPECTED_SOURCE_DATE_EPOCH:
+                findings.append("DEV-005 verified source epoch mismatch")
+            for field in (
+                "build_provenance_attestation_verified",
+                "sbom_attestation_verified",
+                "deterministic_rebuild_verified",
+                "extracted_bundle_validation_verified",
+            ):
+                if dev.get(field) is not True:
+                    findings.append(f"closed DEV-005 requires {field}=true")
+            closure = dev.get("closure_evidence")
+            if not isinstance(closure, dict) or closure.get("id") != "AX-PUB-CI-006" or closure.get("version") != "1.1":
+                findings.append("closed DEV-005 must cite AX-PUB-CI-006 v1.1")
+            if dev.get("next_gate") != "DEV-GATE-04 — External Evaluation Readiness":
+                findings.append("closed DEV-005 next gate mismatch")
+        elif candidate:
+            if dev.get("release_candidate_established") is not False:
+                findings.append("DEV-005 must not establish release candidate before CI evidence")
 
     for root in (ROOT, ROOT / "sdk-candidate", ROOT / "release-candidate"):
         for forbidden in FORBIDDEN_METADATA:
@@ -184,13 +235,7 @@ def main() -> int:
 
     require_markers(
         BUILD,
-        (
-            "ZIP_STORED",
-            "SOURCE_DATE_EPOCH",
-            "sha256",
-            "SPDX-2.3",
-            "SDK PUBLICATION NOT AUTHORIZED",
-        ),
+        ("ZIP_STORED", "SOURCE_DATE_EPOCH", "sha256", "SPDX-2.3", "SDK PUBLICATION NOT AUTHORIZED"),
         findings,
     )
     require_markers(
@@ -207,32 +252,52 @@ def main() -> int:
         ),
         findings,
     )
-    require_markers(
-        SECURITY,
-        ("Security",),
-        findings,
-    )
-    require_markers(
-        DOC,
-        (
-            "DEV-GATE-03",
-            "AX-PUB-RC-001",
-            "SDK PUBLICATION NOT AUTHORIZED",
-            "gh attestation verify",
-            "SPDX 2.3",
-        ),
-        findings,
-    )
+    require_markers(SECURITY, ("Security",), findings)
+
+    if closed:
+        require_markers(
+            EVIDENCE,
+            (
+                "AX-PUB-CI-006",
+                "`1.1`",
+                "32150126557",
+                EXPECTED_DIGEST,
+                "SDK PUBLICATION NOT AUTHORIZED",
+            ),
+            findings,
+        )
+        require_markers(
+            DOC,
+            (
+                "DEV-GATE-03 CLOSED",
+                "RELEASE-CANDIDATE VALIDATED",
+                "AX-PUB-CI-006",
+                EXPECTED_DIGEST,
+                "SDK PUBLICATION NOT AUTHORIZED",
+            ),
+            findings,
+        )
+    else:
+        require_markers(
+            DOC,
+            ("DEV-GATE-03", "AX-PUB-RC-001", "SDK PUBLICATION NOT AUTHORIZED", "gh attestation verify", "SPDX 2.3"),
+            findings,
+        )
 
     if args.dist is not None and descriptor is not None:
         dist = args.dist if args.dist.is_absolute() else ROOT / args.dist
         validate_dist(dist, descriptor, findings)
 
     if findings:
+        prefix = "AX_DEV_GATE_03_CLOSED_FAIL" if closed else "AX_DEV_GATE_03_CANDIDATE_FAIL"
         for item in findings:
-            print(f"AX_DEV_GATE_03_CANDIDATE_FAIL: {item}")
+            print(f"{prefix}: {item}")
         return 1
-    print("AX_DEV_GATE_03_CANDIDATE_STATE_PASS")
+
+    if closed:
+        print("AX_DEV_GATE_03_CLOSED_STATE_PASS")
+    else:
+        print("AX_DEV_GATE_03_CANDIDATE_STATE_PASS")
     return 0
 
 

@@ -10,6 +10,7 @@ on:
       - 'docs/**'
       - 'evidence/AX-PUB-CI-004_REPRODUCIBLE_DEVELOPER_EXPERIENCE_VALIDATION.md'
       - 'evidence/AX-PUB-CI-005_SDK_CANDIDATE_VALIDATION.md'
+      - 'evidence/AX-PUB-CI-006_SUPPLY_CHAIN_RELEASE_CANDIDATE_VALIDATION.md'
       - 'release-candidate/**'
       - 'sdk-candidate/**'
       - 'snapshots/**'
@@ -32,6 +33,7 @@ on:
       - 'docs/**'
       - 'evidence/AX-PUB-CI-004_REPRODUCIBLE_DEVELOPER_EXPERIENCE_VALIDATION.md'
       - 'evidence/AX-PUB-CI-005_SDK_CANDIDATE_VALIDATION.md'
+      - 'evidence/AX-PUB-CI-006_SUPPLY_CHAIN_RELEASE_CANDIDATE_VALIDATION.md'
       - 'release-candidate/**'
       - 'sdk-candidate/**'
       - 'snapshots/**'
@@ -89,7 +91,7 @@ jobs:
       - name: Validate closed DEV-GATE-02 governance state
         run: python3 tools/check_sdk_candidate_state.py
 
-      - name: Validate DEV-GATE-03 candidate governance state
+      - name: Validate DEV-GATE-03 governance state
         run: python3 tools/check_supply_chain_release_candidate.py
 
       - name: Validate SDK candidate public boundary

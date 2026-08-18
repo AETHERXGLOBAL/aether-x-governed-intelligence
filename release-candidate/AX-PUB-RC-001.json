@@ -2,7 +2,7 @@
   "artifact_id": "AX-PUB-RC-001",
   "version": "0.1.0-rc1",
   "type": "NON_PUBLISHED_ENGINEERING_RELEASE_CANDIDATE",
-  "state": "DEV-GATE-03_CANDIDATE",
+  "state": "DEV-GATE-03_VALIDATED",
   "sdk_candidate": {
     "id": "AX-PUB-DEV-004",
     "version": "1.0",
@@ -12,6 +12,8 @@
   "build_script": "tools/build_release_candidate.py",
   "state_checker": "tools/check_supply_chain_release_candidate.py",
   "canonical_build_runtime": "Python 3.13",
+  "verified_source_date_epoch": 1787064230,
+  "verified_build_digest": "8444e7c01621f3d63019b407d9379bc82176f892dce64760cc93e84064ac8c21",
   "deterministic_build_required": true,
   "build_provenance_attestation_required": true,
   "sbom_format": "SPDX-2.3",
@@ -22,7 +24,8 @@
   "registry_status": "NOT AUTHORIZED",
   "licence_decided": false,
   "sdk_publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
-  "release_candidate_established": false,
+  "release_candidate_established": true,
+  "closure_evidence": {"id":"AX-PUB-CI-006","version":"1.1","path":"evidence/AX-PUB-CI-006_SUPPLY_CHAIN_RELEASE_CANDIDATE_VALIDATION.md"},
   "private_repository_dependency_allowed": false,
   "third_party_runtime_dependencies": [],
   "source_files": [
@@ -59,7 +62,8 @@
     ".pypirc"
   ],
   "claim_boundary": [
-    "RELEASE-CANDIDATE ENGINEERING DOES NOT AUTHORIZE PACKAGE OR REGISTRY PUBLICATION",
+    "VALIDATED RELEASE-CANDIDATE ENGINEERING DOES NOT AUTHORIZE PACKAGE OR REGISTRY PUBLICATION",
+    "RELEASE-CANDIDATE VALIDATED DOES NOT ESTABLISH A SUPPORTED SDK",
     "CI ARTIFACT UPLOAD DOES NOT ESTABLISH A PUBLIC SDK RELEASE",
     "BUILD PROVENANCE ATTESTATION DOES NOT ESTABLISH SECURITY CERTIFICATION",
     "SPDX SBOM DOCUMENTATION DOES NOT GRANT A SOFTWARE REUSE LICENCE",
