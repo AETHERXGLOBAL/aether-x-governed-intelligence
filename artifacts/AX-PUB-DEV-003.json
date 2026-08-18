@@ -95,6 +95,7 @@
   "registry_publication_authorized": false,
   "licence_decided": false,
   "next_gate": "DEV-GATE-02 — SDK Candidate",
+  "verification_trigger": "final-closed-state",
   "claim_boundary": [
     "DEV-GATE-01 CLOSURE ESTABLISHES A REPRODUCIBLE PUBLIC REFERENCE DEVELOPER EXPERIENCE ONLY",
     "REPRODUCIBLE DEVELOPER EXPERIENCE DOES NOT ESTABLISH AN SDK CANDIDATE",
