@@ -25,12 +25,9 @@ DEV-GATE-05  ACTIVE
   DEV-GATE-05D  NOT AUTHORIZED
 ```
 
-### Interpretation
+Gate closure establishes only the bounded engineering/evidence objective declared for that gate. It does not imply production readiness, commercial availability, customer deployment or a supported product.
 
-- Gate closure means the bounded engineering/evidence objective of that gate is established.
-- Gate closure does not imply production readiness, commercial availability or a supported product.
-- `DEV-GATE-05C` remains active because external-registry validation, independent human evaluation and release-control requirements are not yet established.
-- `DEV-GATE-05D` remains unauthorized.
+`DEV-GATE-05C` remains active because external-registry validation, independent human evaluation, IP/licensing clearance and release-control requirements are not established.
 
 ---
 
@@ -47,7 +44,7 @@ DEV-GATE-05  ACTIVE
 | Supply-chain engineering release candidate | `VALIDATED / NON-PUBLISHED` |
 | External evaluation readiness | `ESTABLISHED` |
 | Installable Python package candidate | `ESTABLISHED / DETERMINISTIC` |
-| Installable candidate runtime matrix | `PYTHON 3.11–3.14 VERIFIED` |
+| Installable candidate runtime matrix | `CPYTHON 3.11–3.14 VERIFIED` |
 | Local Python Simple Index validation | `VERIFIED / LOCAL ONLY` |
 | External registry validation | `NOT ESTABLISHED / NOT AUTHORIZED` |
 | Independent human external evaluation | `NOT ESTABLISHED` |
@@ -55,6 +52,7 @@ DEV-GATE-05  ACTIVE
 | Registry ownership | `NOT ESTABLISHED` |
 | Public SDK licence | `NOT GRANTED` |
 | Supported SDK | `NOT ESTABLISHED` |
+| Production SDK | `NOT ESTABLISHED` |
 | SDK publication | `NOT AUTHORIZED` |
 
 ---
@@ -71,78 +69,71 @@ Version candidate:
 Import namespace:
 aetherxglobal.governed_intelligence
 
-Declared/verified package runtime matrix:
-Python 3.11
-Python 3.12
-Python 3.13
-Python 3.14
+Declared / verified package runtime matrix:
+CPython 3.11
+CPython 3.12
+CPython 3.13
+CPython 3.14
 ```
 
-### Exact artifact identity
+### Exact validated artifact identity
 
 ```text
 Wheel:
 aetherxglobal_governed_intelligence-0.1.0rc1-py3-none-any.whl
-
 SHA-256:
 bd3c3bfc7306c9b45659e3e0533ea1ac24b065a4c577f08cbe987cc10a4d1fac
-```
 
-```text
 Source distribution:
 aetherxglobal_governed_intelligence-0.1.0rc1.tar.gz
-
 SHA-256:
 2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99
 ```
 
-The package candidate is an engineering object. It is not a supported or published SDK.
+The package candidate is an engineering object. It is not yet an official supported or published SDK.
 
 ---
 
-## 4. Direct Evidence Chain
+## 4. Evidence Chain
 
-### DEV-GATE-05A
+### DEV-GATE-05A — Release Decision Baseline
 
-`AX-PUB-DEV-007`  
-Release Decision Baseline  
+Artifact: `AX-PUB-DEV-007`  
 Evidence: `AX-PUB-CI-008`
 
 Established:
 
-- bounded first SDK scope;
+- first SDK scope direction;
 - target distribution identity;
-- Python 3.11–3.14 direction;
-- target Apache-2.0 licensing direction **without granting a licence**;
-- explicit release-security and authority blockers.
+- CPython 3.11–3.14 direction;
+- target Apache-2.0 SDK licensing direction without granting a licence;
+- release-security and authority blockers.
 
-### DEV-GATE-05B
+### DEV-GATE-05B — Installable Package Candidate
 
-`AX-PUB-DEV-008`  
-Installable Package Candidate  
+Artifact: `AX-PUB-DEV-008`  
 Evidence: `AX-PUB-CI-009`
 
 Established:
 
 - deterministic wheel and sdist candidate;
 - exact SHA-256 identities;
-- install/test verification across Python 3.11–3.14;
-- zero-runtime-dependency bounded package surface;
+- installed-package verification across CPython 3.11–3.14;
+- zero third-party runtime dependencies for the bounded candidate;
 - reproducible package build path.
 
-### DEV-GATE-05C
+### DEV-GATE-05C — Distribution & External Validation
 
-`AX-PUB-DEV-009`  
-Distribution & External Validation Baseline  
+Artifact: `AX-PUB-DEV-009`  
 Evidence: `AX-PUB-CI-010`
 
 Established so far:
 
-- local loopback-only Python Simple Repository API-compatible index;
+- loopback-only Python Simple Repository API-compatible index;
 - pip index discovery rather than direct-wheel installation;
-- exact-candidate installation and verification across Python 3.11–3.14;
+- exact-candidate installation and verification across CPython 3.11–3.14;
 - machine-readable distribution reports;
-- human-evaluation report contract that prevents CI/template evidence from impersonating an independent human evaluation.
+- external-human-evaluation evidence contract.
 
 Not established:
 
@@ -151,53 +142,92 @@ Not established:
 - registry ownership;
 - human external evaluation;
 - external adoption;
+- public SDK licence grant;
 - supported SDK;
-- release authority.
+- final release authority.
 
 `LOCAL INDEX PASS ≠ TESTPYPI PASS`
 
 ---
 
-## 5. Current Governance Source Boundary
+## 5. Canonical Moving Governance State
 
-`AX-PUB-MANIFEST-001 v1.21` is the current machine-readable baseline that introduced the Gate-05C engineering candidate. It records the local-index validation state as pending at the baseline point.
+The current machine-readable moving state is:
 
-`AX-PUB-CI-010` is later direct CI evidence proving the local-index engineering validation.
+```text
+AX-PUB-MANIFEST-001 v1.22
+```
 
-Therefore the current human-readable state is interpreted as:
+The manifest records:
 
 ```text
 GATE-05C: ACTIVE
 LOCAL INDEX ENGINEERING VALIDATION: VERIFIED / LOCAL ONLY
+LOCAL INDEX EVIDENCE: AX-PUB-CI-010
 EXTERNAL REGISTRY VALIDATION: NOT AUTHORIZED / NOT ESTABLISHED
+HUMAN EXTERNAL EVALUATION: NOT ESTABLISHED
+REGISTRY OWNERSHIP: NOT ESTABLISHED
+MAIN RELEASE PROTECTION: NOT ESTABLISHED
+SDK PUBLICATION: NOT AUTHORIZED
 ```
 
-A later bounded manifest-state transition may incorporate `AX-PUB-CI-010` directly into the machine-readable moving state. The absence of that transition does not authorize any stronger claim.
+This removes the earlier human-readable/evidence-overlay gap: `AX-PUB-CI-010` is now represented directly in the moving machine state without promoting Gate-05C to closed.
 
 ---
 
-## 6. Release / IP / Registry Boundary
+## 6. Production SDK Target
+
+AETHER X is now engineering toward a higher state than “public package exists”.
+
+Target end-state:
+
+```text
+OFFICIAL SOURCE
+→ GOVERNED CHANGE
+→ DETERMINISTIC / VERIFIED BUILD
+→ EXACT-ARTIFACT TESTING
+→ PROVENANCE / RELEASE EVIDENCE
+→ CONTROLLED PYPI PUBLICATION
+→ pip install
+→ DOCUMENTED PUBLIC API
+→ COMPATIBILITY / DEPRECATION CONTRACT
+→ SECURITY + MAINTENANCE PROCESS
+→ SUPPORTED DECLARED PRODUCTION SCOPE
+```
+
+The exact promotion criteria are defined in:
+
+- [`PRODUCTION_SDK_DEFINITION_OF_DONE.md`](./PRODUCTION_SDK_DEFINITION_OF_DONE.md)
+- [`RELEASE_CONTROL_PLANE.md`](./RELEASE_CONTROL_PLANE.md)
+
+These documents define targets and hard gates. Their existence does not establish that those controls are already satisfied.
+
+---
+
+## 7. Release / IP / Registry Boundary
 
 Current hard blockers include:
 
 - IP and copyright clearance;
-- fresh package-name recheck at the moment of any authorized registry action;
-- actual registry ownership;
-- sufficient branch/repository release protection;
-- protected publishing environment;
-- explicit authority for controlled external-registry validation;
+- fresh package-name check at the moment of any authorized registry action;
+- actual registry ownership/control;
+- branch/repository release protection;
+- required status-check enforcement;
+- protected PyPI publishing environment;
+- Trusted Publisher configuration;
+- separately authorized controlled external-registry validation;
 - at least one independent human external evaluation;
 - complete finding/issue disposition;
-- final release evidence;
+- final release evidence pack;
 - explicit final release authority.
 
-The current package-name reconnaissance found no exact project during the recorded check, but that is **not** ownership, reservation or a guarantee of later availability.
+The prior package-name reconnaissance that found no exact project does not establish ownership, reservation or future availability.
 
 ---
 
-## 7. Licensing Boundary
+## 8. Licensing Boundary
 
-Current target direction:
+Current target SDK direction:
 
 ```text
 Apache-2.0
@@ -210,39 +240,41 @@ LICENCE GRANTED: NO
 IP / COPYRIGHT CLEARANCE: REQUIRED
 ```
 
-The target applies only to a deliberately scoped future SDK distribution if separately authorized. It does not grant a licence to this public repository.
+The target applies only to a deliberately scoped future SDK distribution if separately authorized. It does not relicense the full public repository.
 
 `PUBLIC VISIBILITY ≠ OPEN-SOURCE LICENCE`
 
 ---
 
-## 8. Private / Public Boundary
+## 9. Public / Private Boundary
 
-This public engineering repository does not disclose or establish:
+This public repository does not disclose or establish:
 
 - private AETHER X product implementations;
 - confidential research or invention work;
 - production credentials or endpoints;
 - proprietary algorithms outside the approved public boundary;
-- integrations between private portfolio initiatives;
+- integration between private portfolio initiatives;
 - production or customer deployment.
 
-Public specifications and validators are designed to make the company engineering doctrine inspectable without presenting confidential implementation as public capability.
+Public specifications and validators make the company engineering doctrine inspectable without exposing confidential implementation or future IP-sensitive research.
 
 ---
 
-## 9. Reading Order
+## 10. Reading Order
 
-For technical review:
+For engineering evaluation:
 
 ```text
 README.md
 → QUICKSTART.md
+→ PUBLIC_ENGINEERING_STATE.md
 → AX-PUB-ARCH-001
 → AX-PUB-SPEC-002 / 003 / 004
-→ AX-PUB-DEV-001
 → AX-PUB-DEV-007 / 008 / 009
 → AX-PUB-CI-008 / 009 / 010
+→ PRODUCTION_SDK_DEFINITION_OF_DONE.md
+→ RELEASE_CONTROL_PLANE.md
 → LIMITATIONS_AND_UNSUPPORTED_USES.md
 ```
 
@@ -253,14 +285,14 @@ AX-PUB-GATE-001
 → AX-PUB-DEV-007
 → AX-PUB-DEV-008
 → AX-PUB-DEV-009
-→ AX-PUB-CI-008
-→ AX-PUB-CI-009
-→ AX-PUB-CI-010
+→ AX-PUB-CI-008 / 009 / 010
+→ PRODUCTION_SDK_DEFINITION_OF_DONE.md
+→ RELEASE_CONTROL_PLANE.md
 ```
 
 ---
 
-## 10. Claim Discipline
+## 11. Claim Discipline
 
 ```text
 PUBLIC ENGINEERING ≠ PRODUCT IMPLEMENTATION
@@ -268,8 +300,9 @@ REFERENCE CODE ≠ PRODUCTION CODE
 CI PASS ≠ EXTERNAL CERTIFICATION
 INSTALLABLE CANDIDATE ≠ SUPPORTED SDK
 LOCAL INDEX PASS ≠ EXTERNAL REGISTRY VALIDATION
-HUMAN EVALUATION ≠ CI
 TARGET LICENCE ≠ LICENCE GRANT
+PRODUCTION SDK TARGET ≠ PRODUCTION SDK ESTABLISHED
+DEV-GATE-05C ACTIVE ≠ DEV-GATE-05D RELEASE AUTHORITY
 SDK PUBLICATION NOT AUTHORIZED
 ```
 
