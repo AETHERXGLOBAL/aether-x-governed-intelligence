@@ -2,7 +2,7 @@
 
 **Artifact ID:** `AX-PUB-DEV-001`  
 **Version:** `1.0`  
-**Status:** `PUBLIC ENGINEERING PROGRAM · UNDER DEVELOPMENT · SDK PUBLICATION NOT AUTHORIZED`  
+**Status:** `PUBLIC ENGINEERING PROGRAM · UNDER DEVELOPMENT · DEV-GATE-00 CLOSED · SDK PUBLICATION NOT AUTHORIZED`  
 **Scope:** `AETHERXGLOBAL/aether-x-governed-intelligence`  
 **Governing readiness gate:** `AX-PUB-GATE-001`
 
@@ -60,11 +60,12 @@ The repository already provides:
 - machine-readable artifact manifest and compatibility policy;
 - commit-anchored reproducibility snapshots;
 - a formal non-product public engineering release;
-- `AX-PUB-GATE-001` as the controlling SDK publication gate.
+- `AX-PUB-GATE-001` as the controlling SDK publication gate;
+- `AX-PUB-DEV-002` as the closed DEV-GATE-00 developer contract baseline.
 
 The current Quickstart uses Python 3.10+ and the reference validators use the Python standard library only.
 
-This is a strong inspection/reproducibility baseline. It is not yet a supported developer platform.
+The contract baseline is established. The developer experience is not yet independently validated as a supported clean-environment path, and no supported SDK exists.
 
 ## 4. Non-Negotiable Boundaries
 
@@ -196,16 +197,19 @@ No named partner, adoption result or integration may be claimed without evidence
 
 ### DEV-GATE-00 — Contract Baseline
 
-Exit requires:
+**Current state:** `CLOSED`
 
-- defined developer-facing problem and supported scope;
-- canonical public contract inventory;
-- explicit non-goals;
-- baseline error taxonomy;
-- compatibility principles;
-- private/public dependency boundary verified.
+Closure is established by:
+
+- [`AX-PUB-DEV-002 — Developer Contract Baseline`](./AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md);
+- machine-readable companion `artifacts/AX-PUB-DEV-002.json`;
+- [`AX-PUB-CI-003`](../evidence/AX-PUB-CI-003_DEVELOPER_CONTRACT_BASELINE_VALIDATION.md).
+
+Closing this gate establishes only the public developer contract baseline. It does not establish an SDK candidate or SDK release.
 
 ### DEV-GATE-01 — Reproducible Developer Experience
+
+**Current state:** `ACTIVE ENGINEERING OBJECTIVE`
 
 Exit requires:
 
@@ -363,6 +367,8 @@ The program must actively prevent:
 
 ```text
 PROGRAM: ACTIVE / UNDER DEVELOPMENT
+DEV-GATE-00: CLOSED
+CURRENT ENGINEERING OBJECTIVE: DEV-GATE-01 — REPRODUCIBLE DEVELOPER EXPERIENCE
 DEVELOPER PLATFORM: NOT RELEASED
 SDK CANDIDATE: NOT YET ESTABLISHED
 PUBLIC SDK: NOT PUBLISHED
@@ -371,7 +377,7 @@ PUBLIC SDK LICENCE: NOT DECIDED
 AX-PUB-GATE-001: SDK PUBLICATION NOT AUTHORIZED
 ```
 
-The immediate next engineering objective is `DEV-GATE-00 — Contract Baseline`.
+`AX-PUB-CI-003` records the directly observed candidate-validation evidence used to close DEV-GATE-00. The closed state itself remains subject to the repository's normal manifest validation.
 
 ## 14. Promotion Principle
 
@@ -387,6 +393,12 @@ REFERENCE
 → RELEASE-CANDIDATE VALIDATED
 → AUTHORIZED
 → SUPPORTED
+```
+
+Current position:
+
+```text
+CONTRACTED
 ```
 
 No later state may be inferred from an earlier one.
