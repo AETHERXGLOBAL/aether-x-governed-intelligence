@@ -27,7 +27,7 @@ DEV-GATE-05  ACTIVE
 
 Gate closure establishes only the bounded engineering/evidence objective declared for that gate. It does not imply production readiness, commercial availability, customer deployment or a supported product.
 
-`DEV-GATE-05C` remains active because external-registry validation, independent human evaluation, IP/licensing clearance and live release-control requirements are not established.
+`DEV-GATE-05C` remains active because external-registry validation, independent human evaluation, IP/licensing clearance, live release-control requirements, support activation and security-operations readiness are not established.
 
 ---
 
@@ -48,6 +48,15 @@ Gate closure establishes only the bounded engineering/evidence objective declare
 | Local Python Simple Index validation | `VERIFIED / LOCAL ONLY` |
 | Public API contract candidate | `VALIDATED / CPYTHON 3.11–3.14` |
 | Stable 1.0 API guarantee | `NOT ESTABLISHED` |
+| Support / compatibility / maintenance contract candidate | `VALIDATED / NOT ACTIVATED` |
+| Support commitment | `NOT ESTABLISHED` |
+| Commercial support SLA | `NOT ESTABLISHED` |
+| Security-operations readiness contract candidate | `VALIDATED / NOT READY` |
+| Security operations ready | `NO` |
+| Dedicated security channel | `NOT ESTABLISHED` |
+| Security response owner | `NOT ESTABLISHED` |
+| Security response SLA | `NOT ESTABLISHED` |
+| Bug bounty | `NOT ESTABLISHED` |
 | Live release-control audit mechanism | `ESTABLISHED / READ-ONLY` |
 | GitHub release-control readiness | `NOT ESTABLISHED` |
 | External registry validation | `NOT ESTABLISHED / NOT AUTHORIZED` |
@@ -207,6 +216,47 @@ STABLE 1.0 GUARANTEE: NOT ESTABLISHED
 SUPPORTED SDK: NOT ESTABLISHED
 ```
 
+### SDK Support / Compatibility / Maintenance Contract Candidate
+
+Artifact: `AX-PUB-SUP-001`  
+Evidence: `AX-PUB-CI-013`
+
+Validated candidate model:
+
+```text
+SUPPORT CONTRACT CANDIDATE: VALIDATED / NOT ACTIVATED
+TARGET NORMAL DEPRECATION RULE: LATER OF 90 DAYS OR ONE INTERVENING SUPPORTED MINOR
+TARGET PREVIOUS-MINOR SECURITY/CORRECTNESS WINDOW: 90 DAYS
+SUPPORT COMMITMENT: NOT ESTABLISHED
+PRODUCTION SUPPORT: NOT ACTIVATED
+COMMERCIAL SLA: NOT ESTABLISHED
+SUPPORTED SDK: NOT ESTABLISHED
+```
+
+The target deprecation and maintenance values are not current commitments. They become operative only if explicitly adopted under final release authority.
+
+### SDK Security-Operations Readiness Contract Candidate
+
+Artifact: `AX-PUB-SEC-001`  
+Evidence: `AX-PUB-CI-013`
+
+Validated candidate model:
+
+```text
+SECURITY OPERATIONS CONTRACT CANDIDATE: VALIDATED / NOT READY
+DEDICATED SECURITY CHANNEL: NOT ESTABLISHED
+SECURITY RESPONSE OWNER: NOT ESTABLISHED
+SECURITY RESPONSE SLA: NOT ESTABLISHED
+BUG BOUNTY: NOT ESTABLISHED
+SECURITY OPERATIONS READY: NO
+SUPPORTED SDK: NOT ESTABLISHED
+SDK PUBLICATION: NOT AUTHORIZED
+```
+
+`AX-PUB-CI-013` also re-built and re-validated the closed Gate-03 release-candidate identity, preserving the established deterministic Gate-03 digest rather than redefining historical evidence.
+
+`CONTRACT VALIDATION ≠ CONTRACT ACTIVATION`
+
 ---
 
 ## 5. Canonical Moving Governance State
@@ -214,10 +264,10 @@ SUPPORTED SDK: NOT ESTABLISHED
 The current machine-readable moving state is:
 
 ```text
-AX-PUB-MANIFEST-001 v1.23
+AX-PUB-MANIFEST-001 v1.24
 ```
 
-The manifest now records:
+The manifest records:
 
 ```text
 GATE-05C: ACTIVE
@@ -226,20 +276,26 @@ LOCAL INDEX EVIDENCE: AX-PUB-CI-010
 LIVE RELEASE-CONTROL BASELINE: AX-PUB-CI-011 / CONTROLS NOT READY
 PUBLIC API CONTRACT: AX-PUB-API-001 / VALIDATED CANDIDATE
 PUBLIC API CONTRACT EVIDENCE: AX-PUB-CI-012
+SUPPORT CONTRACT: AX-PUB-SUP-001 / VALIDATED CANDIDATE / NOT ACTIVATED
+SECURITY OPERATIONS CONTRACT: AX-PUB-SEC-001 / VALIDATED CANDIDATE / NOT READY
+SUPPORT / SECURITY EVIDENCE: AX-PUB-CI-013
 EXTERNAL REGISTRY VALIDATION: NOT AUTHORIZED / NOT ESTABLISHED
 HUMAN EXTERNAL EVALUATION: NOT ESTABLISHED
 REGISTRY OWNERSHIP: NOT ESTABLISHED
 MAIN RELEASE PROTECTION: NOT ESTABLISHED
 STABLE 1.0 GUARANTEE: NOT ESTABLISHED
+SUPPORT COMMITMENT: NOT ESTABLISHED
+SECURITY OPERATIONS READY: NO
 SUPPORTED SDK: NOT ESTABLISHED
 SDK PUBLICATION: NOT AUTHORIZED
 ```
 
-The moving machine state therefore distinguishes three different facts that must not be collapsed:
+The moving machine state therefore distinguishes four different facts that must not be collapsed:
 
 ```text
 PACKAGE INSTALLABILITY: ESTABLISHED AS CANDIDATE
 API CONTRACT VALIDATION: ESTABLISHED AS CANDIDATE
+SUPPORT / SECURITY OPERATING CONTRACTS: VALIDATED AS PRE-ACTIVATION CANDIDATES
 PRODUCTION RELEASE / SUPPORT AUTHORITY: NOT ESTABLISHED
 ```
 
@@ -270,12 +326,14 @@ The exact promotion criteria are defined in:
 - [`PRODUCTION_SDK_DEFINITION_OF_DONE.md`](./PRODUCTION_SDK_DEFINITION_OF_DONE.md)
 - [`RELEASE_CONTROL_PLANE.md`](./RELEASE_CONTROL_PLANE.md)
 - [`AX-PUB-API-001`](./AX-PUB-API-001_PYTHON_SDK_PUBLIC_API_CONTRACT.md)
+- [`AX-PUB-SUP-001`](./AX-PUB-SUP-001_SDK_SUPPORT_COMPATIBILITY_MAINTENANCE_CONTRACT.md)
+- [`AX-PUB-SEC-001`](./AX-PUB-SEC-001_SDK_SECURITY_OPERATIONS_READINESS_CONTRACT.md)
 
 Live control measurement is defined in:
 
 - [`RELEASE_CONTROL_AUDIT.md`](./RELEASE_CONTROL_AUDIT.md)
 
-These documents define targets and hard gates. Their existence does not establish that those controls are already satisfied.
+These documents define targets and hard gates. Their existence or CI validation does not establish that the underlying operating controls are already activated.
 
 ---
 
@@ -292,6 +350,10 @@ Current hard blockers include:
 - Trusted Publisher configuration;
 - separately authorized controlled external-registry validation;
 - at least one independent human external evaluation;
+- dedicated/formally designated private security intake;
+- named security response owner and escalation path;
+- security release/withdrawal operating process;
+- support-contract activation decision;
 - complete finding/issue disposition;
 - final release evidence pack;
 - explicit final release authority.
@@ -349,6 +411,7 @@ README.md
 → AX-PUB-DEV-007 / 008 / 009
 → AX-PUB-CI-008 / 009 / 010
 → AX-PUB-API-001 / AX-PUB-CI-012
+→ AX-PUB-SUP-001 / AX-PUB-SEC-001 / AX-PUB-CI-013
 → AX-PUB-CI-011 / RELEASE_CONTROL_AUDIT.md
 → PRODUCTION_SDK_DEFINITION_OF_DONE.md
 → RELEASE_CONTROL_PLANE.md
@@ -365,6 +428,7 @@ AX-PUB-GATE-001
 → AX-PUB-CI-010
 → AX-PUB-CI-011
 → AX-PUB-API-001 / AX-PUB-CI-012
+→ AX-PUB-SUP-001 / AX-PUB-SEC-001 / AX-PUB-CI-013
 → PRODUCTION_SDK_DEFINITION_OF_DONE.md
 → RELEASE_CONTROL_PLANE.md
 ```
@@ -379,6 +443,9 @@ REFERENCE CODE ≠ PRODUCTION CODE
 CI PASS ≠ EXTERNAL CERTIFICATION
 INSTALLABLE CANDIDATE ≠ SUPPORTED SDK
 VALIDATED API CONTRACT CANDIDATE ≠ STABLE 1.0 GUARANTEE
+VALIDATED SUPPORT CONTRACT CANDIDATE ≠ SUPPORT COMMITMENT
+VALIDATED SECURITY OPERATIONS CONTRACT ≠ SECURITY OPERATIONS READY
+TARGET DEPRECATION WINDOW ≠ CURRENT SUPPORT PROMISE
 LIVE RELEASE-CONTROL AUDIT ≠ RELEASE-CONTROL READY
 LOCAL INDEX PASS ≠ EXTERNAL REGISTRY VALIDATION
 TARGET LICENCE ≠ LICENCE GRANT
