@@ -10,6 +10,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACT = ROOT / "artifacts/AX-PUB-DEV-006.json"
 MANIFEST = ROOT / "artifacts/AX-PUB-MANIFEST-001.json"
+EXPECTED_RUNTIMES = {"3.10", "3.11", "3.12", "3.13"}
 
 REQUIRED_PATHS = [
     "docs/AX-PUB-DEV-006_EXTERNAL_EVALUATION_READINESS.md",
@@ -85,7 +86,7 @@ def main() -> int:
     if state.get("public_sdk_licence_decided") is not False:
         return fail("licence_boundary")
 
-    if set(state.get("declared_candidate_runtime_matrix", [])) != {"3.10", "3.11", "3.12", "3.13"}:
+    if set(state.get("declared_candidate_runtime_matrix", [])) != EXPECTED_RUNTIMES:
         return fail("runtime_matrix")
 
     expected_contracts = {
@@ -157,8 +158,10 @@ def main() -> int:
             return fail(f"forbidden_claim={needle}")
 
     try:
-        if parse_version(str(manifest.get("manifest_version"))) < (1, 17):
-            return fail("manifest_version_lt_1.17")
+        manifest_version = parse_version(str(manifest.get("manifest_version")))
+        minimum = (1, 17) if state["state"] == "CANDIDATE" else (1, 18)
+        if manifest_version < minimum:
+            return fail(f"manifest_version_lt_{minimum[0]}.{minimum[1]}")
     except ValueError as exc:
         return fail(str(exc))
 
@@ -175,22 +178,72 @@ def main() -> int:
 
     maturity = str(manifest_dev006.get("public_maturity", ""))
     if state["state"] == "CANDIDATE":
+        if state.get("external_evaluation_readiness") != "NOT_YET_ESTABLISHED":
+            return fail("candidate_readiness_state")
         if "DEV-GATE-04 CANDIDATE" not in maturity or "NOT YET ESTABLISHED" not in maturity:
             return fail("manifest_candidate_maturity")
         marker = "AX_DEV_GATE_04_CANDIDATE_STATE_PASS"
     else:
         if state.get("external_evaluation_readiness") != "ESTABLISHED":
             return fail("closed_state_readiness")
-        if "DEV-GATE-04 CLOSED" not in maturity or "EXTERNAL EVALUATION READINESS ESTABLISHED" not in maturity:
-            return fail("manifest_closed_maturity")
+        if set(state.get("verified_readiness_runtime_matrix", [])) != EXPECTED_RUNTIMES:
+            return fail("closed_state_verified_runtime_matrix")
+        if state.get("next_gate") != "DEV-GATE-05 — SDK Release Decision":
+            return fail("closed_state_next_gate")
+
+        closure = state.get("closure_evidence")
+        if not isinstance(closure, dict):
+            return fail("closed_state_closure_evidence")
+        if closure.get("id") != "AX-PUB-CI-007" or closure.get("version") != "1.0":
+            return fail("closed_state_CI007_identity")
+        if closure.get("validated_base_commit") != "e237e4baaf378e5ebabe0cc2cd95a6c5cceb5676":
+            return fail("closed_state_CI007_base")
+        if closure.get("verified_head_commit") != "7cb9f46ddf281821f4c0f2d538fdb125c166916c":
+            return fail("closed_state_CI007_head")
+        if closure.get("workflow_run_id") != 32162256262 or closure.get("workflow_run_number") != 6:
+            return fail("closed_state_CI007_workflow")
+        if closure.get("governance_workflow_run_id") != 32162256504 or closure.get("governance_workflow_run_number") != 145:
+            return fail("closed_state_CI007_governance_workflow")
+        if closure.get("conclusion") != "SUCCESS":
+            return fail("closed_state_CI007_conclusion")
+
+        if "DEV-GATE-04 CLOSED" not in maturity:
+            return fail("manifest_closed_maturity_gate")
+        if "EXTERNAL EVALUATION READINESS ESTABLISHED" not in maturity:
+            return fail("manifest_closed_maturity_readiness")
+        if "HUMAN EXTERNAL EVALUATION NOT ESTABLISHED" not in maturity:
+            return fail("manifest_closed_maturity_human_boundary")
+        if "SDK PUBLICATION NOT AUTHORIZED" not in maturity:
+            return fail("manifest_closed_maturity_publication_boundary")
+
         evidence = {item.get("id"): item for item in manifest.get("validation_evidence", []) if isinstance(item, dict)}
-        if "AX-PUB-CI-007" not in evidence:
+        ci007 = evidence.get("AX-PUB-CI-007")
+        if not isinstance(ci007, dict):
             return fail("closed_state_missing_CI007")
+        if ci007.get("version") != "1.0" or ci007.get("conclusion") != "SUCCESS":
+            return fail("closed_state_manifest_CI007")
+        if set(ci007.get("verified_runtime_matrix", [])) != EXPECTED_RUNTIMES:
+            return fail("closed_state_manifest_CI007_runtime_matrix")
+        if ci007.get("human_external_evaluation") is not False:
+            return fail("closed_state_manifest_human_evaluation_boundary")
+        if ci007.get("external_adoption_established") is not False:
+            return fail("closed_state_manifest_adoption_boundary")
+
+        program = manifest.get("current_developer_program")
+        if not isinstance(program, dict):
+            return fail("closed_state_program_missing")
+        if program.get("closed_gate") != "DEV-GATE-04 — External Evaluation Readiness":
+            return fail("closed_state_program_closed_gate")
+        if program.get("active_gate") != "DEV-GATE-05 — SDK Release Decision":
+            return fail("closed_state_program_active_gate")
+        if program.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
+            return fail("closed_state_program_publication_boundary")
+
         marker = "AX_DEV_GATE_04_CLOSED_STATE_PASS"
 
     print(
         f"{marker} manifest={manifest['manifest_version']} "
-        "sdk_publication=NOT_AUTHORIZED external_evaluation_occurred=false"
+        "sdk_publication=NOT_AUTHORIZED external_evaluation_occurred=false external_adoption=false"
     )
     return 0
 
