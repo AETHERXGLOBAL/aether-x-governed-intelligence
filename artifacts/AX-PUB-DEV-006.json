@@ -1,0 +1,44 @@
+{
+  "artifact_id": "AX-PUB-DEV-006",
+  "version": "1.0",
+  "gate": "DEV-GATE-04",
+  "state": "CANDIDATE",
+  "public_maturity": "EXTERNAL EVALUATION READINESS NOT YET ESTABLISHED",
+  "sdk_publication": "NOT_AUTHORIZED",
+  "external_evaluation_readiness": "NOT_YET_ESTABLISHED",
+  "external_evaluation_occurred": false,
+  "external_adoption_established": false,
+  "supported_sdk_established": false,
+  "package_identity_approved": false,
+  "package_registry_authorized": false,
+  "public_sdk_licence_decided": false,
+  "declared_candidate_runtime_matrix": [
+    "3.10",
+    "3.11",
+    "3.12",
+    "3.13"
+  ],
+  "declared_contract_surface": [
+    {"contract_id": "AX-PUB-SPEC-002", "version": "1.0"},
+    {"contract_id": "AX-PUB-SPEC-003", "version": "1.0"},
+    {"contract_id": "AX-PUB-SPEC-004", "version": "1.0"}
+  ],
+  "readiness_surface": {
+    "evaluator_guide": "docs/EXTERNAL_EVALUATOR_GUIDE.md",
+    "limitations": "docs/LIMITATIONS_AND_UNSUPPORTED_USES.md",
+    "migration_deprecation_draft": "docs/MIGRATION_AND_DEPRECATION_DRAFT.md",
+    "feedback_triage": "docs/FEEDBACK_AND_TRIAGE.md",
+    "issue_template": ".github/ISSUE_TEMPLATE/external-evaluation.yml",
+    "evaluation_runner": "tools/run_external_evaluation.py",
+    "report_checker": "tools/check_external_evaluation_report.py",
+    "gate_checker": "tools/check_external_evaluation_readiness.py",
+    "workflow": ".github/workflows/validate-external-evaluation-readiness.yml"
+  },
+  "claim_boundaries": [
+    "READINESS CI PASS DOES NOT ESTABLISH HUMAN EXTERNAL EVALUATION",
+    "EXTERNAL EVALUATION READINESS DOES NOT ESTABLISH ADOPTION",
+    "SDK CANDIDATE DOES NOT ESTABLISH SUPPORTED SDK",
+    "RELEASE-CANDIDATE VALIDATED DOES NOT ESTABLISH SDK RELEASE",
+    "PUBLIC VISIBILITY DOES NOT CREATE A SOFTWARE REUSE LICENCE"
+  ]
+}
