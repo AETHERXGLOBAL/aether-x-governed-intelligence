@@ -14,7 +14,7 @@ REQUIRED_PAIRS = {
     ("AX-PUB-SCHEMA-001","1.0"),("AX-PUB-SCHEMA-002","1.0"),("AX-PUB-SCHEMA-003","1.0"),
     ("AX-PUB-REF-001","1.0"),("AX-PUB-REF-002","1.0"),("AX-PUB-REF-003","1.0"),
     ("AX-PUB-TEST-001","1.0"),("AX-PUB-TEST-002","1.0"),("AX-PUB-POL-001","1.6"),
-    ("AX-PUB-SNAP-002","1.0"),("AX-PUB-REL-001","1.0"),("AX-PUB-GATE-001","1.0"),
+    ("AX-PUB-SNAP-002","1.0"),("AX-PUB-REL-001","1.0"),("AX-PUB-GATE-001","1.0"),("AX-PUB-DEV-001","1.0"),
 }
 REQUIRED_RELATIONS = {
     ("AX-PUB-SCHEMA-001","1.0","STRUCTURAL_PROFILE_OF","AX-PUB-SPEC-002","1.0"),
@@ -29,6 +29,7 @@ REQUIRED_RELATIONS = {
     ("AX-PUB-TEST-001","1.0","EXERCISES_PUBLIC_BEHAVIOR_OF","AX-PUB-REF-002","1.0"),
     ("AX-PUB-TEST-002","1.0","EXERCISES_PUBLIC_BEHAVIOR_OF","AX-PUB-REF-003","1.0"),
     ("AX-PUB-REL-001","1.0","PACKAGES_PUBLIC_STATE_WITH","AX-PUB-SNAP-002","1.0"),
+    ("AX-PUB-DEV-001","1.0","GOVERNED_BY","AX-PUB-GATE-001","1.0"),
 }
 
 def safe_path(raw: Any, findings: list[str], label: str) -> Path | None:
@@ -66,7 +67,7 @@ def main() -> int:
     manifest = load_json(MANIFEST_PATH, findings)
     if manifest is None: return fail(findings)
     if manifest.get("manifest_id") != "AX-PUB-MANIFEST-001": findings.append("manifest_id mismatch")
-    if manifest.get("manifest_version") != "1.7": findings.append("manifest_version must be 1.7")
+    if manifest.get("manifest_version") != "1.8": findings.append("manifest_version must be 1.8")
     if manifest.get("repository") != "AETHERXGLOBAL/aether-x-governed-intelligence": findings.append("repository identity mismatch")
 
     policy = manifest.get("versioning_policy")
@@ -132,13 +133,21 @@ def main() -> int:
         if gp is not None and not gp.is_file(): findings.append("current readiness gate path missing")
         if gate.get("disposition")!="SDK PUBLICATION NOT AUTHORIZED": findings.append("SDK readiness disposition mismatch")
 
+    dev=manifest.get("current_developer_program")
+    if not isinstance(dev,dict) or dev.get("id")!="AX-PUB-DEV-001" or dev.get("version")!="1.0": findings.append("current_developer_program must identify AX-PUB-DEV-001 v1.0")
+    else:
+        dp=safe_path(dev.get("path"),findings,"current_developer_program")
+        if dp is not None and not dp.is_file(): findings.append("current developer program path missing")
+        if dev.get("state")!="UNDER DEVELOPMENT": findings.append("developer program state mismatch")
+        if dev.get("sdk_publication_disposition")!="SDK PUBLICATION NOT AUTHORIZED": findings.append("developer program SDK disposition mismatch")
+
     quickstart = ROOT / "docs" / "QUICKSTART.md"
     if not quickstart.is_file(): findings.append("docs/QUICKSTART.md missing")
     else:
         text = quickstart.read_text(encoding="utf-8")
         for marker in (
             "AX-PUB-MANIFEST-001.json","COMPATIBILITY_AND_VERSIONING.md","AX-PUB-SNAP-001.json","AX-PUB-SNAP-002.json",
-            "AX-PUB-SCHEMA-003","AX-PUB-REF-003","AX-PUB-TEST-002","AX-PUB-REL-001","public-engineering-vnext-1.0","AX-PUB-GATE-001"
+            "AX-PUB-SCHEMA-003","AX-PUB-REF-003","AX-PUB-TEST-002","AX-PUB-REL-001","public-engineering-vnext-1.0","AX-PUB-GATE-001","AX-PUB-DEV-001"
         ):
             if marker not in text: findings.append(f"quickstart missing reference: {marker}")
     if not isinstance(manifest.get("claim_boundary"), list) or not manifest.get("claim_boundary"): findings.append("claim_boundary must be non-empty array")
