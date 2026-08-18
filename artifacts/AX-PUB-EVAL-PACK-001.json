@@ -1,0 +1,69 @@
+{
+  "artifact_id": "AX-PUB-EVAL-PACK-001",
+  "version": "0.1",
+  "state": "DEV_GATE_05C_EXTERNAL_EVALUATOR_HANDOFF_PACK_CANDIDATE",
+  "scope": "INSTALLABLE_SDK_INDEPENDENT_HUMAN_EVALUATION_HANDOFF",
+  "parent_artifact": "AX-PUB-DEV-009",
+  "candidate": {
+    "distribution": "aetherxglobal-governed-intelligence",
+    "version": "0.1.0rc1",
+    "import_namespace": "aetherxglobal.governed_intelligence",
+    "wheel_filename": "aetherxglobal_governed_intelligence-0.1.0rc1-py3-none-any.whl",
+    "wheel_sha256": "bd3c3bfc7306c9b45659e3e0533ea1ac24b065a4c577f08cbe987cc10a4d1fac",
+    "sdist_filename": "aetherxglobal_governed_intelligence-0.1.0rc1.tar.gz",
+    "sdist_sha256": "2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99",
+    "verified_runtime_matrix": ["3.11", "3.12", "3.13", "3.14"]
+  },
+  "report_contract": {
+    "format": "AX-PUB-EVAL-REPORT-002",
+    "version": "1.0",
+    "template_path": "examples/external-evaluation/AX-PUB-EVAL-REPORT-002.template.json",
+    "checker_path": "tools/check_installable_external_evaluation_report.py",
+    "final_record_state": "FINAL",
+    "final_requires_independent_human_evaluator": true,
+    "final_requires_external_index_used": true,
+    "final_requires_issue_disposition_complete": true,
+    "final_allows_unresolved_critical": false,
+    "final_high_requires_fix_or_authorized_risk_acceptance": true
+  },
+  "handoff": {
+    "guide_path": "docs/INSTALLABLE_EXTERNAL_EVALUATOR_GUIDE.md",
+    "builder_path": "tools/build_installable_evaluator_handoff.py",
+    "checker_path": "tools/check_installable_evaluator_handoff.py",
+    "bundle_filename": "AX-PUB-EVAL-PACK-001.zip",
+    "local_rehearsal_payload_includes_exact_wheel_and_sdist": true,
+    "local_rehearsal_is_final_human_evaluation": false,
+    "actions_artifact_is_package_registry_publication": false,
+    "final_evaluation_must_acquire_candidate_from_authorized_external_index": true
+  },
+  "included_repository_sources": [
+    "docs/INSTALLABLE_EXTERNAL_EVALUATOR_GUIDE.md",
+    "examples/external-evaluation/AX-PUB-EVAL-REPORT-002.template.json",
+    "tools/check_installable_external_evaluation_report.py",
+    "artifacts/AX-PUB-API-001.json",
+    "artifacts/AX-PUB-SUP-001.json",
+    "artifacts/AX-PUB-SEC-001.json",
+    "docs/LIMITATIONS_AND_UNSUPPORTED_USES.md"
+  ],
+  "current_state": {
+    "handoff_pack_defined": true,
+    "handoff_pack_ci_validated": false,
+    "external_registry_validation_established": false,
+    "human_external_evaluation_occurred": false,
+    "external_adoption_established": false,
+    "release_control_readiness_established": false,
+    "registry_ownership_established": false,
+    "public_sdk_licence_granted": false,
+    "supported_sdk_established": false,
+    "sdk_publication_authorized": false
+  },
+  "claim_boundaries": [
+    "EVALUATOR HANDOFF PACK DOES NOT ESTABLISH HUMAN EXTERNAL EVALUATION",
+    "LOCAL REHEARSAL DOES NOT SATISFY FINAL EXTERNAL-INDEX EVALUATION",
+    "CI ARTIFACT DISTRIBUTION DOES NOT ESTABLISH TESTPYPI OR PYPI PUBLICATION",
+    "EVALUATION PASS DOES NOT ESTABLISH ENDORSEMENT OR ADOPTION",
+    "EVALUATION PASS DOES NOT ESTABLISH A SUPPORTED SDK",
+    "EVALUATION PASS DOES NOT ESTABLISH RELEASE AUTHORITY",
+    "SDK PUBLICATION NOT AUTHORIZED"
+  ]
+}
