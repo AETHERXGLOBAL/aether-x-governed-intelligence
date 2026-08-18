@@ -1,21 +1,21 @@
 # AETHER X Public Artifact Compatibility & Versioning Policy
 
 **Policy ID:** `AX-PUB-POL-001`  
-**Version:** `1.4`  
+**Version:** `1.5`  
 **Status:** `PUBLIC ENGINEERING POLICY · ACTIVE FOR THIS REPOSITORY`  
 **Scope:** `AETHERXGLOBAL/aether-x-governed-intelligence`
 
 ## 1. Purpose
 
-This policy defines how public AETHER X governed-intelligence artifacts are identified, versioned, related, validated and changed inside this repository.
+This policy defines how public AETHER X governed-intelligence artifacts are identified, versioned, related, validated, snapshotted and released inside this repository.
 
-It applies to public reference architecture, specifications, machine-readable schemas, non-production reference implementations, public conformance-test artifacts, validation-evidence records and reproducibility snapshots.
+It applies to public reference architecture, specifications, machine-readable schemas, non-production reference implementations, public conformance artifacts, CI evidence records, reproducibility snapshots and public engineering release records.
 
 It is **not** a product-release, SDK-compatibility or production-API policy.
 
 ## 2. Artifact Identity
 
-Each public technical artifact has a stable identifier such as:
+Public technical artifacts use stable identifiers such as:
 
 ```text
 AX-PUB-ARCH-001
@@ -25,9 +25,10 @@ AX-PUB-REF-001
 AX-PUB-TEST-001
 AX-PUB-CI-001
 AX-PUB-SNAP-001
+AX-PUB-REL-001
 ```
 
-The artifact ID identifies the conceptual artifact family. The version identifies a published revision within that family.
+The artifact ID identifies the public artifact family. The version identifies a published revision within that family.
 
 A materially different contract may require a new ID rather than overloading an existing artifact identity.
 
@@ -52,7 +53,7 @@ Increase `MINOR` for additive or clarifying changes intended to preserve prior c
 - new validation for already-declared behavior;
 - new independently identified public artifacts;
 - new public evidence records;
-- new snapshots or snapshot semantics;
+- new snapshots or release records;
 - documentation or metadata changes that alter the published current-state description.
 
 A version increment does not establish product adoption or implementation by any AETHER X initiative.
@@ -125,13 +126,17 @@ Preserves directly observed public validation evidence with explicit scope and c
 ### Public Engineering Snapshot
 Preserves a fixed commit-anchored public-review state with recorded Git object identities.
 
+### Public Engineering Release Record
+Preserves the identity of an intentionally published Git tag / GitHub Release and separates that publication event from product-release semantics.
+
 Therefore:
 
 `SCHEMA VALID ≠ SEMANTICALLY VALID`  
 `REFERENCE VALIDATOR PASS ≠ PRODUCTION APPROVAL`  
 `CONFORMANCE PASS ≠ PRODUCT IMPLEMENTATION`  
 `PUBLIC CI PASS ≠ PRODUCT IMPLEMENTATION`  
-`PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
+`PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`  
+`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`
 
 ## 7. Change Discipline
 
@@ -145,7 +150,7 @@ A material public change should preserve a traceable answer to:
 6. What public validation or reproducible evidence applies?
 7. Does the change alter a public claim boundary?
 
-Changes should fail closed when artifact paths, versions, declared relationships, evidence references or snapshot references become internally inconsistent.
+Changes should fail closed when artifact paths, versions, declared relationships, evidence references, snapshot references or release references become internally inconsistent.
 
 A public workflow MUST NOT be represented as a successfully verified CI run unless the run itself is directly evidenced.
 
@@ -159,7 +164,7 @@ For fixed external review, AETHER X publishes commit-anchored Public Engineering
 
 [`AX-PUB-SNAP-002 — Governed Intelligence Public vNext`](../snapshots/AX-PUB-SNAP-002_GOVERNED_INTELLIGENCE_PUBLIC_VNEXT.md)
 
-Immutable anchor:
+Immutable technical-review anchor:
 
 ```text
 6dfdec04a4d8375bc2da0bb6a3830ff07eeb1711
@@ -177,21 +182,46 @@ Closure evidence:
 
 [`AX-PUB-SNAP-001 — Governed Intelligence Public v1.0`](../snapshots/AX-PUB-SNAP-001_GOVERNED_INTELLIGENCE_PUBLIC_V1.0.md)
 
-A snapshot is not automatically a Git tag, GitHub Release, product release or SDK release. Until a formal tag/release is actually created, the recorded full commit SHA is the authoritative immutable review identifier.
+A snapshot is not automatically a Git tag, GitHub Release, product release or SDK release.
 
 `PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
 
-## 9. Snapshot Immutability & Supersession
+## 9. Formal Public Engineering Releases
+
+AETHER X may package an intentionally published public engineering state using a Git tag and GitHub Release.
+
+The first formal public engineering release is:
+
+```text
+Tag: public-engineering-vnext-1.0
+Title: AETHER X Governed Intelligence — Public Engineering vNext 1.0
+Tag target: 4f067c9fd3d3ac065ac50b10faf1abd1bdb91bb6
+```
+
+Release publication evidence is recorded in:
+
+[`AX-PUB-REL-001`](../evidence/AX-PUB-REL-001_PUBLIC_ENGINEERING_VNEXT_RELEASE.md)
+
+The release tag target and `AX-PUB-SNAP-002` anchor are intentionally distinct identifiers with distinct roles:
+
+- the release tag fixes the repository state used to package the public engineering release;
+- the snapshot anchor fixes the technical-review state and Git-blob inventory recorded by `AX-PUB-SNAP-002`.
+
+A public engineering release does **not** establish a product release, production deployment, SDK/API stability, customer availability or internal product adoption.
+
+`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`
+
+## 10. Snapshot & Release Immutability
 
 A published snapshot must not be silently redefined. A later public state uses a new snapshot identifier or version.
 
+A published release tag must not be silently moved to a different commit. A later public engineering release should use a new tag and release identity.
+
 The publication of `AX-PUB-SNAP-002` does not alter the historical contents or meaning of `AX-PUB-SNAP-001`.
 
-Snapshot validation evidence may be published separately from the immutable anchor inventory, provided the evidence record clearly identifies the validated snapshot and verification state.
+## 11. No Product Adoption Inference
 
-## 10. No Product Adoption Inference
-
-A public artifact relationship, CI result, conformance result or snapshot does **not** establish:
+A public artifact relationship, CI result, conformance result, snapshot or public engineering release does **not** establish:
 
 - implementation by AETHER X Quantum, AX-OS, AIC or AETHER X Research;
 - a shared company-wide runtime, agent framework, authorization plane or data model;
@@ -204,13 +234,14 @@ Product adoption requires separate implementation evidence and explicit disclosu
 
 `PUBLIC COMPATIBILITY ≠ PRODUCT INTEGRATION`  
 `PUBLIC CONFORMANCE ≠ PRODUCT IMPLEMENTATION`  
-`PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
+`PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`  
+`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`
 
-## 11. Current Public Compatibility Set
+## 12. Current Public Compatibility Set
 
 The authoritative moving compatibility list is the machine-readable artifact manifest.
 
-At policy version `1.4`, the current public paths are:
+At policy version `1.5`, the current public paths are:
 
 ```text
 AX-PUB-ARCH-001 v1.0
@@ -231,7 +262,7 @@ AX-PUB-SPEC-004 v1.0
 → AX-PUB-TEST-002 v1.0
 ```
 
-The current fixed review state is separately preserved by `AX-PUB-SNAP-002`.
+The current fixed technical-review state is preserved by `AX-PUB-SNAP-002`. The formal public engineering publication is recorded by `AX-PUB-REL-001` and tag `public-engineering-vnext-1.0`.
 
 ---
 
