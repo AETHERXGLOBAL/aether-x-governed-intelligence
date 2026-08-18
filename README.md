@@ -52,8 +52,14 @@ The program defines the governed path from inspectable public engineering toward
 
 The baseline establishes the initial developer problem, canonical contract inventory, non-goals, semantic error taxonomy, compatibility rules, fail-closed behavior and public/private dependency boundary. Its machine-readable companion is [`artifacts/AX-PUB-DEV-002.json`](./artifacts/AX-PUB-DEV-002.json), with candidate-validation evidence recorded in [`AX-PUB-CI-003`](./evidence/AX-PUB-CI-003_DEVELOPER_CONTRACT_BASELINE_VALIDATION.md).
 
+**[AX-PUB-DEV-003 — Reproducible Developer Experience](./docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md)**  
+`DEV-GATE-01 CANDIDATE · RUNTIME MATRIX NOT YET VERIFIED · SDK PUBLICATION NOT AUTHORIZED`
+
+The Gate-01 candidate defines a clean-checkout developer path, deterministic success/failure behavior, a standard-library-only runner and a candidate Python runtime matrix (`3.10`–`3.13`). The matrix is not represented as verified until dedicated CI evidence exists.
+
 `DEV-GATE-00 CLOSED ≠ SDK CANDIDATE`  
-`DEVELOPER CONTRACT BASELINE ≠ SUPPORTED SDK`
+`DEV-GATE-01 CANDIDATE ≠ SDK CANDIDATE`  
+`REPRODUCIBLE DEVELOPER EXPERIENCE ≠ PRODUCTION READINESS`
 
 ### Formal Public Engineering Release
 
@@ -83,7 +89,7 @@ The repository publishes reference engineering, not a supported SDK. The gate re
 
 Current moving public governance:
 
-- **[AX-PUB-MANIFEST-001 v1.10](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state including developer-program and closed DEV-GATE-00 contract-baseline registration.
+- **[AX-PUB-MANIFEST-001 v1.11](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state including the closed developer-contract baseline and DEV-GATE-01 candidate.
 - **[AX-PUB-POL-001 v1.6](./docs/COMPATIBILITY_AND_VERSIONING.md)** — compatibility, snapshot, release and publication-readiness semantics.
 - **[AX-PUB-CI-001](./evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md)** — verified agent-authority schema/reference/conformance CI evidence.
 - **[AX-PUB-CI-002](./evidence/AX-PUB-CI-002_VNEXT_SNAPSHOT_VALIDATION.md)** — verified vNext snapshot and manifest closure evidence.
@@ -108,8 +114,9 @@ Current moving public governance:
 | `AX-PUB-TEST-001` | [Governed Intelligence Conformance Test Kit](./conformance/AX-PUB-TEST-001/README.md) | `REPRODUCIBLY VERIFIED · CI RUN UNVERIFIED · NON-PRODUCTION` |
 | `AX-PUB-TEST-002` | [Agent Authority Conformance Test Kit](./conformance/AX-PUB-TEST-002/README.md) | `CI-TESTED · NON-PRODUCTION` |
 | `AX-PUB-GATE-001` | [Developer SDK Publication Readiness Gate](./docs/AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md) | `ACTIVE · SDK PUBLICATION NOT AUTHORIZED` |
-| `AX-PUB-DEV-001` | [Developer Adoption & SDK Readiness Program](./docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md) | `UNDER DEVELOPMENT · DEV-GATE-00 CLOSED · SDK PUBLICATION NOT AUTHORIZED` |
+| `AX-PUB-DEV-001` | [Developer Adoption & SDK Readiness Program](./docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md) | `UNDER DEVELOPMENT · DEV-GATE-00 CLOSED · DEV-GATE-01 ACTIVE` |
 | `AX-PUB-DEV-002` | [Developer Contract Baseline](./docs/AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md) | `DEV-GATE-00 CLOSED · PUBLIC DEVELOPER CONTRACT BASELINE ESTABLISHED` |
+| `AX-PUB-DEV-003` | [Reproducible Developer Experience](./docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md) | `DEV-GATE-01 CANDIDATE · RUNTIME MATRIX NOT YET VERIFIED` |
 
 ## Three Public Evidence Paths
 
@@ -151,11 +158,11 @@ A future open-source, SDK or other reuse licence may be considered only through 
 
 This repository is intentionally self-contained. Public examples and conformance vectors are generic or synthetic.
 
-No private AETHER X project repository is a runtime, checkout, submodule or package dependency of the public schemas, validators, conformance kits, readiness gate, developer-adoption program or developer-contract baseline. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside this repository's disclosure boundary.
+No private AETHER X project repository is a runtime, checkout, submodule or package dependency of the public schemas, validators, conformance kits, readiness gate, developer-adoption program, developer-contract baseline or Gate-01 developer-experience runner. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside this repository's disclosure boundary.
 
 ## What This Repository Does Not Establish
 
-Publication here does **not** establish or imply product implementation, a shared company runtime or authorization plane, production readiness, customer deployment, production API/SDK status, autonomous authority, security certification, regulatory approval, predictive/investment performance, an open-source/reuse licence, or a supported developer platform.
+Publication here does **not** establish or imply product implementation, a shared company runtime or authorization plane, production readiness, customer deployment, production API/SDK status, autonomous authority, security certification, regulatory approval, predictive/investment performance, an open-source/reuse licence, a supported developer platform, or external developer adoption.
 
 `PUBLIC SPECIFICATION ≠ PRODUCT IMPLEMENTATION`  
 `MACHINE-READABLE SCHEMA ≠ PRODUCT DATA MODEL`  
@@ -165,7 +172,8 @@ Publication here does **not** establish or imply product implementation, a share
 `PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`  
 `DEVELOPER ADOPTION PROGRAM ≠ SDK RELEASE`  
 `DEV-GATE-00 CLOSED ≠ SDK CANDIDATE`  
-`DEVELOPER CONTRACT BASELINE ≠ SUPPORTED SDK`  
+`DEV-GATE-01 CANDIDATE ≠ SDK CANDIDATE`  
+`REPRODUCIBLE DEVELOPER EXPERIENCE ≠ PRODUCTION READINESS`  
 `PUBLIC VISIBILITY ≠ OPEN-SOURCE LICENCE`
 
 See [SECURITY.md](./SECURITY.md).
