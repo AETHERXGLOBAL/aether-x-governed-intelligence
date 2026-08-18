@@ -14,17 +14,21 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "artifacts" / "AX-PUB-MANIFEST-001.json"
 DEV009 = ROOT / "artifacts" / "AX-PUB-DEV-009.json"
+API001 = ROOT / "artifacts" / "AX-PUB-API-001.json"
 QUICKSTART = ROOT / "docs" / "QUICKSTART.md"
 CURRENT = ROOT / "docs" / "PUBLIC_ENGINEERING_STATE.md"
 DOD = ROOT / "docs" / "PRODUCTION_SDK_DEFINITION_OF_DONE.md"
 CONTROL = ROOT / "docs" / "RELEASE_CONTROL_PLANE.md"
 CI010 = ROOT / "evidence" / "AX-PUB-CI-010_DISTRIBUTION_EXTERNAL_VALIDATION_BASELINE_VALIDATION.md"
+CI011 = ROOT / "evidence" / "AX-PUB-CI-011_RELEASE_CONTROL_LIVE_AUDIT.md"
+CI012 = ROOT / "evidence" / "AX-PUB-CI-012_SDK_PUBLIC_API_CONTRACT_VALIDATION.md"
 
 PROJECT = "aetherxglobal-governed-intelligence"
 IMPORT = "aetherxglobal.governed_intelligence"
 VERSION = "0.1.0rc1"
 WHEEL_SHA = "bd3c3bfc7306c9b45659e3e0533ea1ac24b065a4c577f08cbe987cc10a4d1fac"
 SDIST_SHA = "2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99"
+RUNTIMES = ["3.11", "3.12", "3.13", "3.14"]
 
 
 def fail(message: str) -> None:
@@ -60,17 +64,28 @@ def version_at_least(raw: Any, major: int, minor: int) -> bool:
         fail(f"invalid manifest_version: {raw!r}")
 
 
+def evidence_by_id(manifest: dict[str, Any], evidence_id: str) -> dict[str, Any]:
+    raw = manifest.get("validation_evidence")
+    require(isinstance(raw, list), "manifest validation_evidence missing")
+    matches = [item for item in raw if isinstance(item, dict) and item.get("id") == evidence_id]
+    require(len(matches) == 1, f"manifest must contain exactly one {evidence_id} evidence record")
+    return matches[0]
+
+
 def main() -> int:
     manifest = load_json(MANIFEST)
     dev009 = load_json(DEV009)
+    api001 = load_json(API001)
     quickstart = text(QUICKSTART)
     current = text(CURRENT)
     dod = text(DOD)
     control = text(CONTROL)
     ci010 = text(CI010)
+    ci011 = text(CI011)
+    ci012 = text(CI012)
 
     require(manifest.get("manifest_id") == "AX-PUB-MANIFEST-001", "manifest identity mismatch")
-    require(version_at_least(manifest.get("manifest_version"), 1, 22), "manifest must be >= v1.22")
+    require(version_at_least(manifest.get("manifest_version"), 1, 23), "manifest must be >= v1.23")
 
     program = manifest.get("current_developer_program")
     require(isinstance(program, dict), "current_developer_program missing")
@@ -87,6 +102,36 @@ def main() -> int:
     require(current_dist.get("human_external_evaluation_occurred") is False, "human evaluation must not be pre-claimed")
     require(current_dist.get("registry_ownership_established") is False, "registry ownership must not be pre-claimed")
     require(current_dist.get("main_release_protection_established") is False, "release protection must not be pre-claimed")
+
+    release_audit = manifest.get("current_release_control_audit")
+    require(isinstance(release_audit, dict), "current_release_control_audit missing")
+    require(release_audit.get("id") == "AX-PUB-CI-011", "release-control audit identity mismatch")
+    require(release_audit.get("state") == "BASELINE_RECORDED_CONTROLS_NOT_READY", "release-control baseline state mismatch")
+    require(release_audit.get("github_controls_ready_for_release_promotion") is False, "release controls must remain not ready")
+    require(release_audit.get("release_control_readiness") == "NOT_ESTABLISHED", "release-control readiness must remain not established")
+    require(release_audit.get("sdk_publication_disposition") == "SDK PUBLICATION NOT AUTHORIZED", "release audit publication boundary changed")
+
+    api_state = manifest.get("current_sdk_public_api_contract")
+    require(isinstance(api_state, dict), "current_sdk_public_api_contract missing")
+    require(api_state.get("id") == "AX-PUB-API-001", "public API contract identity mismatch")
+    require(api_state.get("state") == "VALIDATED_CANDIDATE_CONTRACT", "public API contract candidate must be validated")
+    require(api_state.get("validation_evidence") == "AX-PUB-CI-012", "public API contract evidence linkage mismatch")
+    require(api_state.get("sdk_candidate_version") == VERSION, "public API candidate version mismatch")
+    require(api_state.get("verified_runtime_matrix") == RUNTIMES, "public API runtime matrix mismatch")
+    require(api_state.get("stable_api_guarantee_established") is False, "stable 1.0 guarantee must not be pre-claimed")
+    require(api_state.get("support_commitment_established") is False, "API support commitment must not be pre-claimed")
+    require(api_state.get("supported_sdk_established") is False, "supported SDK must remain unestablished")
+    require(api_state.get("sdk_publication_disposition") == "SDK PUBLICATION NOT AUTHORIZED", "API contract publication boundary changed")
+
+    ci011_manifest = evidence_by_id(manifest, "AX-PUB-CI-011")
+    require(ci011_manifest.get("github_controls_ready_for_release_promotion") is False, "CI-011 manifest state must remain controls-not-ready")
+    require(ci011_manifest.get("conclusion") == "SUCCESS", "CI-011 audit run must remain successful")
+
+    ci012_manifest = evidence_by_id(manifest, "AX-PUB-CI-012")
+    require(ci012_manifest.get("verified_runtime_matrix") == RUNTIMES, "CI-012 runtime matrix mismatch")
+    require(ci012_manifest.get("stable_api_guarantee_established") is False, "CI-012 must not create stable API guarantee")
+    require(ci012_manifest.get("supported_sdk_established") is False, "CI-012 must not create supported SDK state")
+    require(ci012_manifest.get("conclusion") == "SUCCESS", "CI-012 validation must remain successful")
 
     require(dev009.get("phase") == "DEV-GATE-05C", "DEV-009 phase mismatch")
     require(dev009.get("phase_state") == "ACTIVE_ENGINEERING_OBJECTIVE", "Gate-05C must remain active")
@@ -111,7 +156,7 @@ def main() -> int:
     require(isinstance(candidate, dict), "validated candidate identity missing")
     require(candidate.get("wheel_sha256") == WHEEL_SHA, "wheel digest mismatch")
     require(candidate.get("sdist_sha256") == SDIST_SHA, "sdist digest mismatch")
-    require(candidate.get("verified_runtime_matrix") == ["3.11", "3.12", "3.13", "3.14"], "package runtime matrix mismatch")
+    require(candidate.get("verified_runtime_matrix") == RUNTIMES, "package runtime matrix mismatch")
 
     distribution = dev009.get("distribution_validation")
     require(isinstance(distribution, dict), "distribution validation missing")
@@ -128,11 +173,22 @@ def main() -> int:
     require(controls.get("protected_pypi_environment_established") is False, "pypi environment must not be pre-claimed")
     require(controls.get("pypi_trusted_publisher_established") is False, "Trusted Publisher must not be pre-claimed")
 
+    require(api001.get("artifact_id") == "AX-PUB-API-001", "API artifact ID mismatch")
+    require(api001.get("sdk_distribution_candidate") == PROJECT, "API distribution identity mismatch")
+    require(api001.get("sdk_version_candidate") == VERSION, "API version identity mismatch")
+    require(api001.get("import_namespace") == IMPORT, "API import namespace mismatch")
+    require(api001.get("verified_runtime_target") == RUNTIMES, "API target runtime matrix mismatch")
+    require(api001.get("support_commitment_established") is False, "API artifact must not establish support")
+    require(api001.get("stable_api_guarantee_established") is False, "API artifact must not establish stable guarantee")
+    require(api001.get("sdk_publication_authorized") is False, "API artifact must not authorize publication")
+
     for marker in (
-        "AX-PUB-MANIFEST-001 v1.22",
+        "AX-PUB-MANIFEST-001 v1.23",
         PROJECT,
         IMPORT,
         VERSION,
+        "AX-PUB-API-001",
+        "AX-PUB-CI-012",
         "DEV-GATE-05C",
         "SDK PUBLICATION NOT AUTHORIZED",
     ):
@@ -141,7 +197,11 @@ def main() -> int:
     for marker in (
         "DEV-GATE-05C  ACTIVE",
         "LOCAL INDEX ENGINEERING VALIDATION: VERIFIED / LOCAL ONLY",
-        "AX-PUB-MANIFEST-001 v1.22",
+        "AX-PUB-MANIFEST-001 v1.23",
+        "AX-PUB-CI-011",
+        "AX-PUB-API-001",
+        "AX-PUB-CI-012",
+        "STABLE 1.0 GUARANTEE: NOT ESTABLISHED",
         "SDK PUBLICATION NOT AUTHORIZED",
     ):
         require(marker in current, f"current-state page missing marker: {marker}")
@@ -173,9 +233,26 @@ def main() -> int:
     ):
         require(marker in ci010, f"CI-010 evidence missing marker: {marker}")
 
+    for marker in (
+        "AX-PUB-CI-011",
+        "GITHUB CONTROLS READY FOR RELEASE:          FALSE",
+        "SDK PUBLICATION NOT AUTHORIZED",
+    ):
+        require(marker in ci011, f"CI-011 evidence missing marker: {marker}")
+
+    for marker in (
+        "AX-PUB-CI-012",
+        "CPython 3.11",
+        "CPython 3.14",
+        "STABLE 1.0 GUARANTEE: NOT ESTABLISHED",
+        "SDK PUBLICATION: NOT AUTHORIZED",
+    ):
+        require(marker in ci012, f"CI-012 evidence missing marker: {marker}")
+
     print(
         "AX_PRODUCTION_SDK_TARGET_PASS "
-        "manifest>=1.22 gate05c=ACTIVE local_index=VERIFIED_LOCAL_ONLY "
+        "manifest>=1.23 gate05c=ACTIVE local_index=VERIFIED_LOCAL_ONLY "
+        "release_controls=NOT_READY api_contract=VALIDATED_CANDIDATE "
         "production_sdk=NOT_ESTABLISHED sdk_publication=NOT_AUTHORIZED"
     )
     return 0

@@ -27,7 +27,7 @@ DEV-GATE-05  ACTIVE
 
 Gate closure establishes only the bounded engineering/evidence objective declared for that gate. It does not imply production readiness, commercial availability, customer deployment or a supported product.
 
-`DEV-GATE-05C` remains active because external-registry validation, independent human evaluation, IP/licensing clearance and release-control requirements are not established.
+`DEV-GATE-05C` remains active because external-registry validation, independent human evaluation, IP/licensing clearance and live release-control requirements are not established.
 
 ---
 
@@ -46,6 +46,10 @@ Gate closure establishes only the bounded engineering/evidence objective declare
 | Installable Python package candidate | `ESTABLISHED / DETERMINISTIC` |
 | Installable candidate runtime matrix | `CPYTHON 3.11–3.14 VERIFIED` |
 | Local Python Simple Index validation | `VERIFIED / LOCAL ONLY` |
+| Public API contract candidate | `VALIDATED / CPYTHON 3.11–3.14` |
+| Stable 1.0 API guarantee | `NOT ESTABLISHED` |
+| Live release-control audit mechanism | `ESTABLISHED / READ-ONLY` |
+| GitHub release-control readiness | `NOT ESTABLISHED` |
 | External registry validation | `NOT ESTABLISHED / NOT AUTHORIZED` |
 | Independent human external evaluation | `NOT ESTABLISHED` |
 | External adoption | `NOT ESTABLISHED` |
@@ -148,6 +152,61 @@ Not established:
 
 `LOCAL INDEX PASS ≠ TESTPYPI PASS`
 
+### Release-Control Live Audit
+
+Evidence:
+
+```text
+AX-PUB-CI-011
+AX-PUB-RELEASE-CONTROL-AUDIT-001
+```
+
+First live baseline established:
+
+```text
+MAIN BRANCH PROTECTED:               NOT_ESTABLISHED
+PULL REQUEST REQUIRED:               NOT_ESTABLISHED
+REQUIRED STATUS CHECKS:              NOT_ESTABLISHED
+FORCE-PUSH BLOCKING:                 NOT_ESTABLISHED
+DELETION BLOCKING:                   NOT_ESTABLISHED
+PYPI ENVIRONMENT:                    NOT_ESTABLISHED
+ACTIVE BRANCH RULES:                 NONE
+ENABLED REPOSITORY RULESETS:          NONE
+GITHUB CONTROLS READY FOR RELEASE:    FALSE
+```
+
+The audit mechanism is established. Release-control readiness is not.
+
+### Python SDK Public API Contract Candidate
+
+Artifact: `AX-PUB-API-001`  
+Evidence: `AX-PUB-CI-012`
+
+Directly validated across:
+
+```text
+CPython 3.11
+CPython 3.12
+CPython 3.13
+CPython 3.14
+```
+
+Validated candidate surface includes:
+
+- exact top-level export inventory;
+- callable parameter names/kinds/defaults;
+- frozen result-type field order;
+- `ErrorCategory` string values;
+- supported-contract descriptor inventory;
+- explicit fail-closed unsupported-contract/version behavior;
+- bounded offline/no-execution public-surface contract.
+
+```text
+API CONTRACT CANDIDATE: VALIDATED
+STABLE 1.0 GUARANTEE: NOT ESTABLISHED
+SUPPORTED SDK: NOT ESTABLISHED
+```
+
 ---
 
 ## 5. Canonical Moving Governance State
@@ -155,29 +214,40 @@ Not established:
 The current machine-readable moving state is:
 
 ```text
-AX-PUB-MANIFEST-001 v1.22
+AX-PUB-MANIFEST-001 v1.23
 ```
 
-The manifest records:
+The manifest now records:
 
 ```text
 GATE-05C: ACTIVE
 LOCAL INDEX ENGINEERING VALIDATION: VERIFIED / LOCAL ONLY
 LOCAL INDEX EVIDENCE: AX-PUB-CI-010
+LIVE RELEASE-CONTROL BASELINE: AX-PUB-CI-011 / CONTROLS NOT READY
+PUBLIC API CONTRACT: AX-PUB-API-001 / VALIDATED CANDIDATE
+PUBLIC API CONTRACT EVIDENCE: AX-PUB-CI-012
 EXTERNAL REGISTRY VALIDATION: NOT AUTHORIZED / NOT ESTABLISHED
 HUMAN EXTERNAL EVALUATION: NOT ESTABLISHED
 REGISTRY OWNERSHIP: NOT ESTABLISHED
 MAIN RELEASE PROTECTION: NOT ESTABLISHED
+STABLE 1.0 GUARANTEE: NOT ESTABLISHED
+SUPPORTED SDK: NOT ESTABLISHED
 SDK PUBLICATION: NOT AUTHORIZED
 ```
 
-This removes the earlier human-readable/evidence-overlay gap: `AX-PUB-CI-010` is now represented directly in the moving machine state without promoting Gate-05C to closed.
+The moving machine state therefore distinguishes three different facts that must not be collapsed:
+
+```text
+PACKAGE INSTALLABILITY: ESTABLISHED AS CANDIDATE
+API CONTRACT VALIDATION: ESTABLISHED AS CANDIDATE
+PRODUCTION RELEASE / SUPPORT AUTHORITY: NOT ESTABLISHED
+```
 
 ---
 
 ## 6. Production SDK Target
 
-AETHER X is now engineering toward a higher state than “public package exists”.
+AETHER X is engineering toward a higher state than “public package exists”.
 
 Target end-state:
 
@@ -199,6 +269,11 @@ The exact promotion criteria are defined in:
 
 - [`PRODUCTION_SDK_DEFINITION_OF_DONE.md`](./PRODUCTION_SDK_DEFINITION_OF_DONE.md)
 - [`RELEASE_CONTROL_PLANE.md`](./RELEASE_CONTROL_PLANE.md)
+- [`AX-PUB-API-001`](./AX-PUB-API-001_PYTHON_SDK_PUBLIC_API_CONTRACT.md)
+
+Live control measurement is defined in:
+
+- [`RELEASE_CONTROL_AUDIT.md`](./RELEASE_CONTROL_AUDIT.md)
 
 These documents define targets and hard gates. Their existence does not establish that those controls are already satisfied.
 
@@ -273,6 +348,8 @@ README.md
 → AX-PUB-SPEC-002 / 003 / 004
 → AX-PUB-DEV-007 / 008 / 009
 → AX-PUB-CI-008 / 009 / 010
+→ AX-PUB-API-001 / AX-PUB-CI-012
+→ AX-PUB-CI-011 / RELEASE_CONTROL_AUDIT.md
 → PRODUCTION_SDK_DEFINITION_OF_DONE.md
 → RELEASE_CONTROL_PLANE.md
 → LIMITATIONS_AND_UNSUPPORTED_USES.md
@@ -285,7 +362,9 @@ AX-PUB-GATE-001
 → AX-PUB-DEV-007
 → AX-PUB-DEV-008
 → AX-PUB-DEV-009
-→ AX-PUB-CI-008 / 009 / 010
+→ AX-PUB-CI-010
+→ AX-PUB-CI-011
+→ AX-PUB-API-001 / AX-PUB-CI-012
 → PRODUCTION_SDK_DEFINITION_OF_DONE.md
 → RELEASE_CONTROL_PLANE.md
 ```
@@ -299,6 +378,8 @@ PUBLIC ENGINEERING ≠ PRODUCT IMPLEMENTATION
 REFERENCE CODE ≠ PRODUCTION CODE
 CI PASS ≠ EXTERNAL CERTIFICATION
 INSTALLABLE CANDIDATE ≠ SUPPORTED SDK
+VALIDATED API CONTRACT CANDIDATE ≠ STABLE 1.0 GUARANTEE
+LIVE RELEASE-CONTROL AUDIT ≠ RELEASE-CONTROL READY
 LOCAL INDEX PASS ≠ EXTERNAL REGISTRY VALIDATION
 TARGET LICENCE ≠ LICENCE GRANT
 PRODUCTION SDK TARGET ≠ PRODUCTION SDK ESTABLISHED
