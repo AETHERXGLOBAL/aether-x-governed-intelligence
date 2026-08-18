@@ -49,7 +49,7 @@ git clone https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence.git
 cd aether-x-governed-intelligence
 ```
 
-The public reference validators and conformance runners use the Python standard library only. Python 3.10+ is recommended.
+The public reference validators and conformance runners use the Python standard library only. Python 3.10+ is recommended for the current reference materials. The Gate-01 candidate matrix is tested separately and must not be inferred from this recommendation until CI evidence exists.
 
 ## 3. Run the EAV Reference Path
 
@@ -109,7 +109,13 @@ Agent-authority suite:
 python3 conformance/AX-PUB-TEST-002/run_conformance.py
 ```
 
-Current state: `10 synthetic cases · CI-TESTED`.
+Expected conformance marker:
+
+```text
+AX_AGENT_AUTHORITY_CONFORMANCE_PASS cases=10 conforming=10
+```
+
+Current agent-authority test state: `10 synthetic cases · CI-TESTED`.
 
 The verified GitHub Actions conformance run is recorded in [`AX-PUB-CI-001`](../evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md).
 
@@ -144,7 +150,7 @@ Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json
 Current moving state:
 
 ```text
-AX-PUB-MANIFEST-001 v1.10
+AX-PUB-MANIFEST-001 v1.11
 AX-PUB-POL-001 v1.6
 ```
 
@@ -230,7 +236,43 @@ The baseline defines the bounded initial developer problem, canonical contract i
 `DEVELOPER CONTRACT BASELINE ≠ SUPPORTED SDK`  
 `CONTRACTED PUBLIC SEMANTICS ≠ PRODUCT IMPLEMENTATION`
 
-## 13. SDK Publication Readiness
+## 13. Reproducible Developer Experience
+
+The Gate-01 candidate is:
+
+- [`AX-PUB-DEV-003 — Reproducible Developer Experience`](./AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md)
+- [Machine-readable `AX-PUB-DEV-003.json`](../artifacts/AX-PUB-DEV-003.json)
+
+Canonical runner:
+
+```bash
+python3 tools/check_developer_experience.py
+```
+
+Machine-readable report:
+
+```bash
+python3 tools/check_developer_experience.py --json
+```
+
+The runner exercises all three valid public reference examples, all three intentionally invalid fixtures, `AX-PUB-TEST-001`, and `AX-PUB-TEST-002` using the active Python interpreter and public repository files only.
+
+Current Gate-01 state:
+
+```text
+DEV-GATE-01: CANDIDATE / NOT CLOSED
+CANDIDATE RUNTIMES: Python 3.10, 3.11, 3.12, 3.13
+VERIFIED RUNTIME MATRIX: NOT YET ESTABLISHED
+SUCCESS MARKER: AX_DEVELOPER_EXPERIENCE_PASS
+SDK CANDIDATE: NOT ESTABLISHED
+```
+
+The runtime matrix becomes verified only after the dedicated clean-environment CI matrix completes successfully. No untested Python version is implied to be supported by this gate.
+
+`REPRODUCIBLE DEVELOPER EXPERIENCE ≠ SDK CANDIDATE`  
+`CLEAN-ENVIRONMENT PASS ≠ PRODUCTION READINESS`
+
+## 14. SDK Publication Readiness
 
 This repository does **not** currently publish or imply an officially supported SDK.
 
@@ -250,13 +292,13 @@ The gate requires explicit evidence and authority for licence/IP terms, interfac
 `PUBLIC ENGINEERING RELEASE ≠ SDK RELEASE`  
 `SDK READINESS GATE ≠ SDK COMMITMENT`
 
-## 14. Private-Project Boundary
+## 15. Private-Project Boundary
 
-The public schemas, reference validators, examples and conformance kits are self-contained in this public repository.
+The public schemas, reference validators, examples, conformance kits and Gate-01 runner are self-contained in this public repository.
 
 They do not checkout, import, execute, package, or depend on private AETHER X project repositories. Public examples are synthetic. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside the public disclosure boundary.
 
-## 15. Public Claim Boundary
+## 16. Public Claim Boundary
 
 `PUBLIC ARTIFACT ≠ PRODUCT IMPLEMENTATION`  
 `PUBLIC SPECIFICATION ≠ INTERNAL CONTROL IMPLEMENTATION`  
@@ -267,7 +309,8 @@ They do not checkout, import, execute, package, or depend on private AETHER X pr
 `PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`  
 `DEVELOPER ADOPTION PROGRAM ≠ SDK RELEASE`  
 `DEV-GATE-00 CLOSED ≠ SDK CANDIDATE`  
-`DEVELOPER CONTRACT BASELINE ≠ SUPPORTED SDK`
+`DEV-GATE-01 CANDIDATE ≠ SDK CANDIDATE`  
+`REPRODUCIBLE DEVELOPER EXPERIENCE ≠ PRODUCTION READINESS`
 
 ---
 
