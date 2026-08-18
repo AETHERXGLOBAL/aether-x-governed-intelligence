@@ -31,6 +31,23 @@ GOVERNED KNOWLEDGE
 
 Start with the **[Public Quickstart](./docs/QUICKSTART.md)**.
 
+### Developer Adoption & SDK Readiness Program
+
+**[AX-PUB-DEV-001 — Developer Adoption & SDK Readiness Program](./docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md)**
+
+Current program state:
+
+```text
+PROGRAM: ACTIVE / UNDER DEVELOPMENT
+NEXT GATE: DEV-GATE-00 — Contract Baseline
+SDK CANDIDATE: NOT YET ESTABLISHED
+PUBLIC SDK: NOT PUBLISHED
+```
+
+The program defines the governed path from inspectable public engineering toward a reproducible developer contract, bounded SDK candidate, supply-chain evidence, external evaluation readiness and a later explicit SDK release decision.
+
+`DEVELOPER ADOPTION PROGRAM ≠ SDK RELEASE`
+
 ### Formal Public Engineering Release
 
 **`public-engineering-vnext-1.0` — AETHER X Governed Intelligence — Public Engineering vNext 1.0**
@@ -59,7 +76,7 @@ The repository publishes reference engineering, not a supported SDK. The gate re
 
 Current moving public governance:
 
-- **[AX-PUB-MANIFEST-001 v1.7](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state including release and readiness-gate registration.
+- **[AX-PUB-MANIFEST-001 v1.8](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state including release, readiness-gate and developer-program registration.
 - **[AX-PUB-POL-001 v1.6](./docs/COMPATIBILITY_AND_VERSIONING.md)** — compatibility, snapshot, release and publication-readiness semantics.
 - **[AX-PUB-CI-001](./evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md)** — verified agent-authority schema/reference/conformance CI evidence.
 - **[AX-PUB-CI-002](./evidence/AX-PUB-CI-002_VNEXT_SNAPSHOT_VALIDATION.md)** — verified vNext snapshot and manifest closure evidence.
@@ -83,6 +100,7 @@ Current moving public governance:
 | `AX-PUB-TEST-001` | [Governed Intelligence Conformance Test Kit](./conformance/AX-PUB-TEST-001/README.md) | `REPRODUCIBLY VERIFIED · CI RUN UNVERIFIED · NON-PRODUCTION` |
 | `AX-PUB-TEST-002` | [Agent Authority Conformance Test Kit](./conformance/AX-PUB-TEST-002/README.md) | `CI-TESTED · NON-PRODUCTION` |
 | `AX-PUB-GATE-001` | [Developer SDK Publication Readiness Gate](./docs/AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md) | `ACTIVE · SDK PUBLICATION NOT AUTHORIZED` |
+| `AX-PUB-DEV-001` | [Developer Adoption & SDK Readiness Program](./docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md) | `UNDER DEVELOPMENT · SDK PUBLICATION NOT AUTHORIZED` |
 
 ## Three Public Evidence Paths
 
@@ -124,11 +142,11 @@ A future open-source, SDK or other reuse licence may be considered only through 
 
 This repository is intentionally self-contained. Public examples and conformance vectors are generic or synthetic.
 
-No private AETHER X project repository is a runtime, checkout, submodule or package dependency of the public schemas, validators, conformance kits or readiness gate. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside this repository's disclosure boundary.
+No private AETHER X project repository is a runtime, checkout, submodule or package dependency of the public schemas, validators, conformance kits, readiness gate or developer-adoption program. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside this repository's disclosure boundary.
 
 ## What This Repository Does Not Establish
 
-Publication here does **not** establish or imply product implementation, a shared company runtime or authorization plane, production readiness, customer deployment, production API/SDK status, autonomous authority, security certification, regulatory approval, predictive/investment performance, or an open-source/reuse licence.
+Publication here does **not** establish or imply product implementation, a shared company runtime or authorization plane, production readiness, customer deployment, production API/SDK status, autonomous authority, security certification, regulatory approval, predictive/investment performance, an open-source/reuse licence, or a supported developer platform.
 
 `PUBLIC SPECIFICATION ≠ PRODUCT IMPLEMENTATION`  
 `MACHINE-READABLE SCHEMA ≠ PRODUCT DATA MODEL`  
@@ -136,6 +154,7 @@ Publication here does **not** establish or imply product implementation, a share
 `REFERENCE IMPLEMENTATION ≠ PRODUCTION SYSTEM`  
 `PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`  
 `PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`  
+`DEVELOPER ADOPTION PROGRAM ≠ SDK RELEASE`  
 `PUBLIC VISIBILITY ≠ OPEN-SOURCE LICENCE`
 
 See [SECURITY.md](./SECURITY.md).
