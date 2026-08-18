@@ -1,0 +1,159 @@
+name: Validate Supply-Chain Release Candidate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'README.md'
+      - 'docs/QUICKSTART.md'
+      - 'docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md'
+      - 'docs/AX-PUB-DEV-005_SUPPLY_CHAIN_RELEASE_CANDIDATE.md'
+      - 'artifacts/AX-PUB-DEV-005.json'
+      - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'release-candidate/**'
+      - 'sdk-candidate/**'
+      - 'tools/build_release_candidate.py'
+      - 'tools/check_supply_chain_release_candidate.py'
+      - 'tools/check_sdk_candidate_state.py'
+      - 'tools/check_artifact_manifest.py'
+      - 'SECURITY.md'
+      - '.github/workflows/validate-supply-chain-release-candidate.yml'
+  pull_request:
+    paths:
+      - 'README.md'
+      - 'docs/QUICKSTART.md'
+      - 'docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md'
+      - 'docs/AX-PUB-DEV-005_SUPPLY_CHAIN_RELEASE_CANDIDATE.md'
+      - 'artifacts/AX-PUB-DEV-005.json'
+      - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'release-candidate/**'
+      - 'sdk-candidate/**'
+      - 'tools/build_release_candidate.py'
+      - 'tools/check_supply_chain_release_candidate.py'
+      - 'tools/check_sdk_candidate_state.py'
+      - 'tools/check_artifact_manifest.py'
+      - 'SECURITY.md'
+      - '.github/workflows/validate-supply-chain-release-candidate.yml'
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  validate-release-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout public repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Confirm runtime
+        run: python --version
+
+      - name: Set deterministic source epoch
+        shell: bash
+        run: echo "SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)" >> "$GITHUB_ENV"
+
+      - name: Parse Gate-03 machine-readable state
+        run: |
+          python -m json.tool artifacts/AX-PUB-DEV-005.json > /dev/null
+          python -m json.tool release-candidate/AX-PUB-RC-001.json > /dev/null
+          python -m json.tool artifacts/AX-PUB-MANIFEST-001.json > /dev/null
+
+      - name: Compile release-candidate controls
+        run: |
+          python -m py_compile tools/build_release_candidate.py
+          python -m py_compile tools/check_supply_chain_release_candidate.py
+          python -m py_compile tools/check_sdk_candidate_state.py
+          python -m py_compile tools/check_artifact_manifest.py
+
+      - name: Re-validate closed DEV-GATE-02 state
+        run: python tools/check_sdk_candidate_state.py
+
+      - name: Validate DEV-GATE-03 candidate state before build
+        run: python tools/check_supply_chain_release_candidate.py
+
+      - name: Build canonical release candidate
+        run: python tools/build_release_candidate.py --output-dir dist
+
+      - name: Build release candidate again
+        run: python tools/build_release_candidate.py --output-dir dist-rebuild
+
+      - name: Verify deterministic rebuild
+        shell: bash
+        run: |
+          cmp dist/AX-PUB-RC-001.zip dist-rebuild/AX-PUB-RC-001.zip
+          cmp dist/AX-PUB-RC-001.sha256 dist-rebuild/AX-PUB-RC-001.sha256
+          cmp dist/AX-PUB-RC-001_BUILD_MANIFEST.json dist-rebuild/AX-PUB-RC-001_BUILD_MANIFEST.json
+          cmp dist/AX-PUB-RC-001.spdx.json dist-rebuild/AX-PUB-RC-001.spdx.json
+          sha256sum -c dist/AX-PUB-RC-001.sha256 --ignore-missing
+          echo "AX_RELEASE_CANDIDATE_DETERMINISTIC_REBUILD_PASS"
+
+      - name: Validate built release-candidate state
+        run: python tools/check_supply_chain_release_candidate.py --dist dist
+
+      - name: Extract engineering bundle
+        run: |
+          python - <<'PY'
+          import zipfile
+          from pathlib import Path
+          target = Path('rc-extracted')
+          target.mkdir(exist_ok=True)
+          with zipfile.ZipFile('dist/AX-PUB-RC-001.zip') as archive:
+              archive.extractall(target)
+          PY
+
+      - name: Run extracted SDK candidate unit tests
+        working-directory: rc-extracted/AX-PUB-RC-001
+        run: python -m unittest discover -s sdk-candidate/python/tests -v
+
+      - name: Run extracted SDK candidate conformance
+        working-directory: rc-extracted/AX-PUB-RC-001
+        run: python sdk-candidate/python/run_candidate_conformance.py
+
+      - name: Generate build provenance attestation
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/AX-PUB-RC-001.zip
+
+      - name: Generate SPDX SBOM attestation
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/AX-PUB-RC-001.zip
+          sbom-path: dist/AX-PUB-RC-001.spdx.json
+
+      - name: Verify build provenance attestation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh attestation verify dist/AX-PUB-RC-001.zip \
+            -R AETHERXGLOBAL/aether-x-governed-intelligence
+
+      - name: Verify SPDX SBOM attestation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh attestation verify dist/AX-PUB-RC-001.zip \
+            -R AETHERXGLOBAL/aether-x-governed-intelligence \
+            --predicate-type https://spdx.dev/Document/v2.3
+
+      - name: Upload CI-only engineering artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: AX-PUB-RC-001-ci-only
+          path: |
+            dist/AX-PUB-RC-001.zip
+            dist/AX-PUB-RC-001.sha256
+            dist/AX-PUB-RC-001_BUILD_MANIFEST.json
+            dist/AX-PUB-RC-001.spdx.json
+          if-no-files-found: error
+          retention-days: 7
