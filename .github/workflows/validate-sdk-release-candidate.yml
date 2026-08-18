@@ -71,17 +71,25 @@ jobs:
           '${{ steps.py314.outputs.python-path }}' --version
 
       - name: Parse Gate-05B machine-readable state
-        run: '${{ steps.py314.outputs.python-path }}' -m json.tool artifacts/AX-PUB-DEV-008.json > /dev/null
+        shell: bash
+        run: |
+          '${{ steps.py314.outputs.python-path }}' -m json.tool artifacts/AX-PUB-DEV-008.json > /dev/null
 
       - name: Validate package boundary before build
-        run: '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_candidate_boundary.py
+        shell: bash
+        run: |
+          '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_candidate_boundary.py
 
       - name: Install exact build toolchain
-        run: '${{ steps.py314.outputs.python-path }}' -m pip install 'build==1.5.0' 'hatchling==1.31.0'
+        shell: bash
+        run: |
+          '${{ steps.py314.outputs.python-path }}' -m pip install 'build==1.5.0' 'hatchling==1.31.0'
 
       - name: Build wheel and sdist once
         working-directory: sdk-release-candidate/python
-        run: '${{ steps.py314.outputs.python-path }}' -m build --no-isolation --wheel --sdist
+        shell: bash
+        run: |
+          '${{ steps.py314.outputs.python-path }}' -m build --no-isolation --wheel --sdist
 
       - name: Record candidate distribution digests
         working-directory: sdk-release-candidate/python
@@ -90,6 +98,7 @@ jobs:
 
       - name: Verify wheel metadata and inventory
         working-directory: sdk-release-candidate/python
+        shell: bash
         run: |
           '${{ steps.py314.outputs.python-path }}' - <<'PY'
           import email
@@ -107,7 +116,8 @@ jobs:
               metadata = email.message_from_bytes(zf.read(metadata_paths[0]))
               assert metadata['Name'] == 'aetherxglobal-governed-intelligence'
               assert metadata['Version'] == '0.1.0rc1'
-              assert metadata['Requires-Python'] == '<3.15,>=3.11'
+              requires_python = {part.strip() for part in metadata['Requires-Python'].split(',')}
+              assert requires_python == {'>=3.11', '<3.15'}, metadata['Requires-Python']
               assert metadata.get_all('Requires-Dist') in (None, [])
               forbidden = [n for n in names if n.lower().endswith(('/license', '/license.txt', '/license.md'))]
               if forbidden:
@@ -168,7 +178,9 @@ jobs:
           PY
 
       - name: Re-validate Gate-05A decision invariants
-        run: '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_decision_baseline.py
+        shell: bash
+        run: |
+          '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_decision_baseline.py
 
       - name: Explicit publication boundary
         run: |
