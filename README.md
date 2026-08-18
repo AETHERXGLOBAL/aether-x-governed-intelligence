@@ -41,10 +41,26 @@ Start with the **[Public Quickstart](./docs/QUICKSTART.md)**.
 
 `PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`
 
+### Developer SDK Publication Readiness
+
+**[AX-PUB-GATE-001 — Developer SDK Publication Readiness Gate](./docs/AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md)**
+
+Current public disposition:
+
+```text
+SDK PUBLICATION NOT AUTHORIZED
+```
+
+The repository publishes reference engineering, not a supported SDK. The gate requires explicit licensing/IP authority, interface compatibility, package/distribution identity, security and credential boundaries, failure semantics, SDK-specific conformance, supply-chain controls, documentation and maintenance/support commitments before an SDK publication can be represented as approved.
+
+`PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`  
+`PUBLIC ENGINEERING RELEASE ≠ SDK RELEASE`  
+`SDK READINESS GATE ≠ SDK COMMITMENT`
+
 Current moving public governance:
 
-- **[AX-PUB-MANIFEST-001 v1.6](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state including release registration.
-- **[AX-PUB-POL-001 v1.5](./docs/COMPATIBILITY_AND_VERSIONING.md)** — compatibility, snapshot and formal public-engineering release semantics.
+- **[AX-PUB-MANIFEST-001 v1.7](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state including release and readiness-gate registration.
+- **[AX-PUB-POL-001 v1.6](./docs/COMPATIBILITY_AND_VERSIONING.md)** — compatibility, snapshot, release and publication-readiness semantics.
 - **[AX-PUB-CI-001](./evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md)** — verified agent-authority schema/reference/conformance CI evidence.
 - **[AX-PUB-CI-002](./evidence/AX-PUB-CI-002_VNEXT_SNAPSHOT_VALIDATION.md)** — verified vNext snapshot and manifest closure evidence.
 - **[AX-PUB-SNAP-002](./snapshots/AX-PUB-SNAP-002_GOVERNED_INTELLIGENCE_PUBLIC_VNEXT.md)** — current fixed `CI-VALIDATED` vNext reproducibility snapshot.
@@ -66,6 +82,7 @@ Current moving public governance:
 | `AX-PUB-REF-003` | [Agent Tool-Use Authority Validator](./reference-implementations/agent-tool-authority-validator/README.md) | `CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
 | `AX-PUB-TEST-001` | [Governed Intelligence Conformance Test Kit](./conformance/AX-PUB-TEST-001/README.md) | `REPRODUCIBLY VERIFIED · CI RUN UNVERIFIED · NON-PRODUCTION` |
 | `AX-PUB-TEST-002` | [Agent Authority Conformance Test Kit](./conformance/AX-PUB-TEST-002/README.md) | `CI-TESTED · NON-PRODUCTION` |
+| `AX-PUB-GATE-001` | [Developer SDK Publication Readiness Gate](./docs/AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md) | `ACTIVE · SDK PUBLICATION NOT AUTHORIZED` |
 
 ## Three Public Evidence Paths
 
@@ -91,17 +108,11 @@ public-engineering-vnext-1.0
 FORMAL PUBLIC ENGINEERING RELEASE
 ```
 
-`PUBLIC CI PASS ≠ PRODUCT IMPLEMENTATION`  
-`REFERENCE VALIDATOR PASS ≠ PRODUCTION AUTHORIZATION`  
-`PUBLIC COMPATIBILITY ≠ PRODUCT INTEGRATION`  
-`PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`  
-`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`
-
 ## Private-Project Boundary
 
 This repository is intentionally self-contained. Public examples and conformance vectors are generic or synthetic.
 
-No private AETHER X project repository is a runtime, checkout, submodule or package dependency of the public schemas, validators or conformance kits. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside this repository's disclosure boundary.
+No private AETHER X project repository is a runtime, checkout, submodule or package dependency of the public schemas, validators, conformance kits or readiness gate. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside this repository's disclosure boundary.
 
 ## What This Repository Does Not Establish
 
@@ -110,7 +121,9 @@ Publication here does **not** establish or imply product implementation, a share
 `PUBLIC SPECIFICATION ≠ PRODUCT IMPLEMENTATION`  
 `MACHINE-READABLE SCHEMA ≠ PRODUCT DATA MODEL`  
 `AGENT AUTHORITY SCHEMA ≠ PRODUCTION AUTHORIZATION PLANE`  
-`REFERENCE IMPLEMENTATION ≠ PRODUCTION SYSTEM`
+`REFERENCE IMPLEMENTATION ≠ PRODUCTION SYSTEM`  
+`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`  
+`PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`
 
 See [SECURITY.md](./SECURITY.md).
 
