@@ -35,7 +35,7 @@ git clone https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence.git
 cd aether-x-governed-intelligence
 ```
 
-The public reference validators, Gate-01 developer-experience runner and current repository-local Gate-02 SDK candidate use the Python standard library only.
+The public reference validators, Gate-01 developer-experience runner, repository-local Gate-02 SDK candidate and Gate-04 readiness runner use the Python standard library only.
 
 ## 3. Run the EAV Reference Path
 
@@ -124,7 +124,7 @@ Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json
 Current moving state:
 
 ```text
-AX-PUB-MANIFEST-001 v1.16
+AX-PUB-MANIFEST-001 v1.17
 AX-PUB-POL-001 v1.6
 ```
 
@@ -174,6 +174,9 @@ DEV-GATE-01: CLOSED
 DEV-GATE-02: CLOSED
 DEV-GATE-03: CLOSED
 CURRENT ENGINEERING OBJECTIVE: DEV-GATE-04 — EXTERNAL EVALUATION READINESS
+EXTERNAL EVALUATION READINESS: CANDIDATE / NOT YET ESTABLISHED
+EXTERNAL EVALUATION OCCURRED: NOT ESTABLISHED
+EXTERNAL ADOPTION: NOT ESTABLISHED
 SDK CANDIDATE: ESTABLISHED
 RELEASE CANDIDATE: VALIDATED / NON-PUBLISHED
 PUBLIC SDK: NOT PUBLISHED
@@ -311,15 +314,49 @@ The dedicated CI workflow additionally checks byte-identical rebuilds, extracted
 
 ## 16. External Evaluation Readiness
 
-Current engineering objective:
+Gate-04 candidate:
+
+- [`AX-PUB-DEV-006 — External Evaluation Readiness`](./AX-PUB-DEV-006_EXTERNAL_EVALUATION_READINESS.md)
+- [`AX-PUB-DEV-006.json`](../artifacts/AX-PUB-DEV-006.json)
+- [`External Evaluator Guide`](./EXTERNAL_EVALUATOR_GUIDE.md)
+- [`Limitations & Unsupported Uses`](./LIMITATIONS_AND_UNSUPPORTED_USES.md)
+- [`Migration & Deprecation Draft`](./MIGRATION_AND_DEPRECATION_DRAFT.md)
+- [`Feedback & Triage`](./FEEDBACK_AND_TRIAGE.md)
+
+Current state:
 
 ```text
-DEV-GATE-04 — EXTERNAL EVALUATION READINESS
+DEV-GATE-04: CANDIDATE
+EXTERNAL EVALUATION READINESS: NOT YET ESTABLISHED
+EXTERNAL EVALUATION OCCURRED: NOT ESTABLISHED
+EXTERNAL ADOPTION: NOT ESTABLISHED
+SUPPORTED SDK: NOT ESTABLISHED
+SDK PUBLICATION: NOT AUTHORIZED
 ```
 
-Gate-04 is the next engineering gate. Its activation does **not** mean external evaluation has occurred, that external developers have adopted the candidate, or that support/publication authority exists.
+For a self-service evaluation on a directly verified candidate runtime (Python 3.10–3.13):
 
-The Gate-04 exit criteria are governed by [`AX-PUB-DEV-001`](./AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md).
+```bash
+python3 tools/run_external_evaluation.py --json-out external-evaluation-report.json
+python3 tools/check_external_evaluation_report.py external-evaluation-report.json
+```
+
+Expected success markers when the bounded public checks pass:
+
+```text
+AX_EXTERNAL_EVALUATION_RUN_PASS
+AX_EXTERNAL_EVALUATION_REPORT_PASS
+```
+
+The evaluation runner executes eight bounded public checks and records a machine-readable environment/check report. Gate-04 CI runs this path across Python 3.10, 3.11, 3.12 and 3.13 and uploads the generated reports as short-lived CI-only artifacts.
+
+This CI is evidence about **readiness and reproducibility**, not evidence that a human external evaluator participated or that anyone adopted the candidate.
+
+For repository-local candidate integration, limitations, failure paths and feedback instructions, follow the [`External Evaluator Guide`](./EXTERNAL_EVALUATOR_GUIDE.md).
+
+`READINESS CI PASS ≠ HUMAN EXTERNAL EVALUATION`  
+`EXTERNAL EVALUATION READINESS ≠ EXTERNAL ADOPTION`  
+`ISSUE INTAKE ≠ SUPPORT SLA`
 
 ## 17. SDK Publication Readiness
 
@@ -335,7 +372,7 @@ The gate still requires explicit licence/IP authority, package identity and dist
 
 ## 18. Private-Project Boundary
 
-The public schemas, reference validators, examples, conformance kits, Gate-01 developer experience, Gate-02 SDK candidate and validated Gate-03 engineering release candidate are designed to remain self-contained in this public repository.
+The public schemas, reference validators, examples, conformance kits, Gate-01 developer experience, Gate-02 SDK candidate, validated Gate-03 engineering release candidate and Gate-04 readiness candidate are designed to remain self-contained in this public repository.
 
 They do not require private AETHER X project repositories, private package indexes, private endpoints or private credentials.
 
@@ -346,6 +383,8 @@ They do not require private AETHER X project repositories, private package index
 `PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`  
 `SDK CANDIDATE ESTABLISHED ≠ SUPPORTED SDK`  
 `RELEASE-CANDIDATE VALIDATED ≠ SDK RELEASE`  
+`READINESS CI PASS ≠ HUMAN EXTERNAL EVALUATION`  
+`EXTERNAL EVALUATION READINESS ≠ EXTERNAL ADOPTION`  
 `CI ARTIFACT ≠ PACKAGE PUBLICATION`  
 `ATTESTED BUILD ≠ SECURITY CERTIFICATION`  
 `SBOM ≠ SOFTWARE REUSE LICENCE`  
