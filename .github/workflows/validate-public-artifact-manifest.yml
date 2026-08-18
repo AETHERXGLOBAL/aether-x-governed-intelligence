@@ -11,19 +11,25 @@ on:
       - 'evidence/AX-PUB-CI-004_REPRODUCIBLE_DEVELOPER_EXPERIENCE_VALIDATION.md'
       - 'evidence/AX-PUB-CI-005_SDK_CANDIDATE_VALIDATION.md'
       - 'evidence/AX-PUB-CI-006_SUPPLY_CHAIN_RELEASE_CANDIDATE_VALIDATION.md'
+      - 'evidence/AX-PUB-CI-007_EXTERNAL_EVALUATION_READINESS_VALIDATION.md'
       - 'release-candidate/**'
       - 'sdk-candidate/**'
       - 'snapshots/**'
       - 'specifications/**'
       - 'schemas/**'
       - 'reference-implementations/**'
+      - '.github/ISSUE_TEMPLATE/external-evaluation.yml'
       - 'tools/check_artifact_manifest.py'
       - 'tools/check_developer_contract_baseline.py'
       - 'tools/check_developer_experience_state.py'
       - 'tools/check_sdk_candidate_boundary.py'
       - 'tools/check_sdk_candidate_state.py'
       - 'tools/check_supply_chain_release_candidate.py'
+      - 'tools/check_external_evaluation_readiness.py'
+      - 'tools/check_external_evaluation_report.py'
+      - 'tools/run_external_evaluation.py'
       - 'tools/check_public_conformance_boundary.py'
+      - '.github/workflows/validate-external-evaluation-readiness.yml'
       - '.github/workflows/validate-public-artifact-manifest.yml'
   pull_request:
     paths:
@@ -34,19 +40,25 @@ on:
       - 'evidence/AX-PUB-CI-004_REPRODUCIBLE_DEVELOPER_EXPERIENCE_VALIDATION.md'
       - 'evidence/AX-PUB-CI-005_SDK_CANDIDATE_VALIDATION.md'
       - 'evidence/AX-PUB-CI-006_SUPPLY_CHAIN_RELEASE_CANDIDATE_VALIDATION.md'
+      - 'evidence/AX-PUB-CI-007_EXTERNAL_EVALUATION_READINESS_VALIDATION.md'
       - 'release-candidate/**'
       - 'sdk-candidate/**'
       - 'snapshots/**'
       - 'specifications/**'
       - 'schemas/**'
       - 'reference-implementations/**'
+      - '.github/ISSUE_TEMPLATE/external-evaluation.yml'
       - 'tools/check_artifact_manifest.py'
       - 'tools/check_developer_contract_baseline.py'
       - 'tools/check_developer_experience_state.py'
       - 'tools/check_sdk_candidate_boundary.py'
       - 'tools/check_sdk_candidate_state.py'
       - 'tools/check_supply_chain_release_candidate.py'
+      - 'tools/check_external_evaluation_readiness.py'
+      - 'tools/check_external_evaluation_report.py'
+      - 'tools/run_external_evaluation.py'
       - 'tools/check_public_conformance_boundary.py'
+      - '.github/workflows/validate-external-evaluation-readiness.yml'
       - '.github/workflows/validate-public-artifact-manifest.yml'
 
 permissions:
@@ -55,7 +67,7 @@ permissions:
 jobs:
   validate-public-artifact-manifest:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 6
     steps:
       - name: Checkout public repository
         uses: actions/checkout@v4
@@ -67,6 +79,7 @@ jobs:
           python3 -m json.tool artifacts/AX-PUB-DEV-003.json > /dev/null
           python3 -m json.tool artifacts/AX-PUB-DEV-004.json > /dev/null
           python3 -m json.tool artifacts/AX-PUB-DEV-005.json > /dev/null
+          python3 -m json.tool artifacts/AX-PUB-DEV-006.json > /dev/null
           python3 -m json.tool release-candidate/AX-PUB-RC-001.json > /dev/null
 
       - name: Compile public integrity checkers
@@ -77,6 +90,9 @@ jobs:
           python3 -m py_compile tools/check_sdk_candidate_boundary.py
           python3 -m py_compile tools/check_sdk_candidate_state.py
           python3 -m py_compile tools/check_supply_chain_release_candidate.py
+          python3 -m py_compile tools/check_external_evaluation_readiness.py
+          python3 -m py_compile tools/check_external_evaluation_report.py
+          python3 -m py_compile tools/run_external_evaluation.py
           python3 -m py_compile tools/check_public_conformance_boundary.py
 
       - name: Validate artifact paths versions and compatibility
@@ -93,6 +109,9 @@ jobs:
 
       - name: Validate DEV-GATE-03 governance state
         run: python3 tools/check_supply_chain_release_candidate.py
+
+      - name: Validate DEV-GATE-04 governance state
+        run: python3 tools/check_external_evaluation_readiness.py
 
       - name: Validate SDK candidate public boundary
         run: python3 tools/check_sdk_candidate_boundary.py

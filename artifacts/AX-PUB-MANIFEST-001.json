@@ -1,6 +1,6 @@
 {
   "manifest_id": "AX-PUB-MANIFEST-001",
-  "manifest_version": "1.16",
+  "manifest_version": "1.17",
   "repository": "AETHERXGLOBAL/aether-x-governed-intelligence",
   "scope": "PUBLIC_ENGINEERING_ARTIFACT_COMPATIBILITY",
   "public_state": "CURRENT",
@@ -27,6 +27,7 @@
     {"id":"AX-PUB-DEV-003","version":"1.0","type":"REPRODUCIBLE_DEVELOPER_EXPERIENCE","path":"docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md","machine_readable_companion":"artifacts/AX-PUB-DEV-003.json","entrypoint":"tools/check_developer_experience.py","state":"CURRENT","public_maturity":"DEV-GATE-01 CLOSED / VERIFIED RUNTIME MATRIX PYTHON 3.10-3.13 / REPRODUCIBLE PUBLIC DEVELOPER EXPERIENCE ESTABLISHED / SDK PUBLICATION NOT AUTHORIZED"},
     {"id":"AX-PUB-DEV-004","version":"1.0","type":"SDK_CANDIDATE_ENGINEERING_BASELINE","path":"docs/AX-PUB-DEV-004_SDK_CANDIDATE_ENGINEERING_BASELINE.md","machine_readable_companion":"artifacts/AX-PUB-DEV-004.json","entrypoint":"sdk-candidate/python/aetherx_sdk_candidate.py","state":"CURRENT","public_maturity":"DEV-GATE-02 CLOSED / SDK CANDIDATE ESTABLISHED / VERIFIED RUNTIME MATRIX PYTHON 3.10-3.13 / SDK PUBLICATION NOT AUTHORIZED"},
     {"id":"AX-PUB-DEV-005","version":"1.0","type":"SUPPLY_CHAIN_RELEASE_CANDIDATE","path":"docs/AX-PUB-DEV-005_SUPPLY_CHAIN_RELEASE_CANDIDATE.md","machine_readable_companion":"artifacts/AX-PUB-DEV-005.json","entrypoint":"tools/build_release_candidate.py","state":"CURRENT","public_maturity":"DEV-GATE-03 CLOSED / RELEASE-CANDIDATE VALIDATED / SDK PUBLICATION NOT AUTHORIZED"},
+    {"id":"AX-PUB-DEV-006","version":"1.0","type":"EXTERNAL_EVALUATION_READINESS","path":"docs/AX-PUB-DEV-006_EXTERNAL_EVALUATION_READINESS.md","machine_readable_companion":"artifacts/AX-PUB-DEV-006.json","entrypoint":"tools/run_external_evaluation.py","state":"CURRENT","public_maturity":"DEV-GATE-04 CANDIDATE / EXTERNAL EVALUATION READINESS NOT YET ESTABLISHED / SDK PUBLICATION NOT AUTHORIZED"},
     {"id":"AX-PUB-RC-001","version":"0.1.0-rc1","type":"NON_PUBLISHED_ENGINEERING_RELEASE_CANDIDATE","path":"release-candidate/AX-PUB-RC-001.json","state":"CURRENT","public_maturity":"VALIDATED NON-PUBLISHED ENGINEERING RELEASE CANDIDATE / CI-ONLY / SDK PUBLICATION NOT AUTHORIZED"}
   ],
   "relationships": [
@@ -59,6 +60,9 @@
     {"from_id":"AX-PUB-DEV-005","from_version":"1.0","relationship":"IMPLEMENTS_PROGRAM_GATE_OF","to_id":"AX-PUB-DEV-001","to_version":"1.0","state":"COMPATIBLE"},
     {"from_id":"AX-PUB-DEV-005","from_version":"1.0","relationship":"BUILDS_ON","to_id":"AX-PUB-DEV-004","to_version":"1.0","state":"COMPATIBLE"},
     {"from_id":"AX-PUB-DEV-005","from_version":"1.0","relationship":"GOVERNED_BY","to_id":"AX-PUB-GATE-001","to_version":"1.0","state":"COMPATIBLE"},
+    {"from_id":"AX-PUB-DEV-006","from_version":"1.0","relationship":"IMPLEMENTS_PROGRAM_GATE_OF","to_id":"AX-PUB-DEV-001","to_version":"1.0","state":"COMPATIBLE"},
+    {"from_id":"AX-PUB-DEV-006","from_version":"1.0","relationship":"BUILDS_ON","to_id":"AX-PUB-DEV-005","to_version":"1.0","state":"COMPATIBLE"},
+    {"from_id":"AX-PUB-DEV-006","from_version":"1.0","relationship":"GOVERNED_BY","to_id":"AX-PUB-GATE-001","to_version":"1.0","state":"COMPATIBLE"},
     {"from_id":"AX-PUB-RC-001","from_version":"0.1.0-rc1","relationship":"CANDIDATE_ARTIFACT_OF","to_id":"AX-PUB-DEV-005","to_version":"1.0","state":"COMPATIBLE"}
   ],
   "validation_evidence": [
@@ -97,6 +101,22 @@
     "registry_status":"NOT AUTHORIZED",
     "sdk_publication_disposition":"SDK PUBLICATION NOT AUTHORIZED"
   },
+  "current_external_evaluation_readiness": {
+    "id":"AX-PUB-DEV-006",
+    "version":"1.0",
+    "path":"docs/AX-PUB-DEV-006_EXTERNAL_EVALUATION_READINESS.md",
+    "machine_readable_companion":"artifacts/AX-PUB-DEV-006.json",
+    "runner":"tools/run_external_evaluation.py",
+    "report_checker":"tools/check_external_evaluation_report.py",
+    "state_checker":"tools/check_external_evaluation_readiness.py",
+    "gate":"DEV-GATE-04",
+    "state":"CANDIDATE",
+    "external_evaluation_readiness":"NOT_YET_ESTABLISHED",
+    "external_evaluation_occurred":false,
+    "external_adoption_established":false,
+    "declared_candidate_runtime_matrix":["3.10","3.11","3.12","3.13"],
+    "sdk_publication_disposition":"SDK PUBLICATION NOT AUTHORIZED"
+  },
   "claim_boundary": [
     "PUBLIC COMPATIBILITY DOES NOT ESTABLISH PRODUCT INTEGRATION",
     "REFERENCE VALIDATOR PASS DOES NOT ESTABLISH PRODUCTION APPROVAL OR AUTHORIZATION",
@@ -105,6 +125,7 @@
     "PUBLIC ENGINEERING RELEASE DOES NOT ESTABLISH PRODUCT RELEASE OR SDK RELEASE",
     "SDK CANDIDATE ESTABLISHED DOES NOT ESTABLISH A SUPPORTED SDK OR PACKAGE RELEASE",
     "RELEASE-CANDIDATE VALIDATED DOES NOT ESTABLISH A SUPPORTED SDK OR PACKAGE RELEASE",
+    "EXTERNAL EVALUATION READINESS DOES NOT ESTABLISH HUMAN EXTERNAL EVALUATION OR ADOPTION",
     "CI ARTIFACT UPLOAD DOES NOT ESTABLISH PACKAGE OR SDK PUBLICATION",
     "BUILD PROVENANCE ATTESTATION DOES NOT ESTABLISH SECURITY CERTIFICATION",
     "SPDX SBOM DOES NOT GRANT A SOFTWARE REUSE LICENCE",

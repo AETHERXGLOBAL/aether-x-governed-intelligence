@@ -1,0 +1,104 @@
+name: Validate External Evaluation Readiness
+
+# Readiness matrix only. A CI pass does not establish human external evaluation or adoption.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'README.md'
+      - 'docs/QUICKSTART.md'
+      - 'docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md'
+      - 'docs/AX-PUB-DEV-006_EXTERNAL_EVALUATION_READINESS.md'
+      - 'docs/EXTERNAL_EVALUATOR_GUIDE.md'
+      - 'docs/LIMITATIONS_AND_UNSUPPORTED_USES.md'
+      - 'docs/MIGRATION_AND_DEPRECATION_DRAFT.md'
+      - 'docs/FEEDBACK_AND_TRIAGE.md'
+      - 'artifacts/AX-PUB-DEV-006.json'
+      - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'evidence/AX-PUB-CI-007_EXTERNAL_EVALUATION_READINESS_VALIDATION.md'
+      - '.github/ISSUE_TEMPLATE/external-evaluation.yml'
+      - 'sdk-candidate/**'
+      - 'tools/run_external_evaluation.py'
+      - 'tools/check_external_evaluation_report.py'
+      - 'tools/check_external_evaluation_readiness.py'
+      - 'tools/check_developer_experience.py'
+      - 'tools/check_sdk_candidate_boundary.py'
+      - 'tools/check_sdk_candidate_state.py'
+      - 'tools/check_supply_chain_release_candidate.py'
+      - 'tools/check_artifact_manifest.py'
+      - '.github/workflows/validate-external-evaluation-readiness.yml'
+  pull_request:
+    paths:
+      - 'README.md'
+      - 'docs/QUICKSTART.md'
+      - 'docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md'
+      - 'docs/AX-PUB-DEV-006_EXTERNAL_EVALUATION_READINESS.md'
+      - 'docs/EXTERNAL_EVALUATOR_GUIDE.md'
+      - 'docs/LIMITATIONS_AND_UNSUPPORTED_USES.md'
+      - 'docs/MIGRATION_AND_DEPRECATION_DRAFT.md'
+      - 'docs/FEEDBACK_AND_TRIAGE.md'
+      - 'artifacts/AX-PUB-DEV-006.json'
+      - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'evidence/AX-PUB-CI-007_EXTERNAL_EVALUATION_READINESS_VALIDATION.md'
+      - '.github/ISSUE_TEMPLATE/external-evaluation.yml'
+      - 'sdk-candidate/**'
+      - 'tools/run_external_evaluation.py'
+      - 'tools/check_external_evaluation_report.py'
+      - 'tools/check_external_evaluation_readiness.py'
+      - 'tools/check_developer_experience.py'
+      - 'tools/check_sdk_candidate_boundary.py'
+      - 'tools/check_sdk_candidate_state.py'
+      - 'tools/check_supply_chain_release_candidate.py'
+      - 'tools/check_artifact_manifest.py'
+      - '.github/workflows/validate-external-evaluation-readiness.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  external-evaluation-readiness:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.11', '3.12', '3.13']
+
+    steps:
+      - name: Checkout public repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Confirm runtime
+        run: python --version
+
+      - name: Parse Gate-04 machine-readable state
+        run: python -m json.tool artifacts/AX-PUB-DEV-006.json > /dev/null
+
+      - name: Compile Gate-04 tooling
+        run: |
+          python -m py_compile tools/run_external_evaluation.py
+          python -m py_compile tools/check_external_evaluation_report.py
+          python -m py_compile tools/check_external_evaluation_readiness.py
+
+      - name: Validate Gate-04 governance state
+        run: python tools/check_external_evaluation_readiness.py
+
+      - name: Run self-service evaluation path
+        run: python tools/run_external_evaluation.py --context CI --json-out external-evaluation-report.json
+
+      - name: Validate machine-readable evaluation report
+        run: python tools/check_external_evaluation_report.py external-evaluation-report.json
+
+      - name: Upload CI-only evaluation report
+        uses: actions/upload-artifact@v4
+        with:
+          name: external-evaluation-readiness-python-${{ matrix.python-version }}
+          path: external-evaluation-report.json
+          if-no-files-found: error
+          retention-days: 7
