@@ -70,7 +70,7 @@ def main() -> int:
     manifest = load_json(MANIFEST_PATH, findings)
     if manifest is None: return fail(findings)
     if manifest.get("manifest_id") != "AX-PUB-MANIFEST-001": findings.append("manifest_id mismatch")
-    if manifest.get("manifest_version") != "1.9": findings.append("manifest_version must be 1.9")
+    if manifest.get("manifest_version") != "1.10": findings.append("manifest_version must be 1.10")
     if manifest.get("repository") != "AETHERXGLOBAL/aether-x-governed-intelligence": findings.append("repository identity mismatch")
 
     policy = manifest.get("versioning_policy")
@@ -119,7 +119,7 @@ def main() -> int:
         ep=safe_path(item.get("path"),findings,f"validation_evidence[{i}]")
         if ep is not None and not ep.is_file(): findings.append(f"validation evidence path missing: {item.get('path')}")
         if not isinstance(item.get("verified_head_commit"),str) or len(item.get("verified_head_commit",""))!=40: findings.append(f"validation_evidence[{i}].verified_head_commit invalid")
-    for eid in ("AX-PUB-CI-001","AX-PUB-CI-002"):
+    for eid in ("AX-PUB-CI-001","AX-PUB-CI-002","AX-PUB-CI-003"):
         if eid not in evidence_ids: findings.append(f"required validation evidence missing: {eid}")
 
     snapshot=manifest.get("current_snapshot")
@@ -145,6 +145,8 @@ def main() -> int:
         dp=safe_path(dev.get("path"),findings,"current_developer_program")
         if dp is not None and not dp.is_file(): findings.append("current developer program path missing")
         if dev.get("state")!="UNDER DEVELOPMENT": findings.append("developer program state mismatch")
+        if dev.get("closed_gate")!="DEV-GATE-00 — Contract Baseline": findings.append("developer program closed gate mismatch")
+        if dev.get("next_gate")!="DEV-GATE-01 — Reproducible Developer Experience": findings.append("developer program next gate mismatch")
         if dev.get("sdk_publication_disposition")!="SDK PUBLICATION NOT AUTHORIZED": findings.append("developer program SDK disposition mismatch")
 
     baseline=manifest.get("current_developer_contract_baseline")
@@ -155,7 +157,8 @@ def main() -> int:
         cp=safe_path(baseline.get("machine_readable_companion"),findings,"current_developer_contract_baseline companion")
         if cp is not None and not cp.is_file(): findings.append("current developer contract baseline companion missing")
         if baseline.get("gate")!="DEV-GATE-00": findings.append("developer contract baseline gate mismatch")
-        if baseline.get("state") not in {"CANDIDATE_NOT_CLOSED","CLOSED"}: findings.append("developer contract baseline state invalid")
+        if baseline.get("state")!="CLOSED": findings.append("developer contract baseline must be CLOSED")
+        if baseline.get("closure_evidence")!="AX-PUB-CI-003": findings.append("developer contract baseline closure evidence mismatch")
         if baseline.get("sdk_publication_disposition")!="SDK PUBLICATION NOT AUTHORIZED": findings.append("developer contract baseline SDK disposition mismatch")
 
     quickstart = ROOT / "docs" / "QUICKSTART.md"
@@ -165,7 +168,8 @@ def main() -> int:
         for marker in (
             "AX-PUB-MANIFEST-001.json","COMPATIBILITY_AND_VERSIONING.md","AX-PUB-SNAP-001.json","AX-PUB-SNAP-002.json",
             "AX-PUB-SCHEMA-003","AX-PUB-REF-003","AX-PUB-TEST-002","AX-PUB-REL-001","public-engineering-vnext-1.0",
-            "AX-PUB-GATE-001","AX-PUB-DEV-001","AX-PUB-DEV-002"
+            "AX-PUB-GATE-001","AX-PUB-DEV-001","AX-PUB-DEV-002","AX-PUB-CI-003","DEV-GATE-00: CLOSED",
+            "DEV-GATE-01 — Reproducible Developer Experience"
         ):
             if marker not in text: findings.append(f"quickstart missing reference: {marker}")
     if not isinstance(manifest.get("claim_boundary"), list) or not manifest.get("claim_boundary"): findings.append("claim_boundary must be non-empty array")
