@@ -13,7 +13,8 @@ REQUIRED_PAIRS = {
     ("AX-PUB-ARCH-001","1.0"),("AX-PUB-SPEC-002","1.0"),("AX-PUB-SPEC-003","1.0"),("AX-PUB-SPEC-004","1.0"),
     ("AX-PUB-SCHEMA-001","1.0"),("AX-PUB-SCHEMA-002","1.0"),("AX-PUB-SCHEMA-003","1.0"),
     ("AX-PUB-REF-001","1.0"),("AX-PUB-REF-002","1.0"),("AX-PUB-REF-003","1.0"),
-    ("AX-PUB-TEST-001","1.0"),("AX-PUB-TEST-002","1.0"),("AX-PUB-POL-001","1.4"),
+    ("AX-PUB-TEST-001","1.0"),("AX-PUB-TEST-002","1.0"),("AX-PUB-POL-001","1.5"),
+    ("AX-PUB-SNAP-002","1.0"),("AX-PUB-REL-001","1.0"),
 }
 REQUIRED_RELATIONS = {
     ("AX-PUB-SCHEMA-001","1.0","STRUCTURAL_PROFILE_OF","AX-PUB-SPEC-002","1.0"),
@@ -27,6 +28,7 @@ REQUIRED_RELATIONS = {
     ("AX-PUB-TEST-001","1.0","EXERCISES_PUBLIC_BEHAVIOR_OF","AX-PUB-REF-001","1.0"),
     ("AX-PUB-TEST-001","1.0","EXERCISES_PUBLIC_BEHAVIOR_OF","AX-PUB-REF-002","1.0"),
     ("AX-PUB-TEST-002","1.0","EXERCISES_PUBLIC_BEHAVIOR_OF","AX-PUB-REF-003","1.0"),
+    ("AX-PUB-REL-001","1.0","PACKAGES_PUBLIC_STATE_WITH","AX-PUB-SNAP-002","1.0"),
 }
 
 def safe_path(raw: Any, findings: list[str], label: str) -> Path | None:
@@ -64,11 +66,11 @@ def main() -> int:
     manifest = load_json(MANIFEST_PATH, findings)
     if manifest is None: return fail(findings)
     if manifest.get("manifest_id") != "AX-PUB-MANIFEST-001": findings.append("manifest_id mismatch")
-    if manifest.get("manifest_version") != "1.5": findings.append("manifest_version must be 1.5")
+    if manifest.get("manifest_version") != "1.6": findings.append("manifest_version must be 1.6")
     if manifest.get("repository") != "AETHERXGLOBAL/aether-x-governed-intelligence": findings.append("repository identity mismatch")
 
     policy = manifest.get("versioning_policy")
-    if not isinstance(policy, dict) or policy.get("id") != "AX-PUB-POL-001" or policy.get("version") != "1.4": findings.append("versioning policy must be AX-PUB-POL-001 v1.4")
+    if not isinstance(policy, dict) or policy.get("id") != "AX-PUB-POL-001" or policy.get("version") != "1.5": findings.append("versioning policy must be AX-PUB-POL-001 v1.5")
     else:
         p = safe_path(policy.get("path"), findings, "versioning_policy")
         if p is not None and not p.is_file(): findings.append("versioning policy path missing")
@@ -121,13 +123,25 @@ def main() -> int:
         sp=safe_path(snapshot.get("path"),findings,"current_snapshot")
         if sp is not None and not sp.is_file(): findings.append("current snapshot path missing")
         anchor=snapshot.get("anchor_commit")
-        if not isinstance(anchor,str) or len(anchor)!=40: findings.append("current snapshot anchor must be full commit SHA")
+        if anchor!="6dfdec04a4d8375bc2da0bb6a3830ff07eeb1711": findings.append("current snapshot anchor mismatch")
+
+    release=manifest.get("current_release")
+    if not isinstance(release,dict) or release.get("id")!="AX-PUB-REL-001" or release.get("version")!="1.0": findings.append("current_release must identify AX-PUB-REL-001 v1.0")
+    else:
+        rp=safe_path(release.get("path"),findings,"current_release")
+        if rp is not None and not rp.is_file(): findings.append("current release evidence path missing")
+        if release.get("tag")!="public-engineering-vnext-1.0": findings.append("current release tag mismatch")
+        if release.get("tag_target_commit")!="4f067c9fd3d3ac065ac50b10faf1abd1bdb91bb6": findings.append("current release tag target mismatch")
+        if release.get("release_title")!="AETHER X Governed Intelligence — Public Engineering vNext 1.0": findings.append("current release title mismatch")
 
     quickstart = ROOT / "docs" / "QUICKSTART.md"
     if not quickstart.is_file(): findings.append("docs/QUICKSTART.md missing")
     else:
         text = quickstart.read_text(encoding="utf-8")
-        for marker in ("AX-PUB-MANIFEST-001.json","COMPATIBILITY_AND_VERSIONING.md","AX-PUB-SNAP-001.json","AX-PUB-SNAP-002.json","AX-PUB-SCHEMA-003","AX-PUB-REF-003","AX-PUB-TEST-002"):
+        for marker in (
+            "AX-PUB-MANIFEST-001.json","COMPATIBILITY_AND_VERSIONING.md","AX-PUB-SNAP-001.json","AX-PUB-SNAP-002.json",
+            "AX-PUB-SCHEMA-003","AX-PUB-REF-003","AX-PUB-TEST-002","AX-PUB-REL-001","public-engineering-vnext-1.0"
+        ):
             if marker not in text: findings.append(f"quickstart missing reference: {marker}")
     if not isinstance(manifest.get("claim_boundary"), list) or not manifest.get("claim_boundary"): findings.append("claim_boundary must be non-empty array")
     if findings: return fail(findings)
