@@ -96,11 +96,10 @@ EAV + point-in-time suite:
 python3 conformance/AX-PUB-TEST-001/run_conformance.py
 ```
 
-Published reproducibility evidence for `AX-PUB-TEST-001`:
+Published reproducibility result for `AX-PUB-TEST-001`:
 
 ```text
 AX_PUBLIC_CONFORMANCE_PASS cases=15 conforming=15
-AX_PUBLIC_CONFORMANCE_BOUNDARY_PASS
 ```
 
 Agent-authority suite:
@@ -114,6 +113,20 @@ Expected conformance marker:
 ```text
 AX_AGENT_AUTHORITY_CONFORMANCE_PASS cases=10 conforming=10
 ```
+
+Public-only conformance boundary checker:
+
+```bash
+python3 tools/check_public_conformance_boundary.py
+```
+
+Expected boundary marker:
+
+```text
+AX_PUBLIC_CONFORMANCE_BOUNDARY_PASS
+```
+
+The two conformance suites and the public-boundary checker are separate controls and are evaluated separately by the Gate-01 developer-experience runner.
 
 Current agent-authority test state: `10 synthetic cases · CI-TESTED`.
 
@@ -255,7 +268,7 @@ Machine-readable report:
 python3 tools/check_developer_experience.py --json
 ```
 
-The runner exercises all three valid public reference examples, all three intentionally invalid fixtures, `AX-PUB-TEST-001`, and `AX-PUB-TEST-002` using the active Python interpreter and public repository files only.
+The runner evaluates **nine declared checks** using the active Python interpreter and public repository files only: three valid public reference examples, three intentionally invalid fixtures, two conformance suites, and the separate public-only conformance-boundary check.
 
 Current Gate-01 state:
 
