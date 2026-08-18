@@ -1,0 +1,114 @@
+{
+  "artifact_id": "AX-PUB-RELPACK-001",
+  "version": "0.1",
+  "state": "DEV_GATE_05D_RELEASE_READINESS_PACK_CANDIDATE_BLOCKED",
+  "scope": "FIRST_OFFICIAL_PYTHON_SDK_RELEASE_AUTHORITY_EVIDENCE_AGGREGATION",
+  "candidate": {
+    "distribution": "aetherxglobal-governed-intelligence",
+    "version": "0.1.0rc1",
+    "import_namespace": "aetherxglobal.governed_intelligence",
+    "wheel_sha256": "bd3c3bfc7306c9b45659e3e0533ea1ac24b065a4c577f08cbe987cc10a4d1fac",
+    "sdist_sha256": "2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99",
+    "runtime_matrix": ["3.11", "3.12", "3.13", "3.14"]
+  },
+  "source_of_truth": {
+    "manifest": "artifacts/AX-PUB-MANIFEST-001.json",
+    "production_definition_of_done": "docs/PRODUCTION_SDK_DEFINITION_OF_DONE.md",
+    "release_control_contract": "docs/RELEASE_CONTROL_PLANE.md",
+    "release_control_audit": "evidence/AX-PUB-RELEASE-CONTROL-AUDIT-001.json",
+    "api_contract": "artifacts/AX-PUB-API-001.json",
+    "support_contract": "artifacts/AX-PUB-SUP-001.json",
+    "security_operations_contract": "artifacts/AX-PUB-SEC-001.json",
+    "evaluator_handoff": "artifacts/AX-PUB-EVAL-PACK-001.json",
+    "distribution_state": "artifacts/AX-PUB-DEV-009.json"
+  },
+  "required_dimensions": [
+    {
+      "id": "ENGINEERING_CANDIDATE_IDENTITY",
+      "required_for_05d": true,
+      "expected_current_state": "ESTABLISHED"
+    },
+    {
+      "id": "PUBLIC_API_CONTRACT",
+      "required_for_05d": true,
+      "expected_current_state": "VALIDATED_CANDIDATE"
+    },
+    {
+      "id": "EXACT_ARTIFACT_RUNTIME_VALIDATION",
+      "required_for_05d": true,
+      "expected_current_state": "ESTABLISHED"
+    },
+    {
+      "id": "SUPPLY_CHAIN_PROVENANCE_SBOM",
+      "required_for_05d": true,
+      "expected_current_state": "ESTABLISHED_ENGINEERING_EVIDENCE"
+    },
+    {
+      "id": "EXTERNAL_REGISTRY_VALIDATION",
+      "required_for_05d": true,
+      "expected_current_state": "NOT_ESTABLISHED"
+    },
+    {
+      "id": "INDEPENDENT_HUMAN_EXTERNAL_EVALUATION",
+      "required_for_05d": true,
+      "expected_current_state": "NOT_ESTABLISHED"
+    },
+    {
+      "id": "RELEASE_CONTROL_READINESS",
+      "required_for_05d": true,
+      "expected_current_state": "NOT_ESTABLISHED"
+    },
+    {
+      "id": "REGISTRY_OWNERSHIP_AND_TRUSTED_PUBLISHER",
+      "required_for_05d": true,
+      "expected_current_state": "NOT_ESTABLISHED"
+    },
+    {
+      "id": "LICENCE_AND_IP_CLEARANCE",
+      "required_for_05d": true,
+      "expected_current_state": "NOT_ESTABLISHED"
+    },
+    {
+      "id": "SUPPORT_CONTRACT_ACTIVATION",
+      "required_for_05d": true,
+      "expected_current_state": "NOT_ACTIVATED"
+    },
+    {
+      "id": "SECURITY_OPERATIONS_READINESS",
+      "required_for_05d": true,
+      "expected_current_state": "NOT_READY"
+    },
+    {
+      "id": "RELEASE_OWNER_AND_ACCOUNTABILITY",
+      "required_for_05d": true,
+      "expected_current_state": "NOT_ESTABLISHED"
+    },
+    {
+      "id": "EXPLICIT_RELEASE_AUTHORITY",
+      "required_for_05d": true,
+      "expected_current_state": "NOT_AUTHORIZED"
+    }
+  ],
+  "output_contract": {
+    "report_format": "AX-PUB-RELPACK-REPORT-001",
+    "report_version": "1.0",
+    "builder": "tools/build_sdk_release_readiness_pack.py",
+    "checker": "tools/check_sdk_release_readiness_pack.py",
+    "ready_state": "READY_FOR_DEV_GATE_05D_AUTHORITY_REVIEW",
+    "blocked_state": "BLOCKED_BEFORE_DEV_GATE_05D_AUTHORITY_REVIEW",
+    "publication_state_when_blocked": "SDK PUBLICATION NOT AUTHORIZED"
+  },
+  "current_expected_disposition": {
+    "ready_for_dev_gate_05d_authority_review": false,
+    "dev_gate_05d_authorized": false,
+    "sdk_publication_authorized": false
+  },
+  "claim_boundaries": [
+    "RELEASE READINESS PACK PASS DOES NOT ESTABLISH RELEASE READINESS WHEN REQUIRED DIMENSIONS ARE BLOCKED",
+    "AGGREGATED EVIDENCE DOES NOT CREATE REGISTRY OWNERSHIP, LICENCE RIGHTS, HUMAN EVALUATION OR RELEASE AUTHORITY",
+    "CI CANNOT SUBSTITUTE FOR INDEPENDENT HUMAN EVALUATION OR EXPLICIT AUTHORIZED DECISION",
+    "READY FOR AUTHORITY REVIEW DOES NOT ITSELF AUTHORIZE PUBLICATION",
+    "DEV-GATE-05D NOT AUTHORIZED",
+    "SDK PUBLICATION NOT AUTHORIZED"
+  ]
+}
