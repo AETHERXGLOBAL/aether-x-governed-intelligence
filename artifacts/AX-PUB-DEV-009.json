@@ -1,7 +1,7 @@
 {
   "artifact_id": "AX-PUB-DEV-009",
   "version": "0.1",
-  "status": "DEV-GATE-05C DISTRIBUTION & EXTERNAL VALIDATION BASELINE / ENGINEERING CANDIDATE / SDK PUBLICATION NOT AUTHORIZED",
+  "status": "DEV-GATE-05C DISTRIBUTION & EXTERNAL VALIDATION BASELINE / ENGINEERING CANDIDATE / LOCAL INDEX VALIDATED / SDK PUBLICATION NOT AUTHORIZED",
   "gate": "DEV-GATE-05",
   "phase": "DEV-GATE-05C",
   "phase_state": "ACTIVE_ENGINEERING_OBJECTIVE",
@@ -45,7 +45,15 @@
     "verified_runtime_matrix": ["3.11", "3.12", "3.13", "3.14"]
   },
   "distribution_validation": {
-    "local_simple_index_simulation": "REQUIRED_ENGINEERING_EVIDENCE",
+    "local_simple_index_simulation": "DIRECT_CI_VALIDATED_LOCAL_ONLY",
+    "local_simple_index_validation_evidence": "AX-PUB-CI-010",
+    "local_simple_index_reviewed_head": "779bfe5813c7794ba04ca1f2efe35ec69155d88c",
+    "local_simple_index_workflow_run_id": 32177559732,
+    "local_simple_index_workflow_run_number": 3,
+    "local_simple_index_job_id": 95842861606,
+    "local_simple_index_actions_artifact_id": 9339582392,
+    "local_simple_index_actions_artifact_sha256": "cc5a56aff2c0052169bc8dd4b4816039cad66838c5a4d009e79378df52000f35",
+    "local_simple_index_verified_runtime_matrix": ["3.11", "3.12", "3.13", "3.14"],
     "local_simple_index_is_external_registry_validation": false,
     "simple_repository_contract": "PYTHON_SIMPLE_REPOSITORY_API_COMPATIBLE_TEST_SURFACE",
     "install_from_index_required": true,
