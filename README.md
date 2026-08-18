@@ -31,6 +31,16 @@ GOVERNED KNOWLEDGE
 
 Start with the **[Public Quickstart](./docs/QUICKSTART.md)**.
 
+### Formal Public Engineering Release
+
+**`public-engineering-vnext-1.0` — AETHER X Governed Intelligence — Public Engineering vNext 1.0**
+
+- Git tag target: `4f067c9fd3d3ac065ac50b10faf1abd1bdb91bb6`
+- Release evidence: **[AX-PUB-REL-001](./evidence/AX-PUB-REL-001_PUBLIC_ENGINEERING_VNEXT_RELEASE.md)**
+- Fixed technical-review snapshot: **[AX-PUB-SNAP-002](./snapshots/AX-PUB-SNAP-002_GOVERNED_INTELLIGENCE_PUBLIC_VNEXT.md)**
+
+`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`
+
 Current moving public governance:
 
 - **[AX-PUB-MANIFEST-001 v1.5](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state and closure-evidence references.
@@ -76,12 +86,16 @@ COMMIT-ANCHORED
 GIT-BLOB-INVENTORIED
 MANIFEST-VALIDATED
 SNAPSHOT-CI-VALIDATED
+        ↓
+public-engineering-vnext-1.0
+FORMAL PUBLIC ENGINEERING RELEASE
 ```
 
 `PUBLIC CI PASS ≠ PRODUCT IMPLEMENTATION`  
 `REFERENCE VALIDATOR PASS ≠ PRODUCTION AUTHORIZATION`  
 `PUBLIC COMPATIBILITY ≠ PRODUCT INTEGRATION`  
-`PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
+`PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`  
+`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`
 
 ## Private-Project Boundary
 
