@@ -16,6 +16,22 @@ on:
       - 'docs/LIMITATIONS_AND_UNSUPPORTED_USES.md'
       - 'sdk-release-candidate/python/**'
       - '.github/workflows/validate-installable-external-evaluator-handoff.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'artifacts/AX-PUB-EVAL-PACK-001.json'
+      - 'docs/INSTALLABLE_EXTERNAL_EVALUATOR_GUIDE.md'
+      - 'examples/external-evaluation/AX-PUB-EVAL-REPORT-002.template.json'
+      - 'tools/build_installable_evaluator_handoff.py'
+      - 'tools/check_installable_evaluator_handoff.py'
+      - 'tools/check_installable_external_evaluation_report.py'
+      - 'artifacts/AX-PUB-API-001.json'
+      - 'artifacts/AX-PUB-SUP-001.json'
+      - 'artifacts/AX-PUB-SEC-001.json'
+      - 'artifacts/AX-PUB-DEV-009.json'
+      - 'docs/LIMITATIONS_AND_UNSUPPORTED_USES.md'
+      - 'sdk-release-candidate/python/**'
+      - '.github/workflows/validate-installable-external-evaluator-handoff.yml'
   workflow_dispatch:
 
 permissions:
