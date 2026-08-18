@@ -67,20 +67,18 @@ The canonical automated entry point is:
 python3 tools/check_developer_experience.py
 ```
 
-The runner must use the active interpreter (`sys.executable`) so the exact same developer experience can be exercised across the CI runtime matrix.
+The runner uses the active interpreter (`sys.executable`) so the same developer experience can be exercised across the CI runtime matrix.
 
 The runner validates four categories:
 
 1. valid reference examples;
 2. invalid/fail-closed reference examples;
 3. public conformance suites;
-4. public/private dependency-boundary invariants already governed by the repository.
+4. the public/private conformance-boundary check.
 
 ## 5. Deterministic Valid-Path Expectations
 
 ### EAV reference path
-
-Command:
 
 ```bash
 python3 reference-implementations/eav-contract-validator/validator.py \
@@ -97,8 +95,6 @@ AX_EAV_REFERENCE_VALIDATION_PASS
 
 ### Point-in-Time / Provenance reference path
 
-Command:
-
 ```bash
 python3 reference-implementations/point-in-time-knowledge-validator/validator.py \
   reference-implementations/point-in-time-knowledge-validator/examples/valid_envelope.json
@@ -113,8 +109,6 @@ AX_PTK_REFERENCE_VALIDATION_PASS
 ```
 
 ### Agent Authority / Tool-Use reference path
-
-Command:
 
 ```bash
 python3 reference-implementations/agent-tool-authority-validator/validator.py \
@@ -145,28 +139,21 @@ This validates fail-visible developer behavior without prematurely mapping exist
 
 The semantic developer taxonomy remains governed by `AX-PUB-DEV-002`. SDK-specific exception/API mappings belong to DEV-GATE-02.
 
-## 7. Deterministic Conformance Expectations
+## 7. Deterministic Conformance & Boundary Expectations
 
 ### EAV + Point-in-Time conformance
-
-Command:
 
 ```bash
 python3 conformance/AX-PUB-TEST-001/run_conformance.py
 ```
 
-Required markers:
+Required marker:
 
 ```text
 AX_PUBLIC_CONFORMANCE_PASS cases=15 conforming=15
-AX_PUBLIC_CONFORMANCE_BOUNDARY_PASS
 ```
 
-This preserves the existing public claim boundary that the suite is reproducibly verified while its historical GitHub CI status remains separately described by its own artifact state.
-
 ### Agent-authority conformance
-
-Command:
 
 ```bash
 python3 conformance/AX-PUB-TEST-002/run_conformance.py
@@ -178,7 +165,21 @@ Required marker:
 AX_AGENT_AUTHORITY_CONFORMANCE_PASS cases=10 conforming=10
 ```
 
-These are synthetic public conformance cases. Passing them does not establish production authorization or product implementation.
+### Public-only conformance boundary
+
+```bash
+python3 tools/check_public_conformance_boundary.py
+```
+
+Required marker:
+
+```text
+AX_PUBLIC_CONFORMANCE_BOUNDARY_PASS
+```
+
+The conformance runners and public-boundary checker are deliberately separate controls and are evaluated as separate Gate-01 checks.
+
+These are synthetic public conformance/reference checks. Passing them does not establish production authorization, product implementation or security certification.
 
 ## 8. Failure-Path Interpretation
 
@@ -206,7 +207,7 @@ DEV-GATE-01 does not create a normative one-to-one mapping between every referen
 
 ## 9. Documentation / Execution Drift Control
 
-The Gate-01 CI workflow must run the same commands and expected markers documented here and in the public Quickstart.
+The Gate-01 CI workflow runs the same developer paths and expected markers documented here and in the public Quickstart.
 
 At minimum, CI must fail when:
 
@@ -214,8 +215,9 @@ At minimum, CI must fail when:
 - an invalid fixture stops failing visibly;
 - a declared deterministic marker changes without governance updates;
 - a conformance suite no longer reaches its declared outcome;
+- the public-boundary checker no longer passes;
 - the Gate-01 machine-readable artifact and documentation diverge;
-- the public/private dependency boundary checker fails.
+- the closed Gate-00 baseline no longer validates.
 
 Documentation is therefore treated as an executable developer contract surface, not static marketing copy.
 
@@ -245,7 +247,9 @@ AX_DEVELOPER_EXPERIENCE_PASS
 
 and a machine-readable summary when `--json` is requested.
 
-The summary must identify the Python runtime and the result of each declared check without collecting credentials, private repository data or private environment information.
+The Gate-01 runner currently evaluates **nine declared checks**: three valid examples, three invalid examples, two conformance suites and one public-boundary check.
+
+The summary identifies the Python runtime and the result of each declared check without collecting credentials, private repository data or private environment information.
 
 ## 12. DEV-GATE-01 Exit Criteria
 
@@ -256,9 +260,10 @@ DEV-GATE-01 may close only when all of the following are evidenced:
 - [x] deterministic valid-path outputs declared;
 - [x] deterministic invalid-path behavior declared;
 - [x] conformance outcomes declared;
+- [x] public-boundary outcome declared separately;
 - [x] failure-path interpretation documented;
 - [x] canonical developer-experience runner published;
-- [ ] dedicated clean-environment CI matrix published;
+- [x] dedicated clean-environment CI matrix published;
 - [ ] all declared candidate runtimes complete successfully;
 - [ ] directly observed CI evidence is recorded;
 - [ ] machine-readable Gate-01 state is promoted from candidate to closed;
