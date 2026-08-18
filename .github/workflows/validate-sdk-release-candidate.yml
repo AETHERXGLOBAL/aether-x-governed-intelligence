@@ -282,6 +282,18 @@ jobs:
           print('AX_SDK_INSTALLED_OUTSIDE_REPOSITORY_PASS namespace=aetherxglobal.governed_intelligence')
           PY
 
+      - name: Remove ephemeral build and runtime workspaces before governance revalidation
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .venv311 .venv312 .venv313 .venv314
+          rm -rf sdk-release-candidate/python/dist-b
+          rm -rf sdk-release-candidate/python/dist-from-sdist
+          rm -rf sdk-release-candidate/python/sdist-unpacked
+          test -f sdk-release-candidate/python/dist-a/SHA256SUMS
+          test -f sdk-release-candidate/python/dist-a/BUILD_INFO.json
+          echo 'AX_SDK_EPHEMERAL_WORKSPACE_CLEANUP_PASS'
+
       - name: Re-validate Gate-05B and inherited governance after package tests
         shell: bash
         run: |
