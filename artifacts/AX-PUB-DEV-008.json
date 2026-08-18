@@ -1,0 +1,89 @@
+{
+  "artifact_id": "AX-PUB-DEV-008",
+  "version": "0.1",
+  "status": "DEV-GATE-05B INSTALLABLE PACKAGE CANDIDATE / ENGINEERING CANDIDATE / NOT YET DIRECTLY VALIDATED",
+  "parent_decision_artifact": "AX-PUB-DEV-007",
+  "parent_phase_state": "DEV-GATE-05A CLOSED",
+  "gate": "DEV-GATE-05",
+  "phase": "DEV-GATE-05B",
+  "publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
+  "distribution_authorized": false,
+  "license_granted": false,
+  "supported_sdk_established": false,
+  "distribution": {
+    "name_candidate": "aetherxglobal-governed-intelligence",
+    "version_candidate": "0.1.0rc1",
+    "import_namespace": "aetherxglobal.governed_intelligence",
+    "company_namespace_model": "PEP_420_IMPLICIT_NAMESPACE",
+    "top_level_company_init_allowed": false,
+    "requires_python": ">=3.11,<3.15",
+    "runtime_dependencies": [],
+    "public_registry": "PyPI",
+    "staging_registry": "TestPyPI",
+    "registry_ownership_established": false,
+    "registry_publication_authorized": false
+  },
+  "build": {
+    "standard": "PEP 517 / PEP 621",
+    "layout": "src",
+    "backend": "hatchling",
+    "backend_version": "1.31.0",
+    "frontend": "build",
+    "frontend_version": "1.5.0",
+    "canonical_source_date_epoch": 1787076737,
+    "canonical_source_date_epoch_basis": "DEV-GATE-05A closure commit timestamp",
+    "wheel_required": true,
+    "sdist_required": true,
+    "double_build_required": true,
+    "byte_identical_rebuild_required": true,
+    "exact_distribution_testing_required": true,
+    "ci_artifact_evidence_required": true,
+    "ci_artifact_retention_days": 7,
+    "reproducibility_evidence_established": false
+  },
+  "runtime_target": ["3.11", "3.12", "3.13", "3.14"],
+  "scope": {
+    "offline_validation_only": true,
+    "network_allowed": false,
+    "credentials_allowed": false,
+    "authentication_allowed": false,
+    "production_authorization_allowed": false,
+    "tool_invocation_allowed": false,
+    "real_world_execution_allowed": false,
+    "private_repository_runtime_dependency_allowed": false
+  },
+  "validator_source_identity": {
+    "AX-PUB-REF-001": "10b31f990cdeb0a2285081d4b4a8cc2457564c69",
+    "AX-PUB-REF-002": "f4344dfb70685b490e716e33f8f2fd2da1f0ca50",
+    "AX-PUB-REF-003": "6c8f4d325ef3d3f2041909f8bba7d554ced4366e"
+  },
+  "public_api": {
+    "module": "aetherxglobal.governed_intelligence",
+    "execution_capability_exposed": false,
+    "network_capability_exposed": false,
+    "supported_contract_ids": ["AX-PUB-SPEC-002", "AX-PUB-SPEC-003", "AX-PUB-SPEC-004"]
+  },
+  "verification": {
+    "package_boundary": "PENDING",
+    "deterministic_double_build": "PENDING",
+    "wheel_metadata_inventory": "PENDING",
+    "wheel_install": "PENDING",
+    "sdist_build": "PENDING",
+    "installed_package_tests": "PENDING",
+    "runtime_matrix": "PENDING",
+    "artifact_inventory": "PENDING",
+    "artifact_digests": "PENDING",
+    "ci_artifact_retention": "PENDING",
+    "publication": "NOT_AUTHORIZED"
+  },
+  "next_phase_after_closure": "DEV-GATE-05C — Distribution & External Validation",
+  "hard_blockers_retained": [
+    "IP_AND_COPYRIGHT_CLEARANCE",
+    "PACKAGE_NAME_LIVE_AVAILABILITY_AND_OWNERSHIP",
+    "BRANCH_OR_REPOSITORY_RULESET_PROTECTION",
+    "PROTECTED_PYPI_RELEASE_ENVIRONMENT",
+    "HUMAN_EXTERNAL_EVALUATION",
+    "FINAL_RELEASE_EVIDENCE_PACK",
+    "EXPLICIT_RELEASE_AUTHORITY"
+  ]
+}

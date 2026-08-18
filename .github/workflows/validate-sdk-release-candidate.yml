@@ -3,17 +3,21 @@ name: Validate SDK Release Candidate
 on:
   push:
     branches:
-      - dev-gate-05b-installable-package-candidate
+      - main
     paths:
+      - 'docs/AX-PUB-DEV-008_INSTALLABLE_PACKAGE_CANDIDATE.md'
       - 'sdk-release-candidate/**'
       - 'artifacts/AX-PUB-DEV-008.json'
       - 'tools/check_sdk_release_candidate_boundary.py'
+      - 'tools/check_sdk_release_candidate_document.py'
       - '.github/workflows/validate-sdk-release-candidate.yml'
   pull_request:
     paths:
+      - 'docs/AX-PUB-DEV-008_INSTALLABLE_PACKAGE_CANDIDATE.md'
       - 'sdk-release-candidate/**'
       - 'artifacts/AX-PUB-DEV-008.json'
       - 'tools/check_sdk_release_candidate_boundary.py'
+      - 'tools/check_sdk_release_candidate_document.py'
       - '.github/workflows/validate-sdk-release-candidate.yml'
 
 permissions:
@@ -25,12 +29,14 @@ concurrency:
 
 jobs:
   build-and-validate:
-    name: Build once / validate CPython 3.11-3.14
+    name: Deterministic package / CPython 3.11-3.14
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
       PIP_DISABLE_PIP_VERSION_CHECK: '1'
-      SOURCE_DATE_EPOCH: '1787075174'
+      PIP_NO_CACHE_DIR: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+      SOURCE_DATE_EPOCH: '1787076737'
 
     steps:
       - name: Checkout reviewed source
@@ -65,6 +71,7 @@ jobs:
       - name: Confirm target runtimes
         shell: bash
         run: |
+          set -euo pipefail
           '${{ steps.py311.outputs.python-path }}' --version
           '${{ steps.py312.outputs.python-path }}' --version
           '${{ steps.py313.outputs.python-path }}' --version
@@ -73,116 +80,225 @@ jobs:
       - name: Parse Gate-05B machine-readable state
         shell: bash
         run: |
+          set -euo pipefail
           '${{ steps.py314.outputs.python-path }}' -m json.tool artifacts/AX-PUB-DEV-008.json > /dev/null
 
-      - name: Validate package boundary before build
+      - name: Validate Gate-05B document and package boundaries before build
         shell: bash
         run: |
+          set -euo pipefail
+          '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_candidate_document.py
           '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_candidate_boundary.py
+          '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_decision_baseline.py
+          '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_decision_manifest_state.py
 
-      - name: Install exact build toolchain
+      - name: Install exact Gate-05B build toolchain
         shell: bash
         run: |
-          '${{ steps.py314.outputs.python-path }}' -m pip install 'build==1.5.0' 'hatchling==1.31.0'
+          set -euo pipefail
+          '${{ steps.py314.outputs.python-path }}' -m pip install --disable-pip-version-check 'build==1.5.0' 'hatchling==1.31.0'
+          '${{ steps.py314.outputs.python-path }}' - <<'PY'
+          import importlib.metadata as m
+          assert m.version('build') == '1.5.0'
+          assert m.version('hatchling') == '1.31.0'
+          print('AX_SDK_BUILD_TOOLCHAIN_PASS build=1.5.0 hatchling=1.31.0')
+          PY
 
-      - name: Build wheel and sdist once
+      - name: Build wheel and sdist twice
         working-directory: sdk-release-candidate/python
         shell: bash
         run: |
-          '${{ steps.py314.outputs.python-path }}' -m build --no-isolation --wheel --sdist
+          set -euo pipefail
+          rm -rf dist-a dist-b dist-from-sdist sdist-unpacked
+          '${{ steps.py314.outputs.python-path }}' -m build --no-isolation --wheel --sdist --outdir dist-a .
+          '${{ steps.py314.outputs.python-path }}' -m build --no-isolation --wheel --sdist --outdir dist-b .
 
-      - name: Record candidate distribution digests
-        working-directory: sdk-release-candidate/python
-        shell: bash
-        run: sha256sum dist/* | tee dist/SHA256SUMS
-
-      - name: Verify wheel metadata and inventory
+      - name: Prove byte-identical deterministic rebuild
         working-directory: sdk-release-candidate/python
         shell: bash
         run: |
+          set -euo pipefail
+          mapfile -t first < <(find dist-a -maxdepth 1 -type f \( -name '*.whl' -o -name '*.tar.gz' \) -printf '%f\n' | sort)
+          mapfile -t second < <(find dist-b -maxdepth 1 -type f \( -name '*.whl' -o -name '*.tar.gz' \) -printf '%f\n' | sort)
+          test "${#first[@]}" -eq 2
+          test "${first[*]}" = "${second[*]}"
+          for name in "${first[@]}"; do
+            cmp --silent "dist-a/$name" "dist-b/$name"
+          done
+          echo 'AX_SDK_DETERMINISTIC_DOUBLE_BUILD_PASS artifacts=2'
+
+      - name: Rebuild wheel from candidate sdist
+        working-directory: sdk-release-candidate/python
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p sdist-unpacked dist-from-sdist
+          sdist="$(find dist-a -maxdepth 1 -type f -name '*.tar.gz' -print -quit)"
+          test -n "$sdist"
+          tar -xzf "$sdist" -C sdist-unpacked
+          source_dir="$(find sdist-unpacked -mindepth 1 -maxdepth 1 -type d -print -quit)"
+          test -n "$source_dir"
+          '${{ steps.py314.outputs.python-path }}' -m build --no-isolation --wheel --outdir dist-from-sdist "$source_dir"
+          original_wheel="$(find dist-a -maxdepth 1 -type f -name '*.whl' -print -quit)"
+          rebuilt_wheel="$(find dist-from-sdist -maxdepth 1 -type f -name '*.whl' -print -quit)"
+          test -n "$original_wheel"
+          test -n "$rebuilt_wheel"
+          cmp --silent "$original_wheel" "$rebuilt_wheel"
+          echo 'AX_SDK_SDIST_SELF_CONTAINED_REBUILD_PASS wheel=byte-identical'
+
+      - name: Verify wheel and sdist metadata, namespace and inventory
+        working-directory: sdk-release-candidate/python
+        shell: bash
+        run: |
+          set -euo pipefail
           '${{ steps.py314.outputs.python-path }}' - <<'PY'
           import email
           import pathlib
+          import tarfile
           import zipfile
 
-          wheels = list(pathlib.Path('dist').glob('*.whl'))
-          if len(wheels) != 1:
-              raise SystemExit(f'expected one wheel, found {len(wheels)}')
+          dist = pathlib.Path('dist-a')
+          wheels = list(dist.glob('*.whl'))
+          sdists = list(dist.glob('*.tar.gz'))
+          assert len(wheels) == 1, wheels
+          assert len(sdists) == 1, sdists
+
           with zipfile.ZipFile(wheels[0]) as zf:
-              names = zf.namelist()
+              names = set(zf.namelist())
               metadata_paths = [n for n in names if n.endswith('.dist-info/METADATA')]
-              if len(metadata_paths) != 1:
-                  raise SystemExit('wheel must contain exactly one METADATA file')
+              assert len(metadata_paths) == 1, metadata_paths
               metadata = email.message_from_bytes(zf.read(metadata_paths[0]))
               assert metadata['Name'] == 'aetherxglobal-governed-intelligence'
               assert metadata['Version'] == '0.1.0rc1'
               requires_python = {part.strip() for part in metadata['Requires-Python'].split(',')}
               assert requires_python == {'>=3.11', '<3.15'}, metadata['Requires-Python']
               assert metadata.get_all('Requires-Dist') in (None, [])
-              forbidden = [n for n in names if n.lower().endswith(('/license', '/license.txt', '/license.md'))]
-              if forbidden:
-                  raise SystemExit(f'licence file present before IP clearance: {forbidden}')
+              assert 'aetherxglobal/__init__.py' not in names
               required = {
-                  'aetherxglobal/__init__.py',
                   'aetherxglobal/governed_intelligence/__init__.py',
                   'aetherxglobal/governed_intelligence/_api.py',
                   'aetherxglobal/governed_intelligence/_validators/eav.py',
                   'aetherxglobal/governed_intelligence/_validators/point_in_time.py',
                   'aetherxglobal/governed_intelligence/_validators/agent_authority.py',
               }
-              missing = required.difference(names)
-              if missing:
-                  raise SystemExit(f'wheel missing required package files: {sorted(missing)}')
-              print(f'AX_SDK_WHEEL_METADATA_PASS files={len(names)}')
+              assert not required.difference(names), required.difference(names)
+              forbidden = [n for n in names if pathlib.PurePosixPath(n).name.lower() in {'license', 'license.txt', 'license.md'}]
+              assert not forbidden, forbidden
+
+          with tarfile.open(sdists[0], 'r:gz') as tf:
+              names = set(tf.getnames())
+              leafs = {pathlib.PurePosixPath(n).name.lower() for n in names}
+              assert not {'license', 'license.txt', 'license.md'}.intersection(leafs)
+              assert not any(n.endswith('/src/aetherxglobal/__init__.py') for n in names)
+              assert any(n.endswith('/src/aetherxglobal/governed_intelligence/_api.py') for n in names)
+
+          print('AX_SDK_DISTRIBUTION_INVENTORY_PASS namespace=PEP420 runtime_dependencies=0 licence_granted=false')
           PY
+
+      - name: Record exact candidate digests and build metadata
+        working-directory: sdk-release-candidate/python
+        shell: bash
+        env:
+          BUILD_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          (
+            cd dist-a
+            sha256sum *.whl *.tar.gz | sort > SHA256SUMS
+          )
+          '${{ steps.py314.outputs.python-path }}' - <<'PY'
+          import importlib.metadata as m
+          import json
+          import os
+          import pathlib
+          import platform
+
+          payload = {
+              'artifact_id': 'AX-PUB-DEV-008-CI-BUILD',
+              'source_commit': os.environ['BUILD_SHA'],
+              'source_date_epoch': int(os.environ['SOURCE_DATE_EPOCH']),
+              'builder_python': platform.python_version(),
+              'build_frontend': {'name': 'build', 'version': m.version('build')},
+              'build_backend': {'name': 'hatchling', 'version': m.version('hatchling')},
+              'publication_authorized': False,
+              'registry_release': False,
+          }
+          pathlib.Path('dist-a/BUILD_INFO.json').write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + '\n', encoding='utf-8'
+          )
+          PY
+          cat dist-a/SHA256SUMS
 
       - name: Install exact wheel on CPython 3.11 and run package tests
         shell: bash
         run: |
+          set -euo pipefail
+          wheel="$(find sdk-release-candidate/python/dist-a -maxdepth 1 -type f -name '*.whl' -print -quit)"
           '${{ steps.py311.outputs.python-path }}' -m venv .venv311
-          .venv311/bin/python -m pip install --no-deps sdk-release-candidate/python/dist/*.whl
+          .venv311/bin/python -m pip install --no-index --no-deps "$wheel"
           .venv311/bin/python -m unittest discover -s sdk-release-candidate/python/tests -v
 
       - name: Install exact wheel on CPython 3.12 and run package tests
         shell: bash
         run: |
+          set -euo pipefail
+          wheel="$(find sdk-release-candidate/python/dist-a -maxdepth 1 -type f -name '*.whl' -print -quit)"
           '${{ steps.py312.outputs.python-path }}' -m venv .venv312
-          .venv312/bin/python -m pip install --no-deps sdk-release-candidate/python/dist/*.whl
+          .venv312/bin/python -m pip install --no-index --no-deps "$wheel"
           .venv312/bin/python -m unittest discover -s sdk-release-candidate/python/tests -v
 
       - name: Install exact wheel on CPython 3.13 and run package tests
         shell: bash
         run: |
+          set -euo pipefail
+          wheel="$(find sdk-release-candidate/python/dist-a -maxdepth 1 -type f -name '*.whl' -print -quit)"
           '${{ steps.py313.outputs.python-path }}' -m venv .venv313
-          .venv313/bin/python -m pip install --no-deps sdk-release-candidate/python/dist/*.whl
+          .venv313/bin/python -m pip install --no-index --no-deps "$wheel"
           .venv313/bin/python -m unittest discover -s sdk-release-candidate/python/tests -v
 
       - name: Install exact wheel on CPython 3.14 and run package tests
         shell: bash
         run: |
+          set -euo pipefail
+          wheel="$(find sdk-release-candidate/python/dist-a -maxdepth 1 -type f -name '*.whl' -print -quit)"
           '${{ steps.py314.outputs.python-path }}' -m venv .venv314
-          .venv314/bin/python -m pip install --no-deps sdk-release-candidate/python/dist/*.whl
+          .venv314/bin/python -m pip install --no-index --no-deps "$wheel"
           .venv314/bin/python -m unittest discover -s sdk-release-candidate/python/tests -v
 
-      - name: Verify installed package outside repository package path
+      - name: Verify installed package outside repository source path
         shell: bash
         run: |
+          set -euo pipefail
           tmpdir="$(mktemp -d)"
           cd "$tmpdir"
           "$GITHUB_WORKSPACE/.venv314/bin/python" - <<'PY'
           import aetherxglobal.governed_intelligence as sdk
           assert sdk.__version__ == '0.1.0rc1'
           assert len(sdk.supported_contracts()) == 3
-          assert {'execute', 'authorize', 'trade', 'invoke_tool'}.isdisjoint(set(sdk.__all__))
-          print('AX_SDK_INSTALLED_OUTSIDE_REPOSITORY_PASS')
+          assert {'execute', 'authorize', 'trade', 'invoke_tool', 'authenticate'}.isdisjoint(set(sdk.__all__))
+          print('AX_SDK_INSTALLED_OUTSIDE_REPOSITORY_PASS namespace=aetherxglobal.governed_intelligence')
           PY
 
-      - name: Re-validate Gate-05A decision invariants
+      - name: Re-validate governance after package tests
         shell: bash
         run: |
+          set -euo pipefail
+          '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_candidate_document.py
+          '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_candidate_boundary.py
           '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_decision_baseline.py
+          '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_decision_manifest_state.py
+
+      - name: Preserve candidate distributions as short-lived CI evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: ax-pub-dev-008-${{ github.sha }}
+          path: sdk-release-candidate/python/dist-a/
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
 
       - name: Explicit publication boundary
         run: |
           echo 'SDK PUBLICATION NOT AUTHORIZED'
-          echo 'BUILD PASS != RELEASE AUTHORITY'
+          echo 'CI ARTIFACT != REGISTRY RELEASE'
+          echo 'DETERMINISTIC BUILD PASS != RELEASE AUTHORITY'
