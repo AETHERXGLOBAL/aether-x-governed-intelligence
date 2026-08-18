@@ -1,7 +1,7 @@
 # AX-PUB-CI-006 — Supply-Chain Release-Candidate Validation Evidence
 
 **Artifact ID:** `AX-PUB-CI-006`  
-**Version:** `1.0`  
+**Version:** `1.1`  
 **Type:** `PUBLIC CI VALIDATION EVIDENCE`  
 **Scope:** `DEV-GATE-03 — Supply-Chain & Release Candidate`  
 **Repository:** `AETHERXGLOBAL/aether-x-governed-intelligence`  
@@ -10,6 +10,24 @@
 **Developer program:** `AX-PUB-DEV-001`  
 **Gate artifact:** `AX-PUB-DEV-005`  
 **Publication gate:** `AX-PUB-GATE-001 — SDK PUBLICATION NOT AUTHORIZED`
+
+## 0. Correction Record — v1.1
+
+Version `1.0` incorrectly recorded the engineering-bundle SHA-256 as `698ad1fed52cb4b27726d60298021697a58609dc0c2f5253b7e7a40553534da6`.
+
+Direct GitHub Actions job output for run `32150126557` and an independent SHA-256 calculation over the downloaded inner `AX-PUB-RC-001.zip` both establish the correct engineering-bundle digest as:
+
+```text
+8444e7c01621f3d63019b407d9379bc82176f892dce64760cc93e84064ac8c21
+```
+
+The outer GitHub Actions artifact archive has a separate digest:
+
+```text
+907bea9c870fd578bf812bae3d94131ca74752b9ee1b070dbb424d7617270858
+```
+
+These values identify different objects and must not be conflated. No Gate-03 maturity or publication claim is changed by this correction.
 
 ## 1. Purpose
 
@@ -48,6 +66,7 @@ Run ID: 32150126557
 Run number: 7
 Job ID: 95753629882
 Conclusion: SUCCESS
+Canonical SOURCE_DATE_EPOCH: 1787064230
 ```
 
 The following controls completed successfully in the same job:
@@ -73,7 +92,7 @@ Upload CI-only engineering artifact
 
 ```text
 Workflow: Validate Public Artifact Manifest
-Run ID: 32150126544
+Run ID: 32150126711
 Run number: 135
 Conclusion: SUCCESS
 ```
@@ -89,6 +108,7 @@ Artifact ID: AX-PUB-RC-001
 Candidate version: 0.1.0-rc1
 Bundle filename: AX-PUB-RC-001.zip
 Canonical build runtime: Python 3.13
+Canonical SOURCE_DATE_EPOCH: 1787064230
 ```
 
 The canonical build and second build were byte-compared in CI.
@@ -96,7 +116,7 @@ The canonical build and second build were byte-compared in CI.
 The verified engineering-bundle SHA-256 is:
 
 ```text
-698ad1fed52cb4b27726d60298021697a58609dc0c2f5253b7e7a40553534da6
+8444e7c01621f3d63019b407d9379bc82176f892dce64760cc93e84064ac8c21
 ```
 
 The build manifest records a fixed inventory of `21` declared public source files and no third-party runtime dependencies for the bounded candidate build.
@@ -163,6 +183,7 @@ The successful workflow uploaded a temporary GitHub Actions artifact:
 ```text
 Artifact ID: 9329383928
 Name: AX-PUB-RC-001-ci-only
+Outer Actions artifact SHA-256: 907bea9c870fd578bf812bae3d94131ca74752b9ee1b070dbb424d7617270858
 Retention policy: 7 days
 Scope: CI_ONLY
 ```
