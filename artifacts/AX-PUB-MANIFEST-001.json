@@ -19,6 +19,7 @@
     {"id":"AX-PUB-TEST-001","version":"1.0","type":"PUBLIC_CONFORMANCE_TEST_KIT","path":"conformance/AX-PUB-TEST-001/README.md","entrypoint":"conformance/AX-PUB-TEST-001/run_conformance.py","state":"CURRENT","public_maturity":"REPRODUCIBLY VERIFIED / CI WORKFLOW PUBLISHED / CI RUN UNVERIFIED / NON-PRODUCTION"},
     {"id":"AX-PUB-TEST-002","version":"1.0","type":"PUBLIC_CONFORMANCE_TEST_KIT","path":"conformance/AX-PUB-TEST-002/README.md","entrypoint":"conformance/AX-PUB-TEST-002/run_conformance.py","state":"CURRENT","public_maturity":"CI-TESTED / NON-PRODUCTION"},
     {"id":"AX-PUB-POL-001","version":"1.5","type":"PUBLIC_ENGINEERING_POLICY","path":"docs/COMPATIBILITY_AND_VERSIONING.md","state":"CURRENT","public_maturity":"ACTIVE FOR THIS REPOSITORY"},
+    {"id":"AX-PUB-SNAP-002","version":"1.0","type":"PUBLIC_ENGINEERING_SNAPSHOT","path":"snapshots/AX-PUB-SNAP-002.json","state":"CURRENT","public_maturity":"CI-VALIDATED REPRODUCIBILITY ANCHOR / NON-PRODUCT"},
     {"id":"AX-PUB-REL-001","version":"1.0","type":"PUBLIC_ENGINEERING_RELEASE_RECORD","path":"evidence/AX-PUB-REL-001_PUBLIC_ENGINEERING_VNEXT_RELEASE.md","state":"CURRENT","public_maturity":"PUBLISHED GIT TAG / GITHUB RELEASE RECORD / NON-PRODUCT"}
   ],
   "relationships": [
