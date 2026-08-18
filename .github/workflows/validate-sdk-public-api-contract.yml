@@ -1,0 +1,78 @@
+name: Validate SDK Public API Contract
+
+on:
+  pull_request:
+    paths:
+      - 'artifacts/AX-PUB-API-001.json'
+      - 'docs/AX-PUB-API-001_PYTHON_SDK_PUBLIC_API_CONTRACT.md'
+      - 'sdk-release-candidate/python/**'
+      - 'tools/check_sdk_public_api_contract.py'
+      - '.github/workflows/validate-sdk-public-api-contract.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'artifacts/AX-PUB-API-001.json'
+      - 'docs/AX-PUB-API-001_PYTHON_SDK_PUBLIC_API_CONTRACT.md'
+      - 'sdk-release-candidate/python/**'
+      - 'tools/check_sdk_public_api_contract.py'
+      - '.github/workflows/validate-sdk-public-api-contract.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sdk-public-api-contract-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Public API contract / CPython ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.12', '3.13', '3.14']
+
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+
+      - name: Set up CPython ${{ matrix.python }}
+        id: python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Parse machine-readable API contract
+        run: |
+          '${{ steps.python.outputs.python-path }}' -m json.tool \
+            artifacts/AX-PUB-API-001.json > /dev/null
+
+      - name: Compile API contract checker
+        run: |
+          '${{ steps.python.outputs.python-path }}' -m py_compile \
+            tools/check_sdk_public_api_contract.py
+
+      - name: Validate actual SDK surface against candidate contract
+        run: |
+          '${{ steps.python.outputs.python-path }}' \
+            tools/check_sdk_public_api_contract.py
+
+      - name: Re-run installed-candidate unit tests
+        env:
+          PYTHONPATH: sdk-release-candidate/python/src
+        run: |
+          '${{ steps.python.outputs.python-path }}' -m unittest discover \
+            -s sdk-release-candidate/python/tests \
+            -p 'test_*.py' \
+            -v
+
+      - name: Explicit maturity boundary
+        run: |
+          echo 'PUBLIC API CONTRACT CANDIDATE VALIDATED'
+          echo 'STABLE 1.0 GUARANTEE NOT ESTABLISHED'
+          echo 'SUPPORTED SDK NOT ESTABLISHED'
+          echo 'SDK PUBLICATION NOT AUTHORIZED'
