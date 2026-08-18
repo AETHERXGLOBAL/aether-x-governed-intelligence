@@ -1,0 +1,119 @@
+{
+  "artifact_id": "AX-PUB-DEV-009",
+  "version": "0.1",
+  "status": "DEV-GATE-05C DISTRIBUTION & EXTERNAL VALIDATION BASELINE / ENGINEERING CANDIDATE / SDK PUBLICATION NOT AUTHORIZED",
+  "gate": "DEV-GATE-05",
+  "phase": "DEV-GATE-05C",
+  "phase_state": "ACTIVE_ENGINEERING_OBJECTIVE",
+  "parent_artifact": "AX-PUB-DEV-008",
+  "parent_phase_state": "DEV-GATE-05B CLOSED",
+  "publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
+  "external_registry_write_authorized": false,
+  "testpypi_publication_authorized": false,
+  "pypi_publication_authorized": false,
+  "license_granted": false,
+  "supported_sdk_established": false,
+  "package_identity": {
+    "distribution_candidate": "aetherxglobal-governed-intelligence",
+    "normalized_name": "aetherxglobal-governed-intelligence",
+    "version_candidate": "0.1.0rc1",
+    "import_namespace": "aetherxglobal.governed_intelligence",
+    "canonical_registry": "PyPI",
+    "controlled_external_registry": "TestPyPI",
+    "registry_ownership_established": false,
+    "registry_name_reserved": false,
+    "availability_observation": {
+      "observation_date": "2026-08-18",
+      "method": "OFFICIAL_PYPI_WEB_SEARCH_EXACT_NAME_RECONNAISSANCE",
+      "exact_project_discovered": false,
+      "interpretation": "NO_EXACT_PROJECT_DISCOVERED_IN_CURRENT_SEARCH / NOT AN OWNERSHIP OR RESERVATION CLAIM",
+      "fresh_recheck_required_immediately_before_any_AUTHORIZED_registry_action": true
+    },
+    "known_collision_rejected": {
+      "distribution": "AetherX",
+      "reason": "UNRELATED_EXISTING_PYPI_PROJECT"
+    }
+  },
+  "validated_candidate_identity": {
+    "baseline_commit": "774abcce340c3fbaf3481ab5244ee1d41b88243c",
+    "closure_commit": "b588425a8937293f900f3610d83d40880133fb79",
+    "wheel_filename": "aetherxglobal_governed_intelligence-0.1.0rc1-py3-none-any.whl",
+    "wheel_sha256": "bd3c3bfc7306c9b45659e3e0533ea1ac24b065a4c577f08cbe987cc10a4d1fac",
+    "sdist_filename": "aetherxglobal_governed_intelligence-0.1.0rc1.tar.gz",
+    "sdist_sha256": "2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99",
+    "closure_evidence": "AX-PUB-CI-009",
+    "verified_runtime_matrix": ["3.11", "3.12", "3.13", "3.14"]
+  },
+  "distribution_validation": {
+    "local_simple_index_simulation": "REQUIRED_ENGINEERING_EVIDENCE",
+    "local_simple_index_is_external_registry_validation": false,
+    "simple_repository_contract": "PYTHON_SIMPLE_REPOSITORY_API_COMPATIBLE_TEST_SURFACE",
+    "install_from_index_required": true,
+    "exact_artifact_hash_verification_required": true,
+    "external_registry_validation_required_for_phase_closure": true,
+    "external_registry_validation_state": "BLOCKED_PENDING_EXPLICIT_AUTHORITY_AND_RELEASE_CONTROLS",
+    "testpypi_or_equivalent_after_authorization": true,
+    "production_pypi_allowed_in_phase_05c": false
+  },
+  "external_evaluation": {
+    "minimum_independent_human_evaluators": 1,
+    "human_external_evaluation_occurred": false,
+    "external_adoption_established": false,
+    "evaluator_identity_or_bounded_record_required": true,
+    "exact_distribution_digest_required": true,
+    "environment_and_runtime_required": true,
+    "machine_readable_result_required": true,
+    "issue_disposition_required": true,
+    "unresolved_critical_allowed": false,
+    "high_severity_requires_fix_or_explicit_risk_acceptance": true,
+    "endorsement_inferred_from_evaluation": false
+  },
+  "release_controls_observation": {
+    "observation_date": "2026-08-18",
+    "main_branch_protected": false,
+    "required_status_checks_enforced_on_main": false,
+    "current_release_controls_sufficient_for_external_registry_write": false,
+    "protected_pypi_environment_established": false,
+    "pypi_trusted_publisher_established": false,
+    "note": "UNESTABLISHED VALUES MUST BE RECHECKED FROM PLATFORM STATE BEFORE PROMOTION"
+  },
+  "authorized_pre_distribution_work": [
+    "LOCAL_SIMPLE_INDEX_SIMULATION",
+    "EXACT_ARTIFACT_INSTALL_FROM_LOCAL_INDEX",
+    "DISTRIBUTION_REPORT_GENERATION",
+    "EXTERNAL_EVALUATOR_PACK_PREPARATION",
+    "ISSUE_DISPOSITION_CONTRACT_PREPARATION",
+    "RELEASE_CONTROL_READINESS_CHECKS"
+  ],
+  "prohibited_without_separate_authority": [
+    "TESTPYPI_UPLOAD",
+    "PYPI_UPLOAD",
+    "PYPI_PROJECT_RESERVATION_OR_CREATION",
+    "PENDING_TRUSTED_PUBLISHER_REGISTRATION_IF_IT_CREATES_EXTERNAL_IDENTITY_COMMITMENT",
+    "SOFTWARE_LICENCE_GRANT",
+    "PUBLIC_SUPPORTED_SDK_CLAIM",
+    "EXTERNAL_ADOPTION_CLAIM"
+  ],
+  "closure_requirements": [
+    "FRESH_PACKAGE_NAME_RECHECK_AT_TIME_OF_AUTHORIZED_ACTION",
+    "AUTHORIZED_CONTROLLED_EXTERNAL_DISTRIBUTION_VALIDATION",
+    "INSTALL_FROM_EXTERNAL_INDEX_VERIFICATION_OF_EXACT_CANDIDATE",
+    "AT_LEAST_ONE_INDEPENDENT_HUMAN_EXTERNAL_EVALUATION",
+    "MACHINE_READABLE_EXTERNAL_EVALUATION_RESULT",
+    "ISSUE_DISPOSITION_COMPLETE",
+    "NO_UNRESOLVED_CRITICAL_FINDINGS",
+    "RELEASE_CONTROLS_SUFFICIENT_FOR_CONTROLLED_EXTERNAL_REGISTRY_ACTION",
+    "SDK_PUBLICATION_REMAINS_NOT_AUTHORIZED"
+  ],
+  "hard_blockers_current": [
+    "IP_AND_COPYRIGHT_CLEARANCE",
+    "PACKAGE_NAME_LIVE_AVAILABILITY_AND_OWNERSHIP",
+    "BRANCH_OR_REPOSITORY_RULESET_PROTECTION",
+    "PROTECTED_PYPI_RELEASE_ENVIRONMENT",
+    "AUTHORIZED_CONTROLLED_EXTERNAL_REGISTRY_VALIDATION",
+    "HUMAN_EXTERNAL_EVALUATION",
+    "FINAL_RELEASE_EVIDENCE_PACK",
+    "EXPLICIT_RELEASE_AUTHORITY"
+  ],
+  "next_phase_after_closure": "DEV-GATE-05D — Final Release Authority"
+}
