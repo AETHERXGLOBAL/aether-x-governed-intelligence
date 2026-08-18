@@ -1,8 +1,8 @@
 {
   "artifact_id": "AX-PUB-DEV-007",
   "version": "0.1",
-  "status": "DEV-GATE-05 DECISION BASELINE / ENGINEERING CANDIDATE",
-  "verification_state": "PR_VALIDATION_PENDING",
+  "status": "DEV-GATE-05A CLOSED / DEV-GATE-05B ACTIVE / SDK PUBLICATION NOT AUTHORIZED",
+  "verification_state": "DIRECT_CI_VALIDATED",
   "gate": "DEV-GATE-05",
   "publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
   "release_authorized": false,
@@ -104,12 +104,27 @@
     "preferred_contributor_control": "DCO_OR_EQUIVALENT",
     "cla_required_now": false
   },
+  "closure_evidence": {
+    "id": "AX-PUB-CI-008",
+    "version": "1.0",
+    "path": "evidence/AX-PUB-CI-008_SDK_RELEASE_DECISION_BASELINE_VALIDATION.md",
+    "validated_base_commit": "fa1e2d132071ddff195fb998d0d27a6b5b9d4e40",
+    "verified_head_commit": "7877abceda8fa6a372300fceb1ae0c124853d2b6",
+    "verification_pr": 31,
+    "workflow_run_id": 32168696722,
+    "workflow_run_number": 10,
+    "governance_workflow_run_id": 32168696655,
+    "governance_workflow_run_number": 159,
+    "conclusion": "SUCCESS",
+    "verified_runtime_matrix": ["3.11", "3.12", "3.13", "3.14"]
+  },
   "gate_05_phases": {
-    "DEV-GATE-05A": "DECISION_BASELINE_CANDIDATE",
-    "DEV-GATE-05B": "NOT_ESTABLISHED",
+    "DEV-GATE-05A": "CLOSED",
+    "DEV-GATE-05B": "ACTIVE_ENGINEERING_OBJECTIVE",
     "DEV-GATE-05C": "NOT_ESTABLISHED",
     "DEV-GATE-05D": "NOT_AUTHORIZED"
   },
+  "next_phase": "DEV-GATE-05B — Installable Package Candidate",
   "hard_blockers_before_publication": [
     "IP_AND_COPYRIGHT_CLEARANCE",
     "PACKAGE_NAME_LIVE_AVAILABILITY_AND_OWNERSHIP",
