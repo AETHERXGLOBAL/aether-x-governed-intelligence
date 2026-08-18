@@ -1,0 +1,130 @@
+name: Validate SDK Release Readiness Evidence Pack
+
+on:
+  pull_request:
+    paths:
+      - 'artifacts/AX-PUB-RELPACK-001.json'
+      - 'docs/AX-PUB-RELPACK-001_SDK_RELEASE_READINESS_EVIDENCE_PACK.md'
+      - 'tools/build_sdk_release_readiness_pack.py'
+      - 'tools/check_sdk_release_readiness_pack.py'
+      - 'tools/check_production_sdk_target.py'
+      - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'artifacts/AX-PUB-DEV-009.json'
+      - 'artifacts/AX-PUB-API-001.json'
+      - 'artifacts/AX-PUB-SUP-001.json'
+      - 'artifacts/AX-PUB-SEC-001.json'
+      - 'artifacts/AX-PUB-EVAL-PACK-001.json'
+      - 'evidence/AX-PUB-RELEASE-CONTROL-AUDIT-001.json'
+      - 'docs/PRODUCTION_SDK_DEFINITION_OF_DONE.md'
+      - 'docs/RELEASE_CONTROL_PLANE.md'
+      - '.github/workflows/validate-sdk-release-readiness-evidence-pack.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'artifacts/AX-PUB-RELPACK-001.json'
+      - 'docs/AX-PUB-RELPACK-001_SDK_RELEASE_READINESS_EVIDENCE_PACK.md'
+      - 'tools/build_sdk_release_readiness_pack.py'
+      - 'tools/check_sdk_release_readiness_pack.py'
+      - 'tools/check_production_sdk_target.py'
+      - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'artifacts/AX-PUB-DEV-009.json'
+      - 'artifacts/AX-PUB-API-001.json'
+      - 'artifacts/AX-PUB-SUP-001.json'
+      - 'artifacts/AX-PUB-SEC-001.json'
+      - 'artifacts/AX-PUB-EVAL-PACK-001.json'
+      - 'evidence/AX-PUB-RELEASE-CONTROL-AUDIT-001.json'
+      - 'docs/PRODUCTION_SDK_DEFINITION_OF_DONE.md'
+      - 'docs/RELEASE_CONTROL_PLANE.md'
+      - '.github/workflows/validate-sdk-release-readiness-evidence-pack.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sdk-release-readiness-pack-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Fail-closed SDK release-readiness aggregation
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+
+      - name: Set up CPython 3.14
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.14'
+
+      - name: Parse release-pack contract and source evidence
+        run: |
+          python -m json.tool artifacts/AX-PUB-RELPACK-001.json >/dev/null
+          python -m json.tool artifacts/AX-PUB-MANIFEST-001.json >/dev/null
+          python -m json.tool artifacts/AX-PUB-DEV-009.json >/dev/null
+          python -m json.tool artifacts/AX-PUB-API-001.json >/dev/null
+          python -m json.tool artifacts/AX-PUB-SUP-001.json >/dev/null
+          python -m json.tool artifacts/AX-PUB-SEC-001.json >/dev/null
+          python -m json.tool artifacts/AX-PUB-EVAL-PACK-001.json >/dev/null
+          python -m json.tool evidence/AX-PUB-RELEASE-CONTROL-AUDIT-001.json >/dev/null
+
+      - name: Compile release-readiness controls
+        run: |
+          python -m py_compile tools/build_sdk_release_readiness_pack.py
+          python -m py_compile tools/check_sdk_release_readiness_pack.py
+          python -m py_compile tools/check_production_sdk_target.py
+
+      - name: Validate release-pack contract
+        run: python tools/check_sdk_release_readiness_pack.py
+
+      - name: Revalidate production-SDK current-state firewall
+        run: python tools/check_production_sdk_target.py
+
+      - name: Build current release-readiness report
+        run: |
+          python tools/build_sdk_release_readiness_pack.py \
+            --source-commit '${{ github.sha }}' \
+            --json-out release-readiness/AX-PUB-RELPACK-REPORT-001.json
+
+      - name: Validate generated current report
+        run: |
+          python tools/check_sdk_release_readiness_pack.py \
+            --report release-readiness/AX-PUB-RELPACK-REPORT-001.json
+
+      - name: Show bounded current disposition
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('release-readiness/AX-PUB-RELPACK-REPORT-001.json')
+          r = json.loads(p.read_text())
+          print('AX_RELEASE_PACK_CURRENT_DISPOSITION')
+          print(f"required={r['required_dimension_count']}")
+          print(f"established={r['established_dimension_count']}")
+          print(f"blocked={r['blocked_dimension_count']}")
+          print(f"ready_for_05d={str(r['ready_for_dev_gate_05d_authority_review']).lower()}")
+          for b in r['blockers']:
+              print(f"BLOCKER {b['dimension']} state={b['state']}")
+          print('DEV-GATE-05D NOT AUTHORIZED')
+          print('SDK PUBLICATION NOT AUTHORIZED')
+          PY
+
+      - name: Preserve machine-readable readiness report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: ax-pub-relpack-report-${{ github.sha }}
+          path: release-readiness/AX-PUB-RELPACK-REPORT-001.json
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Explicit authority boundary
+        run: |
+          echo 'RELEASE READINESS REPORT: AGGREGATION ONLY'
+          echo 'READY FOR AUTHORITY REVIEW: FALSE / CURRENT EXPECTED BASELINE'
+          echo 'DEV-GATE-05D: NOT AUTHORIZED'
+          echo 'SDK PUBLICATION: NOT AUTHORIZED'
