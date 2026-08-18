@@ -83,7 +83,7 @@ jobs:
           set -euo pipefail
           '${{ steps.py314.outputs.python-path }}' -m json.tool artifacts/AX-PUB-DEV-008.json > /dev/null
 
-      - name: Validate Gate-05B document and package boundaries before build
+      - name: Validate Gate-05B and inherited governance before build
         shell: bash
         run: |
           set -euo pipefail
@@ -91,6 +91,9 @@ jobs:
           '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_candidate_boundary.py
           '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_decision_baseline.py
           '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_decision_manifest_state.py
+          '${{ steps.py314.outputs.python-path }}' tools/check_supply_chain_release_candidate.py
+          '${{ steps.py314.outputs.python-path }}' tools/check_external_evaluation_readiness.py
+          '${{ steps.py314.outputs.python-path }}' tools/check_artifact_manifest.py
 
       - name: Install exact Gate-05B build toolchain
         shell: bash
@@ -279,7 +282,7 @@ jobs:
           print('AX_SDK_INSTALLED_OUTSIDE_REPOSITORY_PASS namespace=aetherxglobal.governed_intelligence')
           PY
 
-      - name: Re-validate governance after package tests
+      - name: Re-validate Gate-05B and inherited governance after package tests
         shell: bash
         run: |
           set -euo pipefail
@@ -287,6 +290,9 @@ jobs:
           '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_candidate_boundary.py
           '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_decision_baseline.py
           '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_decision_manifest_state.py
+          '${{ steps.py314.outputs.python-path }}' tools/check_supply_chain_release_candidate.py
+          '${{ steps.py314.outputs.python-path }}' tools/check_external_evaluation_readiness.py
+          '${{ steps.py314.outputs.python-path }}' tools/check_artifact_manifest.py
 
       - name: Preserve candidate distributions as short-lived CI evidence
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
