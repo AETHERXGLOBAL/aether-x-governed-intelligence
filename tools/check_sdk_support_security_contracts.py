@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SUP = ROOT / "artifacts" / "AX-PUB-SUP-001.json"
 SEC = ROOT / "artifacts" / "AX-PUB-SEC-001.json"
 API = ROOT / "artifacts" / "AX-PUB-API-001.json"
+MANIFEST = ROOT / "artifacts" / "AX-PUB-MANIFEST-001.json"
 AUDIT = ROOT / "evidence" / "AX-PUB-RELEASE-CONTROL-AUDIT-001.json"
 SUP_DOC = ROOT / "docs" / "AX-PUB-SUP-001_SDK_SUPPORT_COMPATIBILITY_MAINTENANCE_CONTRACT.md"
 SEC_DOC = ROOT / "docs" / "AX-PUB-SEC-001_SDK_SECURITY_OPERATIONS_READINESS_CONTRACT.md"
@@ -75,11 +76,28 @@ def require_markers(path: Path, markers: tuple[str, ...]) -> None:
         require(marker in value, f"{path.relative_to(ROOT)} missing marker: {marker}")
 
 
+def version_at_least(raw: Any, major: int, minor: int) -> bool:
+    require(isinstance(raw, str), "manifest_version must be string")
+    try:
+        parts = raw.split("-", 1)[0].split(".")
+        return (int(parts[0]), int(parts[1])) >= (major, minor)
+    except (ValueError, IndexError):
+        fail(f"invalid manifest_version: {raw!r}")
+
+
 def main() -> int:
     sup = load(SUP)
     sec = load(SEC)
     api = load(API)
+    manifest = load(MANIFEST)
     audit = load(AUDIT)
+
+    require(manifest.get("manifest_id") == "AX-PUB-MANIFEST-001", "manifest identity mismatch")
+    require(version_at_least(manifest.get("manifest_version"), 1, 23), "support/security contracts require manifest >= 1.23 baseline")
+    program = manifest.get("current_developer_program")
+    require(isinstance(program, dict), "current developer program missing")
+    require(program.get("active_phase") == "DEV-GATE-05C — Distribution & External Validation", "Gate-05C must remain active")
+    require(program.get("sdk_publication_disposition") == "SDK PUBLICATION NOT AUTHORIZED", "publication boundary changed")
 
     require(sup.get("artifact_id") == "AX-PUB-SUP-001", "support artifact identity mismatch")
     require(sup.get("version") == "0.1", "support artifact version mismatch")
@@ -103,14 +121,18 @@ def main() -> int:
     require(isinstance(versioning, dict), "support versioning model missing")
     require(versioning.get("scheme") == "SEMANTIC_VERSIONING", "target support versioning scheme mismatch")
     for key in ("patch", "minor", "major", "pre_1_0"):
-        require(isinstance(versioning.get(key), str) and versioning.get(key), f"support version rule missing: {key}")
+        require(isinstance(versioning.get(key), str) and bool(versioning.get(key)), f"support version rule missing: {key}")
 
-    depreciation = sup.get("candidate_deprecation_policy")
-    require(isinstance(depreciation, dict), "candidate deprecation policy missing")
-    require(depreciation.get("normal_removal_requires_prior_deprecation") is True, "normal removal must require prior deprecation")
-    require(depreciation.get("target_minimum_notice_days_after_activation") == 90, "target deprecation notice must remain 90 days")
-    require(depreciation.get("target_minimum_intervening_minor_release") == 1, "target deprecation minor-release requirement mismatch")
-    require(depreciation.get("emergency_exception_allowed") is True, "emergency exception path missing")
+    deprecation = sup.get("candidate_deprecation_policy")
+    require(isinstance(deprecation, dict), "candidate deprecation policy missing")
+    require(deprecation.get("normal_removal_requires_prior_deprecation") is True, "normal removal must require prior deprecation")
+    require(deprecation.get("target_minimum_notice_days_after_activation") == 90, "target deprecation notice must remain 90 days")
+    require(deprecation.get("target_minimum_intervening_minor_release") == 1, "target deprecation minor-release requirement mismatch")
+    require(
+        deprecation.get("effective_rule_after_activation") == "LATER_OF_90_DAYS_OR_ONE_INTERVENING_MINOR_RELEASE_UNDER_NORMAL_CONDITIONS",
+        "target deprecation rule mismatch",
+    )
+    require(deprecation.get("emergency_exception_allowed") is True, "emergency exception path missing")
 
     maintenance = sup.get("candidate_maintenance_model")
     require(isinstance(maintenance, dict), "candidate maintenance model missing")
@@ -140,8 +162,7 @@ def main() -> int:
     require(provisional.get("dedicated_security_service") is False, "provisional email must not become a dedicated service claim")
     require(provisional.get("sla") is False, "provisional security channel must not imply SLA")
 
-    lifecycle = sec.get("case_lifecycle")
-    require(lifecycle == [
+    require(sec.get("case_lifecycle") == [
         "RECEIVED",
         "TRIAGED",
         "VALIDATED_OR_REJECTED",
@@ -155,9 +176,13 @@ def main() -> int:
     require(set(sec.get("activation_requirements", [])) == SEC_ACTIVATION, "security activation requirements changed unexpectedly")
 
     require(api.get("artifact_id") == "AX-PUB-API-001", "API contract missing")
+    require(api.get("sdk_distribution_candidate") == PROJECT, "API distribution identity mismatch")
     require(api.get("sdk_version_candidate") == VERSION, "support/security candidate must bind current API version")
+    require(api.get("import_namespace") == IMPORT, "API namespace mismatch")
+    require(api.get("verified_runtime_target") == RUNTIMES, "API runtime target mismatch")
     require(api.get("support_commitment_established") is False, "API artifact must not pre-establish support")
     require(api.get("stable_api_guarantee_established") is False, "API artifact must remain pre-stable")
+    require(api.get("sdk_publication_authorized") is False, "API artifact publication boundary changed")
 
     require(audit.get("report_format") == "AX-PUB-RELEASE-CONTROL-AUDIT-001", "release-control audit missing")
     require(audit.get("github_controls_ready_for_release_promotion") is False, "release controls must remain not ready at this candidate state")
@@ -167,7 +192,7 @@ def main() -> int:
 
     require_markers(SUP_DOC, (
         "AX-PUB-SUP-001",
-        "SUPPORT COMMITMENT ESTABLISHED: `NO`".replace(" ESTABLISHED", " established").replace("`NO`", "`NO`"),
+        "Support commitment established: `NO`",
         "90 days",
         "one intervening supported minor release",
         "SUPPORTED SDK: NOT ESTABLISHED",
@@ -185,17 +210,25 @@ def main() -> int:
         PROVISIONAL_SECURITY_EMAIL,
         "provisional public reporting path",
         "does not represent a dedicated security-response service, SLA, bug-bounty program or certification",
+        "AX-PUB-SEC-001",
+        "SECURITY OPERATIONS READY: NO",
+        "SDK PUBLICATION: NOT AUTHORIZED",
     ))
     require_markers(MIGRATION, (
         "Migration & Deprecation Draft",
+        PROJECT,
+        VERSION,
+        "AX-PUB-API-001",
+        "AX-PUB-SUP-001",
+        "No Fixed Support Window Yet",
         "PRE-STABLE CANDIDATE ≠ STABLE PUBLIC API",
         "SDK PUBLICATION NOT AUTHORIZED",
     ))
 
     print(
         "AX_SDK_SUPPORT_SECURITY_CONTRACT_PASS "
-        "support=NOT_ACTIVATED security_ops=NOT_READY deprecation_target=90d/1minor "
-        "release_controls=NOT_READY publication=NOT_AUTHORIZED"
+        "manifest>=1.23 support=NOT_ACTIVATED security_ops=NOT_READY "
+        "deprecation_target=90d/1minor release_controls=NOT_READY publication=NOT_AUTHORIZED"
     )
     return 0
 
