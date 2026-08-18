@@ -1,0 +1,57 @@
+{
+  "artifact_id": "AX-PUB-DEV-008",
+  "version": "0.1",
+  "status": "DEV-GATE-05B INSTALLABLE PACKAGE CANDIDATE / NOT YET VERIFIED",
+  "parent_decision_artifact": "AX-PUB-DEV-007",
+  "publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
+  "distribution_authorized": false,
+  "license_granted": false,
+  "distribution": {
+    "name_candidate": "aetherxglobal-governed-intelligence",
+    "version_candidate": "0.1.0rc1",
+    "import_namespace": "aetherxglobal.governed_intelligence",
+    "requires_python": ">=3.11,<3.15",
+    "runtime_dependencies": [],
+    "public_registry": "PyPI",
+    "registry_ownership_established": false
+  },
+  "build": {
+    "standard": "PEP 517 / PEP 621",
+    "layout": "src",
+    "backend": "hatchling",
+    "backend_candidate_version": "1.31.0",
+    "frontend_candidate": "build",
+    "frontend_candidate_version": "1.5.0",
+    "wheel_required": true,
+    "sdist_required": true,
+    "exact_distribution_testing_required": true,
+    "reproducibility_evidence_established": false
+  },
+  "runtime_target": ["3.11", "3.12", "3.13", "3.14"],
+  "scope": {
+    "offline_validation_only": true,
+    "network_allowed": false,
+    "credentials_allowed": false,
+    "authentication_allowed": false,
+    "production_authorization_allowed": false,
+    "tool_invocation_allowed": false,
+    "real_world_execution_allowed": false,
+    "private_repository_runtime_dependency_allowed": false
+  },
+  "validator_source_identity": {
+    "AX-PUB-REF-001": "10b31f990cdeb0a2285081d4b4a8cc2457564c69",
+    "AX-PUB-REF-002": "f4344dfb70685b490e716e33f8f2fd2da1f0ca50",
+    "AX-PUB-REF-003": "6c8f4d325ef3d3f2041909f8bba7d554ced4366e"
+  },
+  "verification": {
+    "package_boundary": "PENDING",
+    "build": "PENDING",
+    "wheel_install": "PENDING",
+    "sdist_build": "PENDING",
+    "installed_package_tests": "PENDING",
+    "runtime_matrix": "PENDING",
+    "artifact_inventory": "PENDING",
+    "artifact_digests": "PENDING",
+    "publication": "NOT_AUTHORIZED"
+  }
+}
