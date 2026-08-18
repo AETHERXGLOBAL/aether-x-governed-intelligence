@@ -144,8 +144,8 @@ Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json
 Current moving state:
 
 ```text
-AX-PUB-MANIFEST-001 v1.6
-AX-PUB-POL-001 v1.5
+AX-PUB-MANIFEST-001 v1.7
+AX-PUB-POL-001 v1.6
 ```
 
 See [`COMPATIBILITY_AND_VERSIONING.md`](./COMPATIBILITY_AND_VERSIONING.md).
@@ -187,20 +187,41 @@ The release tag target packages the published repository state. `AX-PUB-SNAP-002
 
 `PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`
 
-## 11. Private-Project Boundary
+## 11. SDK Publication Readiness
+
+This repository does **not** currently publish or imply an officially supported SDK.
+
+The current gate is:
+
+- [`AX-PUB-GATE-001 — Developer SDK Publication Readiness Gate`](./AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md)
+
+Current disposition:
+
+```text
+SDK PUBLICATION NOT AUTHORIZED
+```
+
+The gate requires explicit evidence and authority for licence/IP terms, interface compatibility, package identity/distribution, security and credential boundaries, failure semantics, SDK-specific conformance, supply-chain controls, documentation and maintenance/support commitments before any supported SDK publication is represented as approved.
+
+`PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`  
+`PUBLIC ENGINEERING RELEASE ≠ SDK RELEASE`  
+`SDK READINESS GATE ≠ SDK COMMITMENT`
+
+## 12. Private-Project Boundary
 
 The public schemas, reference validators, examples and conformance kits are self-contained in this public repository.
 
 They do not checkout, import, execute, package, or depend on private AETHER X project repositories. Public examples are synthetic. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside the public disclosure boundary.
 
-## 12. Public Claim Boundary
+## 13. Public Claim Boundary
 
 `PUBLIC ARTIFACT ≠ PRODUCT IMPLEMENTATION`  
 `PUBLIC SPECIFICATION ≠ INTERNAL CONTROL IMPLEMENTATION`  
 `REFERENCE VALIDATOR PASS ≠ PRODUCTION APPROVAL`  
 `AGENT AUTHORITY REFERENCE ≠ PRODUCTION AUTHORIZATION`  
 `PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`  
-`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`
+`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`  
+`PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`
 
 ---
 
