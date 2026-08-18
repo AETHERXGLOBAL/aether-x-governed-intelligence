@@ -1,0 +1,68 @@
+{
+  "artifact_id": "AX-PUB-RC-001",
+  "version": "0.1.0-rc1",
+  "type": "NON_PUBLISHED_ENGINEERING_RELEASE_CANDIDATE",
+  "state": "DEV-GATE-03_CANDIDATE",
+  "sdk_candidate": {
+    "id": "AX-PUB-DEV-004",
+    "version": "1.0",
+    "state": "DEV-GATE-02_CLOSED"
+  },
+  "bundle_filename": "AX-PUB-RC-001.zip",
+  "build_script": "tools/build_release_candidate.py",
+  "state_checker": "tools/check_supply_chain_release_candidate.py",
+  "canonical_build_runtime": "Python 3.13",
+  "deterministic_build_required": true,
+  "build_provenance_attestation_required": true,
+  "sbom_format": "SPDX-2.3",
+  "sbom_attestation_required": true,
+  "artifact_upload_scope": "CI_ONLY",
+  "artifact_retention_days": 7,
+  "package_identity_status": "NOT APPROVED",
+  "registry_status": "NOT AUTHORIZED",
+  "licence_decided": false,
+  "sdk_publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
+  "release_candidate_established": false,
+  "private_repository_dependency_allowed": false,
+  "third_party_runtime_dependencies": [],
+  "source_files": [
+    "sdk-candidate/python/aetherx_sdk_candidate.py",
+    "sdk-candidate/python/README.md",
+    "sdk-candidate/python/example.py",
+    "sdk-candidate/python/run_candidate_conformance.py",
+    "sdk-candidate/python/tests/test_sdk_candidate.py",
+    "reference-implementations/eav-contract-validator/validator.py",
+    "reference-implementations/eav-contract-validator/examples/valid_bundle.json",
+    "reference-implementations/eav-contract-validator/examples/invalid_bundle.json",
+    "reference-implementations/point-in-time-knowledge-validator/validator.py",
+    "reference-implementations/point-in-time-knowledge-validator/examples/valid_envelope.json",
+    "reference-implementations/point-in-time-knowledge-validator/examples/invalid_envelope.json",
+    "reference-implementations/agent-tool-authority-validator/validator.py",
+    "reference-implementations/agent-tool-authority-validator/examples/valid_envelope.json",
+    "reference-implementations/agent-tool-authority-validator/examples/invalid_envelope.json",
+    "docs/AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md",
+    "docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md",
+    "docs/AX-PUB-DEV-004_SDK_CANDIDATE_ENGINEERING_BASELINE.md",
+    "artifacts/AX-PUB-DEV-002.json",
+    "artifacts/AX-PUB-DEV-003.json",
+    "artifacts/AX-PUB-DEV-004.json",
+    "SECURITY.md"
+  ],
+  "generated_bundle_metadata": [
+    "release-candidate/AX-PUB-RC-001_BUILD_MANIFEST.json",
+    "release-candidate/AX-PUB-RC-001.spdx.json"
+  ],
+  "forbidden_distribution_metadata": [
+    "pyproject.toml",
+    "setup.py",
+    "setup.cfg",
+    ".pypirc"
+  ],
+  "claim_boundary": [
+    "RELEASE-CANDIDATE ENGINEERING DOES NOT AUTHORIZE PACKAGE OR REGISTRY PUBLICATION",
+    "CI ARTIFACT UPLOAD DOES NOT ESTABLISH A PUBLIC SDK RELEASE",
+    "BUILD PROVENANCE ATTESTATION DOES NOT ESTABLISH SECURITY CERTIFICATION",
+    "SPDX SBOM DOCUMENTATION DOES NOT GRANT A SOFTWARE REUSE LICENCE",
+    "SDK PUBLICATION REMAINS NOT AUTHORIZED"
+  ]
+}
