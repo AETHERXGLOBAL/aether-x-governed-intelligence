@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BASELINE_DOC = ROOT / "docs" / "AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md"
 BASELINE_JSON = ROOT / "artifacts" / "AX-PUB-DEV-002.json"
 MANIFEST = ROOT / "artifacts" / "AX-PUB-MANIFEST-001.json"
+CI_EVIDENCE = ROOT / "evidence" / "AX-PUB-CI-003_DEVELOPER_CONTRACT_BASELINE_VALIDATION.md"
 
 REQUIRED_ERRORS = {
     "AXDEV-CONTRACT-INVALID",
@@ -62,7 +63,8 @@ def main() -> int:
         for marker in (
             "AX-PUB-DEV-002",
             "`1.0`",
-            "DEV-GATE-00",
+            "DEV-GATE-00 CLOSED",
+            "AX-PUB-CI-003",
             "SDK PUBLICATION NOT AUTHORIZED",
             "Baseline Error Taxonomy",
             "Public / Private Dependency Boundary",
@@ -74,16 +76,36 @@ def main() -> int:
             if error_id not in text:
                 findings.append(f"baseline document missing error taxonomy id: {error_id}")
 
+    if not CI_EVIDENCE.is_file():
+        findings.append("AX-PUB-CI-003 evidence file missing")
+    else:
+        evidence_text = CI_EVIDENCE.read_text(encoding="utf-8")
+        for marker in (
+            "AX-PUB-CI-003",
+            "32134148610",
+            "Run number:",
+            "97",
+            "SUCCESS",
+            "ae72355968f64997242b770457634fe4f3bf021c",
+            "8e821f9debc27ce8924e1480852b047a8ecf6f02",
+        ):
+            if marker not in evidence_text:
+                findings.append(f"AX-PUB-CI-003 missing marker: {marker}")
+
     baseline = load_json(BASELINE_JSON, findings)
     if baseline is not None:
         if baseline.get("artifact_id") != "AX-PUB-DEV-002":
             findings.append("baseline artifact_id mismatch")
         if baseline.get("version") != "1.0":
             findings.append("baseline version mismatch")
-        if baseline.get("state") not in {"DEV-GATE-00_CANDIDATE", "DEV-GATE-00_CLOSED"}:
-            findings.append("baseline gate state invalid")
+        if baseline.get("state") != "DEV-GATE-00_CLOSED":
+            findings.append("baseline state must be DEV-GATE-00_CLOSED")
+        if baseline.get("gate_exit_state") != "CLOSED":
+            findings.append("baseline gate_exit_state must be CLOSED")
         if baseline.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
             findings.append("baseline SDK publication disposition mismatch")
+        if baseline.get("next_gate") != "DEV-GATE-01 — Reproducible Developer Experience":
+            findings.append("baseline next gate mismatch")
         if baseline.get("sdk_semver_active") is not False:
             findings.append("SDK SemVer must remain inactive at DEV-GATE-00")
         if baseline.get("package_identity_approved") is not False:
@@ -92,6 +114,27 @@ def main() -> int:
             findings.append("registry publication must remain unauthorized at DEV-GATE-00")
         if baseline.get("licence_decided") is not False:
             findings.append("licence decision must remain false at DEV-GATE-00")
+
+        closure = baseline.get("closure_evidence")
+        if not isinstance(closure, dict):
+            findings.append("closure_evidence must be an object")
+        else:
+            expected = {
+                "id": "AX-PUB-CI-003",
+                "verification_pr": 8,
+                "workflow": "Validate Public Artifact Manifest",
+                "workflow_run_id": 32134148610,
+                "workflow_run_number": 97,
+                "conclusion": "SUCCESS",
+                "validated_base_commit": "8e821f9debc27ce8924e1480852b047a8ecf6f02",
+                "verification_head_commit": "ae72355968f64997242b770457634fe4f3bf021c",
+            }
+            for key, value in expected.items():
+                if closure.get(key) != value:
+                    findings.append(f"closure_evidence {key} mismatch")
+            path = closure.get("path")
+            if path != "evidence/AX-PUB-CI-003_DEVELOPER_CONTRACT_BASELINE_VALIDATION.md":
+                findings.append("closure_evidence path mismatch")
 
         errors = baseline.get("error_taxonomy")
         if not isinstance(errors, list):
@@ -150,6 +193,11 @@ def main() -> int:
         current = manifest.get("current_developer_contract_baseline")
         if not isinstance(current, dict) or current.get("id") != "AX-PUB-DEV-002" or current.get("version") != "1.0":
             findings.append("manifest current_developer_contract_baseline mismatch")
+        else:
+            if current.get("state") != "CLOSED":
+                findings.append("manifest developer contract baseline state must be CLOSED")
+            if current.get("closure_evidence") != "AX-PUB-CI-003":
+                findings.append("manifest developer contract baseline closure evidence mismatch")
 
     if findings:
         return fail(findings)
