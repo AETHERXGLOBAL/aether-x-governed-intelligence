@@ -121,8 +121,8 @@ def main() -> int:
 
     if manifest.get("manifest_id") != "AX-PUB-MANIFEST-001":
         findings.append("manifest_id mismatch")
-    if manifest.get("manifest_version") != "1.13":
-        findings.append("manifest_version must be 1.13")
+    if manifest.get("manifest_version") != "1.14":
+        findings.append("manifest_version must be 1.14")
     if manifest.get("repository") != "AETHERXGLOBAL/aether-x-governed-intelligence":
         findings.append("repository identity mismatch")
 
@@ -202,7 +202,7 @@ def main() -> int:
             findings.append(f"validation evidence path missing: {item.get('path')}")
         if not isinstance(item.get("verified_head_commit"), str) or len(item.get("verified_head_commit", "")) != 40:
             findings.append(f"validation_evidence[{index}].verified_head_commit invalid")
-    for evidence_id in ("AX-PUB-CI-001", "AX-PUB-CI-002", "AX-PUB-CI-003", "AX-PUB-CI-004"):
+    for evidence_id in ("AX-PUB-CI-001", "AX-PUB-CI-002", "AX-PUB-CI-003", "AX-PUB-CI-004", "AX-PUB-CI-005"):
         if evidence_id not in evidence_ids:
             findings.append(f"required validation evidence missing: {evidence_id}")
 
@@ -240,9 +240,9 @@ def main() -> int:
             findings.append("current developer program path missing")
         if developer_program.get("state") != "UNDER DEVELOPMENT":
             findings.append("developer program state mismatch")
-        if developer_program.get("closed_gate") != "DEV-GATE-01 — Reproducible Developer Experience":
+        if developer_program.get("closed_gate") != "DEV-GATE-02 — SDK Candidate":
             findings.append("developer program latest closed gate mismatch")
-        if developer_program.get("active_gate") != "DEV-GATE-02 — SDK Candidate":
+        if developer_program.get("active_gate") != "DEV-GATE-03 — Supply-Chain & Release Candidate":
             findings.append("developer program active gate mismatch")
         if developer_program.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
             findings.append("developer program SDK disposition mismatch")
@@ -285,14 +285,16 @@ def main() -> int:
                 findings.append(f"current SDK candidate {field} missing")
         if sdk_candidate.get("gate") != "DEV-GATE-02":
             findings.append("SDK candidate gate mismatch")
-        if sdk_candidate.get("state") != "CANDIDATE_NOT_ESTABLISHED":
-            findings.append("SDK candidate must remain CANDIDATE_NOT_ESTABLISHED before direct CI evidence")
+        if sdk_candidate.get("state") != "CLOSED":
+            findings.append("SDK candidate state must be CLOSED")
         if sdk_candidate.get("candidate_version") != "0.1.0-candidate":
             findings.append("SDK candidate version mismatch")
         if sdk_candidate.get("candidate_runtime_matrix") != EXPECTED_RUNTIMES:
             findings.append("SDK candidate runtime matrix mismatch")
-        if sdk_candidate.get("verified_runtime_matrix") != []:
-            findings.append("SDK candidate runtime matrix must remain unverified")
+        if sdk_candidate.get("verified_runtime_matrix") != EXPECTED_RUNTIMES:
+            findings.append("SDK candidate verified runtime matrix mismatch")
+        if sdk_candidate.get("closure_evidence") != "AX-PUB-CI-005":
+            findings.append("SDK candidate closure evidence mismatch")
         if sdk_candidate.get("package_identity_status") != "NOT APPROVED":
             findings.append("SDK package identity must remain NOT APPROVED")
         if sdk_candidate.get("registry_status") != "NOT AUTHORIZED":
