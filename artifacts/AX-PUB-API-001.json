@@ -1,0 +1,147 @@
+{
+  "artifact_id": "AX-PUB-API-001",
+  "version": "0.1",
+  "type": "PYTHON_SDK_PUBLIC_API_CONTRACT_CANDIDATE",
+  "state": "DEV_GATE_05C_API_CONTRACT_CANDIDATE",
+  "sdk_distribution_candidate": "aetherxglobal-governed-intelligence",
+  "sdk_version_candidate": "0.1.0rc1",
+  "import_namespace": "aetherxglobal.governed_intelligence",
+  "requires_python": ">=3.11,<3.15",
+  "verified_runtime_target": ["3.11", "3.12", "3.13", "3.14"],
+  "support_commitment_established": false,
+  "stable_api_guarantee_established": false,
+  "sdk_publication_authorized": false,
+  "public_exports": [
+    "SDK_VERSION",
+    "__version__",
+    "ErrorCategory",
+    "Finding",
+    "ValidationResult",
+    "supported_contracts",
+    "validate",
+    "validate_eav",
+    "validate_point_in_time",
+    "validate_agent_authority"
+  ],
+  "callable_contracts": {
+    "supported_contracts": {
+      "parameters": [],
+      "return_semantics": "tuple of contract descriptors"
+    },
+    "validate": {
+      "parameters": [
+        {"name": "contract_id", "kind": "POSITIONAL_OR_KEYWORD", "required": true},
+        {"name": "payload", "kind": "POSITIONAL_OR_KEYWORD", "required": true},
+        {"name": "version", "kind": "KEYWORD_ONLY", "required": false, "default": "1.0"}
+      ],
+      "return_type": "ValidationResult"
+    },
+    "validate_eav": {
+      "parameters": [
+        {"name": "payload", "kind": "POSITIONAL_OR_KEYWORD", "required": true},
+        {"name": "version", "kind": "KEYWORD_ONLY", "required": false, "default": "1.0"}
+      ],
+      "return_type": "ValidationResult",
+      "contract_id": "AX-PUB-SPEC-002"
+    },
+    "validate_point_in_time": {
+      "parameters": [
+        {"name": "payload", "kind": "POSITIONAL_OR_KEYWORD", "required": true},
+        {"name": "version", "kind": "KEYWORD_ONLY", "required": false, "default": "1.0"}
+      ],
+      "return_type": "ValidationResult",
+      "contract_id": "AX-PUB-SPEC-003"
+    },
+    "validate_agent_authority": {
+      "parameters": [
+        {"name": "payload", "kind": "POSITIONAL_OR_KEYWORD", "required": true},
+        {"name": "version", "kind": "KEYWORD_ONLY", "required": false, "default": "1.0"}
+      ],
+      "return_type": "ValidationResult",
+      "contract_id": "AX-PUB-SPEC-004"
+    }
+  },
+  "public_types": {
+    "Finding": {
+      "kind": "frozen_dataclass",
+      "fields": ["category", "source_code", "path", "message"],
+      "methods": ["as_dict"]
+    },
+    "ValidationResult": {
+      "kind": "frozen_dataclass",
+      "fields": ["contract_id", "contract_version", "reference_validator_id", "valid", "findings", "sdk_version"],
+      "methods": ["as_dict"]
+    },
+    "ErrorCategory": {
+      "kind": "str_enum",
+      "values": [
+        "AXDEV-CONTRACT-INVALID",
+        "AXDEV-VERSION-UNSUPPORTED",
+        "AXDEV-EVIDENCE-INSUFFICIENT",
+        "AXDEV-AUTHORITY-UNESTABLISHED",
+        "AXDEV-AUTHORITY-INACTIVE",
+        "AXDEV-AUTHORITY-SCOPE-VIOLATION",
+        "AXDEV-TEMPORAL-CUTOFF-VIOLATION",
+        "AXDEV-PROVENANCE-INCOMPLETE",
+        "AXDEV-CONFLICT-UNRESOLVED",
+        "AXDEV-VERIFICATION-FAILED",
+        "AXDEV-VERIFICATION-INCONCLUSIVE",
+        "AXDEV-EXECUTION-NOT-VERIFIED",
+        "AXDEV-UNSUPPORTED-OPERATION"
+      ]
+    }
+  },
+  "supported_contract_inventory": [
+    {
+      "contract_id": "AX-PUB-SPEC-002",
+      "contract_version": "1.0",
+      "schema_id": "AX-PUB-SCHEMA-001",
+      "reference_validator_id": "AX-PUB-REF-001"
+    },
+    {
+      "contract_id": "AX-PUB-SPEC-003",
+      "contract_version": "1.0",
+      "schema_id": "AX-PUB-SCHEMA-002",
+      "reference_validator_id": "AX-PUB-REF-002"
+    },
+    {
+      "contract_id": "AX-PUB-SPEC-004",
+      "contract_version": "1.0",
+      "schema_id": "AX-PUB-SCHEMA-003",
+      "reference_validator_id": "AX-PUB-REF-003"
+    }
+  ],
+  "declared_behavioral_invariants": [
+    "OFFLINE_ONLY",
+    "NO_NETWORK_CALLS",
+    "NO_CREDENTIAL_SURFACE",
+    "NO_TOOL_EXECUTION",
+    "NO_PRODUCTION_AUTHORIZATION",
+    "NO_BROKERAGE_OR_FINANCIAL_EXECUTION",
+    "UNSUPPORTED_CONTRACT_FAILS_EXPLICITLY",
+    "UNSUPPORTED_VERSION_FAILS_EXPLICITLY",
+    "VALIDATION_RESULT_IS_DETERMINISTIC_FOR_IDENTICAL_INPUT_AND_VERSION"
+  ],
+  "compatibility_candidate_rules": {
+    "breaking_changes_include": [
+      "REMOVING_A_PUBLIC_EXPORT",
+      "RENAMING_A_PUBLIC_EXPORT",
+      "REMOVING_OR_RENAMING_A_REQUIRED_PARAMETER",
+      "CHANGING_POSITIONAL_OR_KEYWORD_TO_INCOMPATIBLE_PARAMETER_KIND",
+      "REMOVING_A_PUBLIC_DATACLASS_FIELD",
+      "REORDERING_PUBLIC_DATACLASS_CONSTRUCTOR_FIELDS",
+      "REMOVING_OR_CHANGING_AN_EXISTING_ERROR_CATEGORY_VALUE",
+      "CHANGING_EXISTING_CONTRACT_DESCRIPTOR_IDENTIFIERS",
+      "CHANGING_FAIL_CLOSED_UNSUPPORTED_CONTRACT_OR_VERSION_SEMANTICS"
+    ],
+    "additive_changes_require_review": true,
+    "pre_1_0_breaking_change_possible": true,
+    "stable_1_0_semver_commitment": false
+  },
+  "claim_boundaries": [
+    "API CONTRACT CANDIDATE DOES NOT ESTABLISH A SUPPORTED SDK",
+    "PUBLIC EXPORT DOES NOT ESTABLISH PRODUCTION FITNESS",
+    "PRE_1_0 CANDIDATE DOES NOT CREATE A STABLE 1.0 COMPATIBILITY GUARANTEE",
+    "SDK PUBLICATION NOT AUTHORIZED"
+  ]
+}
