@@ -1,10 +1,10 @@
 {
   "manifest_id": "AX-PUB-MANIFEST-001",
-  "manifest_version": "1.5",
+  "manifest_version": "1.6",
   "repository": "AETHERXGLOBAL/aether-x-governed-intelligence",
   "scope": "PUBLIC_ENGINEERING_ARTIFACT_COMPATIBILITY",
   "public_state": "CURRENT",
-  "versioning_policy": {"id":"AX-PUB-POL-001","version":"1.4","path":"docs/COMPATIBILITY_AND_VERSIONING.md"},
+  "versioning_policy": {"id":"AX-PUB-POL-001","version":"1.5","path":"docs/COMPATIBILITY_AND_VERSIONING.md"},
   "artifacts": [
     {"id":"AX-PUB-ARCH-001","version":"1.0","type":"REFERENCE_ARCHITECTURE","path":"specifications/AX-PUB-ARCH-001_GOVERNED_INTELLIGENCE_REFERENCE_ARCHITECTURE.md","state":"CURRENT","public_maturity":"CONCEPTUAL / NON-PRODUCT-SPECIFIC"},
     {"id":"AX-PUB-SPEC-002","version":"1.0","type":"CONTROL_SPECIFICATION","path":"specifications/AX-PUB-SPEC-002_EVIDENCE_AUTHORITY_VERIFICATION_CONTRACT.md","state":"CURRENT","public_maturity":"CONCEPTUAL / NON-PRODUCT-SPECIFIC"},
@@ -18,7 +18,8 @@
     {"id":"AX-PUB-REF-003","version":"1.0","type":"REFERENCE_IMPLEMENTATION","path":"reference-implementations/agent-tool-authority-validator/README.md","entrypoint":"reference-implementations/agent-tool-authority-validator/validator.py","state":"CURRENT","public_maturity":"CI-TESTED / EDUCATIONAL / NON-PRODUCTION"},
     {"id":"AX-PUB-TEST-001","version":"1.0","type":"PUBLIC_CONFORMANCE_TEST_KIT","path":"conformance/AX-PUB-TEST-001/README.md","entrypoint":"conformance/AX-PUB-TEST-001/run_conformance.py","state":"CURRENT","public_maturity":"REPRODUCIBLY VERIFIED / CI WORKFLOW PUBLISHED / CI RUN UNVERIFIED / NON-PRODUCTION"},
     {"id":"AX-PUB-TEST-002","version":"1.0","type":"PUBLIC_CONFORMANCE_TEST_KIT","path":"conformance/AX-PUB-TEST-002/README.md","entrypoint":"conformance/AX-PUB-TEST-002/run_conformance.py","state":"CURRENT","public_maturity":"CI-TESTED / NON-PRODUCTION"},
-    {"id":"AX-PUB-POL-001","version":"1.4","type":"PUBLIC_ENGINEERING_POLICY","path":"docs/COMPATIBILITY_AND_VERSIONING.md","state":"CURRENT","public_maturity":"ACTIVE FOR THIS REPOSITORY"}
+    {"id":"AX-PUB-POL-001","version":"1.5","type":"PUBLIC_ENGINEERING_POLICY","path":"docs/COMPATIBILITY_AND_VERSIONING.md","state":"CURRENT","public_maturity":"ACTIVE FOR THIS REPOSITORY"},
+    {"id":"AX-PUB-REL-001","version":"1.0","type":"PUBLIC_ENGINEERING_RELEASE_RECORD","path":"evidence/AX-PUB-REL-001_PUBLIC_ENGINEERING_VNEXT_RELEASE.md","state":"CURRENT","public_maturity":"PUBLISHED GIT TAG / GITHUB RELEASE RECORD / NON-PRODUCT"}
   ],
   "relationships": [
     {"from_id":"AX-PUB-SPEC-002","from_version":"1.0","relationship":"ALIGNS_WITH_ARCHITECTURE","to_id":"AX-PUB-ARCH-001","to_version":"1.0","state":"COMPATIBLE"},
@@ -36,7 +37,8 @@
     {"from_id":"AX-PUB-REF-003","from_version":"1.0","relationship":"USES_STRUCTURAL_CONTRACT","to_id":"AX-PUB-SCHEMA-003","to_version":"1.0","state":"COMPATIBLE"},
     {"from_id":"AX-PUB-TEST-001","from_version":"1.0","relationship":"EXERCISES_PUBLIC_BEHAVIOR_OF","to_id":"AX-PUB-REF-001","to_version":"1.0","state":"COMPATIBLE"},
     {"from_id":"AX-PUB-TEST-001","from_version":"1.0","relationship":"EXERCISES_PUBLIC_BEHAVIOR_OF","to_id":"AX-PUB-REF-002","to_version":"1.0","state":"COMPATIBLE"},
-    {"from_id":"AX-PUB-TEST-002","from_version":"1.0","relationship":"EXERCISES_PUBLIC_BEHAVIOR_OF","to_id":"AX-PUB-REF-003","to_version":"1.0","state":"COMPATIBLE"}
+    {"from_id":"AX-PUB-TEST-002","from_version":"1.0","relationship":"EXERCISES_PUBLIC_BEHAVIOR_OF","to_id":"AX-PUB-REF-003","to_version":"1.0","state":"COMPATIBLE"},
+    {"from_id":"AX-PUB-REL-001","from_version":"1.0","relationship":"PACKAGES_PUBLIC_STATE_WITH","to_id":"AX-PUB-SNAP-002","to_version":"1.0","state":"COMPATIBLE"}
   ],
   "validation_evidence": [
     {
@@ -59,6 +61,15 @@
     "anchor_commit": "6dfdec04a4d8375bc2da0bb6a3830ff07eeb1711",
     "public_maturity": "CI-VALIDATED REPRODUCIBILITY ANCHOR / NON-PRODUCT"
   },
+  "current_release": {
+    "id": "AX-PUB-REL-001",
+    "version": "1.0",
+    "tag": "public-engineering-vnext-1.0",
+    "tag_target_commit": "4f067c9fd3d3ac065ac50b10faf1abd1bdb91bb6",
+    "release_title": "AETHER X Governed Intelligence — Public Engineering vNext 1.0",
+    "path": "evidence/AX-PUB-REL-001_PUBLIC_ENGINEERING_VNEXT_RELEASE.md",
+    "public_maturity": "FORMAL PUBLIC ENGINEERING RELEASE / NON-PRODUCT"
+  },
   "claim_boundary": [
     "PUBLIC COMPATIBILITY DOES NOT ESTABLISH PRODUCT INTEGRATION",
     "REFERENCE VALIDATOR PASS DOES NOT ESTABLISH PRODUCTION APPROVAL OR AUTHORIZATION",
@@ -66,6 +77,7 @@
     "MACHINE-READABLE SCHEMA DOES NOT ESTABLISH A PRODUCTION DATA MODEL OR AUTHORIZATION PLANE",
     "PUBLIC CI PASS DOES NOT ESTABLISH PRODUCT IMPLEMENTATION OR PRODUCT RELEASE",
     "PUBLIC SNAPSHOT DOES NOT ESTABLISH PRODUCT RELEASE",
+    "PUBLIC ENGINEERING RELEASE DOES NOT ESTABLISH PRODUCT RELEASE",
     "PUBLIC ARTIFACTS DO NOT ESTABLISH IMPLEMENTATION INSIDE AETHER X PORTFOLIO INITIATIVES"
   ]
 }
