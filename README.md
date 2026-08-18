@@ -43,8 +43,8 @@ Start with the **[Public Quickstart](./docs/QUICKSTART.md)**.
 
 Current moving public governance:
 
-- **[AX-PUB-MANIFEST-001 v1.5](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state and closure-evidence references.
-- **[AX-PUB-POL-001 v1.4](./docs/COMPATIBILITY_AND_VERSIONING.md)** — compatibility/versioning and snapshot policy.
+- **[AX-PUB-MANIFEST-001 v1.6](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state including release registration.
+- **[AX-PUB-POL-001 v1.5](./docs/COMPATIBILITY_AND_VERSIONING.md)** — compatibility, snapshot and formal public-engineering release semantics.
 - **[AX-PUB-CI-001](./evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md)** — verified agent-authority schema/reference/conformance CI evidence.
 - **[AX-PUB-CI-002](./evidence/AX-PUB-CI-002_VNEXT_SNAPSHOT_VALIDATION.md)** — verified vNext snapshot and manifest closure evidence.
 - **[AX-PUB-SNAP-002](./snapshots/AX-PUB-SNAP-002_GOVERNED_INTELLIGENCE_PUBLIC_VNEXT.md)** — current fixed `CI-VALIDATED` vNext reproducibility snapshot.
