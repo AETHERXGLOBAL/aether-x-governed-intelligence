@@ -5,15 +5,19 @@ on:
     branches:
       - main
     paths:
+      - 'docs/AX-PUB-DEV-008_INSTALLABLE_PACKAGE_CANDIDATE.md'
       - 'sdk-release-candidate/**'
       - 'artifacts/AX-PUB-DEV-008.json'
       - 'tools/check_sdk_release_candidate_boundary.py'
+      - 'tools/check_sdk_release_candidate_document.py'
       - '.github/workflows/validate-sdk-release-candidate.yml'
   pull_request:
     paths:
+      - 'docs/AX-PUB-DEV-008_INSTALLABLE_PACKAGE_CANDIDATE.md'
       - 'sdk-release-candidate/**'
       - 'artifacts/AX-PUB-DEV-008.json'
       - 'tools/check_sdk_release_candidate_boundary.py'
+      - 'tools/check_sdk_release_candidate_document.py'
       - '.github/workflows/validate-sdk-release-candidate.yml'
 
 permissions:
@@ -79,10 +83,11 @@ jobs:
           set -euo pipefail
           '${{ steps.py314.outputs.python-path }}' -m json.tool artifacts/AX-PUB-DEV-008.json > /dev/null
 
-      - name: Validate package and parent-gate boundaries before build
+      - name: Validate Gate-05B document and package boundaries before build
         shell: bash
         run: |
           set -euo pipefail
+          '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_candidate_document.py
           '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_candidate_boundary.py
           '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_decision_baseline.py
           '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_decision_manifest_state.py
@@ -278,6 +283,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_candidate_document.py
           '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_candidate_boundary.py
           '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_decision_baseline.py
           '${{ steps.py314.outputs.python-path }}' tools/check_sdk_release_decision_manifest_state.py
