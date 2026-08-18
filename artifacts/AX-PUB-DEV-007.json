@@ -2,6 +2,7 @@
   "artifact_id": "AX-PUB-DEV-007",
   "version": "0.1",
   "status": "DEV-GATE-05 DECISION BASELINE / ENGINEERING CANDIDATE",
+  "verification_state": "CI_PENDING",
   "gate": "DEV-GATE-05",
   "publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
   "release_authorized": false,
