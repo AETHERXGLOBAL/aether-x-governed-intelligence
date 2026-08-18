@@ -6,11 +6,15 @@ This repository contains public, non-production reference material. It must not 
 
 If you believe you have identified a security issue related to AETHER X GLOBAL, **do not publish sensitive details in a public GitHub issue, discussion, pull request, or commit**.
 
-Use the official institutional contact channels available through:
+Until a dedicated vulnerability-disclosure channel is formally published, use the current public organization contact email:
 
-**https://www.aetherxglobal.com**
+```text
+aether.x.eg@gmail.com
+```
 
-Until a dedicated vulnerability-disclosure channel is formally published, the company website is the authoritative public contact entry point.
+Use a clear subject such as `Security Report — AETHER X Public Engineering` and avoid sending secrets, credentials or unrelated private data unless a secure follow-up channel is explicitly established.
+
+This is a provisional public reporting path. It does not represent a dedicated security-response service, SLA, bug-bounty program or certification.
 
 ## Private-Project Separation
 
@@ -18,34 +22,34 @@ Public engineering artifacts must remain separated from private AETHER X project
 
 Public reference code, schemas, examples, tests, conformance vectors and CI workflows must not require or expose:
 
-- checkout or runtime access to private project repositories;
-- private-repository tokens or credentials;
-- private customer or partner data;
-- unpublished research records;
-- proprietary product source code or algorithms;
-- confidential internal endpoints, deployment topology or implementation architecture;
-- private data-source credentials or restricted datasets.
+- private repository source;
+- private package indexes;
+- private endpoints;
+- credentials or secrets;
+- customer information;
+- unpublished research;
+- proprietary product algorithms;
+- confidential implementation architecture.
 
-The public conformance suites include fail-closed boundary checks intended to detect selected private-repository references and private-access markers before executing their public test vectors. The agent-authority conformance path is additionally constrained to its public validator and synthetic public baseline.
+## Public Reference-Code Boundary
 
-`PUBLIC ENGINEERING ≠ PRIVATE PRODUCT IMPLEMENTATION`
+Reference implementations and candidate developer surfaces in this repository are non-production engineering artifacts. Validation, conformance, CI, build-provenance or supply-chain checks do not establish production fitness, product authorization, security certification or a supported SDK.
 
-`PUBLIC TEST VECTOR ≠ PRIVATE PROJECT DATA`
+`PUBLIC REFERENCE CODE ≠ PRODUCTION SECURITY CONTROL`  
+`CI PASS ≠ SECURITY CERTIFICATION`  
+`ATTESTED BUILD ≠ SECURITY CERTIFICATION`  
+`SDK CANDIDATE ≠ SUPPORTED SDK`
 
-`AGENT AUTHORITY REFERENCE ≠ PRODUCTION AUTHORIZATION`
+## Supply-Chain Reporting
 
-## Scope of This Repository
+If a report concerns a public release-candidate build, artifact attestation, SBOM, dependency boundary or release-integrity issue, include the applicable public artifact ID, Git commit, workflow/run identifier and digest when known.
 
-The code under `reference-implementations/` is explicitly **educational / non-production**. A defect in a reference validator should not be interpreted as evidence of a vulnerability in any private AETHER X product, and a passing validator or conformance result is not a security certification or authority grant.
+Do not include credentials or private-repository material as evidence.
 
-Machine-readable authority objects published here are structural/reference artifacts only. They are not credentials, real permissions, production authorization records, or evidence of an internal AETHER X authorization plane.
+## Scope
 
-`REFERENCE IMPLEMENTATION ≠ PRODUCTION SECURITY CONTROL`
-
-`CONFORMANCE PASS ≠ SECURITY CERTIFICATION`
-
-`MACHINE-READABLE AUTHORITY ≠ LIVE AUTHORITY`
+This policy governs only the public `AETHERXGLOBAL/aether-x-governed-intelligence` repository and its intentionally published artifacts. It does not disclose or define the security policy, architecture or operational controls of private AETHER X products or systems.
 
 ---
 
-**AETHER X GLOBAL**
+**AETHER X GLOBAL — Institutional Intelligence. Governed Autonomy.**
