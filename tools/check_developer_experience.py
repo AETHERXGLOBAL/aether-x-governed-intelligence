@@ -73,15 +73,17 @@ CONFORMANCE_CHECKS = [
     {
         "id": "PUBLIC_CONFORMANCE",
         "argv": ["conformance/AX-PUB-TEST-001/run_conformance.py"],
-        "markers": [
-            "AX_PUBLIC_CONFORMANCE_PASS cases=15 conforming=15",
-            "AX_PUBLIC_CONFORMANCE_BOUNDARY_PASS",
-        ],
+        "markers": ["AX_PUBLIC_CONFORMANCE_PASS cases=15 conforming=15"],
     },
     {
         "id": "AGENT_CONFORMANCE",
         "argv": ["conformance/AX-PUB-TEST-002/run_conformance.py"],
         "markers": ["AX_AGENT_AUTHORITY_CONFORMANCE_PASS cases=10 conforming=10"],
+    },
+    {
+        "id": "PUBLIC_BOUNDARY",
+        "argv": ["tools/check_public_conformance_boundary.py"],
+        "markers": ["AX_PUBLIC_CONFORMANCE_BOUNDARY_PASS"],
     },
 ]
 
@@ -155,7 +157,7 @@ def conformance_check(spec: dict[str, Any]) -> dict[str, Any]:
     passed = result.returncode == 0 and all(observed.values())
     return {
         "id": spec["id"],
-        "kind": "PUBLIC_CONFORMANCE",
+        "kind": "PUBLIC_CONFORMANCE_OR_BOUNDARY",
         "status": "PASS" if passed else "FAIL",
         "returncode": result.returncode,
         "markers": observed,
@@ -204,18 +206,12 @@ def main() -> int:
     else:
         for item in checks:
             print(f"{item['status']} {item['id']} kind={item['kind']}")
-        if passed:
-            print(
-                "AX_DEVELOPER_EXPERIENCE_PASS "
-                f"python={runtime['major']}.{runtime['minor']}.{runtime['micro']} "
-                f"checks={len(checks)} conforming={report['conforming_checks']}"
-            )
-        else:
-            print(
-                "AX_DEVELOPER_EXPERIENCE_FAIL "
-                f"python={runtime['major']}.{runtime['minor']}.{runtime['micro']} "
-                f"checks={len(checks)} conforming={report['conforming_checks']}"
-            )
+        marker = "AX_DEVELOPER_EXPERIENCE_PASS" if passed else "AX_DEVELOPER_EXPERIENCE_FAIL"
+        print(
+            f"{marker} "
+            f"python={runtime['major']}.{runtime['minor']}.{runtime['micro']} "
+            f"checks={len(checks)} conforming={report['conforming_checks']}"
+        )
 
     return 0 if passed else 1
 
