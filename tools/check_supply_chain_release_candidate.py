@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
-"""Validate DEV-GATE-03 supply-chain/release-candidate governance state."""
+"""Validate DEV-GATE-03 supply-chain/release-candidate governance state.
+
+Gate-03 historically prohibited all package-distribution metadata because no
+later SDK packaging gate existed. The closed Gate-05A decision now permits one
+bounded Gate-05B package-candidate metadata file under stronger fail-closed
+controls. This checker therefore preserves the Gate-03 prohibition everywhere
+except the exact Gate-05B pyproject path when the later governance state is
+machine-verifiably active and publication remains unauthorized.
+"""
 from __future__ import annotations
 
 import argparse
@@ -12,6 +20,8 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 DESCRIPTOR = ROOT / "release-candidate" / "AX-PUB-RC-001.json"
 DEV005 = ROOT / "artifacts" / "AX-PUB-DEV-005.json"
+DEV007 = ROOT / "artifacts" / "AX-PUB-DEV-007.json"
+DEV008 = ROOT / "artifacts" / "AX-PUB-DEV-008.json"
 DOC = ROOT / "docs" / "AX-PUB-DEV-005_SUPPLY_CHAIN_RELEASE_CANDIDATE.md"
 EVIDENCE = ROOT / "evidence" / "AX-PUB-CI-006_SUPPLY_CHAIN_RELEASE_CANDIDATE_VALIDATION.md"
 SECURITY = ROOT / "SECURITY.md"
@@ -19,6 +29,7 @@ BUILD = ROOT / "tools" / "build_release_candidate.py"
 WORKFLOW = ROOT / ".github" / "workflows" / "validate-supply-chain-release-candidate.yml"
 
 FORBIDDEN_METADATA = {"pyproject.toml", "setup.py", "setup.cfg", ".pypirc"}
+GATE05B_PYPROJECT = ROOT / "sdk-release-candidate" / "python" / "pyproject.toml"
 EXPECTED_GENERATED = {
     "release-candidate/AX-PUB-RC-001_BUILD_MANIFEST.json",
     "release-candidate/AX-PUB-RC-001.spdx.json",
@@ -55,6 +66,73 @@ def digest(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+def gate05b_metadata_allowlist(findings: list[str]) -> set[Path]:
+    """Return the single later-gate metadata path only under proven Gate-05B state."""
+    if not DEV008.exists():
+        return set()
+
+    dev007 = load_json(DEV007, findings)
+    dev008 = load_json(DEV008, findings)
+    if dev007 is None or dev008 is None:
+        return set()
+
+    valid = True
+    phases = dev007.get("gate_05_phases")
+    if not isinstance(phases, dict):
+        findings.append("Gate-05B metadata present but DEV-007 gate_05_phases is missing")
+        valid = False
+    else:
+        if phases.get("DEV-GATE-05A") != "CLOSED":
+            findings.append("Gate-05B metadata requires DEV-GATE-05A=CLOSED")
+            valid = False
+        if phases.get("DEV-GATE-05B") != "ACTIVE_ENGINEERING_OBJECTIVE":
+            findings.append("Gate-05B metadata requires DEV-GATE-05B=ACTIVE_ENGINEERING_OBJECTIVE")
+            valid = False
+
+    if dev007.get("publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
+        findings.append("Gate-05B metadata requires parent SDK publication to remain NOT AUTHORIZED")
+        valid = False
+    if dev007.get("release_authorized") is not False:
+        findings.append("Gate-05B metadata requires parent release_authorized=false")
+        valid = False
+
+    if dev008.get("artifact_id") != "AX-PUB-DEV-008":
+        findings.append("Gate-05B metadata requires AX-PUB-DEV-008")
+        valid = False
+    if dev008.get("parent_decision_artifact") != "AX-PUB-DEV-007":
+        findings.append("Gate-05B metadata parent decision mismatch")
+        valid = False
+    if dev008.get("phase") != "DEV-GATE-05B":
+        findings.append("Gate-05B metadata phase mismatch")
+        valid = False
+    if dev008.get("publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
+        findings.append("Gate-05B metadata requires SDK PUBLICATION NOT AUTHORIZED")
+        valid = False
+    if dev008.get("distribution_authorized") is not False:
+        findings.append("Gate-05B metadata requires distribution_authorized=false")
+        valid = False
+    if dev008.get("license_granted") is not False:
+        findings.append("Gate-05B metadata requires license_granted=false")
+        valid = False
+    if dev008.get("supported_sdk_established") is not False:
+        findings.append("Gate-05B metadata requires supported_sdk_established=false")
+        valid = False
+
+    distribution = dev008.get("distribution")
+    if not isinstance(distribution, dict):
+        findings.append("Gate-05B metadata requires DEV-008 distribution state")
+        valid = False
+    else:
+        if distribution.get("registry_ownership_established") is not False:
+            findings.append("Gate-05B metadata requires registry ownership to remain unestablished")
+            valid = False
+        if distribution.get("registry_publication_authorized") is not False:
+            findings.append("Gate-05B metadata requires registry publication to remain unauthorized")
+            valid = False
+
+    return {GATE05B_PYPROJECT} if valid else set()
 
 
 def validate_dist(dist: Path, descriptor: dict[str, Any], findings: list[str]) -> None:
@@ -124,7 +202,7 @@ def validate_dist(dist: Path, descriptor: dict[str, Any], findings: list[str]) -
                 if mode == 0o120000:
                     findings.append(f"symlink entry is not allowed: {info.filename}")
                 if Path(info.filename).name in FORBIDDEN_METADATA:
-                    findings.append(f"forbidden distribution metadata in bundle: {info.filename}")
+                    findings.append(f"forbidden distribution metadata in Gate-03 bundle: {info.filename}")
     except zipfile.BadZipFile as exc:
         findings.append(f"invalid ZIP bundle: {exc}")
 
@@ -154,7 +232,7 @@ def main() -> int:
         if descriptor.get("registry_status") != "NOT AUTHORIZED":
             findings.append("registry must remain NOT AUTHORIZED")
         if descriptor.get("licence_decided") is not False:
-            findings.append("public SDK licence must remain undecided")
+            findings.append("Gate-03 public SDK licence state must remain undecided")
         if descriptor.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
             findings.append("SDK publication disposition mismatch")
         if descriptor.get("third_party_runtime_dependencies") != []:
@@ -178,7 +256,7 @@ def main() -> int:
                 if not (ROOT / path).is_file():
                     findings.append(f"declared source file missing: {raw}")
                 if path.name in FORBIDDEN_METADATA:
-                    findings.append(f"forbidden package metadata selected: {raw}")
+                    findings.append(f"forbidden package metadata selected into Gate-03 bundle: {raw}")
 
         if closed:
             if descriptor.get("state") != "DEV-GATE-03_VALIDATED":
@@ -227,11 +305,14 @@ def main() -> int:
             if dev.get("release_candidate_established") is not False:
                 findings.append("DEV-005 must not establish release candidate before CI evidence")
 
+    allowed_later_metadata = gate05b_metadata_allowlist(findings)
     for root in (ROOT, ROOT / "sdk-candidate", ROOT / "release-candidate"):
         for forbidden in FORBIDDEN_METADATA:
             matches = list(root.rglob(forbidden)) if root.exists() else []
-            if matches:
-                findings.append(f"forbidden distribution metadata present: {matches[0].relative_to(ROOT)}")
+            for match in matches:
+                if match.resolve() in {path.resolve() for path in allowed_later_metadata}:
+                    continue
+                findings.append(f"forbidden distribution metadata present outside authorized Gate-05B candidate: {match.relative_to(ROOT)}")
 
     require_markers(
         BUILD,
