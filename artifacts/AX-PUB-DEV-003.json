@@ -62,13 +62,19 @@
       "id": "PUBLIC_CONFORMANCE",
       "command": ["python", "conformance/AX-PUB-TEST-001/run_conformance.py"],
       "expected_exit": 0,
-      "expected_markers": ["AX_PUBLIC_CONFORMANCE_PASS cases=15 conforming=15", "AX_PUBLIC_CONFORMANCE_BOUNDARY_PASS"]
+      "expected_marker": "AX_PUBLIC_CONFORMANCE_PASS cases=15 conforming=15"
     },
     {
       "id": "AGENT_CONFORMANCE",
       "command": ["python", "conformance/AX-PUB-TEST-002/run_conformance.py"],
       "expected_exit": 0,
       "expected_marker": "AX_AGENT_AUTHORITY_CONFORMANCE_PASS cases=10 conforming=10"
+    },
+    {
+      "id": "PUBLIC_BOUNDARY",
+      "command": ["python", "tools/check_public_conformance_boundary.py"],
+      "expected_exit": 0,
+      "expected_marker": "AX_PUBLIC_CONFORMANCE_BOUNDARY_PASS"
     }
   ],
   "success_marker": "AX_DEVELOPER_EXPERIENCE_PASS",
