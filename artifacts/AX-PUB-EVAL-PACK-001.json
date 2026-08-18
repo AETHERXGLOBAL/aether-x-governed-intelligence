@@ -4,6 +4,7 @@
   "state": "DEV_GATE_05C_EXTERNAL_EVALUATOR_HANDOFF_PACK_CANDIDATE",
   "scope": "INSTALLABLE_SDK_INDEPENDENT_HUMAN_EVALUATION_HANDOFF",
   "parent_artifact": "AX-PUB-DEV-009",
+  "validation_objective": "FIRST_DIRECT_CI_VALIDATION_OF_HANDOFF_CANDIDATE",
   "candidate": {
     "distribution": "aetherxglobal-governed-intelligence",
     "version": "0.1.0rc1",
