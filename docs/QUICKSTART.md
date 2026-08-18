@@ -144,7 +144,7 @@ Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json
 Current moving state:
 
 ```text
-AX-PUB-MANIFEST-001 v1.7
+AX-PUB-MANIFEST-001 v1.8
 AX-PUB-POL-001 v1.6
 ```
 
@@ -187,11 +187,30 @@ The release tag target packages the published repository state. `AX-PUB-SNAP-002
 
 `PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`
 
-## 11. SDK Publication Readiness
+## 11. Developer Adoption Program
+
+The current developer-adoption program is:
+
+- [`AX-PUB-DEV-001 — Developer Adoption & SDK Readiness Program`](./AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md)
+
+Current program state:
+
+```text
+PROGRAM: ACTIVE / UNDER DEVELOPMENT
+NEXT GATE: DEV-GATE-00 — Contract Baseline
+SDK CANDIDATE: NOT YET ESTABLISHED
+PUBLIC SDK: NOT PUBLISHED
+```
+
+The program defines a gated path from inspectable public engineering toward a reproducible developer contract, bounded SDK candidate, supply-chain evidence, external evaluation readiness and an eventual separate release decision.
+
+`DEVELOPER ADOPTION PROGRAM ≠ SDK RELEASE`
+
+## 12. SDK Publication Readiness
 
 This repository does **not** currently publish or imply an officially supported SDK.
 
-The current gate is:
+The controlling gate is:
 
 - [`AX-PUB-GATE-001 — Developer SDK Publication Readiness Gate`](./AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md)
 
@@ -207,13 +226,13 @@ The gate requires explicit evidence and authority for licence/IP terms, interfac
 `PUBLIC ENGINEERING RELEASE ≠ SDK RELEASE`  
 `SDK READINESS GATE ≠ SDK COMMITMENT`
 
-## 12. Private-Project Boundary
+## 13. Private-Project Boundary
 
 The public schemas, reference validators, examples and conformance kits are self-contained in this public repository.
 
 They do not checkout, import, execute, package, or depend on private AETHER X project repositories. Public examples are synthetic. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside the public disclosure boundary.
 
-## 13. Public Claim Boundary
+## 14. Public Claim Boundary
 
 `PUBLIC ARTIFACT ≠ PRODUCT IMPLEMENTATION`  
 `PUBLIC SPECIFICATION ≠ INTERNAL CONTROL IMPLEMENTATION`  
@@ -221,7 +240,8 @@ They do not checkout, import, execute, package, or depend on private AETHER X pr
 `AGENT AUTHORITY REFERENCE ≠ PRODUCTION AUTHORIZATION`  
 `PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`  
 `PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`  
-`PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`
+`PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`  
+`DEVELOPER ADOPTION PROGRAM ≠ SDK RELEASE`
 
 ---
 
