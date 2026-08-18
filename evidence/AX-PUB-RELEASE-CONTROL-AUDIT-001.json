@@ -1,0 +1,74 @@
+{
+  "api_version": "2026-03-10",
+  "audit_mode": "READ_ONLY_GITHUB_API",
+  "branch": "main",
+  "branch_rule_types": [],
+  "claim_boundaries": [
+    "AUDIT PASS MEANS OBSERVATION COMPLETED; IT DOES NOT MEAN RELEASE CONTROLS ARE READY",
+    "GITHUB CONTROL READINESS DOES NOT ESTABLISH PYPI TRUSTED PUBLISHER OR REGISTRY OWNERSHIP",
+    "GITHUB CONTROL READINESS DOES NOT GRANT A SOFTWARE LICENCE",
+    "GITHUB CONTROL READINESS DOES NOT ESTABLISH A SUPPORTED SDK",
+    "SDK PUBLICATION NOT AUTHORIZED"
+  ],
+  "enabled_repository_rulesets": [],
+  "endpoint_status": {
+    "branch": 200,
+    "branch_rules": 200,
+    "environment": 404,
+    "legacy_branch_protection": 403,
+    "rulesets": 200
+  },
+  "environment_observation": {
+    "deployment_branch_policy": "NOT_ESTABLISHED",
+    "existence": "NOT_ESTABLISHED",
+    "http_status": 404,
+    "required_reviewers": "NOT_ESTABLISHED"
+  },
+  "external_controls_not_audited_here": {
+    "final_release_authority": "NOT_AUTHORIZED",
+    "human_external_evaluation": "UNVERIFIED",
+    "ip_copyright_clearance": "UNVERIFIED",
+    "pypi_registry_ownership": "UNVERIFIED",
+    "pypi_trusted_publisher": "UNVERIFIED",
+    "software_licence_grant": "UNVERIFIED"
+  },
+  "generated_at_utc": "2026-08-18T22:11:14.981774+00:00",
+  "github_controls": {
+    "branch_protected": "NOT_ESTABLISHED",
+    "deletion_blocked": "NOT_ESTABLISHED",
+    "force_push_blocked": "NOT_ESTABLISHED",
+    "pull_request_required": "NOT_ESTABLISHED",
+    "pypi_environment_deployment_branch_policy": "NOT_ESTABLISHED",
+    "pypi_environment_exists": "NOT_ESTABLISHED",
+    "pypi_environment_required_reviewers": "NOT_ESTABLISHED",
+    "required_status_checks": "NOT_ESTABLISHED"
+  },
+  "github_controls_ready_for_release_promotion": false,
+  "legacy_branch_protection_observation": {
+    "api_state": "UNVERIFIED",
+    "conversation_resolution": "UNVERIFIED",
+    "deletion_blocked": "UNVERIFIED",
+    "dismiss_stale_reviews": "UNVERIFIED",
+    "force_push_blocked": "UNVERIFIED",
+    "http_status": 403,
+    "pull_request_reviews": "UNVERIFIED",
+    "required_status_checks": "UNVERIFIED"
+  },
+  "observed_branch_commit": "6b4a067d38ec2f823cadcb7bad51564917cab3ba",
+  "production_environment": "pypi",
+  "report_format": "AX-PUB-RELEASE-CONTROL-AUDIT-001",
+  "report_version": "1.0",
+  "repository": "AETHERXGLOBAL/aether-x-governed-intelligence",
+  "source_ci": {
+    "workflow": "Audit Release Control Plane",
+    "workflow_run_id": 32191506412,
+    "workflow_run_number": 1,
+    "job_id": 95886632381,
+    "reviewed_head_commit": "6f1cd33a2a7f4c3715e51d0b6f8fd18b86b29f98",
+    "pull_request_synthetic_merge_commit": "9c71cef3416c58f226995b1756f5464f504583af",
+    "artifact_id": 9344354547,
+    "artifact_name": "ax-release-control-audit-9c71cef3416c58f226995b1756f5464f504583af",
+    "artifact_sha256": "1d1ced97bd21f5dea68924700c2e1243fc06c037b951b88f69be80f8ef9ff768",
+    "conclusion": "SUCCESS"
+  }
+}

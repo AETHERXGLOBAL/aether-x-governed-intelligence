@@ -29,6 +29,31 @@ The workflow preserves the JSON report as a short-lived GitHub Actions artifact 
 
 ---
 
+## Canonical baseline evidence
+
+The first live audit baseline is preserved as:
+
+- [`AX-PUB-RELEASE-CONTROL-AUDIT-001.json`](../evidence/AX-PUB-RELEASE-CONTROL-AUDIT-001.json) — machine-readable live observation;
+- [`AX-PUB-CI-011`](../evidence/AX-PUB-CI-011_RELEASE_CONTROL_LIVE_AUDIT.md) — evidence record linking the exact workflow run, job, artifact digest and observed blockers.
+
+First-baseline conclusion:
+
+```text
+MAIN BRANCH PROTECTED:               NOT_ESTABLISHED
+PULL REQUEST REQUIRED:               NOT_ESTABLISHED
+REQUIRED STATUS CHECKS:              NOT_ESTABLISHED
+FORCE-PUSH BLOCKING:                 NOT_ESTABLISHED
+DELETION BLOCKING:                   NOT_ESTABLISHED
+PYPI ENVIRONMENT:                    NOT_ESTABLISHED
+ACTIVE BRANCH RULES:                 NONE
+ENABLED REPOSITORY RULESETS:          NONE
+GITHUB CONTROLS READY FOR RELEASE:    FALSE
+```
+
+This baseline is intentionally adverse. Its purpose is to make the control gap measurable before configuration changes are made.
+
+---
+
 ## Fail-closed observation semantics
 
 Every control uses one of:
