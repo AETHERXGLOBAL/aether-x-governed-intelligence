@@ -1,6 +1,6 @@
 {
   "manifest_id": "AX-PUB-MANIFEST-001",
-  "manifest_version": "1.10",
+  "manifest_version": "1.11",
   "repository": "AETHERXGLOBAL/aether-x-governed-intelligence",
   "scope": "PUBLIC_ENGINEERING_ARTIFACT_COMPATIBILITY",
   "public_state": "CURRENT",
@@ -22,8 +22,9 @@
     {"id":"AX-PUB-SNAP-002","version":"1.0","type":"PUBLIC_ENGINEERING_SNAPSHOT","path":"snapshots/AX-PUB-SNAP-002.json","state":"CURRENT","public_maturity":"CI-VALIDATED REPRODUCIBILITY ANCHOR / NON-PRODUCT"},
     {"id":"AX-PUB-REL-001","version":"1.0","type":"PUBLIC_ENGINEERING_RELEASE_RECORD","path":"evidence/AX-PUB-REL-001_PUBLIC_ENGINEERING_VNEXT_RELEASE.md","state":"CURRENT","public_maturity":"PUBLISHED GIT TAG / GITHUB RELEASE RECORD / NON-PRODUCT"},
     {"id":"AX-PUB-GATE-001","version":"1.0","type":"DEVELOPER_SDK_PUBLICATION_READINESS_GATE","path":"docs/AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md","state":"CURRENT","public_maturity":"ACTIVE / SDK PUBLICATION NOT AUTHORIZED"},
-    {"id":"AX-PUB-DEV-001","version":"1.0","type":"DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM","path":"docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md","state":"CURRENT","public_maturity":"UNDER DEVELOPMENT / DEV-GATE-00 CLOSED / SDK PUBLICATION NOT AUTHORIZED"},
-    {"id":"AX-PUB-DEV-002","version":"1.0","type":"DEVELOPER_CONTRACT_BASELINE","path":"docs/AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md","machine_readable_companion":"artifacts/AX-PUB-DEV-002.json","state":"CURRENT","public_maturity":"DEV-GATE-00 CLOSED / PUBLIC DEVELOPER CONTRACT BASELINE ESTABLISHED / SDK PUBLICATION NOT AUTHORIZED"}
+    {"id":"AX-PUB-DEV-001","version":"1.0","type":"DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM","path":"docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md","state":"CURRENT","public_maturity":"UNDER DEVELOPMENT / DEV-GATE-00 CLOSED / DEV-GATE-01 ACTIVE / SDK PUBLICATION NOT AUTHORIZED"},
+    {"id":"AX-PUB-DEV-002","version":"1.0","type":"DEVELOPER_CONTRACT_BASELINE","path":"docs/AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md","machine_readable_companion":"artifacts/AX-PUB-DEV-002.json","state":"CURRENT","public_maturity":"DEV-GATE-00 CLOSED / PUBLIC DEVELOPER CONTRACT BASELINE ESTABLISHED / SDK PUBLICATION NOT AUTHORIZED"},
+    {"id":"AX-PUB-DEV-003","version":"1.0","type":"REPRODUCIBLE_DEVELOPER_EXPERIENCE","path":"docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md","machine_readable_companion":"artifacts/AX-PUB-DEV-003.json","entrypoint":"tools/check_developer_experience.py","state":"CURRENT","public_maturity":"DEV-GATE-01 CANDIDATE / RUNTIME MATRIX NOT YET VERIFIED / SDK PUBLICATION NOT AUTHORIZED"}
   ],
   "relationships": [
     {"from_id":"AX-PUB-SPEC-002","from_version":"1.0","relationship":"ALIGNS_WITH_ARCHITECTURE","to_id":"AX-PUB-ARCH-001","to_version":"1.0","state":"COMPATIBLE"},
@@ -45,7 +46,10 @@
     {"from_id":"AX-PUB-REL-001","from_version":"1.0","relationship":"PACKAGES_PUBLIC_STATE_WITH","to_id":"AX-PUB-SNAP-002","to_version":"1.0","state":"COMPATIBLE"},
     {"from_id":"AX-PUB-DEV-001","from_version":"1.0","relationship":"GOVERNED_BY","to_id":"AX-PUB-GATE-001","to_version":"1.0","state":"COMPATIBLE"},
     {"from_id":"AX-PUB-DEV-002","from_version":"1.0","relationship":"IMPLEMENTS_PROGRAM_GATE_OF","to_id":"AX-PUB-DEV-001","to_version":"1.0","state":"COMPATIBLE"},
-    {"from_id":"AX-PUB-DEV-002","from_version":"1.0","relationship":"GOVERNED_BY","to_id":"AX-PUB-GATE-001","to_version":"1.0","state":"COMPATIBLE"}
+    {"from_id":"AX-PUB-DEV-002","from_version":"1.0","relationship":"GOVERNED_BY","to_id":"AX-PUB-GATE-001","to_version":"1.0","state":"COMPATIBLE"},
+    {"from_id":"AX-PUB-DEV-003","from_version":"1.0","relationship":"IMPLEMENTS_PROGRAM_GATE_OF","to_id":"AX-PUB-DEV-001","to_version":"1.0","state":"COMPATIBLE"},
+    {"from_id":"AX-PUB-DEV-003","from_version":"1.0","relationship":"BUILDS_ON","to_id":"AX-PUB-DEV-002","to_version":"1.0","state":"COMPATIBLE"},
+    {"from_id":"AX-PUB-DEV-003","from_version":"1.0","relationship":"GOVERNED_BY","to_id":"AX-PUB-GATE-001","to_version":"1.0","state":"COMPATIBLE"}
   ],
   "validation_evidence": [
     {"id":"AX-PUB-CI-001","path":"evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md","scope":"AGENT_AUTHORITY_PATH","verified_head_commit":"f07bfb55eb45924f9ee62024f144064506d4be48"},
@@ -62,10 +66,13 @@
     "id":"AX-PUB-GATE-001","version":"1.0","path":"docs/AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md","scope":"SUPPORTED_PUBLIC_SDK_PUBLICATION","disposition":"SDK PUBLICATION NOT AUTHORIZED"
   },
   "current_developer_program": {
-    "id":"AX-PUB-DEV-001","version":"1.0","path":"docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md","state":"UNDER DEVELOPMENT","closed_gate":"DEV-GATE-00 — Contract Baseline","next_gate":"DEV-GATE-01 — Reproducible Developer Experience","sdk_publication_disposition":"SDK PUBLICATION NOT AUTHORIZED"
+    "id":"AX-PUB-DEV-001","version":"1.0","path":"docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md","state":"UNDER DEVELOPMENT","closed_gate":"DEV-GATE-00 — Contract Baseline","active_gate":"DEV-GATE-01 — Reproducible Developer Experience","sdk_publication_disposition":"SDK PUBLICATION NOT AUTHORIZED"
   },
   "current_developer_contract_baseline": {
     "id":"AX-PUB-DEV-002","version":"1.0","path":"docs/AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md","machine_readable_companion":"artifacts/AX-PUB-DEV-002.json","gate":"DEV-GATE-00","state":"CLOSED","closure_evidence":"AX-PUB-CI-003","sdk_publication_disposition":"SDK PUBLICATION NOT AUTHORIZED"
+  },
+  "current_developer_experience": {
+    "id":"AX-PUB-DEV-003","version":"1.0","path":"docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md","machine_readable_companion":"artifacts/AX-PUB-DEV-003.json","runner":"tools/check_developer_experience.py","gate":"DEV-GATE-01","state":"CANDIDATE_NOT_CLOSED","candidate_runtime_matrix":["3.10","3.11","3.12","3.13"],"verified_runtime_matrix":[],"sdk_publication_disposition":"SDK PUBLICATION NOT AUTHORIZED"
   },
   "claim_boundary": [
     "PUBLIC COMPATIBILITY DOES NOT ESTABLISH PRODUCT INTEGRATION",
@@ -79,7 +86,7 @@
     "SDK READINESS GATE DOES NOT ESTABLISH AN SDK COMMITMENT",
     "DEVELOPER ADOPTION PROGRAM DOES NOT ESTABLISH SDK RELEASE OR SUPPORT",
     "DEV-GATE-00 CLOSURE ESTABLISHES A PUBLIC DEVELOPER CONTRACT BASELINE ONLY",
-    "DEVELOPER CONTRACT BASELINE DOES NOT ESTABLISH A SUPPORTED SDK OR PRODUCT IMPLEMENTATION",
+    "DEV-GATE-01 CANDIDATE DOES NOT ESTABLISH AN SDK CANDIDATE OR VERIFIED RUNTIME MATRIX",
     "PUBLIC ARTIFACTS DO NOT ESTABLISH IMPLEMENTATION INSIDE AETHER X PORTFOLIO INITIATIVES"
   ]
 }
