@@ -108,6 +108,18 @@ public-engineering-vnext-1.0
 FORMAL PUBLIC ENGINEERING RELEASE
 ```
 
+## Licensing & Reuse Boundary
+
+No open-source licence or general reuse/distribution permission is granted by publication of this repository at this time.
+
+Public availability is provided for inspection, technical review and reproducibility, and for use of GitHub platform functionality subject to applicable GitHub terms. Any broader reuse, redistribution, adaptation, sublicensing or commercial use requires separate authorization unless otherwise permitted by applicable law.
+
+A future open-source, SDK or other reuse licence may be considered only through an explicit AETHER X publication and IP decision. Repository visibility, a Git tag, a GitHub Release, successful CI, reference implementation availability or conformance evidence does not create such permission by implication.
+
+`PUBLIC VISIBILITY ≠ OPEN-SOURCE LICENCE`  
+`PUBLIC ENGINEERING RELEASE ≠ REUSE AUTHORIZATION`  
+`REFERENCE IMPLEMENTATION ≠ SUPPORTED OR LICENSED SDK`
+
 ## Private-Project Boundary
 
 This repository is intentionally self-contained. Public examples and conformance vectors are generic or synthetic.
@@ -116,14 +128,15 @@ No private AETHER X project repository is a runtime, checkout, submodule or pack
 
 ## What This Repository Does Not Establish
 
-Publication here does **not** establish or imply product implementation, a shared company runtime or authorization plane, production readiness, customer deployment, production API/SDK status, autonomous authority, security certification, regulatory approval, or predictive/investment performance.
+Publication here does **not** establish or imply product implementation, a shared company runtime or authorization plane, production readiness, customer deployment, production API/SDK status, autonomous authority, security certification, regulatory approval, predictive/investment performance, or an open-source/reuse licence.
 
 `PUBLIC SPECIFICATION ≠ PRODUCT IMPLEMENTATION`  
 `MACHINE-READABLE SCHEMA ≠ PRODUCT DATA MODEL`  
 `AGENT AUTHORITY SCHEMA ≠ PRODUCTION AUTHORIZATION PLANE`  
 `REFERENCE IMPLEMENTATION ≠ PRODUCTION SYSTEM`  
 `PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`  
-`PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`
+`PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`  
+`PUBLIC VISIBILITY ≠ OPEN-SOURCE LICENCE`
 
 See [SECURITY.md](./SECURITY.md).
 
