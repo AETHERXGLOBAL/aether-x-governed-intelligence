@@ -1,0 +1,124 @@
+{
+  "artifact_id": "AX-PUB-DEV-007",
+  "version": "0.1",
+  "status": "DEV-GATE-05 DECISION BASELINE / ENGINEERING CANDIDATE",
+  "verification_state": "PR_VALIDATION_PENDING",
+  "gate": "DEV-GATE-05",
+  "publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
+  "release_authorized": false,
+  "release_scope": {
+    "mode": "OFFLINE_VALIDATION_ONLY",
+    "included": [
+      "AX-PUB-SPEC-002 validation",
+      "AX-PUB-SPEC-003 validation",
+      "AX-PUB-SPEC-004 validation",
+      "developer-facing validation results",
+      "contract inventory"
+    ],
+    "excluded": [
+      "network_api",
+      "remote_service",
+      "credentials",
+      "authentication",
+      "production_authorization",
+      "tool_invocation",
+      "real_world_execution",
+      "private_repository_dependency"
+    ]
+  },
+  "licensing": {
+    "strategy": "OPEN_SDK_CONTROLLED_CORE",
+    "target_sdk_license": "Apache-2.0",
+    "license_granted_now": false,
+    "ip_clearance_required": true,
+    "repository_wide_relicense": false,
+    "trademark_rights_included": false
+  },
+  "package_identity": {
+    "distribution_candidate": "aetherxglobal-governed-intelligence",
+    "import_namespace": "aetherxglobal.governed_intelligence",
+    "canonical_registry": "PyPI",
+    "staging_registry": "TestPyPI",
+    "live_registry_availability_check_required": true,
+    "aetherx_distribution_name_rejected_due_to_existing_unrelated_project": true
+  },
+  "runtime_support_target": {
+    "implementation": "CPython",
+    "supported_candidate_versions": ["3.11", "3.12", "3.13", "3.14"],
+    "python_3_10": "HISTORICAL_CANDIDATE_EVIDENCE_ONLY_NOT_SELECTED_FOR_NEW_SUPPORT_CONTRACT",
+    "python_3_15": "PRE_RELEASE_NOT_SUPPORTED"
+  },
+  "versioning": {
+    "standard": "PEP 440",
+    "first_distributable_candidate": "0.1.0rc1",
+    "first_public_release_if_authorized": "0.1.0",
+    "stable_1_0_requires_separate_decision": true
+  },
+  "package_architecture": {
+    "layout": "src",
+    "runtime_third_party_dependency_target": 0,
+    "repository_relative_runtime_imports_allowed": false,
+    "build_metadata": "pyproject.toml / PEP 621",
+    "build_backend_candidate": "hatchling",
+    "build_backend_final_requires_build_evidence": true
+  },
+  "release_security": {
+    "ci_build_required": true,
+    "build_once_test_exact_artifacts": true,
+    "full_commit_sha_pinning_required_for_release_actions": true,
+    "github_provenance_attestation_required": true,
+    "sbom_required_when_technically_appropriate": true,
+    "pypi_trusted_publishing_oidc_required": true,
+    "long_lived_pypi_token_as_primary_release_credential_allowed": false,
+    "pypi_digital_attestations_required": true,
+    "protected_pypi_environment_required": true,
+    "human_release_approval_required": true,
+    "pull_request_target_untrusted_release_path_allowed": false
+  },
+  "repository_release_controls": {
+    "branch_or_ruleset_protection_required": true,
+    "pull_request_required": true,
+    "independent_approval_required": true,
+    "required_status_checks": true,
+    "release_tag_control_required": true,
+    "self_approval_disabled_where_supported": true,
+    "current_main_protection_sufficient_for_release": false
+  },
+  "external_evaluation": {
+    "required_before_0_1_0": true,
+    "minimum_independent_human_evaluators": 1,
+    "machine_readable_result_required": true,
+    "unresolved_critical_allowed": false,
+    "high_severity_requires_fix_or_explicit_risk_acceptance": true
+  },
+  "maintenance": {
+    "commercial_sla_implied": false,
+    "primary_maintained_line": "latest 0.x minor",
+    "previous_minor_security_correctness_window_days": 90,
+    "migration_guidance_for_planned_breaking_change": true,
+    "private_product_integration_support_implied": false
+  },
+  "contributions": {
+    "active_policy_established": false,
+    "preferred_future_sdk_license": "Apache-2.0",
+    "preferred_contributor_control": "DCO_OR_EQUIVALENT",
+    "cla_required_now": false
+  },
+  "gate_05_phases": {
+    "DEV-GATE-05A": "DECISION_BASELINE_CANDIDATE",
+    "DEV-GATE-05B": "NOT_ESTABLISHED",
+    "DEV-GATE-05C": "NOT_ESTABLISHED",
+    "DEV-GATE-05D": "NOT_AUTHORIZED"
+  },
+  "hard_blockers_before_publication": [
+    "IP_AND_COPYRIGHT_CLEARANCE",
+    "PACKAGE_NAME_LIVE_AVAILABILITY_AND_OWNERSHIP",
+    "INSTALLABLE_PACKAGE_CANDIDATE_EVIDENCE",
+    "PYTHON_3_11_TO_3_14_PACKAGE_LEVEL_CI",
+    "BRANCH_OR_REPOSITORY_RULESET_PROTECTION",
+    "PROTECTED_PYPI_RELEASE_ENVIRONMENT",
+    "HUMAN_EXTERNAL_EVALUATION",
+    "FINAL_RELEASE_EVIDENCE_PACK",
+    "EXPLICIT_RELEASE_AUTHORITY"
+  ]
+}
