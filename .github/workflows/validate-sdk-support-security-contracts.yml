@@ -1,0 +1,96 @@
+name: Validate SDK Support & Security Contracts
+
+on:
+  pull_request:
+    paths:
+      - "artifacts/AX-PUB-SUP-001.json"
+      - "artifacts/AX-PUB-SEC-001.json"
+      - "artifacts/AX-PUB-API-001.json"
+      - "artifacts/AX-PUB-MANIFEST-001.json"
+      - "docs/AX-PUB-SUP-001_SDK_SUPPORT_COMPATIBILITY_MAINTENANCE_CONTRACT.md"
+      - "docs/AX-PUB-SEC-001_SDK_SECURITY_OPERATIONS_READINESS_CONTRACT.md"
+      - "docs/MIGRATION_AND_DEPRECATION_DRAFT.md"
+      - "SECURITY.md"
+      - "evidence/AX-PUB-RELEASE-CONTROL-AUDIT-001.json"
+      - "release-candidate/AX-PUB-RC-001.json"
+      - "tools/build_release_candidate.py"
+      - "tools/check_supply_chain_release_candidate.py"
+      - "tools/check_sdk_support_security_contracts.py"
+      - ".github/workflows/validate-sdk-support-security-contracts.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Support/security contracts / CPython ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up CPython ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Parse candidate contracts
+        run: |
+          python -m json.tool artifacts/AX-PUB-SUP-001.json >/dev/null
+          python -m json.tool artifacts/AX-PUB-SEC-001.json >/dev/null
+          python -m json.tool artifacts/AX-PUB-API-001.json >/dev/null
+
+      - name: Compile contract checker
+        run: python -m py_compile tools/check_sdk_support_security_contracts.py
+
+      - name: Validate support and security candidate state
+        run: python tools/check_sdk_support_security_contracts.py
+
+      - name: Explicit maturity boundary
+        run: |
+          echo "SUPPORT CONTRACT: CANDIDATE / NOT ACTIVATED"
+          echo "SECURITY OPERATIONS: NOT READY"
+          echo "SUPPORTED SDK: NOT ESTABLISHED"
+          echo "SDK PUBLICATION: NOT AUTHORIZED"
+
+  preserve-gate03:
+    name: Preserve closed Gate-03 release-candidate identity
+    runs-on: ubuntu-latest
+    env:
+      SOURCE_DATE_EPOCH: "1787064230"
+
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up canonical build runtime
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Compile immutable release-candidate controls
+        run: |
+          python -m py_compile tools/build_release_candidate.py
+          python -m py_compile tools/check_supply_chain_release_candidate.py
+
+      - name: Rebuild AX-PUB-RC-001 from declared immutable source inventory
+        run: python tools/build_release_candidate.py --output-dir dist-support-security-guard
+
+      - name: Verify closed Gate-03 identity remains unchanged
+        run: python tools/check_supply_chain_release_candidate.py --dist dist-support-security-guard
+
+      - name: Explicit cross-gate boundary
+        run: |
+          echo "AX-PUB-RC-001 CLOSED IDENTITY: PRESERVED"
+          echo "SUPPORT/SECURITY PRODUCTIZATION MUST NOT REWRITE CLOSED GATE-03 EVIDENCE"
+          echo "SDK PUBLICATION: NOT AUTHORIZED"
