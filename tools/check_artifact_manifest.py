@@ -15,7 +15,7 @@ REQUIRED_PAIRS = {
     ("AX-PUB-REF-001","1.0"),("AX-PUB-REF-002","1.0"),("AX-PUB-REF-003","1.0"),
     ("AX-PUB-TEST-001","1.0"),("AX-PUB-TEST-002","1.0"),("AX-PUB-POL-001","1.6"),
     ("AX-PUB-SNAP-002","1.0"),("AX-PUB-REL-001","1.0"),("AX-PUB-GATE-001","1.0"),
-    ("AX-PUB-DEV-001","1.0"),("AX-PUB-DEV-002","1.0"),
+    ("AX-PUB-DEV-001","1.0"),("AX-PUB-DEV-002","1.0"),("AX-PUB-DEV-003","1.0"),
 }
 REQUIRED_RELATIONS = {
     ("AX-PUB-SCHEMA-001","1.0","STRUCTURAL_PROFILE_OF","AX-PUB-SPEC-002","1.0"),
@@ -33,6 +33,9 @@ REQUIRED_RELATIONS = {
     ("AX-PUB-DEV-001","1.0","GOVERNED_BY","AX-PUB-GATE-001","1.0"),
     ("AX-PUB-DEV-002","1.0","IMPLEMENTS_PROGRAM_GATE_OF","AX-PUB-DEV-001","1.0"),
     ("AX-PUB-DEV-002","1.0","GOVERNED_BY","AX-PUB-GATE-001","1.0"),
+    ("AX-PUB-DEV-003","1.0","IMPLEMENTS_PROGRAM_GATE_OF","AX-PUB-DEV-001","1.0"),
+    ("AX-PUB-DEV-003","1.0","BUILDS_ON","AX-PUB-DEV-002","1.0"),
+    ("AX-PUB-DEV-003","1.0","GOVERNED_BY","AX-PUB-GATE-001","1.0"),
 }
 
 def safe_path(raw: Any, findings: list[str], label: str) -> Path | None:
@@ -70,7 +73,7 @@ def main() -> int:
     manifest = load_json(MANIFEST_PATH, findings)
     if manifest is None: return fail(findings)
     if manifest.get("manifest_id") != "AX-PUB-MANIFEST-001": findings.append("manifest_id mismatch")
-    if manifest.get("manifest_version") != "1.10": findings.append("manifest_version must be 1.10")
+    if manifest.get("manifest_version") != "1.11": findings.append("manifest_version must be 1.11")
     if manifest.get("repository") != "AETHERXGLOBAL/aether-x-governed-intelligence": findings.append("repository identity mismatch")
 
     policy = manifest.get("versioning_policy")
@@ -146,7 +149,7 @@ def main() -> int:
         if dp is not None and not dp.is_file(): findings.append("current developer program path missing")
         if dev.get("state")!="UNDER DEVELOPMENT": findings.append("developer program state mismatch")
         if dev.get("closed_gate")!="DEV-GATE-00 — Contract Baseline": findings.append("developer program closed gate mismatch")
-        if dev.get("next_gate")!="DEV-GATE-01 — Reproducible Developer Experience": findings.append("developer program next gate mismatch")
+        if dev.get("active_gate")!="DEV-GATE-01 — Reproducible Developer Experience": findings.append("developer program active gate mismatch")
         if dev.get("sdk_publication_disposition")!="SDK PUBLICATION NOT AUTHORIZED": findings.append("developer program SDK disposition mismatch")
 
     baseline=manifest.get("current_developer_contract_baseline")
@@ -161,15 +164,31 @@ def main() -> int:
         if baseline.get("closure_evidence")!="AX-PUB-CI-003": findings.append("developer contract baseline closure evidence mismatch")
         if baseline.get("sdk_publication_disposition")!="SDK PUBLICATION NOT AUTHORIZED": findings.append("developer contract baseline SDK disposition mismatch")
 
+    devex=manifest.get("current_developer_experience")
+    if not isinstance(devex,dict) or devex.get("id")!="AX-PUB-DEV-003" or devex.get("version")!="1.0": findings.append("current_developer_experience must identify AX-PUB-DEV-003 v1.0")
+    else:
+        xp=safe_path(devex.get("path"),findings,"current_developer_experience")
+        if xp is not None and not xp.is_file(): findings.append("current developer experience path missing")
+        cp=safe_path(devex.get("machine_readable_companion"),findings,"current_developer_experience companion")
+        if cp is not None and not cp.is_file(): findings.append("current developer experience companion missing")
+        rp=safe_path(devex.get("runner"),findings,"current_developer_experience runner")
+        if rp is not None and not rp.is_file(): findings.append("current developer experience runner missing")
+        if devex.get("gate")!="DEV-GATE-01": findings.append("developer experience gate mismatch")
+        if devex.get("state")!="CANDIDATE_NOT_CLOSED": findings.append("developer experience candidate state mismatch")
+        if devex.get("candidate_runtime_matrix") != ["3.10","3.11","3.12","3.13"]: findings.append("developer experience candidate runtime matrix mismatch")
+        if devex.get("verified_runtime_matrix") != []: findings.append("developer experience verified runtime matrix must remain empty before CI evidence")
+        if devex.get("sdk_publication_disposition")!="SDK PUBLICATION NOT AUTHORIZED": findings.append("developer experience SDK disposition mismatch")
+
     quickstart = ROOT / "docs" / "QUICKSTART.md"
     if not quickstart.is_file(): findings.append("docs/QUICKSTART.md missing")
     else:
         text = quickstart.read_text(encoding="utf-8")
         for marker in (
-            "AX-PUB-MANIFEST-001.json","COMPATIBILITY_AND_VERSIONING.md","AX-PUB-SNAP-001.json","AX-PUB-SNAP-002.json",
+            "AX-PUB-MANIFEST-001 v1.11","COMPATIBILITY_AND_VERSIONING.md","AX-PUB-SNAP-001.json","AX-PUB-SNAP-002.json",
             "AX-PUB-SCHEMA-003","AX-PUB-REF-003","AX-PUB-TEST-002","AX-PUB-REL-001","public-engineering-vnext-1.0",
             "AX-PUB-GATE-001","AX-PUB-DEV-001","AX-PUB-DEV-002","AX-PUB-CI-003","DEV-GATE-00: CLOSED",
-            "DEV-GATE-01 — Reproducible Developer Experience"
+            "AX-PUB-DEV-003","check_developer_experience.py","DEV-GATE-01: CANDIDATE / NOT CLOSED",
+            "AX_DEVELOPER_EXPERIENCE_PASS"
         ):
             if marker not in text: findings.append(f"quickstart missing reference: {marker}")
     if not isinstance(manifest.get("claim_boundary"), list) or not manifest.get("claim_boundary"): findings.append("claim_boundary must be non-empty array")
