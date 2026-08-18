@@ -1,0 +1,181 @@
+name: Validate Installable External Evaluator Handoff
+
+on:
+  pull_request:
+    paths:
+      - 'artifacts/AX-PUB-EVAL-PACK-001.json'
+      - 'docs/INSTALLABLE_EXTERNAL_EVALUATOR_GUIDE.md'
+      - 'examples/external-evaluation/AX-PUB-EVAL-REPORT-002.template.json'
+      - 'tools/build_installable_evaluator_handoff.py'
+      - 'tools/check_installable_evaluator_handoff.py'
+      - 'tools/check_installable_external_evaluation_report.py'
+      - 'artifacts/AX-PUB-API-001.json'
+      - 'artifacts/AX-PUB-SUP-001.json'
+      - 'artifacts/AX-PUB-SEC-001.json'
+      - 'artifacts/AX-PUB-DEV-009.json'
+      - 'docs/LIMITATIONS_AND_UNSUPPORTED_USES.md'
+      - 'sdk-release-candidate/python/**'
+      - '.github/workflows/validate-installable-external-evaluator-handoff.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: installable-external-evaluator-handoff-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-handoff:
+    name: Deterministic evaluator handoff / CPython 3.11-3.14 rehearsal
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PIP_DISABLE_PIP_VERSION_CHECK: '1'
+      PIP_NO_CACHE_DIR: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+      SOURCE_DATE_EPOCH: '1787076737'
+
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+
+      - name: Set up CPython 3.11
+        id: py311
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.11'
+
+      - name: Set up CPython 3.12
+        id: py312
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.12'
+
+      - name: Set up CPython 3.13
+        id: py313
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.13'
+
+      - name: Set up CPython 3.14
+        id: py314
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.14'
+
+      - name: Parse handoff contracts
+        run: |
+          '${{ steps.py314.outputs.python-path }}' -m json.tool artifacts/AX-PUB-EVAL-PACK-001.json >/dev/null
+          '${{ steps.py314.outputs.python-path }}' -m json.tool examples/external-evaluation/AX-PUB-EVAL-REPORT-002.template.json >/dev/null
+          '${{ steps.py314.outputs.python-path }}' -m json.tool artifacts/AX-PUB-API-001.json >/dev/null
+          '${{ steps.py314.outputs.python-path }}' -m json.tool artifacts/AX-PUB-SUP-001.json >/dev/null
+          '${{ steps.py314.outputs.python-path }}' -m json.tool artifacts/AX-PUB-SEC-001.json >/dev/null
+
+      - name: Compile handoff controls
+        run: |
+          '${{ steps.py314.outputs.python-path }}' -m py_compile tools/build_installable_evaluator_handoff.py
+          '${{ steps.py314.outputs.python-path }}' -m py_compile tools/check_installable_evaluator_handoff.py
+          '${{ steps.py314.outputs.python-path }}' -m py_compile tools/check_installable_external_evaluation_report.py
+
+      - name: Validate source handoff state
+        run: '${{ steps.py314.outputs.python-path }}' tools/check_installable_evaluator_handoff.py
+
+      - name: Install fixed local build toolchain
+        run: |
+          '${{ steps.py314.outputs.python-path }}' -m pip install --disable-pip-version-check 'build==1.5.0' 'hatchling==1.31.0'
+          '${{ steps.py314.outputs.python-path }}' -c "import importlib.metadata as m; assert m.version('build')=='1.5.0'; assert m.version('hatchling')=='1.31.0'; print('AX_EVALUATOR_HANDOFF_BUILD_TOOLCHAIN_PASS')"
+
+      - name: Build evaluator handoff twice
+        run: |
+          '${{ steps.py314.outputs.python-path }}' tools/build_installable_evaluator_handoff.py --output-dir dist-evaluator-handoff-a
+          '${{ steps.py314.outputs.python-path }}' tools/build_installable_evaluator_handoff.py --output-dir dist-evaluator-handoff-b
+
+      - name: Verify deterministic handoff identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          a="$(sha256sum dist-evaluator-handoff-a/AX-PUB-EVAL-PACK-001.zip | awk '{print $1}')"
+          b="$(sha256sum dist-evaluator-handoff-b/AX-PUB-EVAL-PACK-001.zip | awk '{print $1}')"
+          test "$a" = "$b"
+          cmp dist-evaluator-handoff-a/AX-PUB-EVAL-PACK-001.manifest.json dist-evaluator-handoff-b/AX-PUB-EVAL-PACK-001.manifest.json
+          echo "AX_EVALUATOR_HANDOFF_REPRODUCIBILITY_PASS sha256=$a"
+
+      - name: Validate built handoff bundle
+        run: '${{ steps.py314.outputs.python-path }}' tools/check_installable_evaluator_handoff.py --bundle-dir dist-evaluator-handoff-a
+
+      - name: Extract local rehearsal payload
+        run: |
+          '${{ steps.py314.outputs.python-path }}' - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          source = Path('dist-evaluator-handoff-a/AX-PUB-EVAL-PACK-001.zip')
+          target = Path('evaluator-handoff-rehearsal')
+          target.mkdir(exist_ok=True)
+          with ZipFile(source) as z:
+              z.extractall(target)
+          print('AX_EVALUATOR_HANDOFF_EXTRACT_PASS')
+          PY
+
+      - name: Local rehearsal install on CPython 3.11-3.14
+        shell: bash
+        run: |
+          set -euo pipefail
+          wheel="$PWD/evaluator-handoff-rehearsal/payload/aetherxglobal_governed_intelligence-0.1.0rc1-py3-none-any.whl"
+          for spec in \
+            "3.11|${{ steps.py311.outputs.python-path }}" \
+            "3.12|${{ steps.py312.outputs.python-path }}" \
+            "3.13|${{ steps.py313.outputs.python-path }}" \
+            "3.14|${{ steps.py314.outputs.python-path }}"
+          do
+            runtime="${spec%%|*}"
+            py="${spec#*|}"
+            venv="$RUNNER_TEMP/ax-evaluator-rehearsal-${runtime}"
+            "$py" -m venv "$venv"
+            "$venv/bin/python" -m pip install --disable-pip-version-check --no-deps "$wheel"
+            "$venv/bin/python" - <<'PY'
+          import aetherxglobal.governed_intelligence as sdk
+          assert sdk.__version__ == '0.1.0rc1'
+          ids = {item['contract_id'] for item in sdk.supported_contracts()}
+          assert ids == {'AX-PUB-SPEC-002', 'AX-PUB-SPEC-003', 'AX-PUB-SPEC-004'}
+          print('AX_EVALUATOR_LOCAL_REHEARSAL_IMPORT_PASS')
+          PY
+            echo "AX_EVALUATOR_LOCAL_REHEARSAL_RUNTIME_PASS runtime=$runtime"
+          done
+
+      - name: Revalidate blank report template on CPython 3.11-3.14
+        shell: bash
+        run: |
+          set -euo pipefail
+          for py in \
+            '${{ steps.py311.outputs.python-path }}' \
+            '${{ steps.py312.outputs.python-path }}' \
+            '${{ steps.py313.outputs.python-path }}' \
+            '${{ steps.py314.outputs.python-path }}'
+          do
+            "$py" tools/check_installable_external_evaluation_report.py \
+              examples/external-evaluation/AX-PUB-EVAL-REPORT-002.template.json \
+              --allow-template
+          done
+
+      - name: Preserve handoff as short-lived CI artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: ax-pub-eval-pack-001-${{ github.sha }}
+          path: |
+            dist-evaluator-handoff-a/AX-PUB-EVAL-PACK-001.zip
+            dist-evaluator-handoff-a/AX-PUB-EVAL-PACK-001.manifest.json
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Explicit evidence and authority boundary
+        run: |
+          echo 'EVALUATOR HANDOFF PACK: CI VALIDATION ONLY'
+          echo 'LOCAL REHEARSAL: NOT FINAL HUMAN EXTERNAL EVALUATION'
+          echo 'FINAL REPORT REQUIRES AUTHORIZED EXTERNAL INDEX'
+          echo 'TESTPYPI UPLOAD NOT AUTHORIZED'
+          echo 'PYPI UPLOAD NOT AUTHORIZED'
+          echo 'HUMAN EXTERNAL EVALUATION NOT ESTABLISHED BY CI'
+          echo 'SDK PUBLICATION NOT AUTHORIZED'
