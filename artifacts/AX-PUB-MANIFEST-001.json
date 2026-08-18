@@ -1,6 +1,6 @@
 {
   "manifest_id": "AX-PUB-MANIFEST-001",
-  "manifest_version": "1.7",
+  "manifest_version": "1.8",
   "repository": "AETHERXGLOBAL/aether-x-governed-intelligence",
   "scope": "PUBLIC_ENGINEERING_ARTIFACT_COMPATIBILITY",
   "public_state": "CURRENT",
@@ -21,7 +21,8 @@
     {"id":"AX-PUB-POL-001","version":"1.6","type":"PUBLIC_ENGINEERING_POLICY","path":"docs/COMPATIBILITY_AND_VERSIONING.md","state":"CURRENT","public_maturity":"ACTIVE FOR THIS REPOSITORY"},
     {"id":"AX-PUB-SNAP-002","version":"1.0","type":"PUBLIC_ENGINEERING_SNAPSHOT","path":"snapshots/AX-PUB-SNAP-002.json","state":"CURRENT","public_maturity":"CI-VALIDATED REPRODUCIBILITY ANCHOR / NON-PRODUCT"},
     {"id":"AX-PUB-REL-001","version":"1.0","type":"PUBLIC_ENGINEERING_RELEASE_RECORD","path":"evidence/AX-PUB-REL-001_PUBLIC_ENGINEERING_VNEXT_RELEASE.md","state":"CURRENT","public_maturity":"PUBLISHED GIT TAG / GITHUB RELEASE RECORD / NON-PRODUCT"},
-    {"id":"AX-PUB-GATE-001","version":"1.0","type":"DEVELOPER_SDK_PUBLICATION_READINESS_GATE","path":"docs/AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md","state":"CURRENT","public_maturity":"ACTIVE / SDK PUBLICATION NOT AUTHORIZED"}
+    {"id":"AX-PUB-GATE-001","version":"1.0","type":"DEVELOPER_SDK_PUBLICATION_READINESS_GATE","path":"docs/AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md","state":"CURRENT","public_maturity":"ACTIVE / SDK PUBLICATION NOT AUTHORIZED"},
+    {"id":"AX-PUB-DEV-001","version":"1.0","type":"DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM","path":"docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md","state":"CURRENT","public_maturity":"UNDER DEVELOPMENT / SDK PUBLICATION NOT AUTHORIZED"}
   ],
   "relationships": [
     {"from_id":"AX-PUB-SPEC-002","from_version":"1.0","relationship":"ALIGNS_WITH_ARCHITECTURE","to_id":"AX-PUB-ARCH-001","to_version":"1.0","state":"COMPATIBLE"},
@@ -40,7 +41,8 @@
     {"from_id":"AX-PUB-TEST-001","from_version":"1.0","relationship":"EXERCISES_PUBLIC_BEHAVIOR_OF","to_id":"AX-PUB-REF-001","to_version":"1.0","state":"COMPATIBLE"},
     {"from_id":"AX-PUB-TEST-001","from_version":"1.0","relationship":"EXERCISES_PUBLIC_BEHAVIOR_OF","to_id":"AX-PUB-REF-002","to_version":"1.0","state":"COMPATIBLE"},
     {"from_id":"AX-PUB-TEST-002","from_version":"1.0","relationship":"EXERCISES_PUBLIC_BEHAVIOR_OF","to_id":"AX-PUB-REF-003","to_version":"1.0","state":"COMPATIBLE"},
-    {"from_id":"AX-PUB-REL-001","from_version":"1.0","relationship":"PACKAGES_PUBLIC_STATE_WITH","to_id":"AX-PUB-SNAP-002","to_version":"1.0","state":"COMPATIBLE"}
+    {"from_id":"AX-PUB-REL-001","from_version":"1.0","relationship":"PACKAGES_PUBLIC_STATE_WITH","to_id":"AX-PUB-SNAP-002","to_version":"1.0","state":"COMPATIBLE"},
+    {"from_id":"AX-PUB-DEV-001","from_version":"1.0","relationship":"GOVERNED_BY","to_id":"AX-PUB-GATE-001","to_version":"1.0","state":"COMPATIBLE"}
   ],
   "validation_evidence": [
     {"id":"AX-PUB-CI-001","path":"evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md","scope":"AGENT_AUTHORITY_PATH","verified_head_commit":"f07bfb55eb45924f9ee62024f144064506d4be48"},
@@ -55,6 +57,9 @@
   "current_readiness_gate": {
     "id":"AX-PUB-GATE-001","version":"1.0","path":"docs/AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md","scope":"SUPPORTED_PUBLIC_SDK_PUBLICATION","disposition":"SDK PUBLICATION NOT AUTHORIZED"
   },
+  "current_developer_program": {
+    "id":"AX-PUB-DEV-001","version":"1.0","path":"docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md","state":"UNDER DEVELOPMENT","next_gate":"DEV-GATE-00 — Contract Baseline","sdk_publication_disposition":"SDK PUBLICATION NOT AUTHORIZED"
+  },
   "claim_boundary": [
     "PUBLIC COMPATIBILITY DOES NOT ESTABLISH PRODUCT INTEGRATION",
     "REFERENCE VALIDATOR PASS DOES NOT ESTABLISH PRODUCTION APPROVAL OR AUTHORIZATION",
@@ -65,6 +70,7 @@
     "PUBLIC ENGINEERING RELEASE DOES NOT ESTABLISH PRODUCT RELEASE OR SDK RELEASE",
     "PUBLIC REFERENCE IMPLEMENTATION DOES NOT ESTABLISH A SUPPORTED SDK",
     "SDK READINESS GATE DOES NOT ESTABLISH AN SDK COMMITMENT",
+    "DEVELOPER ADOPTION PROGRAM DOES NOT ESTABLISH SDK RELEASE OR SUPPORT",
     "PUBLIC ARTIFACTS DO NOT ESTABLISH IMPLEMENTATION INSIDE AETHER X PORTFOLIO INITIATIVES"
   ]
 }
