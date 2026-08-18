@@ -2,11 +2,12 @@
 """Validate DEV-GATE-03 supply-chain/release-candidate governance state.
 
 Gate-03 historically prohibited all package-distribution metadata because no
-later SDK packaging gate existed. The closed Gate-05A decision now permits one
-bounded Gate-05B package-candidate metadata file under stronger fail-closed
-controls. This checker therefore preserves the Gate-03 prohibition everywhere
-except the exact Gate-05B pyproject path when the later governance state is
-machine-verifiably active and publication remains unauthorized.
+later SDK packaging gate existed. Closed Gate-05A permits one bounded Gate-05B
+package-candidate metadata file under stronger fail-closed controls. This
+checker preserves that prohibition everywhere except the exact Gate-05B
+pyproject path while Gate-05B is active, or after Gate-05B closes only when
+AX-PUB-CI-009 proves the bounded package and Gate-05C is the active objective.
+Publication, registry, licence and supported-SDK authority remain fail-closed.
 """
 from __future__ import annotations
 
@@ -24,6 +25,7 @@ DEV007 = ROOT / "artifacts" / "AX-PUB-DEV-007.json"
 DEV008 = ROOT / "artifacts" / "AX-PUB-DEV-008.json"
 DOC = ROOT / "docs" / "AX-PUB-DEV-005_SUPPLY_CHAIN_RELEASE_CANDIDATE.md"
 EVIDENCE = ROOT / "evidence" / "AX-PUB-CI-006_SUPPLY_CHAIN_RELEASE_CANDIDATE_VALIDATION.md"
+EVIDENCE_009 = ROOT / "evidence" / "AX-PUB-CI-009_INSTALLABLE_PACKAGE_CANDIDATE_VALIDATION.md"
 SECURITY = ROOT / "SECURITY.md"
 BUILD = ROOT / "tools" / "build_release_candidate.py"
 WORKFLOW = ROOT / ".github" / "workflows" / "validate-supply-chain-release-candidate.yml"
@@ -69,7 +71,7 @@ def digest(path: Path) -> str:
 
 
 def gate05b_metadata_allowlist(findings: list[str]) -> set[Path]:
-    """Return the single later-gate metadata path only under proven Gate-05B state."""
+    """Allow exactly one pyproject only under machine-proven later Gate-05 state."""
     if not DEV008.exists():
         return set()
 
@@ -80,6 +82,7 @@ def gate05b_metadata_allowlist(findings: list[str]) -> set[Path]:
 
     valid = True
     phases = dev007.get("gate_05_phases")
+    b_state: Any = None
     if not isinstance(phases, dict):
         findings.append("Gate-05B metadata present but DEV-007 gate_05_phases is missing")
         valid = False
@@ -87,9 +90,21 @@ def gate05b_metadata_allowlist(findings: list[str]) -> set[Path]:
         if phases.get("DEV-GATE-05A") != "CLOSED":
             findings.append("Gate-05B metadata requires DEV-GATE-05A=CLOSED")
             valid = False
-        if phases.get("DEV-GATE-05B") != "ACTIVE_ENGINEERING_OBJECTIVE":
-            findings.append("Gate-05B metadata requires DEV-GATE-05B=ACTIVE_ENGINEERING_OBJECTIVE")
+        b_state = phases.get("DEV-GATE-05B")
+        if b_state not in {"ACTIVE_ENGINEERING_OBJECTIVE", "CLOSED"}:
+            findings.append("Gate-05B metadata requires Gate-05B active or evidence-backed closed state")
             valid = False
+        elif b_state == "ACTIVE_ENGINEERING_OBJECTIVE":
+            if phases.get("DEV-GATE-05C") != "NOT_ESTABLISHED":
+                findings.append("active Gate-05B metadata must not pre-promote Gate-05C")
+                valid = False
+        else:
+            if phases.get("DEV-GATE-05C") != "ACTIVE_ENGINEERING_OBJECTIVE":
+                findings.append("closed Gate-05B metadata requires DEV-GATE-05C=ACTIVE_ENGINEERING_OBJECTIVE")
+                valid = False
+            if phases.get("DEV-GATE-05D") != "NOT_AUTHORIZED":
+                findings.append("closed Gate-05B metadata requires DEV-GATE-05D=NOT_AUTHORIZED")
+                valid = False
 
     if dev007.get("publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
         findings.append("Gate-05B metadata requires parent SDK publication to remain NOT AUTHORIZED")
@@ -130,6 +145,28 @@ def gate05b_metadata_allowlist(findings: list[str]) -> set[Path]:
             valid = False
         if distribution.get("registry_publication_authorized") is not False:
             findings.append("Gate-05B metadata requires registry publication to remain unauthorized")
+            valid = False
+
+    if b_state == "CLOSED":
+        if dev008.get("phase_state") != "CLOSED":
+            findings.append("closed Gate-05B metadata requires DEV-008 phase_state=CLOSED")
+            valid = False
+        closure = dev008.get("closure_evidence")
+        if not isinstance(closure, dict):
+            findings.append("closed Gate-05B metadata requires DEV-008 closure evidence")
+            valid = False
+        else:
+            if closure.get("id") != "AX-PUB-CI-009" or closure.get("version") != "1.0":
+                findings.append("closed Gate-05B metadata requires AX-PUB-CI-009 v1.0")
+                valid = False
+            if closure.get("workflow_run_id") != 32171606094 or closure.get("job_id") != 95823835258:
+                findings.append("closed Gate-05B metadata closure evidence identity mismatch")
+                valid = False
+            if closure.get("conclusion") != "SUCCESS":
+                findings.append("closed Gate-05B metadata requires successful closure evidence")
+                valid = False
+        if not EVIDENCE_009.is_file():
+            findings.append("closed Gate-05B metadata requires AX-PUB-CI-009 evidence file")
             valid = False
 
     return {GATE05B_PYPROJECT} if valid else set()
@@ -306,11 +343,12 @@ def main() -> int:
                 findings.append("DEV-005 must not establish release candidate before CI evidence")
 
     allowed_later_metadata = gate05b_metadata_allowlist(findings)
+    allowed_resolved = {path.resolve() for path in allowed_later_metadata}
     for root in (ROOT, ROOT / "sdk-candidate", ROOT / "release-candidate"):
         for forbidden in FORBIDDEN_METADATA:
             matches = list(root.rglob(forbidden)) if root.exists() else []
             for match in matches:
-                if match.resolve() in {path.resolve() for path in allowed_later_metadata}:
+                if match.resolve() in allowed_resolved:
                     continue
                 findings.append(f"forbidden distribution metadata present outside authorized Gate-05B candidate: {match.relative_to(ROOT)}")
 

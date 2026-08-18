@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Fail-closed boundary validation for AX-PUB-DEV-008 / DEV-GATE-05B."""
+"""Fail-closed boundary validation for AX-PUB-DEV-008 / DEV-GATE-05B.
+
+The checker accepts either the published engineering-candidate state or the
+AX-PUB-CI-009-backed closed state. Closed state is accepted only when the exact
+validated distribution identities and verification evidence are present.
+"""
 from __future__ import annotations
 
 import ast
@@ -16,7 +21,14 @@ NAMESPACE_ROOT = PACKAGE_ROOT / "src" / "aetherxglobal"
 SRC_ROOT = NAMESPACE_ROOT / "governed_intelligence"
 ARTIFACT_PATH = ROOT / "artifacts" / "AX-PUB-DEV-008.json"
 PARENT_ARTIFACT = ROOT / "artifacts" / "AX-PUB-DEV-007.json"
+EVIDENCE_PATH = ROOT / "evidence" / "AX-PUB-CI-009_INSTALLABLE_PACKAGE_CANDIDATE_VALIDATION.md"
 PYPROJECT = PACKAGE_ROOT / "pyproject.toml"
+
+EXPECTED_WHEEL = "aetherxglobal_governed_intelligence-0.1.0rc1-py3-none-any.whl"
+EXPECTED_WHEEL_SHA256 = "bd3c3bfc7306c9b45659e3e0533ea1ac24b065a4c577f08cbe987cc10a4d1fac"
+EXPECTED_SDIST = "aetherxglobal_governed_intelligence-0.1.0rc1.tar.gz"
+EXPECTED_SDIST_SHA256 = "2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99"
+EXPECTED_ACTIONS_ARTIFACT_SHA256 = "9b2e050d59146e2b768cb5f9468b2035c078aa1abbb4e0fd0ac4148e8d58d4a2"
 
 VALIDATOR_PAIRS = {
     "AX-PUB-REF-001": (
@@ -77,18 +89,114 @@ def git_blob_sha1(content: bytes) -> str:
     return hashlib.sha1(header + content).hexdigest()
 
 
-def check_parent_gate() -> None:
+def check_parent_gate() -> str:
     parent = load_json(PARENT_ARTIFACT)
-    require(parent.get("artifact_id") == "AX-PUB-DEV-007", "parent Gate-05A artifact ID mismatch")
+    require(parent.get("artifact_id") == "AX-PUB-DEV-007", "parent Gate-05 artifact ID mismatch")
     phases = parent.get("gate_05_phases")
     require(isinstance(phases, dict), "parent Gate-05 phase state missing")
-    require(phases.get("DEV-GATE-05A") == "CLOSED", "Gate-05B may not proceed before Gate-05A is closed")
-    require(phases.get("DEV-GATE-05B") == "ACTIVE_ENGINEERING_OBJECTIVE", "Gate-05B is not the active engineering objective")
+    require(phases.get("DEV-GATE-05A") == "CLOSED", "Gate-05B requires Gate-05A=CLOSED")
+    b_state = phases.get("DEV-GATE-05B")
+    require(b_state in {"ACTIVE_ENGINEERING_OBJECTIVE", "CLOSED"}, "Gate-05B parent state invalid")
+    if b_state == "ACTIVE_ENGINEERING_OBJECTIVE":
+        require(phases.get("DEV-GATE-05C") == "NOT_ESTABLISHED", "candidate Gate-05B must not pre-promote Gate-05C")
+    else:
+        require(phases.get("DEV-GATE-05C") == "ACTIVE_ENGINEERING_OBJECTIVE", "closed Gate-05B must advance Gate-05C")
+        require(parent.get("next_phase") == "DEV-GATE-05C — Distribution & External Validation", "closed Gate-05B parent next phase mismatch")
+        package_evidence = parent.get("installable_package_closure_evidence")
+        require(isinstance(package_evidence, dict), "closed Gate-05B parent closure evidence missing")
+        require(package_evidence.get("id") == "AX-PUB-CI-009", "closed Gate-05B parent must cite AX-PUB-CI-009")
+    require(phases.get("DEV-GATE-05D") == "NOT_AUTHORIZED", "Gate-05D must remain unauthorized")
     require(parent.get("publication_disposition") == "SDK PUBLICATION NOT AUTHORIZED", "parent publication boundary changed")
     require(parent.get("release_authorized") is False, "parent release authority must remain false")
+    return b_state
 
 
-def check_artifact() -> dict[str, Any]:
+def check_closed_evidence(data: dict[str, Any]) -> None:
+    require(data.get("phase_state") == "CLOSED", "closed Gate-05B requires phase_state=CLOSED")
+    require(data.get("next_phase") == "DEV-GATE-05C — Distribution & External Validation", "closed Gate-05B next phase mismatch")
+
+    build = data.get("build")
+    require(isinstance(build, dict), "build state missing")
+    require(build.get("reproducibility_evidence_established") is True, "closed Gate-05B requires reproducibility evidence")
+
+    verification = data.get("verification")
+    require(isinstance(verification, dict), "closed Gate-05B verification state missing")
+    required_verification = {
+        "package_boundary": "VERIFIED",
+        "deterministic_double_build": "VERIFIED",
+        "wheel_metadata_inventory": "VERIFIED",
+        "wheel_install": "VERIFIED",
+        "sdist_build": "VERIFIED",
+        "sdist_to_wheel_byte_identity": "VERIFIED",
+        "installed_package_tests": "VERIFIED",
+        "runtime_matrix": "VERIFIED_CPTHON_3_11_TO_3_14",
+        "artifact_inventory": "VERIFIED",
+        "artifact_digests": "VERIFIED",
+        "ci_artifact_retention": "VERIFIED_7_DAYS",
+        "inherited_gate_03": "PRESERVED",
+        "inherited_gate_04": "PRESERVED",
+        "inherited_gate_05a": "PRESERVED",
+        "public_manifest": "PRESERVED",
+        "publication": "NOT_AUTHORIZED",
+    }
+    for key, expected in required_verification.items():
+        require(verification.get(key) == expected, f"closed Gate-05B verification mismatch for {key}")
+
+    identity = data.get("verified_distribution_identity")
+    require(isinstance(identity, dict), "verified distribution identity missing")
+    wheel = identity.get("wheel")
+    sdist = identity.get("sdist")
+    actions = identity.get("actions_artifact")
+    require(isinstance(wheel, dict) and isinstance(sdist, dict) and isinstance(actions, dict), "verified distribution identity incomplete")
+    require(wheel.get("filename") == EXPECTED_WHEEL, "verified wheel filename mismatch")
+    require(wheel.get("sha256") == EXPECTED_WHEEL_SHA256, "verified wheel digest mismatch")
+    require(sdist.get("filename") == EXPECTED_SDIST, "verified sdist filename mismatch")
+    require(sdist.get("sha256") == EXPECTED_SDIST_SHA256, "verified sdist digest mismatch")
+    require(actions.get("id") == 9337474216, "Actions artifact ID mismatch")
+    require(actions.get("name") == "ax-pub-dev-008-3267c66681e417bf5eb0f8a384e8c2d992d266c0", "Actions artifact name mismatch")
+    require(actions.get("sha256") == EXPECTED_ACTIONS_ARTIFACT_SHA256, "Actions artifact digest mismatch")
+    require(actions.get("retention_days") == 7, "Actions artifact retention mismatch")
+
+    closure = data.get("closure_evidence")
+    require(isinstance(closure, dict), "closed Gate-05B closure_evidence missing")
+    expected_closure = {
+        "id": "AX-PUB-CI-009",
+        "version": "1.0",
+        "path": "evidence/AX-PUB-CI-009_INSTALLABLE_PACKAGE_CANDIDATE_VALIDATION.md",
+        "published_baseline_commit": "774abcce340c3fbaf3481ab5244ee1d41b88243c",
+        "verification_head_commit": "63477bb11124aebbad4034587a366d5ef882b3c2",
+        "verification_merge_commit": "3267c66681e417bf5eb0f8a384e8c2d992d266c0",
+        "verification_pr": 36,
+        "workflow_run_id": 32171606094,
+        "workflow_run_number": 19,
+        "job_id": 95823835258,
+        "governance_workflow_run_id": 32171606079,
+        "governance_workflow_run_number": 168,
+        "conclusion": "SUCCESS",
+        "source_date_epoch": 1787076737,
+    }
+    for key, expected in expected_closure.items():
+        require(closure.get(key) == expected, f"closed Gate-05B closure evidence mismatch for {key}")
+    require(closure.get("verified_runtime_matrix") == ["3.11", "3.12", "3.13", "3.14"], "closed Gate-05B runtime evidence mismatch")
+
+    require(EVIDENCE_PATH.is_file(), "AX-PUB-CI-009 evidence file missing")
+    evidence = EVIDENCE_PATH.read_text(encoding="utf-8")
+    for token in (
+        "AX-PUB-CI-009",
+        "774abcce340c3fbaf3481ab5244ee1d41b88243c",
+        "63477bb11124aebbad4034587a366d5ef882b3c2",
+        "3267c66681e417bf5eb0f8a384e8c2d992d266c0",
+        "32171606094",
+        "95823835258",
+        EXPECTED_WHEEL_SHA256,
+        EXPECTED_SDIST_SHA256,
+        EXPECTED_ACTIONS_ARTIFACT_SHA256,
+        "SDK PUBLICATION NOT AUTHORIZED",
+    ):
+        require(token in evidence, f"AX-PUB-CI-009 missing token: {token}")
+
+
+def check_artifact(parent_b_state: str) -> tuple[dict[str, Any], bool]:
     data = load_json(ARTIFACT_PATH)
     require(data.get("artifact_id") == "AX-PUB-DEV-008", "unexpected package artifact ID")
     require(data.get("version") == "0.1", "unexpected Gate-05B artifact version")
@@ -97,8 +205,18 @@ def check_artifact() -> dict[str, Any]:
     require(data.get("gate") == "DEV-GATE-05" and data.get("phase") == "DEV-GATE-05B", "Gate-05B identity mismatch")
     require(data.get("publication_disposition") == "SDK PUBLICATION NOT AUTHORIZED", "publication disposition must remain fail-closed")
     require(data.get("distribution_authorized") is False, "distribution must remain unauthorized")
-    require(data.get("license_granted") is False, "candidate must not grant a software licence")
-    require(data.get("supported_sdk_established") is False, "candidate must not establish a supported SDK")
+    require(data.get("license_granted") is False, "Gate-05B must not grant a software licence")
+    require(data.get("supported_sdk_established") is False, "Gate-05B must not establish a supported SDK")
+
+    closed = data.get("phase_state") == "CLOSED"
+    if parent_b_state == "CLOSED":
+        require(closed, "parent closes Gate-05B but DEV-008 is not closed")
+        check_closed_evidence(data)
+    else:
+        require(not closed, "DEV-008 may not close before parent Gate-05 state advances")
+        build_candidate = data.get("build")
+        require(isinstance(build_candidate, dict), "candidate build state missing")
+        require(build_candidate.get("reproducibility_evidence_established") is False, "candidate must not pre-claim reproducibility evidence")
 
     distribution = data.get("distribution")
     require(isinstance(distribution, dict), "distribution state must be an object")
@@ -126,7 +244,6 @@ def check_artifact() -> dict[str, Any]:
     ):
         require(build.get(key) is True, f"build control {key} must remain required")
     require(build.get("ci_artifact_retention_days") == 7, "CI artifact retention must remain 7 days")
-    require(build.get("reproducibility_evidence_established") is False, "candidate must not pre-claim reproducibility evidence")
 
     require(data.get("runtime_target") == ["3.11", "3.12", "3.13", "3.14"], "runtime target must remain CPython 3.11-3.14")
 
@@ -159,7 +276,7 @@ def check_artifact() -> dict[str, Any]:
         "EXPLICIT_RELEASE_AUTHORITY",
     }
     require(required_blockers <= set(blockers), "one or more release hard blockers were removed")
-    return data
+    return data, closed
 
 
 def check_pyproject() -> None:
@@ -181,9 +298,6 @@ def check_pyproject() -> None:
     require(build_system.get("build-backend") == "hatchling.build", "unexpected build backend")
     require(build_system.get("requires") == ["hatchling==1.31.0"], "build backend must remain exactly pinned for Gate-05B")
 
-    hatch = data.get("tool", {}).get("hatch", {}) if isinstance(data.get("tool"), dict) else {}
-    require(isinstance(hatch, dict), "Hatch configuration missing")
-
 
 def check_namespace_boundary() -> None:
     require(NAMESPACE_ROOT.is_dir(), "company namespace directory is missing")
@@ -194,7 +308,6 @@ def check_namespace_boundary() -> None:
 def check_validator_identity(artifact: dict[str, Any]) -> None:
     expected = artifact.get("validator_source_identity")
     require(isinstance(expected, dict), "validator source identity map is missing")
-
     for artifact_id, (reference, packaged) in VALIDATOR_PAIRS.items():
         require(reference.is_file(), f"missing reference validator for {artifact_id}")
         require(packaged.is_file(), f"missing packaged validator for {artifact_id}")
@@ -217,12 +330,10 @@ def check_import_boundary(files: list[Path]) -> None:
         text = path.read_text(encoding="utf-8")
         for marker in PRIVATE_MARKERS:
             require(marker not in text, f"private-project marker {marker!r} found in {path.relative_to(ROOT)}")
-
         try:
             tree = ast.parse(text, filename=str(path))
         except SyntaxError as exc:
             fail(f"syntax error in {path.relative_to(ROOT)}: {exc}")
-
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
                 modules = [alias.name for alias in node.names]
@@ -250,7 +361,6 @@ def check_public_surface() -> None:
                             exported.add(item.value)
     require(exported, "public __all__ is missing")
     require(FORBIDDEN_PUBLIC_NAMES.isdisjoint(exported), "execution/network capability leaked into public API")
-
     api_text = (SRC_ROOT / "_api.py").read_text(encoding="utf-8")
     require('SDK_VERSION = "0.1.0rc1"' in api_text, "SDK_VERSION must match package candidate metadata")
 
@@ -262,8 +372,8 @@ def check_no_repository_loader() -> None:
 
 
 def main() -> None:
-    check_parent_gate()
-    artifact = check_artifact()
+    parent_b_state = check_parent_gate()
+    artifact, closed = check_artifact(parent_b_state)
     check_pyproject()
     check_namespace_boundary()
     check_validator_identity(artifact)
@@ -271,10 +381,8 @@ def main() -> None:
     check_import_boundary(files)
     check_public_surface()
     check_no_repository_loader()
-    print(
-        "AX_SDK_RELEASE_CANDIDATE_BOUNDARY_PASS "
-        f"python_files={len(files)} runtime_dependencies=0 validators=3 namespace=PEP420"
-    )
+    marker = "AX_SDK_RELEASE_CANDIDATE_CLOSED_STATE_PASS" if closed else "AX_SDK_RELEASE_CANDIDATE_BOUNDARY_PASS"
+    print(f"{marker} python_files={len(files)} runtime_dependencies=0 validators=3 namespace=PEP420")
 
 
 if __name__ == "__main__":
