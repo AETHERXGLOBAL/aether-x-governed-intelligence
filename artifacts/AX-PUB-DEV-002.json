@@ -1,0 +1,94 @@
+{
+  "artifact_id": "AX-PUB-DEV-002",
+  "version": "1.0",
+  "type": "DEVELOPER_CONTRACT_BASELINE",
+  "state": "DEV-GATE-00_CANDIDATE",
+  "sdk_publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
+  "program": {
+    "id": "AX-PUB-DEV-001",
+    "version": "1.0"
+  },
+  "governing_gate": {
+    "id": "AX-PUB-GATE-001",
+    "version": "1.0"
+  },
+  "contract_paths": [
+    {
+      "path_id": "EAV",
+      "specification": {"id": "AX-PUB-SPEC-002", "version": "1.0"},
+      "schema": {"id": "AX-PUB-SCHEMA-001", "version": "1.0"},
+      "reference": {"id": "AX-PUB-REF-001", "version": "1.0"},
+      "conformance": {"id": "AX-PUB-TEST-001", "version": "1.0"}
+    },
+    {
+      "path_id": "POINT_IN_TIME_PROVENANCE",
+      "specification": {"id": "AX-PUB-SPEC-003", "version": "1.0"},
+      "schema": {"id": "AX-PUB-SCHEMA-002", "version": "1.0"},
+      "reference": {"id": "AX-PUB-REF-002", "version": "1.0"},
+      "conformance": {"id": "AX-PUB-TEST-001", "version": "1.0"}
+    },
+    {
+      "path_id": "AGENT_AUTHORITY_TOOL_USE",
+      "specification": {"id": "AX-PUB-SPEC-004", "version": "1.0"},
+      "schema": {"id": "AX-PUB-SCHEMA-003", "version": "1.0"},
+      "reference": {"id": "AX-PUB-REF-003", "version": "1.0"},
+      "conformance": {"id": "AX-PUB-TEST-002", "version": "1.0"}
+    }
+  ],
+  "error_taxonomy": [
+    "AXDEV-CONTRACT-INVALID",
+    "AXDEV-VERSION-UNSUPPORTED",
+    "AXDEV-EVIDENCE-INSUFFICIENT",
+    "AXDEV-AUTHORITY-UNESTABLISHED",
+    "AXDEV-AUTHORITY-INACTIVE",
+    "AXDEV-AUTHORITY-SCOPE-VIOLATION",
+    "AXDEV-TEMPORAL-CUTOFF-VIOLATION",
+    "AXDEV-PROVENANCE-INCOMPLETE",
+    "AXDEV-CONFLICT-UNRESOLVED",
+    "AXDEV-VERIFICATION-FAILED",
+    "AXDEV-VERIFICATION-INCONCLUSIVE",
+    "AXDEV-EXECUTION-NOT-VERIFIED",
+    "AXDEV-UNSUPPORTED-OPERATION"
+  ],
+  "fail_closed_rules": [
+    "UNKNOWN_AUTHORITY_NO_CONSEQUENTIAL_EXECUTION",
+    "EXPIRED_OR_REVOKED_AUTHORITY_NO_NEW_EXECUTION",
+    "OUT_OF_SCOPE_ACTION_NO_EXECUTION",
+    "FUTURE_DATA_NO_POINT_IN_TIME_CONFORMANT_RESULT",
+    "FAILED_VERIFICATION_NO_VERIFIED_OUTCOME",
+    "INCONCLUSIVE_VERIFICATION_NO_VERIFIED_OUTCOME",
+    "UNKNOWN_CONTRACT_VERSION_NO_SILENT_VERSION_COERCION"
+  ],
+  "non_goals": [
+    "PRODUCTION_HTTP_API",
+    "HOSTED_DEVELOPER_SERVICE",
+    "SHARED_COMPANY_RUNTIME",
+    "PRODUCTION_AUTHORIZATION_PLANE",
+    "PACKAGE_REGISTRY_PUBLICATION",
+    "SUPPORTED_SDK",
+    "STABLE_SDK_1_0_API",
+    "OPEN_SOURCE_OR_COMMERCIAL_REUSE_LICENCE",
+    "CUSTOMER_SUPPORT_OR_SLA",
+    "PRODUCT_INTEGRATION_CLAIM",
+    "SECURITY_OR_REGULATORY_CERTIFICATION"
+  ],
+  "public_private_boundary": {
+    "private_repository_dependency_allowed": false,
+    "private_endpoint_dependency_allowed": false,
+    "private_credential_dependency_allowed": false,
+    "private_package_index_dependency_allowed": false,
+    "unpublished_schema_dependency_allowed": false,
+    "public_examples": "SYNTHETIC_OR_EXPLICITLY_AUTHORIZED"
+  },
+  "sdk_semver_active": false,
+  "package_identity_approved": false,
+  "registry_publication_authorized": false,
+  "licence_decided": false,
+  "gate_exit_state": "CANDIDATE_NOT_CLOSED",
+  "next_gate_after_verified_closure": "DEV-GATE-01 — Reproducible Developer Experience",
+  "claim_boundary": [
+    "DEVELOPER CONTRACT BASELINE DOES NOT ESTABLISH A SUPPORTED SDK",
+    "CONTRACTED PUBLIC SEMANTICS DO NOT ESTABLISH PRODUCT IMPLEMENTATION",
+    "PUBLIC VISIBILITY DOES NOT GRANT A REUSE LICENCE"
+  ]
+}
