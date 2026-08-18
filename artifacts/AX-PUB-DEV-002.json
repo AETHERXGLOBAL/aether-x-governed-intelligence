@@ -2,7 +2,7 @@
   "artifact_id": "AX-PUB-DEV-002",
   "version": "1.0",
   "type": "DEVELOPER_CONTRACT_BASELINE",
-  "state": "DEV-GATE-00_CANDIDATE",
+  "state": "DEV-GATE-00_CLOSED",
   "sdk_publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
   "program": {
     "id": "AX-PUB-DEV-001",
@@ -84,11 +84,22 @@
   "package_identity_approved": false,
   "registry_publication_authorized": false,
   "licence_decided": false,
-  "gate_exit_state": "CANDIDATE_NOT_CLOSED",
-  "next_gate_after_verified_closure": "DEV-GATE-01 — Reproducible Developer Experience",
+  "gate_exit_state": "CLOSED",
+  "closure_evidence": {
+    "id": "AX-PUB-CI-003",
+    "path": "evidence/AX-PUB-CI-003_DEVELOPER_CONTRACT_BASELINE_VALIDATION.md",
+    "verification_pr": 8,
+    "workflow": "Validate Public Artifact Manifest",
+    "workflow_run_id": 32134148610,
+    "workflow_run_number": 97,
+    "conclusion": "SUCCESS",
+    "validated_base_commit": "8e821f9debc27ce8924e1480852b047a8ecf6f02",
+    "verification_head_commit": "ae72355968f64997242b770457634fe4f3bf021c"
+  },
+  "next_gate": "DEV-GATE-01 — Reproducible Developer Experience",
   "claim_boundary": [
-    "DEVELOPER CONTRACT BASELINE DOES NOT ESTABLISH A SUPPORTED SDK",
-    "CONTRACTED PUBLIC SEMANTICS DO NOT ESTABLISH PRODUCT IMPLEMENTATION",
+    "DEV-GATE-00 CLOSURE DOES NOT ESTABLISH A SUPPORTED SDK",
+    "DEVELOPER CONTRACT BASELINE DOES NOT ESTABLISH PRODUCT IMPLEMENTATION",
     "PUBLIC VISIBILITY DOES NOT GRANT A REUSE LICENCE"
   ]
 }
