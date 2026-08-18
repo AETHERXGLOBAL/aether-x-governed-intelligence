@@ -1,0 +1,85 @@
+{
+  "artifact_id": "AX-PUB-DEV-003",
+  "version": "1.0",
+  "type": "REPRODUCIBLE_DEVELOPER_EXPERIENCE",
+  "state": "DEV-GATE-01_CANDIDATE",
+  "sdk_publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
+  "program": {"id": "AX-PUB-DEV-001", "version": "1.0"},
+  "contract_baseline": {"id": "AX-PUB-DEV-002", "version": "1.0", "state": "DEV-GATE-00_CLOSED"},
+  "governing_gate": {"id": "AX-PUB-GATE-001", "version": "1.0"},
+  "clean_environment": {
+    "public_checkout_only": true,
+    "private_repository_dependency_allowed": false,
+    "private_package_index_dependency_allowed": false,
+    "private_endpoint_dependency_allowed": false,
+    "credential_required": false,
+    "third_party_runtime_dependency_required": false
+  },
+  "candidate_runtime_matrix": ["3.10", "3.11", "3.12", "3.13"],
+  "verified_runtime_matrix": [],
+  "runner": "tools/check_developer_experience.py",
+  "checks": [
+    {
+      "id": "EAV_VALID",
+      "command": ["python", "reference-implementations/eav-contract-validator/validator.py", "reference-implementations/eav-contract-validator/examples/valid_bundle.json"],
+      "expected_exit": 0,
+      "expected_marker": "AX_EAV_REFERENCE_VALIDATION_PASS"
+    },
+    {
+      "id": "EAV_INVALID",
+      "command": ["python", "reference-implementations/eav-contract-validator/validator.py", "reference-implementations/eav-contract-validator/examples/invalid_bundle.json", "--json"],
+      "expected_exit": "NONZERO",
+      "expected_json_status": "FAIL",
+      "minimum_findings": 1
+    },
+    {
+      "id": "PTK_VALID",
+      "command": ["python", "reference-implementations/point-in-time-knowledge-validator/validator.py", "reference-implementations/point-in-time-knowledge-validator/examples/valid_envelope.json"],
+      "expected_exit": 0,
+      "expected_marker": "AX_PTK_REFERENCE_VALIDATION_PASS"
+    },
+    {
+      "id": "PTK_INVALID",
+      "command": ["python", "reference-implementations/point-in-time-knowledge-validator/validator.py", "reference-implementations/point-in-time-knowledge-validator/examples/invalid_envelope.json", "--json"],
+      "expected_exit": "NONZERO",
+      "expected_json_status": "FAIL",
+      "minimum_findings": 1
+    },
+    {
+      "id": "AGENT_VALID",
+      "command": ["python", "reference-implementations/agent-tool-authority-validator/validator.py", "reference-implementations/agent-tool-authority-validator/examples/valid_envelope.json"],
+      "expected_exit": 0,
+      "expected_marker": "AX_AGENT_AUTHORITY_REFERENCE_VALIDATION_PASS"
+    },
+    {
+      "id": "AGENT_INVALID",
+      "command": ["python", "reference-implementations/agent-tool-authority-validator/validator.py", "reference-implementations/agent-tool-authority-validator/examples/invalid_envelope.json", "--json"],
+      "expected_exit": "NONZERO",
+      "expected_json_status": "FAIL",
+      "minimum_findings": 1
+    },
+    {
+      "id": "PUBLIC_CONFORMANCE",
+      "command": ["python", "conformance/AX-PUB-TEST-001/run_conformance.py"],
+      "expected_exit": 0,
+      "expected_markers": ["AX_PUBLIC_CONFORMANCE_PASS cases=15 conforming=15", "AX_PUBLIC_CONFORMANCE_BOUNDARY_PASS"]
+    },
+    {
+      "id": "AGENT_CONFORMANCE",
+      "command": ["python", "conformance/AX-PUB-TEST-002/run_conformance.py"],
+      "expected_exit": 0,
+      "expected_marker": "AX_AGENT_AUTHORITY_CONFORMANCE_PASS cases=10 conforming=10"
+    }
+  ],
+  "success_marker": "AX_DEVELOPER_EXPERIENCE_PASS",
+  "sdk_candidate_established": false,
+  "package_identity_approved": false,
+  "registry_publication_authorized": false,
+  "licence_decided": false,
+  "next_gate_after_verified_closure": "DEV-GATE-02 — SDK Candidate",
+  "claim_boundary": [
+    "REPRODUCIBLE DEVELOPER EXPERIENCE DOES NOT ESTABLISH AN SDK CANDIDATE",
+    "CLEAN ENVIRONMENT CI PASS DOES NOT ESTABLISH PRODUCTION READINESS",
+    "RUNTIME MATRIX VALIDATION DOES NOT CREATE A GENERAL SDK SUPPORT COMMITMENT"
+  ]
+}
