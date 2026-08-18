@@ -1,0 +1,82 @@
+{
+  "artifact_id": "AX-PUB-SEC-001",
+  "version": "0.1",
+  "type": "SDK_SECURITY_OPERATIONS_READINESS_CONTRACT_CANDIDATE",
+  "state": "DEV_GATE_05C_SECURITY_OPERATIONS_CANDIDATE",
+  "scope": "PUBLIC_AETHER_X_GOVERNED_INTELLIGENCE_SDK_AND_RELEASE_SUPPLY_CHAIN",
+  "security_operations_ready": false,
+  "dedicated_security_channel_established": false,
+  "security_response_owner_assigned": false,
+  "security_response_sla_established": false,
+  "bug_bounty_established": false,
+  "supported_sdk_established": false,
+  "sdk_publication_authorized": false,
+  "current_provisional_intake": {
+    "channel": "aether.x.eg@gmail.com",
+    "subject_prefix": "Security Report — AETHER X Public Engineering",
+    "dedicated_security_service": false,
+    "sla": false
+  },
+  "required_production_intake": {
+    "private_channel": true,
+    "dedicated_or_formally_designated": true,
+    "published_in_security_policy": true,
+    "named_internal_owner": true,
+    "escalation_path": true,
+    "confidential_followup_capability": true
+  },
+  "case_lifecycle": [
+    "RECEIVED",
+    "TRIAGED",
+    "VALIDATED_OR_REJECTED",
+    "REMEDIATION_PLANNED",
+    "FIX_VALIDATED",
+    "RELEASE_OR_MITIGATION_READY",
+    "DISCLOSURE_OR_ADVISORY_DECIDED",
+    "CLOSED"
+  ],
+  "severity_classes": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFORMATIONAL"],
+  "minimum_case_record": [
+    "CASE_ID",
+    "RECEIVED_AT",
+    "AFFECTED_VERSION_OR_ARTIFACT",
+    "REPORT_CHANNEL",
+    "SEVERITY",
+    "TRIAGE_STATE",
+    "TECHNICAL_FINDING",
+    "REMEDIATION_OR_RISK_DECISION",
+    "FIX_OR_MITIGATION_VERSION",
+    "DISCLOSURE_STATE",
+    "CLOSURE_EVIDENCE"
+  ],
+  "release_incident_controls": [
+    "FREEZE_AFFECTED_RELEASE_PROMOTION",
+    "IDENTIFY_EXACT_AFFECTED_ARTIFACT_DIGESTS",
+    "VERIFY_SOURCE_BUILD_AND_REGISTRY_PROVENANCE",
+    "BLOCK_REUSE_OF_COMPROMISED_RELEASE_CREDENTIAL_OR_PATH",
+    "PREPARE_FIXED_OR_WITHDRAWN_RELEASE_ACTION_AS_SUPPORTED_AND_AUTHORIZED",
+    "PUBLISH_CONSUMER_SAFE_GUIDANCE_WHEN_MATERIAL",
+    "PRESERVE_INCIDENT_AND_REMEDIATION_EVIDENCE"
+  ],
+  "activation_requirements": [
+    "DEDICATED_OR_FORMALLY_DESIGNATED_PRIVATE_SECURITY_CHANNEL",
+    "NAMED_SECURITY_RESPONSE_OWNER",
+    "DOCUMENTED_ESCALATION_PATH",
+    "RELEASE_REMEDIATION_AUTHORITY",
+    "SUPPORTED_VERSION_INVENTORY",
+    "VULNERABILITY_CASE_RECORD_PROCESS",
+    "SECURITY_RELEASE_AND_WITHDRAWAL_PROCESS",
+    "RELEASE_CONTROL_READINESS_ESTABLISHED",
+    "PUBLIC_SECURITY_POLICY_SYNCHRONIZED",
+    "EXPLICIT_DEV_GATE_05D_RELEASE_AUTHORITY"
+  ],
+  "claim_boundaries": [
+    "SECURITY OPERATIONS CONTRACT CANDIDATE DOES NOT ESTABLISH SECURITY OPERATIONS READINESS",
+    "PROVISIONAL EMAIL DOES NOT ESTABLISH A DEDICATED SECURITY RESPONSE SERVICE",
+    "NO SECURITY RESPONSE SLA IS ESTABLISHED",
+    "NO BUG BOUNTY PROGRAM IS ESTABLISHED",
+    "NO SECURITY CERTIFICATION IS IMPLIED",
+    "SUPPORTED SDK NOT ESTABLISHED",
+    "SDK PUBLICATION NOT AUTHORIZED"
+  ]
+}
