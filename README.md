@@ -4,177 +4,160 @@
 
 # AETHER X Governed Intelligence
 
-**Public reference architecture, technical specifications, machine-readable contracts, non-production reference implementations and bounded conformance evidence for governed intelligence systems by AETHER X GLOBAL.**
+**Public reference architecture, machine-readable contracts, bounded reference implementations, conformance evidence and developer-readiness engineering for governed intelligence systems by AETHER X GLOBAL.**
 
-`PUBLIC ENGINEERING REPOSITORY · CONTROLLED DISCLOSURE`
+`PUBLIC ENGINEERING REPOSITORY · CONTROLLED DISCLOSURE · NON-PRODUCTION`
 
 > **Institutional Intelligence. Governed Autonomy.**  
 > **Build Intelligence That Can Be Trusted to Act.**
 
-## Core Boundary
+---
+
+## Engineering Thesis
+
+AETHER X treats intelligence as a governed system, not a model response.
 
 ```text
-GOVERNED KNOWLEDGE
-→ TRACEABLE EVIDENCE
-→ ANALYSIS / RECOMMENDATION
-→ EXPLICIT DECISION
-→ BOUNDED AUTHORITY
-→ CONTROLLED EXECUTION
-→ INDEPENDENT VERIFICATION
-→ VERIFIED OUTCOME
-→ AUDIT / INSTITUTIONAL LEARNING
+INTENT
+  ↓
+DATA / KNOWLEDGE
+  ↓
+EVIDENCE
+  ↓
+ANALYSIS / REASONING
+  ↓
+DECISION
+  ↓
+AUTHORITY
+  ↓
+CONTROLLED EXECUTION
+  ↓
+VERIFICATION
+  ↓
+VERIFIED OUTCOME
+  ↓
+AUDIT / LEARNING
 ```
 
-`OUTPUT ≠ FACT` · `RECOMMENDATION ≠ DECISION` · `CAPABILITY ≠ AUTHORITY` · `TOOL AVAILABILITY ≠ TOOL PERMISSION` · `EXECUTION COMPLETE ≠ VERIFIED`
+Core engineering separations:
 
-## Developer Entry Point
+`OUTPUT ≠ FACT`  
+`RECOMMENDATION ≠ DECISION`  
+`CAPABILITY ≠ AUTHORITY`  
+`TOOL AVAILABILITY ≠ TOOL PERMISSION`  
+`EXECUTION COMPLETE ≠ VERIFIED`
 
-Start with the **[Public Quickstart](./docs/QUICKSTART.md)**.
+These separations are architectural constraints, not marketing language.
 
-For bounded external technical evaluation, use the **[External Evaluator Guide](./docs/EXTERNAL_EVALUATOR_GUIDE.md)**.
+---
 
-`EXTERNAL EVALUATION READINESS ESTABLISHED ≠ EXTERNAL EVALUATION OCCURRED`
+## What Is Public Here
 
-### Developer Adoption & SDK Readiness Program
+This repository intentionally exposes a bounded technical surface for inspection, reproducibility and engineering evaluation:
 
-**[AX-PUB-DEV-001 — Developer Adoption & SDK Readiness Program](./docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md)**
+- governed-intelligence reference architecture;
+- evidence, authority and verification specifications;
+- point-in-time knowledge and provenance contracts;
+- governed agent authority and tool-use boundaries;
+- JSON Schemas;
+- Python reference validators;
+- synthetic conformance kits;
+- deterministic build and supply-chain evidence;
+- public CI evidence;
+- an installable Python SDK **candidate**;
+- local-index distribution validation;
+- external-evaluation contracts and tooling.
 
-Current program state:
+Private product code, confidential research, credentials, internal endpoints, proprietary algorithms and unpublished implementation architecture remain outside this repository.
+
+---
+
+## Current Engineering State
+
+The current public developer program is deliberately gated.
 
 ```text
 PROGRAM: ACTIVE / UNDER DEVELOPMENT
-DEV-GATE-00: CLOSED
-DEV-GATE-01: CLOSED
-DEV-GATE-02: CLOSED
-DEV-GATE-03: CLOSED
-DEV-GATE-04: CLOSED
-CURRENT ENGINEERING / DECISION OBJECTIVE: DEV-GATE-05 — SDK RELEASE DECISION
-EXTERNAL EVALUATION READINESS: ESTABLISHED
-EXTERNAL EVALUATION OCCURRED: NOT ESTABLISHED
+
+DEV-GATE-00  CLOSED   Developer Contract Baseline
+DEV-GATE-01  CLOSED   Reproducible Developer Experience
+DEV-GATE-02  CLOSED   SDK Candidate
+DEV-GATE-03  CLOSED   Supply-Chain & Release Candidate
+DEV-GATE-04  CLOSED   External Evaluation Readiness
+
+DEV-GATE-05  ACTIVE   SDK Release Decision
+  05A        CLOSED   Release Decision Baseline
+  05B        CLOSED   Installable Package Candidate
+  05C        ACTIVE   Distribution & External Validation
+  05D        NOT AUTHORIZED   Final Release Authority
+```
+
+Current verified engineering facts:
+
+```text
+INSTALLABLE PACKAGE CANDIDATE: ESTABLISHED
+DISTRIBUTION CANDIDATE: aetherxglobal-governed-intelligence
+IMPORT NAMESPACE: aetherxglobal.governed_intelligence
+VERSION CANDIDATE: 0.1.0rc1
+VERIFIED PACKAGE RUNTIME MATRIX: Python 3.11–3.14
+LOCAL SIMPLE-INDEX DISTRIBUTION VALIDATION: VERIFIED / LOCAL ONLY
+EXTERNAL REGISTRY VALIDATION: NOT ESTABLISHED / NOT AUTHORIZED
+HUMAN EXTERNAL EVALUATION: NOT ESTABLISHED
 EXTERNAL ADOPTION: NOT ESTABLISHED
-SDK CANDIDATE: ESTABLISHED
-RELEASE CANDIDATE: VALIDATED / NON-PUBLISHED
-PUBLIC SDK: NOT PUBLISHED
-PACKAGE IDENTITY: NOT APPROVED
-PACKAGE REGISTRY: NOT AUTHORIZED
-PUBLIC SDK LICENCE: NOT DECIDED
+REGISTRY OWNERSHIP: NOT ESTABLISHED
+PUBLIC SDK LICENCE: NOT GRANTED
+SUPPORTED SDK: NOT ESTABLISHED
 SDK PUBLICATION: NOT AUTHORIZED
 ```
 
-The program defines the governed path from inspectable public engineering toward a reproducible developer experience, a bounded SDK candidate, supply-chain evidence, external evaluation readiness and a later explicit SDK release decision.
+The detailed current-state page is **[Public Engineering State](./docs/PUBLIC_ENGINEERING_STATE.md)**.
 
-**[AX-PUB-DEV-002 — Developer Contract Baseline](./docs/AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md)**  
-`DEV-GATE-00 CLOSED · PUBLIC DEVELOPER CONTRACT BASELINE ESTABLISHED · SDK PUBLICATION NOT AUTHORIZED`
+---
 
-The baseline establishes the initial developer problem, canonical contract inventory, non-goals, semantic error taxonomy, compatibility rules, fail-closed behavior and public/private dependency boundary. Validation evidence is recorded in [`AX-PUB-CI-003`](./evidence/AX-PUB-CI-003_DEVELOPER_CONTRACT_BASELINE_VALIDATION.md).
+## Developer Entry Points
 
-**[AX-PUB-DEV-003 — Reproducible Developer Experience](./docs/AX-PUB-DEV-003_REPRODUCIBLE_DEVELOPER_EXPERIENCE.md)**  
-`DEV-GATE-01 CLOSED · VERIFIED REFERENCE RUNTIME MATRIX PYTHON 3.10–3.13 · SDK PUBLICATION NOT AUTHORIZED`
+1. **[Quickstart](./docs/QUICKSTART.md)** — run the bounded public reference path.
+2. **[Developer Adoption & SDK Readiness Program](./docs/AX-PUB-DEV-001_DEVELOPER_ADOPTION_SDK_READINESS_PROGRAM.md)** — understand the gate model.
+3. **[External Evaluator Guide](./docs/EXTERNAL_EVALUATOR_GUIDE.md)** — evaluate the bounded public surface.
+4. **[Installable External Evaluator Guide](./docs/INSTALLABLE_EXTERNAL_EVALUATOR_GUIDE.md)** — evaluate the exact installable candidate when an authorized distribution path exists.
+5. **[Limitations & Unsupported Uses](./docs/LIMITATIONS_AND_UNSUPPORTED_USES.md)** — read before interpreting capability.
 
-Gate-01 establishes a clean-checkout, standard-library-only public reference developer path with direct clean-environment CI evidence across Python 3.10, 3.11, 3.12 and 3.13. Closure evidence is recorded in [`AX-PUB-CI-004`](./evidence/AX-PUB-CI-004_REPRODUCIBLE_DEVELOPER_EXPERIENCE_VALIDATION.md).
-
-**[AX-PUB-DEV-004 — SDK Candidate Engineering Baseline](./docs/AX-PUB-DEV-004_SDK_CANDIDATE_ENGINEERING_BASELINE.md)**  
-`DEV-GATE-02 CLOSED · SDK CANDIDATE ESTABLISHED · VERIFIED CANDIDATE RUNTIME MATRIX PYTHON 3.10–3.13 · SDK PUBLICATION NOT AUTHORIZED`
-
-Gate-02 establishes a **bounded repository-local Python SDK candidate** over the three declared public contract paths. Direct validation evidence is recorded in [`AX-PUB-CI-005`](./evidence/AX-PUB-CI-005_SDK_CANDIDATE_VALIDATION.md).
-
-**[AX-PUB-DEV-005 — Supply-Chain & Release Candidate](./docs/AX-PUB-DEV-005_SUPPLY_CHAIN_RELEASE_CANDIDATE.md)**  
-`DEV-GATE-03 CLOSED · RELEASE-CANDIDATE VALIDATED · SDK PUBLICATION NOT AUTHORIZED`
-
-Gate-03 establishes a validated **non-published engineering release candidate** [`AX-PUB-RC-001 v0.1.0-rc1`](./release-candidate/AX-PUB-RC-001.json) over the bounded Gate-02 candidate. Direct evidence is recorded in [`AX-PUB-CI-006 v1.1`](./evidence/AX-PUB-CI-006_SUPPLY_CHAIN_RELEASE_CANDIDATE_VALIDATION.md).
-
-Verified engineering-bundle identity:
-
-```text
-AX-PUB-RC-001.zip
-SHA-256: 8444e7c01621f3d63019b407d9379bc82176f892dce64760cc93e84064ac8c21
-SOURCE_DATE_EPOCH: 1787064230
-```
-
-The validated Gate-03 path includes byte-identical deterministic rebuilds, a build manifest, SPDX 2.3 SBOM, GitHub build-provenance and SBOM attestations, attestation verification, extracted-bundle unit/conformance execution and public/private supply-chain boundary checks.
-
-The Gate-03 artifact remains a CI-only, non-published engineering object. It is not a public package, GitHub Release asset, supported SDK or approved distribution identity.
-
-`RELEASE-CANDIDATE VALIDATED ≠ SUPPORTED SDK`  
-`CI ARTIFACT ≠ PUBLIC PACKAGE RELEASE`  
-`ATTESTED BUILD ≠ SECURITY CERTIFICATION`  
-`SBOM ≠ SOFTWARE REUSE LICENCE`
-
-**[AX-PUB-DEV-006 — External Evaluation Readiness](./docs/AX-PUB-DEV-006_EXTERNAL_EVALUATION_READINESS.md)**  
-`DEV-GATE-04 CLOSED · EXTERNAL EVALUATION READINESS ESTABLISHED · HUMAN EXTERNAL EVALUATION NOT ESTABLISHED · SDK PUBLICATION NOT AUTHORIZED`
-
-Gate-04 establishes a self-service evaluator guide, explicit limitations and unsupported uses, a migration/deprecation draft, structured public feedback/triage, a machine-readable evaluation report and a clean Python 3.10–3.13 readiness CI matrix. Direct validation evidence is recorded in [`AX-PUB-CI-007`](./evidence/AX-PUB-CI-007_EXTERNAL_EVALUATION_READINESS_VALIDATION.md).
-
-This is **readiness evidence only**. It does not establish that a human external evaluator has participated, that any external developer or partner has adopted the candidate, or that AETHER X provides a supported SDK.
-
-`READINESS CI PASS ≠ HUMAN EXTERNAL EVALUATION`  
-`EXTERNAL EVALUATION READINESS ≠ EXTERNAL ADOPTION`
-
-### Formal Public Engineering Release
-
-**`public-engineering-vnext-1.0` — AETHER X Governed Intelligence — Public Engineering vNext 1.0**
-
-- Git tag target: `4f067c9fd3d3ac065ac50b10faf1abd1bdb91bb6`
-- Release evidence: **[AX-PUB-REL-001](./evidence/AX-PUB-REL-001_PUBLIC_ENGINEERING_VNEXT_RELEASE.md)**
-- Fixed technical-review snapshot: **[AX-PUB-SNAP-002](./snapshots/AX-PUB-SNAP-002_GOVERNED_INTELLIGENCE_PUBLIC_VNEXT.md)**
-
-`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`
-
-### Developer SDK Publication Readiness
-
-**[AX-PUB-GATE-001 — Developer SDK Publication Readiness Gate](./docs/AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md)**
-
-Current public disposition:
-
-```text
-SDK PUBLICATION NOT AUTHORIZED
-```
-
-DEV-GATE-05 is now the current engineering/decision objective. It must resolve licensing/IP authority, interface compatibility, package/distribution identity, security and credential boundaries, maintenance/support commitments and explicit release authority before SDK publication can be represented as approved.
-
-`DEV-GATE-05 ACTIVE ≠ SDK RELEASE AUTHORIZED`  
-`SDK CANDIDATE ≠ SUPPORTED SDK`  
-`RELEASE-CANDIDATE VALIDATED ≠ SDK RELEASE`
-
-## Current Moving Public Governance
-
-- **[AX-PUB-MANIFEST-001 v1.18](./artifacts/AX-PUB-MANIFEST-001.json)** — current machine-readable artifact state including closed DEV-GATE-00/01/02/03/04 and DEV-GATE-05 as the active engineering/decision objective.
-- **[AX-PUB-POL-001 v1.6](./docs/COMPATIBILITY_AND_VERSIONING.md)** — compatibility, snapshot, release and publication-readiness semantics.
-- **[AX-PUB-CI-001](./evidence/AX-PUB-CI-001_AGENT_AUTHORITY_VNEXT_VALIDATION.md)** — verified agent-authority schema/reference/conformance CI evidence.
-- **[AX-PUB-CI-002](./evidence/AX-PUB-CI-002_VNEXT_SNAPSHOT_VALIDATION.md)** — verified vNext snapshot and manifest closure evidence.
-- **[AX-PUB-CI-003](./evidence/AX-PUB-CI-003_DEVELOPER_CONTRACT_BASELINE_VALIDATION.md)** — DEV-GATE-00 validation evidence.
-- **[AX-PUB-CI-004](./evidence/AX-PUB-CI-004_REPRODUCIBLE_DEVELOPER_EXPERIENCE_VALIDATION.md)** — DEV-GATE-01 clean-environment runtime-matrix evidence.
-- **[AX-PUB-CI-005](./evidence/AX-PUB-CI-005_SDK_CANDIDATE_VALIDATION.md)** — DEV-GATE-02 SDK-candidate validation evidence.
-- **[AX-PUB-CI-006 v1.1](./evidence/AX-PUB-CI-006_SUPPLY_CHAIN_RELEASE_CANDIDATE_VALIDATION.md)** — DEV-GATE-03 deterministic-build, SBOM, provenance, attestation-verification, extracted-bundle and public-boundary evidence.
-- **[AX-PUB-CI-007](./evidence/AX-PUB-CI-007_EXTERNAL_EVALUATION_READINESS_VALIDATION.md)** — DEV-GATE-04 self-service readiness path, machine-readable evaluation-report and Python 3.10–3.13 readiness-matrix evidence.
-- **[AX-PUB-SNAP-002](./snapshots/AX-PUB-SNAP-002_GOVERNED_INTELLIGENCE_PUBLIC_VNEXT.md)** — current fixed vNext reproducibility snapshot.
+---
 
 ## Public Technical Series
 
-| ID | Artifact | Public state |
+| Layer | Public artifact | State |
 |---|---|---|
-| `AX-PUB-ARCH-001` | [Governed Intelligence Reference Architecture](./specifications/AX-PUB-ARCH-001_GOVERNED_INTELLIGENCE_REFERENCE_ARCHITECTURE.md) | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
-| `AX-PUB-SPEC-002` | [Evidence, Authority & Verification Contract](./specifications/AX-PUB-SPEC-002_EVIDENCE_AUTHORITY_VERIFICATION_CONTRACT.md) | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
-| `AX-PUB-SPEC-003` | [Point-in-Time Knowledge & Provenance Standard](./specifications/AX-PUB-SPEC-003_POINT_IN_TIME_KNOWLEDGE_PROVENANCE_STANDARD.md) | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
-| `AX-PUB-SPEC-004` | [Governed Agent Authority & Tool-Use Boundary Standard](./specifications/AX-PUB-SPEC-004_GOVERNED_AGENT_AUTHORITY_TOOL_USE_STANDARD.md) | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
-| `AX-PUB-SCHEMA-001` | Governed EAV Contract Schema | `JSON SCHEMA · CONCEPTUAL` |
-| `AX-PUB-SCHEMA-002` | Point-in-Time Knowledge Envelope | `JSON SCHEMA · CONCEPTUAL` |
-| `AX-PUB-SCHEMA-003` | Agent Tool-Use Authority Envelope | `JSON SCHEMA · CI-VALIDATED · CONCEPTUAL` |
-| `AX-PUB-REF-001` | EAV Contract Validator | `CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
-| `AX-PUB-REF-002` | Point-in-Time Knowledge Validator | `CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
-| `AX-PUB-REF-003` | Agent Tool-Use Authority Validator | `CI-TESTED · EDUCATIONAL / NON-PRODUCTION` |
-| `AX-PUB-TEST-001` | Governed Intelligence Conformance Test Kit | `REPRODUCIBLY VERIFIED · CI RUN UNVERIFIED · NON-PRODUCTION` |
-| `AX-PUB-TEST-002` | Agent Authority Conformance Test Kit | `CI-TESTED · NON-PRODUCTION` |
-| `AX-PUB-GATE-001` | [Developer SDK Publication Readiness Gate](./docs/AX-PUB-GATE-001_DEVELOPER_SDK_PUBLICATION_READINESS.md) | `ACTIVE · SDK PUBLICATION NOT AUTHORIZED` |
-| `AX-PUB-DEV-001` | Developer Adoption & SDK Readiness Program | `UNDER DEVELOPMENT · DEV-GATE-05 ACTIVE` |
-| `AX-PUB-DEV-002` | Developer Contract Baseline | `DEV-GATE-00 CLOSED` |
-| `AX-PUB-DEV-003` | Reproducible Developer Experience | `DEV-GATE-01 CLOSED · PYTHON 3.10–3.13` |
-| `AX-PUB-DEV-004` | SDK Candidate Engineering Baseline | `DEV-GATE-02 CLOSED · SDK CANDIDATE ESTABLISHED` |
-| `AX-PUB-DEV-005` | Supply-Chain & Release Candidate | `DEV-GATE-03 CLOSED · RELEASE-CANDIDATE VALIDATED` |
-| `AX-PUB-DEV-006` | [External Evaluation Readiness](./docs/AX-PUB-DEV-006_EXTERNAL_EVALUATION_READINESS.md) | `DEV-GATE-04 CLOSED · READINESS ESTABLISHED · HUMAN EVALUATION NOT ESTABLISHED` |
-| `AX-PUB-RC-001` | Non-published engineering release candidate | `VALIDATED · CI-ONLY · NON-PUBLISHED` |
+| Reference architecture | `AX-PUB-ARCH-001` | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
+| Evidence / Authority / Verification | `AX-PUB-SPEC-002` | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
+| Point-in-Time Knowledge & Provenance | `AX-PUB-SPEC-003` | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
+| Agent Authority & Tool Use | `AX-PUB-SPEC-004` | `CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
+| Machine-readable contracts | `AX-PUB-SCHEMA-001/002/003` | `PUBLIC / MACHINE-READABLE` |
+| Reference validators | `AX-PUB-REF-001/002/003` | `CI-TESTED / EDUCATIONAL / NON-PRODUCTION` |
+| Conformance | `AX-PUB-TEST-001/002` | `BOUNDED / SYNTHETIC / NON-PRODUCTION` |
+| Public artifact governance | `AX-PUB-MANIFEST-001` | `CURRENT MACHINE-READABLE BASELINE` |
+| Public engineering release | `AX-PUB-REL-001` | `FORMAL PUBLIC ENGINEERING RELEASE / NON-PRODUCT` |
+| Developer program | `AX-PUB-DEV-001` | `ACTIVE / UNDER DEVELOPMENT` |
+| Installable candidate | `AX-PUB-DEV-008` | `DEV-GATE-05B CLOSED` |
+| Distribution validation | `AX-PUB-DEV-009` + `AX-PUB-CI-010` | `05C ACTIVE · LOCAL INDEX VERIFIED` |
 
-## Three Public Evidence Paths
+---
+
+## Evidence Chain
+
+The public technical surface is designed to remain traceable:
+
+```text
+SPECIFICATION
+→ MACHINE-READABLE CONTRACT
+→ REFERENCE / SDK BEHAVIOR
+→ CONFORMANCE CASE
+→ CI RESULT
+→ EVIDENCE RECORD
+→ GOVERNED MATURITY STATE
+```
+
+Three core public paths are:
 
 ```text
 AX-PUB-SPEC-002 → AX-PUB-SCHEMA-001 → AX-PUB-REF-001 → AX-PUB-TEST-001
@@ -182,37 +165,90 @@ AX-PUB-SPEC-003 → AX-PUB-SCHEMA-002 → AX-PUB-REF-002 → AX-PUB-TEST-001
 AX-PUB-SPEC-004 → AX-PUB-SCHEMA-003 → AX-PUB-REF-003 → AX-PUB-TEST-002
 ```
 
-## Licensing & Reuse Boundary
+Recent developer evidence:
 
-No open-source licence or general reuse/distribution permission is granted by publication of this repository at this time.
-
-Public availability is provided for inspection, technical review and reproducibility, and for use of GitHub platform functionality subject to applicable GitHub terms. Any broader reuse, redistribution, adaptation, sublicensing or commercial use requires separate authorization unless otherwise permitted by applicable law.
-
-`PUBLIC VISIBILITY ≠ OPEN-SOURCE LICENCE`  
-`SBOM ≠ SOFTWARE REUSE LICENCE`  
-`CI ARTIFACT ≠ PUBLIC DISTRIBUTION`
-
-## Private-Project Boundary
-
-This repository is intentionally self-contained. Public examples and conformance vectors are generic or synthetic.
-
-No private AETHER X project repository is a runtime, checkout, submodule, package or hidden service dependency of the public engineering path, including the validated Gate-03 engineering release candidate and closed Gate-04 readiness surface. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside this repository's disclosure boundary.
-
-## What This Repository Does Not Establish
-
-Publication here does **not** establish or imply product implementation, a shared company runtime or authorization plane, production readiness, customer deployment, a production API, a supported or published SDK, approved package identity, registry availability, a public reuse licence, autonomous authority, security certification, regulatory approval, human external evaluation, external developer adoption or product integration.
-
-`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`  
-`SDK CANDIDATE ESTABLISHED ≠ SUPPORTED SDK`  
-`RELEASE-CANDIDATE VALIDATED ≠ SDK RELEASE`  
-`READINESS CI PASS ≠ HUMAN EXTERNAL EVALUATION`  
-`EXTERNAL EVALUATION READINESS ≠ EXTERNAL ADOPTION`  
-`DEV-GATE-05 ACTIVE ≠ SDK PUBLICATION AUTHORIZED`  
-`ATTESTED BUILD ≠ SECURITY CERTIFICATION`  
-`SDK PUBLICATION NOT AUTHORIZED`
-
-See [SECURITY.md](./SECURITY.md).
+- `AX-PUB-CI-008` — DEV-GATE-05A release-decision baseline validation;
+- `AX-PUB-CI-009` — deterministic installable-package candidate validation;
+- `AX-PUB-CI-010` — local-index distribution validation across Python 3.11–3.14.
 
 ---
 
-**AETHER X GLOBAL — Institutional Intelligence. Governed Autonomy.**
+## Installable Candidate Identity
+
+The current engineering candidate is intentionally pre-release and non-published:
+
+```text
+Distribution: aetherxglobal-governed-intelligence
+Version:      0.1.0rc1
+Import:       aetherxglobal.governed_intelligence
+```
+
+Validated artifact identities:
+
+```text
+Wheel SHA-256:
+bd3c3bfc7306c9b45659e3e0533ea1ac24b065a4c577f08cbe987cc10a4d1fac
+
+sdist SHA-256:
+2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99
+```
+
+`LOCAL INDEX PASS ≠ TESTPYPI PASS`  
+`INSTALLABLE CANDIDATE ≠ SUPPORTED SDK`
+
+---
+
+## Licensing & Reuse Boundary
+
+No general open-source licence or general reuse/distribution permission is granted by publication of this repository at this time.
+
+Public availability is for inspection, technical review and reproducibility, subject to applicable GitHub terms and applicable law. Broader reuse, redistribution, adaptation, sublicensing or commercial use requires separate authorization unless otherwise permitted by law.
+
+The current SDK release-direction record identifies **Apache-2.0 as a target direction only after IP/copyright clearance**. No licence has been granted.
+
+`PUBLIC VISIBILITY ≠ OPEN-SOURCE LICENCE`
+
+---
+
+## What This Repository Does Not Establish
+
+This repository does **not** establish or imply:
+
+- production deployment;
+- customer deployment;
+- a production API;
+- a supported public SDK;
+- PyPI or TestPyPI ownership/publication;
+- package-name reservation;
+- human external evaluation;
+- external developer adoption;
+- security certification;
+- regulatory approval;
+- integration with private AETHER X products;
+- unrestricted autonomous authority.
+
+`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`  
+`CI PASS ≠ PRODUCT IMPLEMENTATION`  
+`HUMAN EVALUATION ≠ CI`  
+`SDK PUBLICATION NOT AUTHORIZED`
+
+---
+
+## Public Engineering Release
+
+The fixed public engineering release remains:
+
+**`public-engineering-vnext-1.0` — AETHER X Governed Intelligence — Public Engineering vNext 1.0**
+
+See **[AX-PUB-REL-001](./evidence/AX-PUB-REL-001_PUBLIC_ENGINEERING_VNEXT_RELEASE.md)** and **[AX-PUB-SNAP-002](./snapshots/AX-PUB-SNAP-002_GOVERNED_INTELLIGENCE_PUBLIC_VNEXT.md)**.
+
+---
+
+## Security
+
+See **[SECURITY.md](./SECURITY.md)** for the public security and disclosure boundary.
+
+---
+
+**AETHER X GLOBAL — A Governed Intelligence Systems Company**  
+**Institutional Intelligence. Governed Autonomy.**
