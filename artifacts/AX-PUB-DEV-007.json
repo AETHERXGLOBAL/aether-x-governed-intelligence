@@ -3,6 +3,7 @@
   "version": "0.1",
   "status": "DEV-GATE-05 DECISION BASELINE / ENGINEERING CANDIDATE",
   "verification_state": "PR_VALIDATION_PENDING",
+  "verification_trigger": "VERIFY_PUBLISHED_BASELINE_ONLY",
   "gate": "DEV-GATE-05",
   "publication_disposition": "SDK PUBLICATION NOT AUTHORIZED",
   "release_authorized": false,
