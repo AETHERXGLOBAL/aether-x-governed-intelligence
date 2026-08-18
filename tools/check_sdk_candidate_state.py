@@ -217,7 +217,7 @@ def main() -> int:
         (
             "REPOSITORY-LOCAL",
             "NON-DISTRIBUTABLE",
-            "SDK CANDIDATE CODE PRESENT ≠ SDK CANDIDATE ESTABLISHED",
+            "SDK CANDIDATE ESTABLISHED ≠ SUPPORTED SDK",
             "AX_SDK_CANDIDATE_BOUNDARY_PASS",
         ),
         findings,
