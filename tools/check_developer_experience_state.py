@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Validate the published closed state for AX-PUB-DEV-003 / DEV-GATE-01.
+"""Validate the durable closed state for AX-PUB-DEV-003 / DEV-GATE-01.
 
-This checker validates governance/state coherence only. Runtime behavior is exercised
-separately by tools/check_developer_experience.py and the dedicated CI matrix.
+This checker verifies Gate-01 closure evidence and its own durable state. It must
+remain valid as later developer-program gates and manifest versions advance.
 """
 from __future__ import annotations
 
@@ -45,6 +45,16 @@ def load_json(path: Path, findings: list[str]) -> dict[str, Any] | None:
     return data
 
 
+def version_at_least(raw: Any, minimum: tuple[int, int]) -> bool:
+    if not isinstance(raw, str):
+        return False
+    try:
+        major, minor = raw.split(".", 1)
+        return (int(major), int(minor)) >= minimum
+    except (ValueError, TypeError):
+        return False
+
+
 def require_text(path: Path, markers: tuple[str, ...], findings: list[str]) -> None:
     if not path.is_file():
         findings.append(f"missing file: {path.relative_to(ROOT)}")
@@ -77,15 +87,13 @@ def main() -> int:
         if dev.get("verified_runtime_matrix") != EXPECTED_RUNTIMES:
             findings.append("verified runtime matrix mismatch")
         if dev.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
-            findings.append("SDK publication disposition mismatch")
-        if dev.get("sdk_candidate_established") is not False:
-            findings.append("SDK candidate must remain not established")
+            findings.append("Gate-01 publication disposition must remain SDK PUBLICATION NOT AUTHORIZED")
         if dev.get("package_identity_approved") is not False:
-            findings.append("package identity must remain unapproved")
+            findings.append("Gate-01 artifact must preserve its package-identity boundary")
         if dev.get("registry_publication_authorized") is not False:
-            findings.append("registry publication must remain unauthorized")
+            findings.append("Gate-01 artifact must preserve its registry boundary")
         if dev.get("licence_decided") is not False:
-            findings.append("public SDK licence must remain undecided")
+            findings.append("Gate-01 artifact must preserve its licence-decision boundary")
         checks = dev.get("checks")
         if not isinstance(checks, list) or {item.get("id") for item in checks if isinstance(item, dict)} != EXPECTED_CHECK_IDS:
             findings.append("declared nine-check inventory mismatch")
@@ -102,8 +110,9 @@ def main() -> int:
 
     manifest = load_json(MANIFEST_PATH, findings)
     if manifest is not None:
-        if manifest.get("manifest_version") != "1.12":
-            findings.append("manifest version must be 1.12 for DEV-GATE-01 closure")
+        if not version_at_least(manifest.get("manifest_version"), (1, 12)):
+            findings.append("manifest version must be at least 1.12 to contain DEV-GATE-01 closure")
+
         evidence_items = manifest.get("validation_evidence")
         ci004 = None
         if isinstance(evidence_items, list):
@@ -120,21 +129,14 @@ def main() -> int:
             if ci004.get("conclusion") != "SUCCESS":
                 findings.append("manifest AX-PUB-CI-004 conclusion must be SUCCESS")
 
-        program = manifest.get("current_developer_program")
-        if not isinstance(program, dict):
-            findings.append("manifest current_developer_program missing")
-        else:
-            if program.get("closed_gate") != "DEV-GATE-01 — Reproducible Developer Experience":
-                findings.append("manifest latest closed developer gate mismatch")
-            if program.get("active_gate") != "DEV-GATE-02 — SDK Candidate":
-                findings.append("manifest active developer gate must be DEV-GATE-02")
-
         current = manifest.get("current_developer_experience")
         if not isinstance(current, dict):
             findings.append("manifest current_developer_experience missing")
         else:
+            if current.get("id") != "AX-PUB-DEV-003" or current.get("version") != "1.0":
+                findings.append("manifest current developer experience identity mismatch")
             if current.get("state") != "CLOSED":
-                findings.append("manifest current developer experience must be CLOSED")
+                findings.append("manifest current developer experience must remain CLOSED")
             if current.get("verified_runtime_matrix") != EXPECTED_RUNTIMES:
                 findings.append("manifest verified runtime matrix mismatch")
             if current.get("closure_evidence") != "AX-PUB-CI-004":
@@ -163,7 +165,6 @@ def main() -> int:
             "Python 3.11",
             "Python 3.12",
             "Python 3.13",
-            "DEV-GATE-02 — SDK Candidate",
             "SDK PUBLICATION NOT AUTHORIZED",
         ),
         findings,
@@ -172,7 +173,6 @@ def main() -> int:
         PROGRAM_PATH,
         (
             "DEV-GATE-01: CLOSED",
-            "CURRENT ENGINEERING OBJECTIVE: DEV-GATE-02 — SDK CANDIDATE",
             "AX-PUB-CI-004",
             "REPRODUCIBLE",
         ),
@@ -181,11 +181,9 @@ def main() -> int:
     require_text(
         QUICKSTART_PATH,
         (
-            "AX-PUB-MANIFEST-001 v1.12",
             "DEV-GATE-01: CLOSED",
             "AX-PUB-CI-004",
             "VERIFIED RUNTIME MATRIX: Python 3.10, 3.11, 3.12, 3.13",
-            "NEXT GATE: DEV-GATE-02 — SDK Candidate",
         ),
         findings,
     )
