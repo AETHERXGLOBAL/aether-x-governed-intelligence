@@ -95,7 +95,7 @@ jobs:
           cmp dist/AX-PUB-RC-001.sha256 dist-rebuild/AX-PUB-RC-001.sha256
           cmp dist/AX-PUB-RC-001_BUILD_MANIFEST.json dist-rebuild/AX-PUB-RC-001_BUILD_MANIFEST.json
           cmp dist/AX-PUB-RC-001.spdx.json dist-rebuild/AX-PUB-RC-001.spdx.json
-          sha256sum -c dist/AX-PUB-RC-001.sha256 --ignore-missing
+          (cd dist && sha256sum -c AX-PUB-RC-001.sha256)
           echo "AX_RELEASE_CANDIDATE_DETERMINISTIC_REBUILD_PASS"
 
       - name: Validate built release-candidate state
