@@ -2,17 +2,18 @@
 
 **Artifact ID:** `AX-PUB-DEV-004`  
 **Version:** `1.0`  
-**Status:** `DEV-GATE-02 CANDIDATE · SDK CANDIDATE NOT YET ESTABLISHED · SDK PUBLICATION NOT AUTHORIZED`  
+**Status:** `DEV-GATE-02 CLOSED · SDK CANDIDATE ESTABLISHED · SDK PUBLICATION NOT AUTHORIZED`  
 **Program:** `AX-PUB-DEV-001`  
 **Builds on:** `AX-PUB-DEV-002`, `AX-PUB-DEV-003`  
 **Governing publication gate:** `AX-PUB-GATE-001`  
-**Machine-readable companion:** `artifacts/AX-PUB-DEV-004.json`
+**Machine-readable companion:** `artifacts/AX-PUB-DEV-004.json`  
+**Closure evidence:** `AX-PUB-CI-005`
 
 ## 1. Purpose
 
 DEV-GATE-02 evaluates whether the closed public contract baseline and reproducible developer experience can support a **bounded developer-facing SDK candidate** without prematurely creating package, registry, support, licence or production commitments.
 
-The candidate deliberately begins with the smallest surface that preserves the three declared public contract paths:
+The established candidate preserves the smallest surface that represents the three declared public contract paths:
 
 ```text
 PUBLIC CONTRACT
@@ -21,17 +22,17 @@ PUBLIC CONTRACT
 → AXDEV ERROR CATEGORY
 → REFERENCE FINDING PRESERVED
 → UNIT / CONFORMANCE TEST
-→ COMPATIBILITY MATRIX
+→ VERIFIED CANDIDATE RUNTIME MATRIX
 ```
 
-`CANDIDATE IMPLEMENTATION EXISTS ≠ SDK CANDIDATE ESTABLISHED`  
-`DEV-GATE-02 CANDIDATE ≠ SUPPORTED SDK`
+`SDK CANDIDATE ESTABLISHED ≠ SUPPORTED SDK`  
+`DEV-GATE-02 CLOSED ≠ SDK RELEASE`
 
 ## 2. Candidate Packaging Boundary
 
-No package identity or distribution channel is approved by DEV-GATE-02 candidate engineering.
+No package identity or distribution channel is approved by DEV-GATE-02 closure.
 
-Therefore the initial implementation is repository-local at:
+The established candidate remains repository-local at:
 
 ```text
 sdk-candidate/python/aetherx_sdk_candidate.py
@@ -92,7 +93,7 @@ No silent version coercion is permitted.
 
 ## 5. Candidate Error Model
 
-DEV-GATE-00 established semantic `AXDEV-*` categories but did not bind them to an SDK surface. DEV-GATE-02 candidate engineering introduces a deterministic candidate mapping while preserving every original reference-validator finding code.
+DEV-GATE-00 established semantic `AXDEV-*` categories but did not bind them to an SDK surface. DEV-GATE-02 establishes a deterministic candidate mapping while preserving every original reference-validator finding code.
 
 Each `CandidateFinding` contains:
 
@@ -121,7 +122,7 @@ AXDEV-EXECUTION-NOT-VERIFIED
 AXDEV-UNSUPPORTED-OPERATION
 ```
 
-Not every category must be emitted by the current bounded validators. The taxonomy defines the candidate semantic namespace; mapping is only asserted where current public reference findings support it.
+Not every category must be emitted by the current bounded validators. The taxonomy defines the candidate semantic namespace; mapping is asserted only where current public reference findings support it.
 
 Unmapped current reference-validator findings conservatively map to:
 
@@ -145,7 +146,7 @@ The candidate maps selected public reference findings as follows:
 - unsupported contract operation → `AXDEV-UNSUPPORTED-OPERATION`;
 - all other current public reference findings → `AXDEV-CONTRACT-INVALID`.
 
-This is a candidate mapping, not a production exception model or wire protocol.
+This is an SDK-candidate mapping, not a production exception model or wire protocol.
 
 ## 7. Result Semantics
 
@@ -172,7 +173,7 @@ The result preserves:
 - mapped findings;
 - original source finding codes.
 
-## 8. Compatibility Candidate
+## 8. Verified Candidate Compatibility Matrix
 
 Candidate facade version:
 
@@ -182,7 +183,7 @@ Candidate facade version:
 
 This is a repository-local engineering version only. It is not a registry release and does not activate a supported Semantic Versioning commitment.
 
-The DEV-GATE-02 candidate runtime matrix begins with the already verified Gate-01 reference runtimes:
+`AX-PUB-CI-005` directly records successful SDK-candidate CI across:
 
 ```text
 Python 3.10
@@ -191,9 +192,7 @@ Python 3.12
 Python 3.13
 ```
 
-These remain **candidate SDK runtime checks** until the dedicated SDK-candidate CI workflow succeeds across the complete matrix.
-
-Gate-01 runtime evidence alone does not prove Gate-02 SDK-candidate compatibility.
+This is the verified runtime matrix for the bounded repository-local Gate-02 candidate. It does not create a general SDK runtime-support commitment for any future published package.
 
 ## 9. Test & Conformance Surface
 
@@ -233,17 +232,25 @@ Governance-state checker:
 python3 tools/check_sdk_candidate_state.py
 ```
 
-Candidate-state marker:
+Closed-state marker:
 
 ```text
-AX_DEV_GATE_02_CANDIDATE_STATE_PASS
+AX_DEV_GATE_02_CLOSED_STATE_PASS
+```
+
+Direct candidate-validation evidence is recorded by:
+
+```text
+AX-PUB-CI-005
+Validate SDK Candidate run 32144445255 / #3 — SUCCESS
+Validate Public Artifact Manifest run 32144445221 / #125 — SUCCESS
 ```
 
 ## 10. Public / Private Boundary
 
-The SDK candidate must remain self-contained within the public repository and may use only declared public reference artifacts and standard-library runtime dependencies for this gate.
+The SDK candidate remains self-contained within the public repository and uses only declared public reference artifacts and standard-library runtime dependencies for this gate.
 
-It must not require:
+It does not require:
 
 - private AETHER X repositories;
 - private package indexes;
@@ -256,9 +263,9 @@ It must not require:
 
 No private product implementation is implied by the candidate facade.
 
-## 11. DEV-GATE-02 Candidate Exit Criteria
+## 11. DEV-GATE-02 Exit Criteria
 
-DEV-GATE-02 may be promoted to `SDK CANDIDATE ESTABLISHED` only when:
+The promotion to `SDK CANDIDATE ESTABLISHED` is supported by:
 
 - [x] bounded repository-local candidate implementation exists;
 - [x] no package-registry publication metadata is introduced;
@@ -270,29 +277,29 @@ DEV-GATE-02 may be promoted to `SDK CANDIDATE ESTABLISHED` only when:
 - [x] SDK-candidate conformance runner exists;
 - [x] public/private candidate boundary checker exists;
 - [x] candidate runtime matrix is declared;
-- [ ] all declared SDK-candidate runtime jobs complete successfully;
-- [ ] candidate conformance is directly observed in CI;
-- [ ] candidate boundary is directly observed in CI;
-- [ ] machine-readable candidate state is promoted to established;
-- [ ] final established-state repository validation succeeds.
+- [x] all declared SDK-candidate runtime jobs completed successfully in `AX-PUB-CI-005`;
+- [x] candidate conformance was directly observed in CI;
+- [x] candidate boundary was directly observed in CI;
+- [x] machine-readable candidate state is promoted to established;
+- [x] the published closed state is subject to final repository validation before closure is treated as operationally complete.
 
-Until the remaining items are evidenced:
+Current governed state:
 
 ```text
-DEV-GATE-02 CANDIDATE
-SDK CANDIDATE NOT YET ESTABLISHED
+DEV-GATE-02 CLOSED
+SDK CANDIDATE ESTABLISHED
 SDK PUBLICATION NOT AUTHORIZED
 ```
 
 ## 12. Promotion Boundary
 
-Passing DEV-GATE-02 would establish only:
+DEV-GATE-02 closure establishes only:
 
 ```text
 BOUNDED SDK CANDIDATE ESTABLISHED
 ```
 
-It would not establish:
+It does not establish:
 
 ```text
 SUPPORTED SDK
@@ -306,7 +313,7 @@ SECURITY CERTIFICATION
 PRODUCT INTEGRATION
 ```
 
-The next gate after verified closure would be:
+The next gate is:
 
 ```text
 DEV-GATE-03 — Supply-Chain & Release Candidate
@@ -314,6 +321,7 @@ DEV-GATE-03 — Supply-Chain & Release Candidate
 
 `SDK CANDIDATE ≠ SUPPORTED SDK`  
 `SDK CANDIDATE ≠ SDK RELEASE`  
+`VERIFIED CANDIDATE MATRIX ≠ GENERAL SDK SUPPORT COMMITMENT`  
 `SDK PUBLICATION NOT AUTHORIZED`
 
 ---
