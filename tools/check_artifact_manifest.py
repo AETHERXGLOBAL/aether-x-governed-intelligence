@@ -37,6 +37,7 @@ REQUIRED_PAIRS = {
     ("AX-PUB-DEV-003", "1.0"),
     ("AX-PUB-DEV-004", "1.0"),
     ("AX-PUB-DEV-005", "1.0"),
+    ("AX-PUB-DEV-006", "1.0"),
     ("AX-PUB-RC-001", "0.1.0-rc1"),
 }
 
@@ -65,6 +66,9 @@ REQUIRED_RELATIONS = {
     ("AX-PUB-DEV-005", "1.0", "IMPLEMENTS_PROGRAM_GATE_OF", "AX-PUB-DEV-001", "1.0"),
     ("AX-PUB-DEV-005", "1.0", "BUILDS_ON", "AX-PUB-DEV-004", "1.0"),
     ("AX-PUB-DEV-005", "1.0", "GOVERNED_BY", "AX-PUB-GATE-001", "1.0"),
+    ("AX-PUB-DEV-006", "1.0", "IMPLEMENTS_PROGRAM_GATE_OF", "AX-PUB-DEV-001", "1.0"),
+    ("AX-PUB-DEV-006", "1.0", "BUILDS_ON", "AX-PUB-DEV-005", "1.0"),
+    ("AX-PUB-DEV-006", "1.0", "GOVERNED_BY", "AX-PUB-GATE-001", "1.0"),
     ("AX-PUB-RC-001", "0.1.0-rc1", "CANDIDATE_ARTIFACT_OF", "AX-PUB-DEV-005", "1.0"),
 }
 
@@ -140,8 +144,8 @@ def main() -> int:
 
     if manifest.get("manifest_id") != "AX-PUB-MANIFEST-001":
         findings.append("manifest_id mismatch")
-    if not version_at_least(manifest.get("manifest_version"), 1, 16):
-        findings.append("manifest_version must be >= 1.16")
+    if not version_at_least(manifest.get("manifest_version"), 1, 17):
+        findings.append("manifest_version must be >= 1.17")
     if manifest.get("repository") != "AETHERXGLOBAL/aether-x-governed-intelligence":
         findings.append("repository identity mismatch")
 
@@ -364,6 +368,38 @@ def main() -> int:
         if supply_chain.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
             findings.append("Gate-03 SDK publication disposition mismatch")
 
+    external_readiness = manifest.get("current_external_evaluation_readiness")
+    if not isinstance(external_readiness, dict) or external_readiness.get("id") != "AX-PUB-DEV-006" or external_readiness.get("version") != "1.0":
+        findings.append("current_external_evaluation_readiness must identify AX-PUB-DEV-006 v1.0")
+    else:
+        for field in ("path", "machine_readable_companion", "runner", "report_checker", "state_checker"):
+            target = safe_path(external_readiness.get(field), findings, f"current_external_evaluation_readiness.{field}")
+            if target is not None and not target.is_file():
+                findings.append(f"current external evaluation readiness {field} missing")
+        if external_readiness.get("gate") != "DEV-GATE-04":
+            findings.append("external evaluation readiness gate mismatch")
+        if external_readiness.get("declared_candidate_runtime_matrix") != EXPECTED_RUNTIMES:
+            findings.append("external evaluation readiness runtime matrix mismatch")
+        if external_readiness.get("external_evaluation_occurred") is not False:
+            findings.append("external evaluation occurred must remain false unless separately evidenced")
+        if external_readiness.get("external_adoption_established") is not False:
+            findings.append("external adoption must remain false unless separately evidenced")
+        if external_readiness.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
+            findings.append("Gate-04 SDK publication disposition mismatch")
+        ext_state = external_readiness.get("state")
+        if ext_state == "CANDIDATE":
+            if external_readiness.get("external_evaluation_readiness") != "NOT_YET_ESTABLISHED":
+                findings.append("Gate-04 candidate readiness must be NOT_YET_ESTABLISHED")
+        elif ext_state == "CLOSED":
+            if external_readiness.get("external_evaluation_readiness") != "ESTABLISHED":
+                findings.append("Gate-04 closed readiness must be ESTABLISHED")
+            if external_readiness.get("closure_evidence") != "AX-PUB-CI-007":
+                findings.append("Gate-04 closed state requires AX-PUB-CI-007")
+            if "AX-PUB-CI-007" not in evidence_by_id:
+                findings.append("Gate-04 closed state requires AX-PUB-CI-007 validation evidence")
+        else:
+            findings.append("Gate-04 state must be CANDIDATE or CLOSED")
+
     dev005 = load_json(ROOT / "artifacts" / "AX-PUB-DEV-005.json", findings)
     if dev005 is not None:
         if dev005.get("state") != "DEV-GATE-03_CLOSED" or dev005.get("release_candidate_established") is not True:
@@ -377,6 +413,31 @@ def main() -> int:
             findings.append("AX-PUB-DEV-005 closure evidence must be AX-PUB-CI-006 v1.1")
         if dev005.get("sdk_publication_disposition") != "SDK PUBLICATION NOT AUTHORIZED":
             findings.append("AX-PUB-DEV-005 publication boundary mismatch")
+
+    dev006 = load_json(ROOT / "artifacts" / "AX-PUB-DEV-006.json", findings)
+    if dev006 is not None:
+        if dev006.get("artifact_id") != "AX-PUB-DEV-006" or dev006.get("version") != "1.0":
+            findings.append("AX-PUB-DEV-006 descriptor identity mismatch")
+        if dev006.get("gate") != "DEV-GATE-04":
+            findings.append("AX-PUB-DEV-006 gate mismatch")
+        if dev006.get("sdk_publication") != "NOT_AUTHORIZED":
+            findings.append("AX-PUB-DEV-006 SDK publication boundary mismatch")
+        if dev006.get("external_evaluation_occurred") is not False:
+            findings.append("AX-PUB-DEV-006 external evaluation claim boundary mismatch")
+        if dev006.get("external_adoption_established") is not False:
+            findings.append("AX-PUB-DEV-006 external adoption boundary mismatch")
+        if dev006.get("supported_sdk_established") is not False:
+            findings.append("AX-PUB-DEV-006 supported SDK boundary mismatch")
+        if dev006.get("declared_candidate_runtime_matrix") != EXPECTED_RUNTIMES:
+            findings.append("AX-PUB-DEV-006 runtime matrix mismatch")
+        if dev006.get("state") == "CANDIDATE":
+            if dev006.get("external_evaluation_readiness") != "NOT_YET_ESTABLISHED":
+                findings.append("AX-PUB-DEV-006 candidate readiness mismatch")
+        elif dev006.get("state") == "CLOSED":
+            if dev006.get("external_evaluation_readiness") != "ESTABLISHED":
+                findings.append("AX-PUB-DEV-006 closed readiness mismatch")
+        else:
+            findings.append("AX-PUB-DEV-006 state must be CANDIDATE or CLOSED")
 
     rc = load_json(ROOT / "release-candidate" / "AX-PUB-RC-001.json", findings)
     if rc is not None:
