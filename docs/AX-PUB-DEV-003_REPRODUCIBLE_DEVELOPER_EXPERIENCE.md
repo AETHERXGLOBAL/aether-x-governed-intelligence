@@ -295,3 +295,5 @@ DEV-GATE-02 — SDK CANDIDATE
 ---
 
 **AETHER X GLOBAL — Institutional Intelligence. Governed Autonomy.**
+
+<!-- verification-only trigger: DEV-GATE-01 runtime matrix -->
