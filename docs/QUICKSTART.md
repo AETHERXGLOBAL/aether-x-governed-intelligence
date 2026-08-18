@@ -144,7 +144,7 @@ Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json
 Current moving state:
 
 ```text
-AX-PUB-MANIFEST-001 v1.9
+AX-PUB-MANIFEST-001 v1.10
 AX-PUB-POL-001 v1.6
 ```
 
@@ -197,26 +197,36 @@ Current program state:
 
 ```text
 PROGRAM: ACTIVE / UNDER DEVELOPMENT
-CURRENT GATE: DEV-GATE-00 — Contract Baseline
+DEV-GATE-00: CLOSED
+CURRENT ENGINEERING OBJECTIVE: DEV-GATE-01 — Reproducible Developer Experience
 SDK CANDIDATE: NOT YET ESTABLISHED
 PUBLIC SDK: NOT PUBLISHED
 ```
 
-The program defines a gated path from inspectable public engineering toward a reproducible developer contract, bounded SDK candidate, supply-chain evidence, external evaluation readiness and an eventual separate release decision.
+The program defines a gated path from inspectable public engineering toward a reproducible developer experience, bounded SDK candidate, supply-chain evidence, external evaluation readiness and an eventual separate release decision.
 
 `DEVELOPER ADOPTION PROGRAM ≠ SDK RELEASE`
 
 ## 12. Developer Contract Baseline
 
-The current developer-facing contract baseline is:
+The established developer-facing contract baseline is:
 
 - [`AX-PUB-DEV-002 — Developer Contract Baseline`](./AX-PUB-DEV-002_DEVELOPER_CONTRACT_BASELINE.md)
 - [Machine-readable `AX-PUB-DEV-002.json`](../artifacts/AX-PUB-DEV-002.json)
+- [`AX-PUB-CI-003 — DEV-GATE-00 validation evidence`](../evidence/AX-PUB-CI-003_DEVELOPER_CONTRACT_BASELINE_VALIDATION.md)
 
-It defines the bounded initial developer problem, canonical contract inventory, explicit non-goals, semantic error taxonomy, compatibility baseline, fail-closed rules and public/private dependency boundary.
+Current state:
 
-At initial publication the baseline remains a `DEV-GATE-00 CANDIDATE` until its repository-level checks and directly observed CI evidence pass.
+```text
+DEV-GATE-00: CLOSED
+PUBLIC DEVELOPER CONTRACT BASELINE: ESTABLISHED
+NEXT GATE: DEV-GATE-01 — Reproducible Developer Experience
+SDK PUBLICATION: NOT AUTHORIZED
+```
 
+The baseline defines the bounded initial developer problem, canonical contract inventory, explicit non-goals, semantic error taxonomy, compatibility baseline, fail-closed rules and public/private dependency boundary.
+
+`DEV-GATE-00 CLOSED ≠ SDK CANDIDATE`  
 `DEVELOPER CONTRACT BASELINE ≠ SUPPORTED SDK`  
 `CONTRACTED PUBLIC SEMANTICS ≠ PRODUCT IMPLEMENTATION`
 
@@ -256,6 +266,7 @@ They do not checkout, import, execute, package, or depend on private AETHER X pr
 `PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`  
 `PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`  
 `DEVELOPER ADOPTION PROGRAM ≠ SDK RELEASE`  
+`DEV-GATE-00 CLOSED ≠ SDK CANDIDATE`  
 `DEVELOPER CONTRACT BASELINE ≠ SUPPORTED SDK`
 
 ---
