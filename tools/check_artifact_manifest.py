@@ -14,7 +14,8 @@ REQUIRED_PAIRS = {
     ("AX-PUB-SCHEMA-001","1.0"),("AX-PUB-SCHEMA-002","1.0"),("AX-PUB-SCHEMA-003","1.0"),
     ("AX-PUB-REF-001","1.0"),("AX-PUB-REF-002","1.0"),("AX-PUB-REF-003","1.0"),
     ("AX-PUB-TEST-001","1.0"),("AX-PUB-TEST-002","1.0"),("AX-PUB-POL-001","1.6"),
-    ("AX-PUB-SNAP-002","1.0"),("AX-PUB-REL-001","1.0"),("AX-PUB-GATE-001","1.0"),("AX-PUB-DEV-001","1.0"),
+    ("AX-PUB-SNAP-002","1.0"),("AX-PUB-REL-001","1.0"),("AX-PUB-GATE-001","1.0"),
+    ("AX-PUB-DEV-001","1.0"),("AX-PUB-DEV-002","1.0"),
 }
 REQUIRED_RELATIONS = {
     ("AX-PUB-SCHEMA-001","1.0","STRUCTURAL_PROFILE_OF","AX-PUB-SPEC-002","1.0"),
@@ -30,6 +31,8 @@ REQUIRED_RELATIONS = {
     ("AX-PUB-TEST-002","1.0","EXERCISES_PUBLIC_BEHAVIOR_OF","AX-PUB-REF-003","1.0"),
     ("AX-PUB-REL-001","1.0","PACKAGES_PUBLIC_STATE_WITH","AX-PUB-SNAP-002","1.0"),
     ("AX-PUB-DEV-001","1.0","GOVERNED_BY","AX-PUB-GATE-001","1.0"),
+    ("AX-PUB-DEV-002","1.0","IMPLEMENTS_PROGRAM_GATE_OF","AX-PUB-DEV-001","1.0"),
+    ("AX-PUB-DEV-002","1.0","GOVERNED_BY","AX-PUB-GATE-001","1.0"),
 }
 
 def safe_path(raw: Any, findings: list[str], label: str) -> Path | None:
@@ -67,7 +70,7 @@ def main() -> int:
     manifest = load_json(MANIFEST_PATH, findings)
     if manifest is None: return fail(findings)
     if manifest.get("manifest_id") != "AX-PUB-MANIFEST-001": findings.append("manifest_id mismatch")
-    if manifest.get("manifest_version") != "1.8": findings.append("manifest_version must be 1.8")
+    if manifest.get("manifest_version") != "1.9": findings.append("manifest_version must be 1.9")
     if manifest.get("repository") != "AETHERXGLOBAL/aether-x-governed-intelligence": findings.append("repository identity mismatch")
 
     policy = manifest.get("versioning_policy")
@@ -92,6 +95,9 @@ def main() -> int:
         if artifact.get("entrypoint") is not None:
             ep = safe_path(artifact.get("entrypoint"), findings, f"artifacts[{i}].entrypoint")
             if ep is not None and not ep.is_file(): findings.append(f"entrypoint missing: {artifact.get('entrypoint')}")
+        if artifact.get("machine_readable_companion") is not None:
+            cp = safe_path(artifact.get("machine_readable_companion"), findings, f"artifacts[{i}].machine_readable_companion")
+            if cp is not None and not cp.is_file(): findings.append(f"machine-readable companion missing: {artifact.get('machine_readable_companion')}")
     for pair in sorted(REQUIRED_PAIRS - set(by_pair)): findings.append(f"required current artifact missing: {pair}")
 
     rels: set[tuple[str,str,str,str,str]] = set()
@@ -141,13 +147,25 @@ def main() -> int:
         if dev.get("state")!="UNDER DEVELOPMENT": findings.append("developer program state mismatch")
         if dev.get("sdk_publication_disposition")!="SDK PUBLICATION NOT AUTHORIZED": findings.append("developer program SDK disposition mismatch")
 
+    baseline=manifest.get("current_developer_contract_baseline")
+    if not isinstance(baseline,dict) or baseline.get("id")!="AX-PUB-DEV-002" or baseline.get("version")!="1.0": findings.append("current_developer_contract_baseline must identify AX-PUB-DEV-002 v1.0")
+    else:
+        bp=safe_path(baseline.get("path"),findings,"current_developer_contract_baseline")
+        if bp is not None and not bp.is_file(): findings.append("current developer contract baseline path missing")
+        cp=safe_path(baseline.get("machine_readable_companion"),findings,"current_developer_contract_baseline companion")
+        if cp is not None and not cp.is_file(): findings.append("current developer contract baseline companion missing")
+        if baseline.get("gate")!="DEV-GATE-00": findings.append("developer contract baseline gate mismatch")
+        if baseline.get("state") not in {"CANDIDATE_NOT_CLOSED","CLOSED"}: findings.append("developer contract baseline state invalid")
+        if baseline.get("sdk_publication_disposition")!="SDK PUBLICATION NOT AUTHORIZED": findings.append("developer contract baseline SDK disposition mismatch")
+
     quickstart = ROOT / "docs" / "QUICKSTART.md"
     if not quickstart.is_file(): findings.append("docs/QUICKSTART.md missing")
     else:
         text = quickstart.read_text(encoding="utf-8")
         for marker in (
             "AX-PUB-MANIFEST-001.json","COMPATIBILITY_AND_VERSIONING.md","AX-PUB-SNAP-001.json","AX-PUB-SNAP-002.json",
-            "AX-PUB-SCHEMA-003","AX-PUB-REF-003","AX-PUB-TEST-002","AX-PUB-REL-001","public-engineering-vnext-1.0","AX-PUB-GATE-001","AX-PUB-DEV-001"
+            "AX-PUB-SCHEMA-003","AX-PUB-REF-003","AX-PUB-TEST-002","AX-PUB-REL-001","public-engineering-vnext-1.0",
+            "AX-PUB-GATE-001","AX-PUB-DEV-001","AX-PUB-DEV-002"
         ):
             if marker not in text: findings.append(f"quickstart missing reference: {marker}")
     if not isinstance(manifest.get("claim_boundary"), list) or not manifest.get("claim_boundary"): findings.append("claim_boundary must be non-empty array")
