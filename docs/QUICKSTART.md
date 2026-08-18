@@ -131,6 +131,8 @@ CONFORMANCE KIT
 PUBLIC CI EVIDENCE
         ↓
 COMMIT-ANCHORED SNAPSHOT
+        ↓
+FORMAL PUBLIC ENGINEERING RELEASE
 ```
 
 The layers have different responsibilities. Schema validity does not guarantee semantic validity. Validator, conformance or CI passes do not establish production fitness, security certification, product adoption, or authorization for consequential action.
@@ -142,8 +144,8 @@ Use [`artifacts/AX-PUB-MANIFEST-001.json`](../artifacts/AX-PUB-MANIFEST-001.json
 Current moving state:
 
 ```text
-AX-PUB-MANIFEST-001 v1.5
-AX-PUB-POL-001 v1.4
+AX-PUB-MANIFEST-001 v1.6
+AX-PUB-POL-001 v1.5
 ```
 
 See [`COMPATIBILITY_AND_VERSIONING.md`](./COMPATIBILITY_AND_VERSIONING.md).
@@ -167,19 +169,38 @@ Current fixed vNext public snapshot:
 
 `PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
 
-## 10. Private-Project Boundary
+## 10. Formal Public Engineering Release
+
+The formal public engineering publication is:
+
+```text
+Tag: public-engineering-vnext-1.0
+Title: AETHER X Governed Intelligence — Public Engineering vNext 1.0
+Tag target: 4f067c9fd3d3ac065ac50b10faf1abd1bdb91bb6
+```
+
+Release publication evidence:
+
+- [`AX-PUB-REL-001 — Public Engineering vNext Release Record`](../evidence/AX-PUB-REL-001_PUBLIC_ENGINEERING_VNEXT_RELEASE.md)
+
+The release tag target packages the published repository state. `AX-PUB-SNAP-002` separately preserves the fixed technical-review anchor and Git-blob inventory.
+
+`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`
+
+## 11. Private-Project Boundary
 
 The public schemas, reference validators, examples and conformance kits are self-contained in this public repository.
 
 They do not checkout, import, execute, package, or depend on private AETHER X project repositories. Public examples are synthetic. Private source code, unpublished research, credentials, internal endpoints, proprietary algorithms and confidential implementation architecture remain outside the public disclosure boundary.
 
-## 11. Public Claim Boundary
+## 12. Public Claim Boundary
 
 `PUBLIC ARTIFACT ≠ PRODUCT IMPLEMENTATION`  
 `PUBLIC SPECIFICATION ≠ INTERNAL CONTROL IMPLEMENTATION`  
 `REFERENCE VALIDATOR PASS ≠ PRODUCTION APPROVAL`  
 `AGENT AUTHORITY REFERENCE ≠ PRODUCTION AUTHORIZATION`  
-`PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`
+`PUBLIC SNAPSHOT ≠ PRODUCT RELEASE`  
+`PUBLIC ENGINEERING RELEASE ≠ PRODUCT RELEASE`
 
 ---
 
