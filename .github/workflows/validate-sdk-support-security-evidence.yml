@@ -1,0 +1,43 @@
+name: Validate SDK Support & Security Evidence
+
+on:
+  pull_request:
+    paths:
+      - "evidence/AX-PUB-CI-013_SDK_SUPPORT_SECURITY_CONTRACT_VALIDATION.md"
+      - "artifacts/AX-PUB-SUP-001.json"
+      - "artifacts/AX-PUB-SEC-001.json"
+      - "tools/check_sdk_support_security_evidence.py"
+      - ".github/workflows/validate-sdk-support-security-evidence.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: AX-PUB-CI-013 evidence integrity
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Compile evidence checker
+        run: python -m py_compile tools/check_sdk_support_security_evidence.py
+
+      - name: Validate AX-PUB-CI-013
+        run: python tools/check_sdk_support_security_evidence.py
+
+      - name: Explicit maturity boundary
+        run: |
+          echo "AX-PUB-CI-013: EVIDENCE INTEGRITY VALIDATED"
+          echo "SUPPORT CONTRACT: NOT ACTIVATED"
+          echo "SECURITY OPERATIONS: NOT READY"
+          echo "SDK PUBLICATION: NOT AUTHORIZED"
