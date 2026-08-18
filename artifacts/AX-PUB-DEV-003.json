@@ -83,6 +83,7 @@
   "registry_publication_authorized": false,
   "licence_decided": false,
   "next_gate_after_verified_closure": "DEV-GATE-02 — SDK Candidate",
+  "verification_trigger": "runtime-matrix-v2",
   "claim_boundary": [
     "REPRODUCIBLE DEVELOPER EXPERIENCE DOES NOT ESTABLISH AN SDK CANDIDATE",
     "CLEAN ENVIRONMENT CI PASS DOES NOT ESTABLISH PRODUCTION READINESS",
