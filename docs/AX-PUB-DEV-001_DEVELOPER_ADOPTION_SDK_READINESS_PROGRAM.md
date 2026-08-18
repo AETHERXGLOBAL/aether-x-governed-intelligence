@@ -2,7 +2,7 @@
 
 **Artifact ID:** `AX-PUB-DEV-001`  
 **Version:** `1.0`  
-**Status:** `PUBLIC ENGINEERING PROGRAM · UNDER DEVELOPMENT · DEV-GATE-00 CLOSED · DEV-GATE-01 CLOSED · SDK PUBLICATION NOT AUTHORIZED`  
+**Status:** `PUBLIC ENGINEERING PROGRAM · UNDER DEVELOPMENT · DEV-GATE-00 CLOSED · DEV-GATE-01 CLOSED · DEV-GATE-02 CLOSED · SDK PUBLICATION NOT AUTHORIZED`  
 **Scope:** `AETHERXGLOBAL/aether-x-governed-intelligence`  
 **Governing readiness gate:** `AX-PUB-GATE-001`
 
@@ -63,11 +63,13 @@ The repository now provides:
 - `AX-PUB-GATE-001` as the controlling SDK publication gate;
 - `AX-PUB-DEV-002` as the closed DEV-GATE-00 developer contract baseline;
 - `AX-PUB-DEV-003` as the closed DEV-GATE-01 reproducible developer experience;
-- directly observed Gate-01 runtime-matrix evidence recorded by `AX-PUB-CI-004`.
+- directly observed Gate-01 runtime-matrix evidence recorded by `AX-PUB-CI-004`;
+- `AX-PUB-DEV-004` as the closed DEV-GATE-02 bounded repository-local SDK candidate;
+- directly observed Gate-02 SDK-candidate and governance evidence recorded by `AX-PUB-CI-005`.
 
-The public reference developer path uses the Python standard library only. `AX-PUB-CI-004` directly validates the declared Gate-01 reference experience across Python 3.10, 3.11, 3.12 and 3.13.
+The public reference developer path uses the Python standard library only. `AX-PUB-CI-004` directly validates the declared Gate-01 reference experience across Python 3.10, 3.11, 3.12 and 3.13. `AX-PUB-CI-005` directly validates the bounded Gate-02 candidate across the same declared candidate runtime matrix.
 
-This establishes reproducibility of the public reference path only. No supported SDK exists.
+This establishes a bounded SDK candidate only. No supported or published SDK exists.
 
 ## 4. Non-Negotiable Boundaries
 
@@ -99,7 +101,7 @@ If a network API is later approved, its externally supported HTTP surface should
 
 ### Layer B — Developer Experience
 
-The public developer path now includes:
+The public developer path includes:
 
 - one canonical Quickstart;
 - minimal runnable examples;
@@ -114,15 +116,21 @@ DEV-GATE-01 closure establishes reproducibility of this bounded public reference
 
 ### Layer C — SDK Candidate
 
-The first SDK candidate should minimize new architectural surface.
+DEV-GATE-02 establishes a bounded repository-local Python SDK candidate because the current public reference implementations and Quickstart already use Python and the candidate can remain aligned with the language-neutral contract surface.
 
-**Preferred first-language candidate:** Python, because the current public reference implementations and Quickstart already use Python and Gate-01 has directly validated the public reference experience across Python 3.10–3.13.
+The established candidate:
 
-This is a design preference, not package publication authority and not a final SDK runtime-support decision.
+- exposes explicit typed result abstractions;
+- maps only to the three declared public contract paths;
+- preserves original reference findings;
+- maps selected findings into the declared `AXDEV-*` taxonomy;
+- fails explicitly for unsupported contracts and versions;
+- exposes no production execution, credential, network or product API;
+- remains non-distributable and without an approved package identity.
+
+The verified candidate runtime matrix is Python 3.10–3.13 under `AX-PUB-CI-005`. This is a bounded candidate compatibility result, not a general package-support policy.
 
 A future second language should be demand-driven after the language-neutral contract and compatibility surface are stable. Multi-language expansion must not multiply inconsistent semantics.
-
-The SDK candidate should provide typed or otherwise explicit developer-facing abstractions for the approved public contract surface, while keeping authority decisions fail-closed where applicable.
 
 ### Layer D — Conformance & Compatibility
 
@@ -234,22 +242,32 @@ Closing this gate establishes only a reproducible public reference developer exp
 
 ### DEV-GATE-02 — SDK Candidate
 
-**Current state:** `ACTIVE ENGINEERING OBJECTIVE`
+**Current state:** `CLOSED`
 
-Exit requires:
+Closure is established by:
 
-- one bounded SDK candidate implementation;
-- no package-registry publication;
-- supported candidate surface mapped to contracts;
-- typed/explicit public interfaces;
-- stable error-model candidate;
-- unit and conformance tests;
-- compatibility matrix;
-- no representation of the candidate as a supported SDK.
+- [`AX-PUB-DEV-004 — SDK Candidate Engineering Baseline`](./AX-PUB-DEV-004_SDK_CANDIDATE_ENGINEERING_BASELINE.md);
+- machine-readable companion `artifacts/AX-PUB-DEV-004.json`;
+- repository-local candidate module `sdk-candidate/python/aetherx_sdk_candidate.py`;
+- unit and candidate-conformance tests;
+- public/private candidate boundary checker;
+- closed-state governance checker;
+- [`AX-PUB-CI-005`](../evidence/AX-PUB-CI-005_SDK_CANDIDATE_VALIDATION.md).
 
-Passing this gate means `SDK CANDIDATE`, not `SUPPORTED SDK`.
+The directly verified bounded candidate runtime matrix is:
+
+```text
+Python 3.10
+Python 3.11
+Python 3.12
+Python 3.13
+```
+
+Passing this gate establishes `SDK CANDIDATE`, not `SUPPORTED SDK`.
 
 ### DEV-GATE-03 — Supply-Chain & Release Candidate
+
+**Current state:** `ACTIVE ENGINEERING OBJECTIVE`
 
 Exit requires:
 
@@ -261,6 +279,8 @@ Exit requires:
 - protected publication path design;
 - vulnerability-reporting path;
 - no private repository dependency.
+
+Beginning DEV-GATE-03 does not authorize registry publication, approve a package identity, select a licence or create a supported release commitment.
 
 ### DEV-GATE-04 — External Evaluation Readiness
 
@@ -385,26 +405,30 @@ The program must actively prevent:
 PROGRAM: ACTIVE / UNDER DEVELOPMENT
 DEV-GATE-00: CLOSED
 DEV-GATE-01: CLOSED
-CURRENT ENGINEERING OBJECTIVE: DEV-GATE-02 — SDK CANDIDATE
+DEV-GATE-02: CLOSED
+CURRENT ENGINEERING OBJECTIVE: DEV-GATE-03 — SUPPLY-CHAIN & RELEASE CANDIDATE
 DEVELOPER PLATFORM: NOT RELEASED
-SDK CANDIDATE: NOT YET ESTABLISHED
+SDK CANDIDATE: ESTABLISHED
 PUBLIC SDK: NOT PUBLISHED
+PACKAGE IDENTITY: NOT APPROVED
 PACKAGE REGISTRY: NOT AUTHORIZED
 PUBLIC SDK LICENCE: NOT DECIDED
 AX-PUB-GATE-001: SDK PUBLICATION NOT AUTHORIZED
 ```
 
-`AX-PUB-CI-003` records the directly observed candidate-validation evidence used to close DEV-GATE-00.
+`AX-PUB-CI-003` records the directly observed validation evidence used to close DEV-GATE-00.
 
 `AX-PUB-CI-004` records the directly observed clean-environment runtime-matrix and public-governance evidence used to close DEV-GATE-01.
+
+`AX-PUB-CI-005` records the directly observed SDK-candidate runtime-matrix, candidate conformance, public-boundary and governance evidence used to close DEV-GATE-02.
 
 The current program position is:
 
 ```text
-REPRODUCIBLE
+CANDIDATE
 ```
 
-This means the bounded public reference developer experience is independently reproducible within its evidenced runtime matrix. It does not mean an SDK candidate has been established.
+This means a bounded repository-local SDK candidate is established for the declared public contract surface. It does not mean a package is published, supported, licensed for general reuse, production-ready or approved for registry distribution.
 
 ## 14. Promotion Principle
 
@@ -425,10 +449,10 @@ REFERENCE
 Current position:
 
 ```text
-REPRODUCIBLE
+CANDIDATE
 ```
 
-The next promotion target is `CANDIDATE`, governed by DEV-GATE-02. No later state may be inferred from an earlier one.
+The next promotion target is `RELEASE-CANDIDATE VALIDATED`, governed by DEV-GATE-03. No later state may be inferred from an earlier one.
 
 ---
 
