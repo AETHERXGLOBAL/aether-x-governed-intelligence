@@ -1,0 +1,131 @@
+name: Validate SDK Installable Package Closure
+
+on:
+  pull_request:
+    paths:
+      - 'artifacts/AX-PUB-DEV-007.json'
+      - 'artifacts/AX-PUB-DEV-008.json'
+      - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'docs/AX-PUB-DEV-008_INSTALLABLE_PACKAGE_CANDIDATE.md'
+      - 'evidence/AX-PUB-CI-009_INSTALLABLE_PACKAGE_CANDIDATE_VALIDATION.md'
+      - 'tools/check_sdk_release_decision_baseline.py'
+      - 'tools/check_sdk_release_decision_manifest_state.py'
+      - 'tools/check_sdk_release_candidate_boundary.py'
+      - 'tools/check_sdk_release_candidate_document.py'
+      - 'tools/check_sdk_installable_package_manifest_state.py'
+      - 'tools/check_supply_chain_release_candidate.py'
+      - 'tools/check_artifact_manifest.py'
+      - '.github/workflows/validate-sdk-installable-package-closure.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'artifacts/AX-PUB-DEV-007.json'
+      - 'artifacts/AX-PUB-DEV-008.json'
+      - 'artifacts/AX-PUB-MANIFEST-001.json'
+      - 'docs/AX-PUB-DEV-008_INSTALLABLE_PACKAGE_CANDIDATE.md'
+      - 'evidence/AX-PUB-CI-009_INSTALLABLE_PACKAGE_CANDIDATE_VALIDATION.md'
+      - 'tools/check_sdk_release_decision_baseline.py'
+      - 'tools/check_sdk_release_decision_manifest_state.py'
+      - 'tools/check_sdk_release_candidate_boundary.py'
+      - 'tools/check_sdk_release_candidate_document.py'
+      - 'tools/check_sdk_installable_package_manifest_state.py'
+      - 'tools/check_supply_chain_release_candidate.py'
+      - 'tools/check_artifact_manifest.py'
+      - '.github/workflows/validate-sdk-installable-package-closure.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sdk-installable-package-closure-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-closure:
+    name: DEV-GATE-05B closed-state governance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+
+      - name: Set up CPython 3.14
+        id: python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.14'
+
+      - name: Validate bootstrap or evidence-backed closure state
+        shell: bash
+        run: |
+          set -euo pipefail
+          python='${{ steps.python.outputs.python-path }}'
+          "$python" -m json.tool artifacts/AX-PUB-DEV-007.json > /dev/null
+          "$python" -m json.tool artifacts/AX-PUB-DEV-008.json > /dev/null
+          "$python" -m json.tool artifacts/AX-PUB-MANIFEST-001.json > /dev/null
+
+          if [[ ! -f tools/check_sdk_installable_package_manifest_state.py ]]; then
+            "$python" - <<'PY'
+          import json
+          from pathlib import Path
+
+          dev007 = json.loads(Path('artifacts/AX-PUB-DEV-007.json').read_text())
+          dev008 = json.loads(Path('artifacts/AX-PUB-DEV-008.json').read_text())
+          manifest = json.loads(Path('artifacts/AX-PUB-MANIFEST-001.json').read_text())
+
+          b_state = dev007.get('gate_05_phases', {}).get('DEV-GATE-05B')
+          if b_state == 'CLOSED' or dev008.get('phase_state') == 'CLOSED':
+              raise SystemExit('AX_DEV_GATE_05B_CLOSURE_BOOTSTRAP_FAIL: closed state requires closure checker')
+          major, minor = (int(x) for x in manifest['manifest_version'].split('.')[:2])
+          if (major, minor) >= (1, 20):
+              raise SystemExit('AX_DEV_GATE_05B_CLOSURE_BOOTSTRAP_FAIL: manifest >=1.20 requires closure checker')
+          if dev007.get('publication_disposition') != 'SDK PUBLICATION NOT AUTHORIZED':
+              raise SystemExit('AX_DEV_GATE_05B_CLOSURE_BOOTSTRAP_FAIL: publication boundary changed')
+          print('AX_DEV_GATE_05B_CLOSURE_CI_BOOTSTRAP_PASS state=PRE_CLOSURE')
+          PY
+            exit 0
+          fi
+
+          "$python" -m py_compile \
+            tools/check_sdk_release_decision_baseline.py \
+            tools/check_sdk_release_decision_manifest_state.py \
+            tools/check_sdk_release_candidate_boundary.py \
+            tools/check_sdk_release_candidate_document.py \
+            tools/check_sdk_installable_package_manifest_state.py \
+            tools/check_supply_chain_release_candidate.py \
+            tools/check_external_evaluation_readiness.py \
+            tools/check_artifact_manifest.py
+
+          "$python" tools/check_sdk_release_decision_baseline.py
+          "$python" tools/check_sdk_release_decision_manifest_state.py
+          "$python" tools/check_sdk_release_candidate_document.py
+          "$python" tools/check_sdk_release_candidate_boundary.py
+          "$python" tools/check_supply_chain_release_candidate.py
+          "$python" tools/check_external_evaluation_readiness.py
+          "$python" tools/check_artifact_manifest.py
+          "$python" tools/check_sdk_installable_package_manifest_state.py
+
+          "$python" - <<'PY'
+          import json
+          from pathlib import Path
+
+          dev007 = json.loads(Path('artifacts/AX-PUB-DEV-007.json').read_text())
+          dev008 = json.loads(Path('artifacts/AX-PUB-DEV-008.json').read_text())
+          manifest = json.loads(Path('artifacts/AX-PUB-MANIFEST-001.json').read_text())
+
+          assert dev007['gate_05_phases']['DEV-GATE-05B'] == 'CLOSED'
+          assert dev007['gate_05_phases']['DEV-GATE-05C'] == 'ACTIVE_ENGINEERING_OBJECTIVE'
+          assert dev007['gate_05_phases']['DEV-GATE-05D'] == 'NOT_AUTHORIZED'
+          assert dev007['release_authorized'] is False
+          assert dev008['phase_state'] == 'CLOSED'
+          assert dev008['distribution_authorized'] is False
+          assert dev008['license_granted'] is False
+          assert dev008['supported_sdk_established'] is False
+          assert manifest['current_readiness_gate']['disposition'] == 'SDK PUBLICATION NOT AUTHORIZED'
+          assert manifest['current_developer_program']['active_gate'] == 'DEV-GATE-05 — SDK Release Decision'
+          assert manifest['current_developer_program']['active_phase'] == 'DEV-GATE-05C — Distribution & External Validation'
+          print('AX_DEV_GATE_05B_CLOSURE_BOUNDARY_PASS sdk_publication=NOT_AUTHORIZED')
+          PY
