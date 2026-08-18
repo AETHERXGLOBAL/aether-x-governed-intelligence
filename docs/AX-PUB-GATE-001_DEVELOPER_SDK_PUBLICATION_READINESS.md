@@ -17,7 +17,7 @@ PUBLIC REFERENCE IMPLEMENTATION
 SUPPORTED SDK
 ```
 
-The current repository contains public reference engineering, machine-readable contracts, validators, conformance evidence and a formal public engineering release. Those facts do **not** by themselves authorize SDK publication.
+The current repository now includes a bounded SDK candidate, a validated non-published engineering release candidate and an external-evaluation-ready public surface. Those facts still do **not** by themselves authorize SDK publication.
 
 ## 2. Current Disposition
 
@@ -27,20 +27,37 @@ SDK PUBLICATION: NOT AUTHORIZED
 
 This disposition is based only on the current public repository state. It does not describe private product maturity or private implementation capability.
 
-At present, the public repository intentionally does not establish all of the following as supported commitments:
+Current developer-program position:
+
+```text
+DEV-GATE-00: CLOSED
+DEV-GATE-01: CLOSED
+DEV-GATE-02: CLOSED
+DEV-GATE-03: CLOSED
+DEV-GATE-04: CLOSED
+CURRENT ENGINEERING / DECISION OBJECTIVE: DEV-GATE-05 — SDK RELEASE DECISION
+EXTERNAL EVALUATION READINESS: ESTABLISHED
+HUMAN EXTERNAL EVALUATION: NOT ESTABLISHED
+EXTERNAL ADOPTION: NOT ESTABLISHED
+SUPPORTED SDK: NOT ESTABLISHED
+SDK PUBLICATION: NOT AUTHORIZED
+```
+
+At present, the public repository still does not establish all of the following as approved supported commitments:
 
 - an approved public software licence governing SDK reuse/distribution;
 - a stable supported SDK/API compatibility contract;
 - an approved package namespace and distribution channel;
 - a public support/maintenance commitment;
 - a production authentication, authorization or credential-handling contract;
-- a production security or deployment support boundary.
+- a production security or deployment support boundary;
+- explicit SDK release authority.
 
 The absence of those public commitments is intentional and must not be silently filled by inference.
 
 ## 3. Gate Principle
 
-An SDK is not just executable code. Publication of an SDK creates expectations about compatibility, security, packaging, maintenance and support.
+An SDK is not just executable code. Publication of an SDK creates expectations about compatibility, security, packaging, maintenance, support and release accountability.
 
 Therefore:
 
@@ -50,13 +67,19 @@ REFERENCE CODE
 CI
 +
 DOCUMENTATION
++
+SDK CANDIDATE
++
+VALIDATED RELEASE CANDIDATE
++
+EXTERNAL-EVALUATION READINESS
 ≠
 SUPPORTED SDK
 ```
 
-SDK publication should occur only after the required evidence and authority for the intended public support boundary exist.
+SDK publication should occur only after the required evidence **and authority** for the intended public support boundary exist.
 
-## 4. Readiness Dimensions
+## 4. Readiness Dimensions — Current Assessment
 
 ### GATE-01 — Public Authority & IP / Licence
 
@@ -79,9 +102,16 @@ Required before SDK publication:
 - defined compatibility expectations across supported versions;
 - deprecation and breaking-change handling.
 
-**Current public state:** `PARTIAL / REFERENCE-ARTIFACT VERSIONING EXISTS; SDK COMPATIBILITY DOES NOT`
+**Current public state:** `PARTIAL / BOUNDED CANDIDATE CONTRACT + PYTHON 3.10–3.13 EVIDENCE EXISTS; SUPPORTED SDK API / COMPATIBILITY COMMITMENT NOT APPROVED`
 
-`AX-PUB-POL-001` governs public reference artifacts, not a supported SDK API.
+The public engineering now includes:
+
+- `AX-PUB-DEV-002` developer contract baseline;
+- `AX-PUB-DEV-004` bounded repository-local SDK candidate;
+- direct Python 3.10–3.13 candidate CI evidence through `AX-PUB-CI-005`;
+- a migration/deprecation draft established by the Gate-04 readiness surface.
+
+These are candidate/readiness controls, not a stable supported SDK API contract.
 
 ### GATE-03 — Package Identity & Distribution
 
@@ -93,9 +123,9 @@ Required before SDK publication:
 - reproducible build/package process;
 - integrity/provenance expectations for distributed artifacts.
 
-**Current public state:** `NOT ESTABLISHED`
+**Current public state:** `PARTIAL / ENGINEERING RELEASE-CANDIDATE BUILD, SBOM AND PROVENANCE ARE VERIFIED; PACKAGE IDENTITY + REGISTRY ARE NOT APPROVED`
 
-No package name or package-registry publication should be inferred from this repository.
+`AX-PUB-DEV-005`, `AX-PUB-RC-001` and `AX-PUB-CI-006 v1.1` establish a deterministic, attested, non-published engineering release candidate. They do not establish an approved package name or registry distribution surface.
 
 ### GATE-04 — Security, Credentials & Authority Boundary
 
@@ -108,9 +138,9 @@ Required before an SDK can mediate consequential operations:
 - failure behavior when identity or authority cannot be established;
 - clear separation between reference validation and production authorization.
 
-**Current public state:** `REFERENCE SEMANTICS ONLY / PRODUCTION BOUNDARY NOT ESTABLISHED`
+**Current public state:** `PARTIAL / REFERENCE AUTHORITY SEMANTICS AND PUBLIC BOUNDARY CONTROLS EXIST; PRODUCTION CREDENTIAL / AUTHORIZATION BOUNDARY NOT ESTABLISHED`
 
-`AX-PUB-SPEC-004`, `AX-PUB-SCHEMA-003` and `AX-PUB-REF-003` are public reference artifacts. They do not establish a production authorization plane.
+`AX-PUB-SPEC-004`, `AX-PUB-SCHEMA-003`, `AX-PUB-REF-003` and the SDK candidate expose bounded authority-validation semantics. They do not establish a production authorization plane or production credential contract.
 
 ### GATE-05 — Error & Failure Semantics
 
@@ -122,7 +152,9 @@ Required before SDK publication:
 - timeout/cancellation behavior where applicable;
 - fail-closed behavior for authority or evidence failures.
 
-**Current public state:** `NOT DEFINED AS AN SDK CONTRACT`
+**Current public state:** `PARTIAL / AXDEV CANDIDATE ERROR TAXONOMY AND FAIL-CLOSED REFERENCE BEHAVIOR EXIST; SUPPORTED SDK RETRY / TIMEOUT / CANCELLATION CONTRACT NOT APPROVED`
+
+The bounded candidate's error taxonomy is evidence for candidate engineering, not a stable support commitment.
 
 ### GATE-06 — Conformance & Regression Evidence
 
@@ -133,9 +165,9 @@ Required before SDK publication:
 - public conformance cases for normative behavior where appropriate;
 - release-gated CI.
 
-**Current public state:** `REFERENCE CONFORMANCE EXISTS / SDK CONFORMANCE DOES NOT`
+**Current public state:** `PARTIAL / BOUNDED SDK-CANDIDATE UNIT + CONFORMANCE TESTS AND PYTHON 3.10–3.13 CI EXIST; SUPPORTED RELEASE-GATED SDK CONFORMANCE COMMITMENT NOT APPROVED`
 
-Current conformance evidence applies to public reference validators only.
+`AX-PUB-CI-005` and later readiness checks directly exercise the bounded candidate. This does not yet define the release gate for a supported distributed package.
 
 ### GATE-07 — Dependency & Supply-Chain Boundary
 
@@ -147,7 +179,9 @@ Required before SDK publication:
 - secret-free, private-repository-free public build path;
 - clear policy for third-party components and licences.
 
-**Current public state:** `PUBLIC REFERENCE IMPLEMENTATIONS ARE SELF-CONTAINED; SDK SUPPLY-CHAIN POLICY NOT ESTABLISHED`
+**Current public state:** `PARTIAL / DETERMINISTIC RELEASE-CANDIDATE BUILD + SPDX SBOM + BUILD PROVENANCE ARE VERIFIED; DISTRIBUTED-PACKAGE DEPENDENCY / UPDATE / PUBLISHING POLICY NOT APPROVED`
+
+The bounded engineering candidate currently declares no third-party runtime dependency and has verified public/private build boundaries. A future distributed package still requires an approved dependency/update and publication policy.
 
 ### GATE-08 — Documentation & Developer Contract
 
@@ -160,7 +194,9 @@ Required before SDK publication:
 - security and authority warnings;
 - migration guidance for breaking changes.
 
-**Current public state:** `REFERENCE QUICKSTART EXISTS / SDK DOCUMENTATION CONTRACT DOES NOT`
+**Current public state:** `PARTIAL / SELF-SERVICE EVALUATOR GUIDE + LIMITATIONS + MIGRATION DRAFT + STRUCTURED FEEDBACK PATH EXIST; SUPPORTED PACKAGE INSTALLATION / SDK DOCUMENTATION CONTRACT NOT APPROVED`
+
+`AX-PUB-DEV-006` and `AX-PUB-CI-007` establish external-evaluation readiness for the repository-local candidate surface. They do not establish a supported package installation contract.
 
 ### GATE-09 — Maintenance & Support Boundary
 
@@ -172,13 +208,15 @@ Required before SDK publication:
 - deprecation/end-of-support process;
 - public statement of support expectations.
 
-**Current public state:** `NOT ESTABLISHED AS AN SDK SUPPORT COMMITMENT`
+**Current public state:** `NOT SATISFIED AS A SUPPORTED-SDK COMMITMENT`
+
+A public security-reporting path, feedback/triage process and migration/deprecation draft now exist. However, no supported-version window, response SLA, maintenance commitment, end-of-support contract or supported SDK owner obligation has been approved.
 
 ### GATE-10 — Release Authority
 
-A supported SDK publication should require an explicit release decision after the preceding gates are reviewed for the intended scope.
+A supported SDK publication requires an explicit release decision after the preceding dimensions are reviewed for the intended scope.
 
-A Git tag, GitHub Release, reference validator or successful CI workflow does not implicitly grant this authority.
+A Git tag, GitHub Release, SDK candidate, release candidate, external-evaluation readiness state or successful CI workflow does not implicitly grant this authority.
 
 **Current public state:** `NO SDK RELEASE AUTHORITY RECORDED`
 
@@ -193,9 +231,9 @@ NOT AUTHORIZED
 → APPROVED FOR PUBLIC SDK RELEASE
 ```
 
-The names above describe this repository's public engineering gate only. They do not describe internal product maturity.
+Developer-program gates may establish engineering readiness without changing the publication disposition.
 
-No state should be promoted because of marketing pressure, repository activity, a successful demo, or the mere existence of executable reference code.
+No state should be promoted because of marketing pressure, repository activity, a successful demo, a successful CI run, or the mere existence of executable candidate code.
 
 ## 6. Evidence Required for Promotion
 
@@ -213,7 +251,21 @@ A future SDK publication decision should identify, at minimum:
 
 Unknowns remain unknown until evidenced.
 
-## 7. Private-Project Boundary
+## 7. External-Evaluation Boundary
+
+`DEV-GATE-04 CLOSED` means the bounded public surface is ready for external technical evaluation under its declared constraints.
+
+It does **not** establish:
+
+- that a human external evaluator has participated;
+- that an external developer or partner adopted the candidate;
+- that an integration exists;
+- that a support relationship exists;
+- that the SDK is approved for publication.
+
+`EXTERNAL EVALUATION READINESS ≠ EXTERNAL EVALUATION OCCURRED ≠ EXTERNAL ADOPTION`
+
+## 8. Private-Project Boundary
 
 This gate does not require inspection or disclosure of any private AETHER X project repository.
 
@@ -221,12 +273,37 @@ It does not establish implementation by AETHER X Quantum, AX-OS, AIC, AETHER X R
 
 Private source code, unpublished research, credentials, confidential architecture, internal endpoints, customer information and unpublished intellectual property remain outside the public disclosure boundary.
 
-## 8. Claim Boundary
+## 9. Current Assessment Refresh — 2026-08-18
+
+This refresh updates only the **current evidence assessment** of the existing Gate dimensions after DEV-GATE-00 through DEV-GATE-04 progression.
+
+It does not change:
+
+- Artifact ID `AX-PUB-GATE-001`;
+- Version `1.0`;
+- the Gate criteria;
+- publication authority;
+- licence/IP authority;
+- package identity;
+- registry authorization;
+- supported SDK status.
+
+Current disposition remains:
+
+```text
+SDK PUBLICATION NOT AUTHORIZED
+```
+
+## 10. Claim Boundary
 
 `PUBLIC REFERENCE IMPLEMENTATION ≠ SUPPORTED SDK`  
+`SDK CANDIDATE ≠ SUPPORTED SDK`  
+`RELEASE-CANDIDATE VALIDATED ≠ SDK RELEASE`  
+`EXTERNAL-EVALUATION READY ≠ SDK RELEASE`  
 `PUBLIC ENGINEERING RELEASE ≠ SDK RELEASE`  
 `JSON SCHEMA ≠ PRODUCTION API`  
 `REFERENCE AUTHORITY VALIDATOR ≠ PRODUCTION AUTHORIZATION`  
+`DEV-GATE-05 ACTIVE ≠ SDK PUBLICATION AUTHORIZED`  
 `SDK READINESS GATE ≠ SDK COMMITMENT`
 
 This gate is a public engineering control for future publication decisions, not an announcement that an SDK will be released.
