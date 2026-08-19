@@ -23,10 +23,10 @@ TERMINAL_STAGES = (
     "PREDICATE_POLICY_VALIDATED",
 )
 
-Verifier = Callable[[bytes, Mapping[str, Any]], Mapping[str, Any]]
+Verifier = Callable[[Mapping[str, Any]], Mapping[str, Any]]
 SignaturePolicy = Callable[[Sequence[Mapping[str, Any]]], str]
 TrustPolicy = Callable[[Mapping[str, Any]], Mapping[str, Any]]
-PredicatePolicy = Callable[[Mapping[str, Any]], str]
+PredicatePolicy = Callable[[Mapping[str, Any]], Mapping[str, Any]]
 
 
 def _iso_timestamp(value: str) -> str:
@@ -79,7 +79,7 @@ def _base_result(raw_bytes: bytes, observed_at: str) -> dict[str, Any]:
     }
 
 
-def _parse(raw_bytes: bytes) -> tuple[dict[str, Any], bytes, list[dict[str, Any]], str]:
+def _parse(raw_bytes: bytes) -> tuple[dict[str, Any], bytes, list[dict[str, Any]], str, str | None]:
     try:
         outer = json.loads(raw_bytes.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
@@ -89,10 +89,14 @@ def _parse(raw_bytes: bytes) -> tuple[dict[str, Any], bytes, list[dict[str, Any]
 
     signatures: list[dict[str, Any]] = []
     envelope_form = "bare_statement"
+    payload_type: str | None = None
     signed_payload = raw_bytes
 
     if {"payloadType", "payload", "signatures"}.issubset(outer):
-        envelope_form = "dsse_like_envelope"
+        envelope_form = "dsse_envelope"
+        if not isinstance(outer["payloadType"], str) or not outer["payloadType"]:
+            raise ValueError("envelope payloadType must be a non-empty string")
+        payload_type = outer["payloadType"]
         if not isinstance(outer["signatures"], list):
             raise ValueError("envelope signatures must be an array")
         signatures = [dict(s) for s in outer["signatures"] if isinstance(s, dict)]
@@ -120,7 +124,7 @@ def _parse(raw_bytes: bytes) -> tuple[dict[str, Any], bytes, list[dict[str, Any]
         if "digest" not in subject or not isinstance(subject["digest"], dict):
             raise ValueError("each subject must preserve a digest object")
 
-    return statement, signed_payload, signatures, envelope_form
+    return statement, signed_payload, signatures, envelope_form, payload_type
 
 
 def _bind_subjects(
@@ -153,6 +157,8 @@ def _bind_subjects(
 
 def _verify_signatures(
     signed_payload: bytes,
+    payload_type: str | None,
+    envelope_form: str,
     signatures: Sequence[Mapping[str, Any]],
     verifier: Verifier | None,
     signature_policy: SignaturePolicy | None,
@@ -170,7 +176,16 @@ def _verify_signatures(
         if verifier is None:
             identity.update({"result": "NOT_EVALUATED", "signer_identity": None, "reason": "no verifier supplied"})
         else:
-            verdict = dict(verifier(signed_payload, signature))
+            verdict = dict(
+                verifier(
+                    {
+                        "signed_payload": signed_payload,
+                        "payload_type": payload_type,
+                        "envelope_form": envelope_form,
+                        "signature": dict(signature),
+                    }
+                )
+            )
             result = verdict.get("result", "UNKNOWN")
             if result not in {"PASS", "FAIL", "UNKNOWN", "NOT_EVALUATED"}:
                 raise ValueError("signature verifier returned invalid result")
@@ -215,7 +230,7 @@ def import_attestation(
     states = result["states"]
 
     try:
-        statement, signed_payload, signatures, envelope_form = _parse(raw_bytes)
+        statement, signed_payload, signatures, envelope_form, payload_type = _parse(raw_bytes)
     except ValueError as exc:
         states["PARSED"] = "FAIL"
         _not_reached(states, "PARSED")
@@ -228,6 +243,7 @@ def import_attestation(
         {
             "envelope_form": envelope_form,
             "signed_payload_identity": {"sha256": _sha256(signed_payload)},
+            "payload_type": payload_type,
             "predicate_type": statement["predicateType"],
             "subjects": statement["subject"],
             "attestation_asserted_timestamps": _extract_asserted_timestamps(statement),
@@ -242,7 +258,7 @@ def import_attestation(
     }
 
     per_signature, aggregate_signature = _verify_signatures(
-        signed_payload, signatures, signature_verifier, signature_policy
+        signed_payload, payload_type, envelope_form, signatures, signature_verifier, signature_policy
     )
     result["per_signature_results"] = per_signature
     states["SIGNATURE_VERIFIED"] = aggregate_signature
@@ -271,6 +287,10 @@ def import_attestation(
             trust_result.update(dict(trust_policy(trust_context)))
             if trust_result.get("status") not in {"PASS", "FAIL", "UNKNOWN", "NOT_EVALUATED"}:
                 raise ValueError("trust policy returned invalid status")
+            if trust_result.get("status") == "PASS":
+                if not trust_result.get("policy_identity") or not trust_result.get("policy_digest"):
+                    trust_result["status"] = "UNKNOWN"
+                    trust_result["reason"] = "PASS forbidden without immutable trust-policy identity"
     states["TRUSTED_ISSUER"] = trust_result["status"]
     evidence["trust_evaluation"] = trust_result
 
@@ -304,9 +324,16 @@ def import_attestation(
         "observed_at": observed_at,
         "trust_evaluation": trust_result,
     }
-    predicate_status = predicate_policy(predicate_context)
+    predicate_result = dict(predicate_policy(predicate_context))
+    predicate_status = predicate_result.get("status", "UNKNOWN")
     if predicate_status not in {"PASS", "FAIL", "UNKNOWN", "UNSUPPORTED", "NOT_EVALUATED"}:
         raise ValueError("predicate policy returned invalid result")
+    if predicate_status == "PASS":
+        if not predicate_result.get("policy_identity") or not predicate_result.get("policy_digest"):
+            predicate_status = "UNKNOWN"
+            predicate_result["status"] = "UNKNOWN"
+            predicate_result["reason"] = "PASS forbidden without immutable predicate-policy identity"
+    evidence["predicate_policy_evaluation"] = predicate_result
     states["PREDICATE_POLICY_VALIDATED"] = predicate_status
     return result
 
