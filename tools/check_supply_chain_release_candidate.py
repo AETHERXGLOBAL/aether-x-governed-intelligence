@@ -74,7 +74,7 @@ def main() -> int:
     overlay = load(OVERLAY)
     if overlay.get("artifact_id") != "AX-PUB-CANDIDATE-IDENTITY-001":
         fail("current candidate overlay identity mismatch")
-    if overlay.get("state") != "CURRENT_CANDIDATE_IDENTITY_ALIGNMENT":
+    if overlay.get("state") != "CURRENT_CANDIDATE_IDENTITY_ALIGNED":
         fail("current candidate overlay state mismatch")
     reason = overlay.get("reason")
     if not isinstance(reason, dict) or reason.get("finding_id") != "AXGI-REV-001":
