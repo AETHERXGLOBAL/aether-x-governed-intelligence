@@ -1,0 +1,177 @@
+{
+  "document_id": "AX-INTEROP-IMPORT-PROFILE-001",
+  "version": "0.1",
+  "status": "DESIGN_CANDIDATE / NON-BINDING / OFFLINE / READ-ONLY / IMPORT-ONLY / NO_RUNTIME_IMPLEMENTATION",
+  "base_revision": "e6501f9ea665d1c3e88bfe38f82ceae7199d7034",
+  "parent_research": "AX-INTEROP-GAP-MATRIX-001",
+  "oversight_basis": {
+    "reviewed_revision": "e6501f9ea665d1c3e88bfe38f82ceae7199d7034",
+    "result": "PASS / RESEARCH DIRECTION SOUND",
+    "authorization": "DESIGN_CANDIDATE_ONLY / RE_REVIEW_REQUIRED_BEFORE_IMPLEMENTATION"
+  },
+  "purpose": "Define a bounded semantic import mapping for already-supplied in-toto Statement v1 / SLSA provenance and VSA inputs without promoting external claims into AETHER Decision, Authority, Verification, Acceptance, or Verified Outcome.",
+  "core_invariants": [
+    "Evidence != Decision",
+    "Decision != Authority",
+    "Authority != Capability",
+    "Execution != Verified Outcome",
+    "Unknown != Pass",
+    "PARSED != SUBJECT_BOUND",
+    "SUBJECT_BOUND != SIGNATURE_VERIFIED",
+    "SIGNATURE_VERIFIED != TRUSTED_ISSUER",
+    "TRUSTED_ISSUER != PREDICATE_POLICY_VALIDATED",
+    "PREDICATE_POLICY_VALIDATED != AETHER_VERIFICATION",
+    "AETHER_VERIFICATION != VERIFIED_OUTCOME",
+    "Historical Evidence = Immutable",
+    "Point-in-Time Knowledge"
+  ],
+  "scope": {
+    "in_scope": [
+      "offline bytes already supplied to importer",
+      "read-only parsing/classification design",
+      "in-toto Statement v1 subjects/predicateType preservation",
+      "in-toto multi-subject preservation",
+      "SLSA v1 build provenance mapping",
+      "SLSA v1 Verification Summary Attestation mapping",
+      "explicit trust-policy identity requirements",
+      "negative semantic cases"
+    ],
+    "out_of_scope": [
+      "runtime adapter",
+      "network access",
+      "external registry",
+      "Release/Gate integration",
+      "AuthZEN adapter",
+      "SCITT integration",
+      "Cedar/OpenFGA integration",
+      "custom crypto",
+      "custom predicate",
+      "export contract",
+      "signing",
+      "trust-store management"
+    ]
+  },
+  "default_import": {
+    "aether_type": "Evidence / Source Data",
+    "semantic_status": "UNVERIFIED_EXTERNAL_CLAIM",
+    "promotion": "NONE",
+    "rule": "No external attestation field, signature, signer identity, SLSA level, verificationResult, or trusted-issuer state directly creates AETHER Decision, Authority, Verification, Acceptance, or Verified Outcome."
+  },
+  "stages": [
+    {
+      "stage": "PARSED",
+      "meaning": "Exact input bytes decoded and selected envelope/Statement structural rules satisfied.",
+      "results": ["PASS", "FAIL"],
+      "does_not_imply": ["SUBJECT_BOUND", "SIGNATURE_VERIFIED", "TRUSTED_ISSUER", "PREDICATE_POLICY_VALIDATED", "AETHER_VERIFICATION", "VERIFIED_OUTCOME"]
+    },
+    {
+      "stage": "SUBJECT_BOUND",
+      "meaning": "Expected artifact/resource identity matched under explicit subject policy while preserving the complete original subject set.",
+      "results": ["PASS", "FAIL", "UNKNOWN"],
+      "does_not_imply": ["SIGNATURE_VERIFIED", "TRUSTED_ISSUER", "PREDICATE_POLICY_VALIDATED", "AETHER_VERIFICATION", "VERIFIED_OUTCOME"]
+    },
+    {
+      "stage": "SIGNATURE_VERIFIED",
+      "meaning": "Cryptographic verification of signed envelope/payload succeeded using explicitly supplied verification material.",
+      "results": ["PASS", "FAIL", "NOT_EVALUATED"],
+      "does_not_imply": ["TRUSTED_ISSUER", "truth", "authorization", "PREDICATE_POLICY_VALIDATED", "AETHER_VERIFICATION", "VERIFIED_OUTCOME"]
+    },
+    {
+      "stage": "TRUSTED_ISSUER",
+      "meaning": "Cryptographically verified signer/issuer admitted by explicit point-in-time AETHER trust policy for this purpose.",
+      "results": ["PASS", "FAIL", "UNKNOWN", "NOT_EVALUATED"],
+      "requires": ["SIGNATURE_VERIFIED=PASS", "trust policy identity", "trust policy digest or immutable version", "signer/issuer policy match"],
+      "does_not_imply": ["PREDICATE_POLICY_VALIDATED", "AETHER_VERIFICATION", "Authority", "Acceptance", "VERIFIED_OUTCOME"]
+    },
+    {
+      "stage": "PREDICATE_POLICY_VALIDATED",
+      "meaning": "Supported predicate type/version interpreted under explicit policy and all required predicate-specific checks passed.",
+      "results": ["PASS", "FAIL", "UNKNOWN", "UNSUPPORTED", "NOT_EVALUATED"],
+      "requires": ["PARSED=PASS", "SUBJECT_BOUND=PASS", "supported predicateType", "predicate interpretation version", "policy identity", "policy digest or immutable version"],
+      "does_not_imply": ["AETHER_VERIFICATION", "Acceptance", "Authority", "VERIFIED_OUTCOME"]
+    },
+    {
+      "stage": "AETHER_VERIFICATION",
+      "meaning": "Separate AETHER process evaluated imported Evidence against AETHER requirements and produced a distinct verification record.",
+      "importer_may_produce": false,
+      "results": ["PASS", "FAIL", "INCONCLUSIVE", "BLOCKED", "NOT_APPLICABLE", "NOT_EVALUATED"]
+    },
+    {
+      "stage": "VERIFIED_OUTCOME",
+      "meaning": "Separate downstream AETHER process established a verified outcome after required verification and authority/acceptance boundaries.",
+      "importer_may_produce": false,
+      "results": ["ESTABLISHED", "NOT_ESTABLISHED"]
+    }
+  ],
+  "raw_identity": {
+    "rules": [
+      "Preserve SHA-256 of exact received envelope/attestation bytes.",
+      "If an envelope contains a signed payload, preserve SHA-256 of exact signed payload bytes separately.",
+      "Do not substitute a digest of reserialized/canonicalized JSON for either exact-byte identity.",
+      "Preserve media/encoding type and envelope-vs-bare-Statement form.",
+      "Preserve acquisition time separately from timestamps asserted inside attestation.",
+      "Never invent a missing attestation timestamp."
+    ]
+  },
+  "subject_mapping": {
+    "generic_in_toto_v1": {
+      "rule": "Preserve every subject ResourceDescriptor and complete original subject set; do not silently discard co-subjects.",
+      "binding_default": "Match by digest/immutable identifier according to explicit consumer policy.",
+      "multi_subject": "SUPPORTED; matched-target views do not replace the complete attestation scope unless predicate semantics explicitly permit distributive interpretation.",
+      "name_semantics": "Preserve name; apply name matching only when selected predicate/profile or explicit policy defines it.",
+      "pep740_boundary": "Do not generalize PEP 740 single-subject filename/SHA-256 rules into generic in-toto/SLSA handling."
+    }
+  },
+  "predicate_mappings": [
+    {
+      "predicate": "SLSA Build Provenance",
+      "predicateType": "https://slsa.dev/provenance/v1",
+      "classification": "Evidence / Source Data",
+      "preserve": ["exact predicateType", "complete subjects/digests", "buildDefinition", "runDetails", "builder identity claims", "timestamps when present", "resolved dependencies when present", "raw attestation identity", "signed payload identity"],
+      "semantic_rule": "Authentic or policy-valid provenance does not establish AETHER correctness, security approval, Authority, Acceptance, AETHER Verification, or Verified Outcome."
+    },
+    {
+      "predicate": "SLSA Verification Summary Attestation",
+      "predicateType": "https://slsa.dev/verification_summary/v1",
+      "classification": "Evidence of external verifier assessment",
+      "preserve": ["exact predicateType", "complete subjects/digests", "verifier.id", "verifier.version when present", "timeVerified when present", "resourceUri", "policy.uri", "policy.digest when present", "inputAttestations", "verificationResult", "verifiedLevels", "dependencyLevels", "slsaVersion", "raw attestation identity", "signed payload identity"],
+      "semantic_rule": "verificationResult=PASSED and verifiedLevels remain external verifier claims and never auto-create AETHER Verification, Acceptance, Authority, or Verified Outcome.",
+      "trust_pair_rule": "Predicate-policy validation requires explicit trust policy accepting the signer/issuer + verifier.id pair for the intended purpose."
+    }
+  ],
+  "unknown_semantics": {
+    "unknown_predicateType": "May be PARSED and SUBJECT_BOUND if generic rules are evaluable, but PREDICATE_POLICY_VALIDATED=UNSUPPORTED and promotion is forbidden.",
+    "unknown_fields": "Preserve raw identity; follow applicable parsing rules but assign no AETHER meaning to unknown fields.",
+    "unknown_subject_identifier": "SUBJECT_BOUND=UNKNOWN unless explicit policy can verify it without ambiguity.",
+    "missing_policy_digest": "Preserve absence; exact policy-instance validation=UNKNOWN unless policy identity is otherwise immutably versioned by explicit AETHER policy."
+  },
+  "negative_semantic_cases": [
+    {"id":"NEG-001-MALFORMED","condition":"Input cannot be decoded or required Statement structure invalid.","expected":"PARSED=FAIL; all later stages NOT_REACHED","forbidden":"any semantic promotion"},
+    {"id":"NEG-002-CO-SUBJECT-DROPPED","condition":"Multi-subject Statement mapped after discarding original co-subjects.","expected":"MAPPING=FAIL / SEMANTIC_SCOPE_LOSS","forbidden":"claim equivalent per-subject evidence without predicate-specific distributive semantics"},
+    {"id":"NEG-003-PEP740-RULE-LEAKAGE","condition":"Generic in-toto/SLSA digest matches but name differs and no selected policy requires name equality.","expected":"DO_NOT_APPLY_PEP740_FILENAME_RULE","forbidden":"generalize PEP 740 single-subject filename/SHA-256 semantics"},
+    {"id":"NEG-004-UNSUPPORTED-PREDICATE","condition":"Statement valid and subject-bound but predicateType unsupported.","expected":"PREDICATE_POLICY_VALIDATED=UNSUPPORTED; classification=Evidence/Source Data","forbidden":"semantic PASS or promotion"},
+    {"id":"NEG-005-UNVERIFIABLE-SUBJECT-ID","condition":"Subject identifier/digest algorithm cannot be verified under configured policy.","expected":"SUBJECT_BOUND=UNKNOWN","forbidden":"SUBJECT_BOUND=PASS"},
+    {"id":"NEG-006-INVALID-SIGNATURE","condition":"Cryptographic signature verification fails.","expected":"SIGNATURE_VERIFIED=FAIL; TRUSTED_ISSUER=NOT_EVALUATED","forbidden":"authenticated/trusted issuer claim"},
+    {"id":"NEG-007-VALID-SIGNATURE-NO-TRUST-POLICY","condition":"Signature valid but no explicit applicable trust policy exists.","expected":"SIGNATURE_VERIFIED=PASS; TRUSTED_ISSUER=UNKNOWN","forbidden":"trusted issuer or policy PASS"},
+    {"id":"NEG-008-VSA-SIGNER-VERIFIER-MISMATCH","condition":"VSA signature verifies under trusted signer but verifier.id pair not allowed by trust policy.","expected":"PREDICATE_POLICY_VALIDATED=FAIL","forbidden":"trusted external assessment or AETHER Verification"},
+    {"id":"NEG-009-VSA-PASSED-NOT-AETHER-VERIFICATION","condition":"Trusted subject-bound VSA has verificationResult=PASSED and expected verifiedLevels.","expected":"classification=Evidence of external verifier assessment; AETHER_VERIFICATION=NOT_EVALUATED; VERIFIED_OUTCOME=NOT_ESTABLISHED","forbidden":"auto-create AETHER Verification/Acceptance/Authority/Verified Outcome"},
+    {"id":"NEG-010-VSA-FAILED","condition":"VSA verificationResult=FAILED.","expected":"external assessment evidence with non-pass policy result","forbidden":"PASS or Verified Outcome"},
+    {"id":"NEG-011-VSA-POLICY-DIGEST-MISSING","condition":"VSA policy.uri present but policy.digest absent and no immutable alternative version configured.","expected":"preserve absence; PREDICATE_POLICY_VALIDATED=UNKNOWN","forbidden":"claim exact policy version or PASS from URI alone"},
+    {"id":"NEG-012-MISSING-TIMESTAMP","condition":"Optional attestation timestamp absent.","expected":"timestamp=ABSENT_AS_RECEIVED","forbidden":"invent timestamp or substitute acquisition time"},
+    {"id":"NEG-013-UNKNOWN-EXTENSION","condition":"Allowed but unrecognized extension field present.","expected":"raw identity preserved; no AETHER meaning assigned","forbidden":"semantic promotion from unknown field"},
+    {"id":"NEG-014-RESERIALIZATION-IDENTITY","condition":"Two byte-distinct attestations parse to equivalent JSON semantics.","expected":"raw identities DIFFERENT; parsed semantics MAY_BE_EQUIVALENT","forbidden":"replace exact-byte identity with reserialized JSON identity"}
+  ],
+  "review_gate": {
+    "before_any_implementation": "Independent Technical Oversight re-review required.",
+    "implementation_authorized": false,
+    "reason": "Profile is a proposed interoperability contract touching Core evidence/verification semantics."
+  },
+  "sources": [
+    {"standard":"in-toto Attestation Framework","version":"v1.2","uri":"https://github.com/in-toto/attestation/tree/main/spec/v1"},
+    {"standard":"in-toto Statement v1","uri":"https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md"},
+    {"standard":"in-toto Envelope v1","uri":"https://github.com/in-toto/attestation/blob/main/spec/v1/envelope.md"},
+    {"standard":"SLSA","version":"v1.2 Approved","uri":"https://slsa.dev/spec/v1.2/"},
+    {"standard":"SLSA Build Provenance","uri":"https://slsa.dev/spec/v1.2/build-provenance"},
+    {"standard":"SLSA VSA","uri":"https://slsa.dev/spec/v1.2/verification_summary"}
+  ]
+}
