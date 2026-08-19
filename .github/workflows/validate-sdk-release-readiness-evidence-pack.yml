@@ -7,6 +7,7 @@ on:
       - 'docs/AX-PUB-RELPACK-001_SDK_RELEASE_READINESS_EVIDENCE_PACK.md'
       - 'tools/build_sdk_release_readiness_pack.py'
       - 'tools/check_sdk_release_readiness_pack.py'
+      - 'tools/check_sdk_release_readiness_evidence.py'
       - 'tools/check_production_sdk_target.py'
       - 'artifacts/AX-PUB-MANIFEST-001.json'
       - 'artifacts/AX-PUB-DEV-009.json'
@@ -14,6 +15,7 @@ on:
       - 'artifacts/AX-PUB-SUP-001.json'
       - 'artifacts/AX-PUB-SEC-001.json'
       - 'artifacts/AX-PUB-EVAL-PACK-001.json'
+      - 'evidence/AX-PUB-CI-016_SDK_RELEASE_READINESS_EVIDENCE_PACK_VALIDATION.md'
       - 'evidence/AX-PUB-RELEASE-CONTROL-AUDIT-001.json'
       - 'docs/PRODUCTION_SDK_DEFINITION_OF_DONE.md'
       - 'docs/RELEASE_CONTROL_PLANE.md'
@@ -25,6 +27,7 @@ on:
       - 'docs/AX-PUB-RELPACK-001_SDK_RELEASE_READINESS_EVIDENCE_PACK.md'
       - 'tools/build_sdk_release_readiness_pack.py'
       - 'tools/check_sdk_release_readiness_pack.py'
+      - 'tools/check_sdk_release_readiness_evidence.py'
       - 'tools/check_production_sdk_target.py'
       - 'artifacts/AX-PUB-MANIFEST-001.json'
       - 'artifacts/AX-PUB-DEV-009.json'
@@ -32,6 +35,7 @@ on:
       - 'artifacts/AX-PUB-SUP-001.json'
       - 'artifacts/AX-PUB-SEC-001.json'
       - 'artifacts/AX-PUB-EVAL-PACK-001.json'
+      - 'evidence/AX-PUB-CI-016_SDK_RELEASE_READINESS_EVIDENCE_PACK_VALIDATION.md'
       - 'evidence/AX-PUB-RELEASE-CONTROL-AUDIT-001.json'
       - 'docs/PRODUCTION_SDK_DEFINITION_OF_DONE.md'
       - 'docs/RELEASE_CONTROL_PLANE.md'
@@ -78,9 +82,20 @@ jobs:
           python -m py_compile tools/build_sdk_release_readiness_pack.py
           python -m py_compile tools/check_sdk_release_readiness_pack.py
           python -m py_compile tools/check_production_sdk_target.py
+          if [ -f tools/check_sdk_release_readiness_evidence.py ]; then
+            python -m py_compile tools/check_sdk_release_readiness_evidence.py
+          fi
 
       - name: Validate release-pack contract
         run: python tools/check_sdk_release_readiness_pack.py
+
+      - name: Validate AX-PUB-CI-016 evidence when present
+        run: |
+          if [ -f evidence/AX-PUB-CI-016_SDK_RELEASE_READINESS_EVIDENCE_PACK_VALIDATION.md ]; then
+            python tools/check_sdk_release_readiness_evidence.py
+          else
+            echo 'AX-PUB-CI-016 evidence not present on this reviewed source; candidate validation only.'
+          fi
 
       - name: Revalidate production-SDK current-state firewall
         run: python tools/check_production_sdk_target.py
