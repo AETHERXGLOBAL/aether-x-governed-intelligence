@@ -2,7 +2,7 @@
   "artifact_id": "AX-PUB-CANDIDATE-IDENTITY-001",
   "version": "0.1",
   "type": "CURRENT_SUPERSEDING_CANDIDATE_EVIDENCE",
-  "state": "CURRENT_CANDIDATE_IDENTITY_ALIGNMENT",
+  "state": "CURRENT_CANDIDATE_IDENTITY_ALIGNED",
   "reason": {
     "finding_id": "AXGI-REV-001",
     "correction_revision": "3e8be5b097df0049dbf4cad134fbc6706269ca9c",
@@ -47,19 +47,32 @@
     },
     "package": {
       "wheel_filename": "aetherxglobal_governed_intelligence-0.1.0rc1-py3-none-any.whl",
-      "wheel_sha256": null,
+      "wheel_sha256": "277910189daaad2167d5d321a7881b72455483ec886574aea5f5ba4f1e1f3f1c",
       "sdist_filename": "aetherxglobal_governed_intelligence-0.1.0rc1.tar.gz",
-      "sdist_sha256": null,
-      "identity_state": "PENDING_CI_OBSERVATION"
+      "sdist_sha256": "c9eeab1060689e918c91b882c985ab9630a84d5ded0da7424decde4779616291",
+      "identity_state": "CI_OBSERVED_DETERMINISTIC_CURRENT_CANDIDATE",
+      "observation": {
+        "pr_head_revision": "3007cd5483343f84dd8eb3a897bafbdff7ef4eb1",
+        "pr_merge_test_revision": "2b4d20c588518669ac22b5e0c3396dbfbee0512e",
+        "workflow": "Validate SDK Release Candidate",
+        "workflow_run_id": 32274792119,
+        "job_id": 96139546890,
+        "conclusion": "SUCCESS",
+        "runtime_matrix": ["3.11", "3.12", "3.13", "3.14"]
+      }
     },
     "evaluator_handoff": {
-      "identity_state": "PENDING_CURRENT_PACKAGE_IDENTITY"
+      "identity_state": "CURRENT_PACKAGE_IDENTITY_BOUND",
+      "historical_validation_evidence_retained": "AX-PUB-CI-014",
+      "final_external_index_evaluation_established": false,
+      "human_external_evaluation_established": false
     }
   },
   "claim_boundaries": [
     "HISTORICAL CLOSED-STATE DIGESTS AND CI EVIDENCE REMAIN IMMUTABLE",
     "CURRENT CANDIDATE IDENTITY DOES NOT REDEFINE OR RE-CLOSE HISTORICAL GATES",
     "CURRENT CANDIDATE EVIDENCE DOES NOT ESTABLISH SDK PUBLICATION OR RELEASE AUTHORITY",
+    "LOCAL OR CI EVALUATOR HANDOFF DOES NOT ESTABLISH FINAL HUMAN EXTERNAL EVALUATION",
     "SDK PUBLICATION NOT AUTHORIZED"
   ]
 }
