@@ -8,6 +8,7 @@ and inside the standalone evaluator handoff bundle.
 """
 from __future__ import annotations
 
+import argparse
 import importlib.util
 import json
 from pathlib import Path
@@ -57,7 +58,7 @@ def load_historical():
     return module
 
 
-def current_identity(overlay: dict[str, Any]) -> tuple[str, str]:
+def current_identity(overlay: dict[str, Any]) -> tuple[str, str, str, str]:
     require(overlay.get("artifact_id") == "AX-PUB-CANDIDATE-IDENTITY-001", "candidate identity artifact mismatch")
     require(overlay.get("type") == "CURRENT_SUPERSEDING_CANDIDATE_EVIDENCE", "candidate identity type mismatch")
     require(overlay.get("state") == "CURRENT_CANDIDATE_IDENTITY_ALIGNED", "candidate identity state mismatch")
@@ -71,23 +72,52 @@ def current_identity(overlay: dict[str, Any]) -> tuple[str, str]:
     current = overlay.get("current_candidate", {}).get("package")
     require(isinstance(current, dict), "current package identity missing")
     require(current.get("identity_state") == "CI_OBSERVED_DETERMINISTIC_CURRENT_CANDIDATE", "current package identity is not CI-observed")
+    wheel_filename = current.get("wheel_filename")
     wheel_sha = current.get("wheel_sha256")
+    sdist_filename = current.get("sdist_filename")
     sdist_sha = current.get("sdist_sha256")
+    require(isinstance(wheel_filename, str) and wheel_filename, "current wheel filename missing")
     require(isinstance(wheel_sha, str) and len(wheel_sha) == 64, "current wheel digest missing")
+    require(isinstance(sdist_filename, str) and sdist_filename, "current sdist filename missing")
     require(isinstance(sdist_sha, str) and len(sdist_sha) == 64, "current sdist digest missing")
-    return wheel_sha, sdist_sha
+    return wheel_filename, wheel_sha, sdist_filename, sdist_sha
+
+
+def validate_report_subject(
+    report_path: Path,
+    wheel_filename: str,
+    wheel_sha: str,
+    sdist_filename: str,
+    sdist_sha: str,
+) -> None:
+    report = load_json(report_path)
+    candidate = report.get("candidate")
+    require(isinstance(candidate, dict), "candidate identity missing")
+    require(candidate.get("wheel_filename") == wheel_filename, "wheel filename mismatch")
+    require(candidate.get("wheel_sha256") == wheel_sha, "wheel digest mismatch")
+    require(candidate.get("sdist_filename") == sdist_filename, "sdist filename mismatch")
+    require(candidate.get("sdist_sha256") == sdist_sha, "sdist digest mismatch")
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("report", type=Path)
+    parser.add_argument("--allow-template", action="store_true")
+    args, unknown = parser.parse_known_args()
+    require(not unknown, f"unsupported arguments: {unknown}")
+
     overlay = load_overlay()
-    wheel_sha, sdist_sha = current_identity(overlay)
+    wheel_filename, wheel_sha, sdist_filename, sdist_sha = current_identity(overlay)
+    validate_report_subject(args.report, wheel_filename, wheel_sha, sdist_filename, sdist_sha)
+
     historical = load_historical()
     historical.WHEEL_SHA = wheel_sha
     historical.SDIST_SHA = sdist_sha
     result = historical.main()
     print(
         "AX_INSTALLABLE_EXTERNAL_EVALUATION_CURRENT_CANDIDATE_PASS "
-        f"wheel={wheel_sha} sdist={sdist_sha} historical_ci014_preserved=true"
+        f"wheel={wheel_filename}:{wheel_sha} sdist={sdist_filename}:{sdist_sha} "
+        "historical_ci014_preserved=true"
     )
     return int(result or 0)
 
