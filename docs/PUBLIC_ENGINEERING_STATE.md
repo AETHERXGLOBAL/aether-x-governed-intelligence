@@ -3,7 +3,12 @@
 **Purpose:** single human-readable current-state view for developers, technical reviewers, partners and diligence readers.  
 **Repository:** `AETHERXGLOBAL/aether-x-governed-intelligence`  
 **State basis:** governed artifacts on `main` plus direct CI evidence records.  
+**Current Stable Public Evaluation Baseline:** `0b16a6af227cdc7b2399698d439c35191d5cfc73`  
+**Verified baseline tree:** `237b2f29224be755abfc0216f52df4198457d2ff`  
+**Formal public engineering release:** `public-engineering-vnext-1.0` — unchanged  
 **Publication boundary:** `SDK PUBLICATION NOT AUTHORIZED`
+
+`CURRENT MAIN BASELINE ≠ FORMAL PUBLIC ENGINEERING RELEASE`
 
 ---
 
@@ -38,6 +43,9 @@ Gate closure establishes only the bounded engineering/evidence objective declare
 | Public governed-intelligence architecture | `PUBLISHED / CONCEPTUAL / NON-PRODUCT-SPECIFIC` |
 | Machine-readable contracts | `PUBLISHED` |
 | Bounded Python reference validators | `CI-TESTED / EDUCATIONAL / NON-PRODUCTION` |
+| Agent Tool-Use Authority Validator (`AX-PUB-REF-003`) | `CI-TESTED / EDUCATIONAL / NON-PRODUCTION` |
+| Offline in-toto / SLSA attestation semantic importer | `INDEPENDENTLY VERIFIED / OFFLINE / READ-ONLY / IMPORT-ONLY / NON-PRODUCTION` |
+| Offline AuthZEN decision-admissibility proof | `INDEPENDENTLY VERIFIED / OFFLINE / SINGLE ACCESS EVALUATION ONLY / NON-PRODUCTION` |
 | Synthetic conformance kits | `PUBLISHED / BOUNDED` |
 | Reproducible developer experience | `ESTABLISHED` |
 | Repository-local SDK candidate | `ESTABLISHED` |
@@ -170,6 +178,19 @@ Not established:
 - final release authority.
 
 `LOCAL INDEX PASS ≠ TESTPYPI PASS`
+
+### Verified Interoperability / Trust-Admissibility Reference Proofs
+
+The current Stable Public Evaluation Baseline also contains two independently reviewed bounded proofs:
+
+- [Offline in-toto / SLSA Attestation Semantic Importer](../reference-implementations/offline-attestation-importer/README.md) — caller-supplied bytes only; in-toto Statement v1 parsing; explicit subject binding; supported SLSA predicate classification; injected signature/trust/policy interfaces; output remains AETHER `SOURCE_DATA`. No cryptography, trust store, network/registry access, AETHER Decision, Authority, Execution, Verification or Verified Outcome is created.
+- [Offline AuthZEN Decision Admissibility Proof](../reference-implementations/offline-authzen-admissibility/README.md) — one already-supplied AuthZEN single Access Evaluation only; bounded chain `RECEIVED → REQUEST_BOUND → RESPONSE_INTEGRITY_VERIFIED → PDP_TRUSTED → DECISION_ADMISSIBLE`; fail-closed exact request/response identity and provenance checks; no PDP/network/policy engine/cryptography and no AETHER Decision, Authority, grant, capability or execution permission.
+
+`DECISION_ADMISSIBLE ≠ AETHER_DECISION ≠ AETHER_AUTHORITY ≠ EXECUTION_PERMISSION`
+
+These proofs are part of the current published engineering baseline. They do not change DEV-GATE state and do not create a formal public engineering release.
+
+`CURRENT MAIN BASELINE ≠ FORMAL PUBLIC ENGINEERING RELEASE`
 
 ### Release-Control Live Audit
 
@@ -385,6 +406,8 @@ RELEASE READINESS AGGREGATION: CI-VALIDATED / CURRENTLY BLOCKED
 PRODUCTION RELEASE / SUPPORT AUTHORITY: NOT ESTABLISHED
 ```
 
+The Stable Public Evaluation Baseline recorded at the top of this page is a repository revision identity. It does not redefine `AX-PUB-MANIFEST-001`, the historical release tag, or any Gate/Release authority state.
+
 ---
 
 ## 6. Production SDK Target
@@ -532,6 +555,7 @@ AX-PUB-GATE-001
 ```text
 PUBLIC ENGINEERING ≠ PRODUCT IMPLEMENTATION
 REFERENCE CODE ≠ PRODUCTION CODE
+CURRENT MAIN BASELINE ≠ FORMAL PUBLIC ENGINEERING RELEASE
 CI PASS ≠ EXTERNAL CERTIFICATION
 INSTALLABLE CANDIDATE ≠ SUPPORTED SDK
 VALIDATED API CONTRACT CANDIDATE ≠ STABLE 1.0 GUARANTEE
