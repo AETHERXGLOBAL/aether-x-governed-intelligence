@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import os
 import shutil
 import subprocess
@@ -31,6 +32,20 @@ def run(command: list[str], *, env: dict[str, str] | None = None) -> None:
     completed = subprocess.run(command, cwd=ROOT, env=env, text=True, check=False)
     if completed.returncode != 0:
         fail(f"command failed with exit={completed.returncode}: {' '.join(command)}")
+
+
+def expect_failure(
+    command: list[str],
+    *,
+    contains: str,
+    env: dict[str, str] | None = None,
+) -> None:
+    print("+ EXPECT_FAIL", " ".join(command), flush=True)
+    completed = subprocess.run(command, cwd=ROOT, env=env, text=True, capture_output=True, check=False)
+    combined = f"{completed.stdout}\n{completed.stderr}"
+    if completed.returncode == 0 or contains not in combined:
+        fail(f"expected fail-closed result containing {contains!r}: {' '.join(command)}")
+    print(f"AX_EVALUATOR_REPORT_NEGATIVE_PASS expected={contains}")
 
 
 def output(command: list[str]) -> str:
@@ -129,6 +144,20 @@ def main() -> int:
     first = root_output / "first"
     second = root_output / "second"
     shutil.rmtree(root_output, ignore_errors=True)
+    root_output.mkdir(parents=True, exist_ok=True)
+
+    current_template = json.loads(
+        (ROOT / "examples/external-evaluation/AX-PUB-EVAL-REPORT-002.current.template.json").read_text(encoding="utf-8")
+    )
+    current_template["candidate"]["wheel_filename"] = "tampered-0.1.0rc1-py3-none-any.whl"
+    negative_report = root_output / "negative-wheel-filename.json"
+    negative_report.write_text(json.dumps(current_template, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    expect_failure([
+        py314,
+        "tools/check_installable_external_evaluation_report.py",
+        str(negative_report),
+        "--allow-template",
+    ], contains="wheel filename mismatch", env=env)
 
     run([py314, "tools/build_installable_evaluator_handoff.py", "--output-dir", str(first)], env=env)
     run([py314, "tools/build_installable_evaluator_handoff.py", "--output-dir", str(second)], env=env)
@@ -160,6 +189,13 @@ def main() -> int:
     for path in (packed_checker, packed_template, packed_historical_checker, rehearsal / "CURRENT_CANDIDATE_IDENTITY.json"):
         if not path.is_file():
             fail(f"rehearsal evaluator component missing: {path.name}")
+
+    expect_failure([
+        py314,
+        str(packed_checker),
+        str(negative_report),
+        "--allow-template",
+    ], contains="wheel filename mismatch", env=env)
 
     for runtime, executable in pythons.items():
         venv = root_output / f"venv-{runtime}"
