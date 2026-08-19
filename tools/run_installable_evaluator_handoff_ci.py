@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import json
 import os
 import shutil
 import subprocess
@@ -72,7 +71,9 @@ def main() -> int:
 
     for path in (
         "artifacts/AX-PUB-EVAL-PACK-001.json",
+        "artifacts/AX-PUB-CANDIDATE-IDENTITY-001.json",
         "examples/external-evaluation/AX-PUB-EVAL-REPORT-002.template.json",
+        "examples/external-evaluation/AX-PUB-EVAL-REPORT-002.current.template.json",
         "artifacts/AX-PUB-API-001.json",
         "artifacts/AX-PUB-SUP-001.json",
         "artifacts/AX-PUB-SEC-001.json",
@@ -83,11 +84,24 @@ def main() -> int:
         "tools/build_installable_evaluator_handoff.py",
         "tools/check_installable_evaluator_handoff.py",
         "tools/check_installable_external_evaluation_report.py",
+        "tools/check_installable_external_evaluation_report_historical.py",
         "tools/run_installable_evaluator_handoff_ci.py",
     ):
         run([py314, "-m", "py_compile", path])
 
     run([py314, "tools/check_installable_evaluator_handoff.py"])
+    run([
+        py314,
+        "tools/check_installable_external_evaluation_report.py",
+        "examples/external-evaluation/AX-PUB-EVAL-REPORT-002.current.template.json",
+        "--allow-template",
+    ])
+    run([
+        py314,
+        "tools/check_installable_external_evaluation_report_historical.py",
+        "examples/external-evaluation/AX-PUB-EVAL-REPORT-002.template.json",
+        "--allow-template",
+    ])
 
     env = os.environ.copy()
     env.update({
@@ -138,8 +152,14 @@ def main() -> int:
     with zipfile.ZipFile(first_zip) as archive:
         archive.extractall(rehearsal)
     wheel = rehearsal / "payload" / WHEEL
+    packed_checker = rehearsal / "check_installable_external_evaluation_report.py"
+    packed_template = rehearsal / "AX-PUB-EVAL-REPORT-002.template.json"
+    packed_historical_checker = rehearsal / "check_installable_external_evaluation_report_historical.py"
     if not wheel.is_file():
         fail("rehearsal wheel missing")
+    for path in (packed_checker, packed_template, packed_historical_checker, rehearsal / "CURRENT_CANDIDATE_IDENTITY.json"):
+        if not path.is_file():
+            fail(f"rehearsal evaluator component missing: {path.name}")
 
     for runtime, executable in pythons.items():
         venv = root_output / f"venv-{runtime}"
@@ -161,8 +181,8 @@ def main() -> int:
         ], env=env)
         run([
             executable,
-            "tools/check_installable_external_evaluation_report.py",
-            "examples/external-evaluation/AX-PUB-EVAL-REPORT-002.template.json",
+            str(packed_checker),
+            str(packed_template),
             "--allow-template",
         ], env=env)
         print(f"AX_EVALUATOR_LOCAL_REHEARSAL_RUNTIME_PASS runtime={runtime}")
