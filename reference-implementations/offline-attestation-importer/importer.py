@@ -99,7 +99,10 @@ def _parse(raw_bytes: bytes) -> tuple[dict[str, Any], bytes, list[dict[str, Any]
         payload_type = outer["payloadType"]
         if not isinstance(outer["signatures"], list):
             raise ValueError("envelope signatures must be an array")
-        signatures = [dict(s) for s in outer["signatures"] if isinstance(s, dict)]
+        for signature in outer["signatures"]:
+            if not isinstance(signature, dict):
+                raise ValueError("each envelope signature entry must be an object")
+            signatures.append(dict(signature))
         try:
             signed_payload = base64.b64decode(outer["payload"], validate=True)
             statement = json.loads(signed_payload.decode("utf-8"))
@@ -112,13 +115,16 @@ def _parse(raw_bytes: bytes) -> tuple[dict[str, Any], bytes, list[dict[str, Any]
         raise ValueError("statement must be a JSON object")
     if statement.get("_type") != IN_TOTO_STATEMENT_V1:
         raise ValueError("unsupported or missing in-toto Statement v1 _type")
-    if not isinstance(statement.get("subject"), list):
+    subjects = statement.get("subject")
+    if not isinstance(subjects, list):
         raise ValueError("statement subject must be an array")
+    if not subjects:
+        raise ValueError("statement subject must be a non-empty array")
     if not isinstance(statement.get("predicateType"), str) or not statement["predicateType"]:
         raise ValueError("statement predicateType must be a non-empty string")
     if "predicate" not in statement or not isinstance(statement["predicate"], dict):
         raise ValueError("statement predicate must be an object")
-    for subject in statement["subject"]:
+    for subject in subjects:
         if not isinstance(subject, dict):
             raise ValueError("each subject must be an object")
         if "digest" not in subject or not isinstance(subject["digest"], dict):
@@ -131,16 +137,22 @@ def _bind_subjects(
     subjects: Sequence[Mapping[str, Any]],
     expected_subjects: Sequence[Mapping[str, Any]] | None,
 ) -> tuple[str, list[int]]:
-    if expected_subjects is None:
+    if not expected_subjects:
         return "UNKNOWN", []
+
     matched: list[int] = []
     for expected in expected_subjects:
         expected_digest = expected.get("digest")
         if not isinstance(expected_digest, Mapping) or not expected_digest:
             return "UNKNOWN", matched
-        supported_pairs = [(alg, val) for alg, val in expected_digest.items() if alg == "sha256" and isinstance(val, str)]
+        supported_pairs = [
+            (alg, val)
+            for alg, val in expected_digest.items()
+            if alg == "sha256" and isinstance(val, str) and val
+        ]
         if not supported_pairs:
             return "UNKNOWN", matched
+
         found = False
         for idx, subject in enumerate(subjects):
             digest = subject.get("digest", {})
@@ -152,6 +164,7 @@ def _bind_subjects(
                 break
         if not found:
             return "FAIL", matched
+
     return "PASS", matched
 
 
@@ -174,7 +187,13 @@ def _verify_signatures(
             "signature_value_sha256": _sha256(str(signature.get("sig", "")).encode("utf-8")),
         }
         if verifier is None:
-            identity.update({"result": "NOT_EVALUATED", "signer_identity": None, "reason": "no verifier supplied"})
+            identity.update(
+                {
+                    "result": "NOT_EVALUATED",
+                    "signer_identity": None,
+                    "reason": "no verifier supplied",
+                }
+            )
         else:
             verdict = dict(
                 verifier(
@@ -206,6 +225,66 @@ def _verify_signatures(
     if aggregate not in {"PASS", "FAIL", "UNKNOWN", "NOT_EVALUATED"}:
         raise ValueError("signature policy returned invalid result")
     return per_signature, aggregate
+
+
+def _preserve_typed_slsa_evidence(statement: Mapping[str, Any]) -> dict[str, Any] | None:
+    predicate_type = statement.get("predicateType")
+    predicate = statement.get("predicate")
+    if not isinstance(predicate, Mapping):
+        return None
+
+    if predicate_type == SLSA_PROVENANCE_V1:
+        preserved_predicate: dict[str, Any] = {}
+        for key in ("buildDefinition", "runDetails"):
+            if key in predicate:
+                preserved_predicate[key] = predicate[key]
+        return {
+            "kind": "SLSA_BUILD_PROVENANCE_V1",
+            "predicateType": SLSA_PROVENANCE_V1,
+            "predicate": preserved_predicate,
+        }
+
+    if predicate_type == SLSA_VSA_V1:
+        preserved_predicate = {}
+        verifier = predicate.get("verifier")
+        if isinstance(verifier, Mapping):
+            preserved_verifier = {
+                key: verifier[key]
+                for key in ("id", "version")
+                if key in verifier
+            }
+            if preserved_verifier:
+                preserved_predicate["verifier"] = preserved_verifier
+
+        for key in (
+            "timeVerified",
+            "resourceUri",
+            "inputAttestations",
+            "verificationResult",
+            "verifiedLevels",
+            "dependencyLevels",
+            "slsaVersion",
+        ):
+            if key in predicate:
+                preserved_predicate[key] = predicate[key]
+
+        policy = predicate.get("policy")
+        if isinstance(policy, Mapping):
+            preserved_policy = {
+                key: policy[key]
+                for key in ("uri", "digest")
+                if key in policy
+            }
+            if preserved_policy:
+                preserved_predicate["policy"] = preserved_policy
+
+        return {
+            "kind": "SLSA_VERIFICATION_SUMMARY_V1",
+            "predicateType": SLSA_VSA_V1,
+            "predicate": preserved_predicate,
+        }
+
+    return None
 
 
 def import_attestation(
@@ -250,22 +329,38 @@ def import_attestation(
         }
     )
 
+    typed_slsa_evidence = _preserve_typed_slsa_evidence(statement)
+    if typed_slsa_evidence is not None:
+        evidence["slsa_evidence"] = typed_slsa_evidence
+
     subject_status, matched_indices = _bind_subjects(statement["subject"], expected_subjects)
     states["SUBJECT_BOUND"] = subject_status
     evidence["subject_binding"] = {
         "matched_subject_indices": matched_indices,
         "complete_subject_set_preserved": True,
+        "artifact_identity_constraint_present": bool(expected_subjects),
     }
 
     per_signature, aggregate_signature = _verify_signatures(
-        signed_payload, payload_type, envelope_form, signatures, signature_verifier, signature_policy
+        signed_payload,
+        payload_type,
+        envelope_form,
+        signatures,
+        signature_verifier,
+        signature_policy,
     )
     result["per_signature_results"] = per_signature
     states["SIGNATURE_VERIFIED"] = aggregate_signature
 
-    signer_claims = [item.get("signer_identity") for item in per_signature if item.get("signer_identity")]
+    signer_claims = [
+        item.get("signer_identity")
+        for item in per_signature
+        if item.get("signer_identity")
+    ]
     evidence["signer_identity_claims"] = signer_claims
-    evidence["signer_identity_status"] = "UNTRUSTED_CLAIM" if signer_claims else "ABSENT_OR_UNVERIFIED"
+    evidence["signer_identity_status"] = (
+        "UNTRUSTED_CLAIM" if signer_claims else "ABSENT_OR_UNVERIFIED"
+    )
 
     trust_context = {
         "observed_at": observed_at,
@@ -285,17 +380,27 @@ def import_attestation(
             trust_result["status"] = "UNKNOWN"
         else:
             trust_result.update(dict(trust_policy(trust_context)))
-            if trust_result.get("status") not in {"PASS", "FAIL", "UNKNOWN", "NOT_EVALUATED"}:
+            if trust_result.get("status") not in {
+                "PASS",
+                "FAIL",
+                "UNKNOWN",
+                "NOT_EVALUATED",
+            }:
                 raise ValueError("trust policy returned invalid status")
             if trust_result.get("status") == "PASS":
                 if not trust_result.get("policy_identity") or not trust_result.get("policy_digest"):
                     trust_result["status"] = "UNKNOWN"
-                    trust_result["reason"] = "PASS forbidden without immutable trust-policy identity"
+                    trust_result["reason"] = (
+                        "PASS forbidden without immutable trust-policy identity"
+                    )
     states["TRUSTED_ISSUER"] = trust_result["status"]
     evidence["trust_evaluation"] = trust_result
 
     predicate_type = statement["predicateType"]
-    evidence["semantic_role"] = SUPPORTED_PREDICATES.get(predicate_type, "UNSUPPORTED_EXTERNAL_PREDICATE")
+    evidence["semantic_role"] = SUPPORTED_PREDICATES.get(
+        predicate_type,
+        "UNSUPPORTED_EXTERNAL_PREDICATE",
+    )
     if predicate_type not in SUPPORTED_PREDICATES:
         states["PREDICATE_POLICY_VALIDATED"] = "UNSUPPORTED"
         return result
@@ -326,13 +431,21 @@ def import_attestation(
     }
     predicate_result = dict(predicate_policy(predicate_context))
     predicate_status = predicate_result.get("status", "UNKNOWN")
-    if predicate_status not in {"PASS", "FAIL", "UNKNOWN", "UNSUPPORTED", "NOT_EVALUATED"}:
+    if predicate_status not in {
+        "PASS",
+        "FAIL",
+        "UNKNOWN",
+        "UNSUPPORTED",
+        "NOT_EVALUATED",
+    }:
         raise ValueError("predicate policy returned invalid result")
     if predicate_status == "PASS":
         if not predicate_result.get("policy_identity") or not predicate_result.get("policy_digest"):
             predicate_status = "UNKNOWN"
             predicate_result["status"] = "UNKNOWN"
-            predicate_result["reason"] = "PASS forbidden without immutable predicate-policy identity"
+            predicate_result["reason"] = (
+                "PASS forbidden without immutable predicate-policy identity"
+            )
     evidence["predicate_policy_evaluation"] = predicate_result
     states["PREDICATE_POLICY_VALIDATED"] = predicate_status
     return result
