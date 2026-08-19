@@ -114,6 +114,23 @@ The detailed current-state page is **[Public Engineering State](./docs/PUBLIC_EN
 
 ---
 
+## Recent Verified Engineering Additions
+
+The current Stable Public Evaluation Baseline includes two independently reviewed, bounded offline interoperability/trust-admissibility proofs:
+
+- **[Offline in-toto / SLSA Attestation Semantic Importer](./reference-implementations/offline-attestation-importer/README.md)** — accepts caller-supplied attestation bytes, parses in-toto Statement v1, classifies supported SLSA predicate forms, preserves exact-byte identities and maps imported material only to AETHER `SOURCE_DATA`. Signature, trust and policy determinations are injected interfaces. It implements no cryptography, trust store, network access, registry access, AETHER Decision, Authority, Execution, Verification or Verified Outcome.
+- **[Offline AuthZEN Decision Admissibility Proof](./reference-implementations/offline-authzen-admissibility/README.md)** — evaluates one already-supplied AuthZEN single Access Evaluation through the bounded chain `RECEIVED → REQUEST_BOUND → RESPONSE_INTEGRITY_VERIFIED → PDP_TRUSTED → DECISION_ADMISSIBLE`. It is fail-closed, preserves exact request/response identities, and implements no PDP, network client, policy engine, cryptography, AETHER Decision, Authority, grant, capability or execution permission.
+
+Their corresponding design records are [AX-INTEROP-IMPORT-PROFILE-001](./docs/AX-INTEROP-IMPORT-PROFILE-001.md) and [AX-AUTHZEN-DECISION-ADMISSIBILITY-PROFILE-001](./docs/AX-AUTHZEN-DECISION-ADMISSIBILITY-PROFILE-001.md).
+
+`DECISION_ADMISSIBLE ≠ AETHER_DECISION ≠ AETHER_AUTHORITY ≠ EXECUTION_PERMISSION`
+
+`CURRENT MAIN BASELINE ≠ FORMAL PUBLIC ENGINEERING RELEASE`
+
+The fixed formal public engineering release remains `public-engineering-vnext-1.0`; these verified additions do not create a new release, Gate transition, Production approval, Security GO or Risk Acceptance.
+
+---
+
 ## Developer Entry Points
 
 1. **[Quickstart](./docs/QUICKSTART.md)** — run the bounded public reference path.
