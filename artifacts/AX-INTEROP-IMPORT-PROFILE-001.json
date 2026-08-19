@@ -5,9 +5,9 @@
   "base_revision": "e6501f9ea665d1c3e88bfe38f82ceae7199d7034",
   "parent_research": "AX-INTEROP-GAP-MATRIX-001",
   "oversight_basis": {
-    "reviewed_revision": "e6501f9ea665d1c3e88bfe38f82ceae7199d7034",
-    "result": "PASS / RESEARCH DIRECTION SOUND",
-    "authorization": "DESIGN_CANDIDATE_ONLY / RE_REVIEW_REQUIRED_BEFORE_IMPLEMENTATION"
+    "reviewed_revision": "fd7122c9ebd4bce3960cceb30ce362521a45d89e",
+    "result": "CORRECTION — bounded design correction only",
+    "authorization": "DESIGN_CORRECTION_ONLY / RE_REVIEW_REQUIRED_BEFORE_IMPLEMENTATION"
   },
   "purpose": "Define a bounded semantic import mapping for already-supplied in-toto Statement v1 / SLSA provenance and VSA inputs without promoting external claims into AETHER Decision, Authority, Verification, Acceptance, or Verified Outcome.",
   "core_invariants": [
@@ -34,6 +34,8 @@
       "SLSA v1 build provenance mapping",
       "SLSA v1 Verification Summary Attestation mapping",
       "explicit trust-policy identity requirements",
+      "per-signature verification-result preservation",
+      "explicit aggregate signature-policy semantics",
       "negative semantic cases"
     ],
     "out_of_scope": [
@@ -52,10 +54,11 @@
     ]
   },
   "default_import": {
-    "aether_type": "Evidence / Source Data",
+    "target": "evidence_record",
+    "classification": "SOURCE_DATA",
     "semantic_status": "UNVERIFIED_EXTERNAL_CLAIM",
     "promotion": "NONE",
-    "rule": "No external attestation field, signature, signer identity, SLSA level, verificationResult, or trusted-issuer state directly creates AETHER Decision, Authority, Verification, Acceptance, or Verified Outcome."
+    "rule": "The AETHER record target and its classification are distinct: imported external attestation data is stored as an evidence_record classified SOURCE_DATA. No external attestation field, signature, signer identity, SLSA level, verificationResult, or trusted-issuer state directly creates AETHER Decision, Authority, Verification, Acceptance, or Verified Outcome."
   },
   "stages": [
     {
@@ -72,8 +75,9 @@
     },
     {
       "stage": "SIGNATURE_VERIFIED",
-      "meaning": "Cryptographic verification of signed envelope/payload succeeded using explicitly supplied verification material.",
-      "results": ["PASS", "FAIL", "NOT_EVALUATED"],
+      "meaning": "Aggregate cryptographic signature result derived from preserved per-signature verification results under an explicit applicable signature policy.",
+      "results": ["PASS", "FAIL", "UNKNOWN", "NOT_EVALUATED"],
+      "requires_for_pass": ["per-signature results preserved", "explicit applicable signature policy", "aggregate signature policy satisfied"],
       "does_not_imply": ["TRUSTED_ISSUER", "truth", "authorization", "PREDICATE_POLICY_VALIDATED", "AETHER_VERIFICATION", "VERIFIED_OUTCOME"]
     },
     {
@@ -103,6 +107,14 @@
       "results": ["ESTABLISHED", "NOT_ESTABLISHED"]
     }
   ],
+  "signature_semantics": {
+    "per_signature": "Preserve each signature identity, verification material identity/reference, signer/issuer claim, verification result, and failure/unknown reason independently.",
+    "aggregate_rule": "SIGNATURE_VERIFIED is not derived from existence of any one valid signature. The aggregate result is evaluated only under an explicit applicable signature policy defining acceptable signers, threshold/required signatures, and treatment of unknown or unsupported signatures.",
+    "no_policy": "If multiple signatures exist and no explicit aggregate signature policy applies, preserve per-signature results and set SIGNATURE_VERIFIED=UNKNOWN.",
+    "pass_rule": "SIGNATURE_VERIFIED=PASS only when the explicit aggregate signature policy is satisfied.",
+    "fail_rule": "SIGNATURE_VERIFIED=FAIL when the explicit aggregate signature policy is evaluable and not satisfied.",
+    "does_not_imply": "An aggregate signature PASS does not establish TRUSTED_ISSUER, predicate truth, authorization, AETHER Verification, Acceptance, Authority, or Verified Outcome."
+  },
   "raw_identity": {
     "rules": [
       "Preserve SHA-256 of exact received envelope/attestation bytes.",
@@ -126,17 +138,32 @@
     {
       "predicate": "SLSA Build Provenance",
       "predicateType": "https://slsa.dev/provenance/v1",
-      "classification": "Evidence / Source Data",
-      "preserve": ["exact predicateType", "complete subjects/digests", "buildDefinition", "runDetails", "builder identity claims", "timestamps when present", "resolved dependencies when present", "raw attestation identity", "signed payload identity"],
+      "target": "evidence_record",
+      "classification": "SOURCE_DATA",
+      "semantic_role": "BUILD_PROVENANCE_EXTERNAL_CLAIM",
+      "preserve": ["exact predicateType", "complete subjects/digests", "buildDefinition", "runDetails", "builder identity claims", "timestamps when present", "resolved dependencies when present", "raw attestation identity", "signed payload identity", "per-signature results"],
       "semantic_rule": "Authentic or policy-valid provenance does not establish AETHER correctness, security approval, Authority, Acceptance, AETHER Verification, or Verified Outcome."
     },
     {
       "predicate": "SLSA Verification Summary Attestation",
       "predicateType": "https://slsa.dev/verification_summary/v1",
-      "classification": "Evidence of external verifier assessment",
-      "preserve": ["exact predicateType", "complete subjects/digests", "verifier.id", "verifier.version when present", "timeVerified when present", "resourceUri", "policy.uri", "policy.digest when present", "inputAttestations", "verificationResult", "verifiedLevels", "dependencyLevels", "slsaVersion", "raw attestation identity", "signed payload identity"],
+      "target": "evidence_record",
+      "classification": "SOURCE_DATA",
+      "semantic_role": "EXTERNAL_VERIFIER_ASSESSMENT",
+      "preserve": ["exact predicateType", "complete subjects/digests", "verifier.id", "verifier.version when present", "timeVerified when present", "resourceUri", "policy.uri", "policy.digest when present", "inputAttestations", "verificationResult", "verifiedLevels", "dependencyLevels", "slsaVersion", "raw attestation identity", "signed payload identity", "per-signature results"],
       "semantic_rule": "verificationResult=PASSED and verifiedLevels remain external verifier claims and never auto-create AETHER Verification, Acceptance, Authority, or Verified Outcome.",
-      "trust_pair_rule": "Predicate-policy validation requires explicit trust policy accepting the signer/issuer + verifier.id pair for the intended purpose."
+      "predicate_policy_pass_requires": [
+        "PARSED=PASS",
+        "SUBJECT_BOUND=PASS",
+        "SIGNATURE_VERIFIED=PASS",
+        "TRUSTED_ISSUER=PASS",
+        "supported VSA predicateType/version",
+        "applicable point-in-time trust policy identity",
+        "applicable point-in-time trust policy digest or immutable version",
+        "signer/issuer + verifier.id pair explicitly accepted by that applicable point-in-time trust policy",
+        "VSA predicate-specific policy checks satisfied"
+      ],
+      "trust_pair_rule": "For SLSA VSA, PREDICATE_POLICY_VALIDATED=PASS is forbidden unless SIGNATURE_VERIFIED=PASS and TRUSTED_ISSUER=PASS, and the signer/issuer + verifier.id pair is explicitly accepted by the applicable point-in-time trust policy for the intended purpose."
     }
   ],
   "unknown_semantics": {
@@ -149,17 +176,20 @@
     {"id":"NEG-001-MALFORMED","condition":"Input cannot be decoded or required Statement structure invalid.","expected":"PARSED=FAIL; all later stages NOT_REACHED","forbidden":"any semantic promotion"},
     {"id":"NEG-002-CO-SUBJECT-DROPPED","condition":"Multi-subject Statement mapped after discarding original co-subjects.","expected":"MAPPING=FAIL / SEMANTIC_SCOPE_LOSS","forbidden":"claim equivalent per-subject evidence without predicate-specific distributive semantics"},
     {"id":"NEG-003-PEP740-RULE-LEAKAGE","condition":"Generic in-toto/SLSA digest matches but name differs and no selected policy requires name equality.","expected":"DO_NOT_APPLY_PEP740_FILENAME_RULE","forbidden":"generalize PEP 740 single-subject filename/SHA-256 semantics"},
-    {"id":"NEG-004-UNSUPPORTED-PREDICATE","condition":"Statement valid and subject-bound but predicateType unsupported.","expected":"PREDICATE_POLICY_VALIDATED=UNSUPPORTED; classification=Evidence/Source Data","forbidden":"semantic PASS or promotion"},
+    {"id":"NEG-004-UNSUPPORTED-PREDICATE","condition":"Statement valid and subject-bound but predicateType unsupported.","expected":"target=evidence_record; classification=SOURCE_DATA; PREDICATE_POLICY_VALIDATED=UNSUPPORTED","forbidden":"semantic PASS or promotion"},
     {"id":"NEG-005-UNVERIFIABLE-SUBJECT-ID","condition":"Subject identifier/digest algorithm cannot be verified under configured policy.","expected":"SUBJECT_BOUND=UNKNOWN","forbidden":"SUBJECT_BOUND=PASS"},
-    {"id":"NEG-006-INVALID-SIGNATURE","condition":"Cryptographic signature verification fails.","expected":"SIGNATURE_VERIFIED=FAIL; TRUSTED_ISSUER=NOT_EVALUATED","forbidden":"authenticated/trusted issuer claim"},
-    {"id":"NEG-007-VALID-SIGNATURE-NO-TRUST-POLICY","condition":"Signature valid but no explicit applicable trust policy exists.","expected":"SIGNATURE_VERIFIED=PASS; TRUSTED_ISSUER=UNKNOWN","forbidden":"trusted issuer or policy PASS"},
-    {"id":"NEG-008-VSA-SIGNER-VERIFIER-MISMATCH","condition":"VSA signature verifies under trusted signer but verifier.id pair not allowed by trust policy.","expected":"PREDICATE_POLICY_VALIDATED=FAIL","forbidden":"trusted external assessment or AETHER Verification"},
-    {"id":"NEG-009-VSA-PASSED-NOT-AETHER-VERIFICATION","condition":"Trusted subject-bound VSA has verificationResult=PASSED and expected verifiedLevels.","expected":"classification=Evidence of external verifier assessment; AETHER_VERIFICATION=NOT_EVALUATED; VERIFIED_OUTCOME=NOT_ESTABLISHED","forbidden":"auto-create AETHER Verification/Acceptance/Authority/Verified Outcome"},
-    {"id":"NEG-010-VSA-FAILED","condition":"VSA verificationResult=FAILED.","expected":"external assessment evidence with non-pass policy result","forbidden":"PASS or Verified Outcome"},
+    {"id":"NEG-006-INVALID-SIGNATURE","condition":"Cryptographic signature verification fails under the applicable signature policy.","expected":"per-signature result preserved; aggregate SIGNATURE_VERIFIED=FAIL when policy is evaluable and unsatisfied; TRUSTED_ISSUER=NOT_EVALUATED","forbidden":"authenticated/trusted issuer claim"},
+    {"id":"NEG-007-VALID-SIGNATURE-NO-TRUST-POLICY","condition":"Aggregate signature policy passes but no explicit applicable point-in-time trust policy exists.","expected":"SIGNATURE_VERIFIED=PASS; TRUSTED_ISSUER=UNKNOWN","forbidden":"trusted issuer or predicate-policy PASS"},
+    {"id":"NEG-008-VSA-SIGNER-VERIFIER-MISMATCH","condition":"VSA aggregate signature policy passes and signer is otherwise trusted, but signer/issuer + verifier.id pair is not accepted by the applicable point-in-time trust policy.","expected":"PREDICATE_POLICY_VALIDATED=FAIL","forbidden":"PREDICATE_POLICY_VALIDATED=PASS, trusted external assessment promotion, or AETHER Verification"},
+    {"id":"NEG-009-VSA-PASSED-NOT-AETHER-VERIFICATION","condition":"Trusted subject-bound VSA has verificationResult=PASSED and expected verifiedLevels.","expected":"target=evidence_record; classification=SOURCE_DATA; semantic_role=EXTERNAL_VERIFIER_ASSESSMENT; AETHER_VERIFICATION=NOT_EVALUATED; VERIFIED_OUTCOME=NOT_ESTABLISHED","forbidden":"auto-create AETHER Verification/Acceptance/Authority/Verified Outcome"},
+    {"id":"NEG-010-VSA-FAILED","condition":"VSA verificationResult=FAILED.","expected":"target=evidence_record; classification=SOURCE_DATA; external verifier assessment retained with non-pass policy result","forbidden":"PASS or Verified Outcome"},
     {"id":"NEG-011-VSA-POLICY-DIGEST-MISSING","condition":"VSA policy.uri present but policy.digest absent and no immutable alternative version configured.","expected":"preserve absence; PREDICATE_POLICY_VALIDATED=UNKNOWN","forbidden":"claim exact policy version or PASS from URI alone"},
     {"id":"NEG-012-MISSING-TIMESTAMP","condition":"Optional attestation timestamp absent.","expected":"timestamp=ABSENT_AS_RECEIVED","forbidden":"invent timestamp or substitute acquisition time"},
     {"id":"NEG-013-UNKNOWN-EXTENSION","condition":"Allowed but unrecognized extension field present.","expected":"raw identity preserved; no AETHER meaning assigned","forbidden":"semantic promotion from unknown field"},
-    {"id":"NEG-014-RESERIALIZATION-IDENTITY","condition":"Two byte-distinct attestations parse to equivalent JSON semantics.","expected":"raw identities DIFFERENT; parsed semantics MAY_BE_EQUIVALENT","forbidden":"replace exact-byte identity with reserialized JSON identity"}
+    {"id":"NEG-014-RESERIALIZATION-IDENTITY","condition":"Two byte-distinct attestations parse to equivalent JSON semantics.","expected":"raw identities DIFFERENT; parsed semantics MAY_BE_EQUIVALENT","forbidden":"replace exact-byte identity with reserialized JSON identity"},
+    {"id":"NEG-015-MULTISIG-ONE-VALID-NO-AGGREGATE-POLICY","condition":"Multiple signatures are present; at least one signature verifies, but no explicit applicable aggregate signature policy exists.","expected":"all per-signature results preserved; SIGNATURE_VERIFIED=UNKNOWN","forbidden":"SIGNATURE_VERIFIED=PASS because one signature is valid"},
+    {"id":"NEG-016-MULTISIG-POLICY-NOT-SATISFIED","condition":"Explicit aggregate signature policy requires a threshold or specific signer set and the preserved per-signature results do not satisfy it.","expected":"SIGNATURE_VERIFIED=FAIL; TRUSTED_ISSUER=NOT_EVALUATED","forbidden":"aggregate PASS from any valid subset that does not satisfy policy"},
+    {"id":"NEG-017-VSA-POLICY-PASS-WITHOUT-SIGNATURE-TRUST","condition":"VSA subject and predicate contents appear policy-conformant, but SIGNATURE_VERIFIED is not PASS or TRUSTED_ISSUER is not PASS.","expected":"PREDICATE_POLICY_VALIDATED=NOT_EVALUATED or non-PASS; preserve as evidence_record/SOURCE_DATA","forbidden":"PREDICATE_POLICY_VALIDATED=PASS"}
   ],
   "review_gate": {
     "before_any_implementation": "Independent Technical Oversight re-review required.",
