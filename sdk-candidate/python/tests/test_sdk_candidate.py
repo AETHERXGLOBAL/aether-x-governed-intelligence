@@ -39,6 +39,20 @@ class SDKCandidateTests(unittest.TestCase):
         self.assertEqual(result.reference_validator_id, "AX-PUB-REF-001")
         self.assertEqual(result.findings, ())
 
+    def test_structurally_incomplete_eav_fails_closed(self) -> None:
+        payload = load_json("reference-implementations/eav-contract-validator/examples/valid_bundle.json")
+        cases = (
+            {},
+            {key: value for key, value in payload.items() if key != "schema_id"},
+            {**payload, "evidence_records": {}},
+        )
+        for case in cases:
+            with self.subTest(case=case):
+                result = sdk.validate_eav(case)
+                self.assertFalse(result.valid)
+                self.assertGreaterEqual(len(result.findings), 1)
+                self.assertTrue(all(f.category is sdk.ErrorCategory.CONTRACT_INVALID for f in result.findings))
+
     def test_valid_point_in_time(self) -> None:
         payload = load_json("reference-implementations/point-in-time-knowledge-validator/examples/valid_envelope.json")
         result = sdk.validate_point_in_time(payload)

@@ -11,6 +11,9 @@ import validator  # noqa: E402
 
 def valid_bundle():
     return {
+        "schema_id": "AX-PUB-SCHEMA-001",
+        "schema_version": "1.0",
+        "bundle_id": "bundle-test-001",
         "evidence_records": [
             {
                 "evidence_id": "ev-1",
@@ -79,6 +82,48 @@ class EAVValidatorTests(unittest.TestCase):
 
     def test_valid_bundle_passes(self):
         self.assertEqual(validator.validate_bundle(valid_bundle()), [])
+
+    def test_empty_payload_fails_closed(self):
+        findings = validator.validate_bundle({})
+        self.assertTrue(findings)
+        self.assertIn("AX-REF-REQUIRED", {finding.code for finding in findings})
+
+    def test_missing_required_metadata_fails_closed(self):
+        for field in ("schema_id", "schema_version", "bundle_id"):
+            with self.subTest(field=field):
+                bundle = valid_bundle()
+                del bundle[field]
+                self.assertTrue(validator.validate_bundle(bundle))
+
+    def test_invalid_required_metadata_fails_closed(self):
+        cases = (
+            ("schema_id", "AX-PUB-SCHEMA-999", "AX-REF-SCHEMA-ID"),
+            ("schema_version", "2.0", "AX-REF-SCHEMA-VERSION"),
+            ("bundle_id", 123, "AX-REF-BUNDLE-ID"),
+        )
+        for field, value, expected_code in cases:
+            with self.subTest(field=field):
+                bundle = valid_bundle()
+                bundle[field] = value
+                self.assertIn(expected_code, self.codes(bundle))
+
+    def test_missing_required_collections_fail_closed(self):
+        for field in validator.REQUIRED_COLLECTIONS:
+            with self.subTest(field=field):
+                bundle = valid_bundle()
+                del bundle[field]
+                findings = validator.validate_bundle(bundle)
+                self.assertTrue(findings)
+                self.assertTrue(any(f.path == f"$.{field}" for f in findings))
+
+    def test_structurally_invalid_required_collections_fail_closed(self):
+        for field in validator.REQUIRED_COLLECTIONS:
+            with self.subTest(field=field):
+                bundle = valid_bundle()
+                bundle[field] = {}
+                findings = validator.validate_bundle(bundle)
+                self.assertTrue(findings)
+                self.assertTrue(any(f.code == "AX-REF-COLLECTION" and f.path == f"$.{field}" for f in findings))
 
     def test_revoked_authority_blocks_execution(self):
         bundle = valid_bundle()

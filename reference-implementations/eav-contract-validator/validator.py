@@ -15,6 +15,18 @@ from pathlib import Path
 from typing import Any, Iterable
 
 
+EXPECTED_SCHEMA_ID = "AX-PUB-SCHEMA-001"
+EXPECTED_SCHEMA_VERSION = "1.0"
+REQUIRED_COLLECTIONS = (
+    "evidence_records",
+    "decision_records",
+    "authority_grants",
+    "execution_records",
+    "verification_records",
+    "verified_outcomes",
+)
+
+
 SUPPORTED_EVIDENCE_CLASSIFICATIONS = {
     "FACT",
     "SOURCE_DATA",
@@ -63,6 +75,44 @@ def require_fields(record: dict[str, Any], fields: Iterable[str], path: str, fin
             findings.append(Finding("AX-REF-REQUIRED", f"{path}.{field}", "required field is missing or empty"))
 
 
+def require_top_level_structure(bundle: dict[str, Any], findings: list[Finding]) -> dict[str, list[Any]]:
+    schema_id = bundle.get("schema_id")
+    if schema_id is None:
+        findings.append(Finding("AX-REF-REQUIRED", "$.schema_id", "required field is missing"))
+    elif schema_id != EXPECTED_SCHEMA_ID:
+        findings.append(Finding("AX-REF-SCHEMA-ID", "$.schema_id", f"schema_id must be {EXPECTED_SCHEMA_ID}"))
+
+    schema_version = bundle.get("schema_version")
+    if schema_version is None:
+        findings.append(Finding("AX-REF-REQUIRED", "$.schema_version", "required field is missing"))
+    elif schema_version != EXPECTED_SCHEMA_VERSION:
+        findings.append(
+            Finding(
+                "AX-REF-SCHEMA-VERSION",
+                "$.schema_version",
+                f"schema_version must be {EXPECTED_SCHEMA_VERSION}",
+            )
+        )
+
+    bundle_id = bundle.get("bundle_id")
+    if not isinstance(bundle_id, str) or not bundle_id:
+        findings.append(Finding("AX-REF-BUNDLE-ID", "$.bundle_id", "bundle_id must be a non-empty string"))
+
+    collections: dict[str, list[Any]] = {}
+    for collection_name in REQUIRED_COLLECTIONS:
+        if collection_name not in bundle:
+            findings.append(Finding("AX-REF-REQUIRED", f"$.{collection_name}", "required collection is missing"))
+            collections[collection_name] = []
+            continue
+        value = bundle[collection_name]
+        if not isinstance(value, list):
+            findings.append(Finding("AX-REF-COLLECTION", f"$.{collection_name}", "collection must be an array"))
+            collections[collection_name] = []
+            continue
+        collections[collection_name] = value
+    return collections
+
+
 def index_records(
     records: Any,
     id_field: str,
@@ -97,12 +147,13 @@ def validate_bundle(bundle: dict[str, Any]) -> list[Finding]:
     if not isinstance(bundle, dict):
         return [Finding("AX-REF-BUNDLE", "$", "bundle must be a JSON object")]
 
-    evidence = index_records(bundle.get("evidence_records"), "evidence_id", "evidence_records", findings)
-    decisions = index_records(bundle.get("decision_records"), "decision_id", "decision_records", findings)
-    authorities = index_records(bundle.get("authority_grants"), "authority_id", "authority_grants", findings)
-    executions = index_records(bundle.get("execution_records"), "execution_id", "execution_records", findings)
-    verifications = index_records(bundle.get("verification_records"), "verification_id", "verification_records", findings)
-    outcomes = index_records(bundle.get("verified_outcomes"), "outcome_id", "verified_outcomes", findings)
+    collections = require_top_level_structure(bundle, findings)
+    evidence = index_records(collections["evidence_records"], "evidence_id", "evidence_records", findings)
+    decisions = index_records(collections["decision_records"], "decision_id", "decision_records", findings)
+    authorities = index_records(collections["authority_grants"], "authority_id", "authority_grants", findings)
+    executions = index_records(collections["execution_records"], "execution_id", "execution_records", findings)
+    verifications = index_records(collections["verification_records"], "verification_id", "verification_records", findings)
+    outcomes = index_records(collections["verified_outcomes"], "outcome_id", "verified_outcomes", findings)
 
     # Evidence records
     for evidence_id, record in evidence.items():

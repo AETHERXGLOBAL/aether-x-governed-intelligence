@@ -1,0 +1,45 @@
+{
+  "report_format": "AX-PUB-EVAL-REPORT-002",
+  "report_version": "1.0",
+  "record_state": "TEMPLATE",
+  "evaluator": {
+    "identifier": "REPLACE_WITH_BOUNDED_EVALUATOR_IDENTIFIER",
+    "independent_of_implementation": null,
+    "affiliation_optional": null
+  },
+  "evaluation": {
+    "started_at_utc": null,
+    "completed_at_utc": null,
+    "platform": null,
+    "python_runtime": null,
+    "installation_source": null,
+    "external_index_used": null
+  },
+  "candidate": {
+    "distribution": "aetherxglobal-governed-intelligence",
+    "version": "0.1.0rc1",
+    "wheel_filename": "aetherxglobal_governed_intelligence-0.1.0rc1-py3-none-any.whl",
+    "wheel_sha256": "277910189daaad2167d5d321a7881b72455483ec886574aea5f5ba4f1e1f3f1c",
+    "sdist_filename": "aetherxglobal_governed_intelligence-0.1.0rc1.tar.gz",
+    "sdist_sha256": "c9eeab1060689e918c91b882c985ab9630a84d5ded0da7424decde4779616291"
+  },
+  "checks": [],
+  "findings": [],
+  "overall_result": "NOT_EVALUATED",
+  "issue_disposition_complete": false,
+  "unresolved_critical_findings": null,
+  "unresolved_high_findings": null,
+  "external_adoption_established": false,
+  "endorsement_claimed": false,
+  "supported_sdk_established": false,
+  "sdk_publication": "NOT_AUTHORIZED",
+  "claim_boundaries": [
+    "CURRENT PACKAGE IDENTITY SUPERSEDES HISTORICAL PACKAGE DIGESTS FOR THIS EVALUATION CANDIDATE ONLY",
+    "HISTORICAL AX-PUB-CI-014 EVIDENCE REMAINS IMMUTABLE",
+    "HUMAN EVALUATION DOES NOT ESTABLISH ENDORSEMENT",
+    "HUMAN EVALUATION DOES NOT ESTABLISH ADOPTION",
+    "EVALUATION PASS DOES NOT ESTABLISH A SUPPORTED SDK",
+    "EVALUATION PASS DOES NOT ESTABLISH RELEASE AUTHORITY",
+    "SDK PUBLICATION NOT AUTHORIZED"
+  ]
+}

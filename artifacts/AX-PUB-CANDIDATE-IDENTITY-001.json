@@ -1,0 +1,78 @@
+{
+  "artifact_id": "AX-PUB-CANDIDATE-IDENTITY-001",
+  "version": "0.1",
+  "type": "CURRENT_SUPERSEDING_CANDIDATE_EVIDENCE",
+  "state": "CURRENT_CANDIDATE_IDENTITY_ALIGNED",
+  "reason": {
+    "finding_id": "AXGI-REV-001",
+    "correction_revision": "3e8be5b097df0049dbf4cad134fbc6706269ca9c",
+    "independent_technical_status": "CLOSED"
+  },
+  "historical_anchors": {
+    "gate_03": {
+      "artifact_id": "AX-PUB-DEV-005",
+      "evidence_id": "AX-PUB-CI-006",
+      "verified_build_digest": "8444e7c01621f3d63019b407d9379bc82176f892dce64760cc93e84064ac8c21",
+      "verified_source_date_epoch": 1787064230
+    },
+    "gate_05b": {
+      "artifact_id": "AX-PUB-DEV-008",
+      "evidence_id": "AX-PUB-CI-009",
+      "validator_source_identity": {
+        "AX-PUB-REF-001": "10b31f990cdeb0a2285081d4b4a8cc2457564c69",
+        "AX-PUB-REF-002": "f4344dfb70685b490e716e33f8f2fd2da1f0ca50",
+        "AX-PUB-REF-003": "6c8f4d325ef3d3f2041909f8bba7d554ced4366e"
+      },
+      "wheel_sha256": "bd3c3bfc7306c9b45659e3e0533ea1ac24b065a4c577f08cbe987cc10a4d1fac",
+      "sdist_sha256": "2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99"
+    },
+    "evaluator_handoff": {
+      "artifact_id": "AX-PUB-EVAL-PACK-001",
+      "evidence_id": "AX-PUB-CI-014",
+      "validation_subject_zip_sha256": "5dbac6681909e76a9d844fd5311b3dd3c21e0ac02ecfa27d148348d96b7fc8f2",
+      "wheel_sha256": "bd3c3bfc7306c9b45659e3e0533ea1ac24b065a4c577f08cbe987cc10a4d1fac",
+      "sdist_sha256": "2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99"
+    }
+  },
+  "current_candidate": {
+    "release_candidate": {
+      "source_revision": "3e8be5b097df0049dbf4cad134fbc6706269ca9c",
+      "source_date_epoch": 1787064230,
+      "bundle_sha256": "ccdb50aa92f5d62ab7187a1665713270d55768f1da6e984478764c4ffd8932a5"
+    },
+    "validator_source_identity": {
+      "AX-PUB-REF-001": "1601960df87cf39aa238bcdeffbbe4acec4b3da1",
+      "AX-PUB-REF-002": "f4344dfb70685b490e716e33f8f2fd2da1f0ca50",
+      "AX-PUB-REF-003": "6c8f4d325ef3d3f2041909f8bba7d554ced4366e"
+    },
+    "package": {
+      "wheel_filename": "aetherxglobal_governed_intelligence-0.1.0rc1-py3-none-any.whl",
+      "wheel_sha256": "277910189daaad2167d5d321a7881b72455483ec886574aea5f5ba4f1e1f3f1c",
+      "sdist_filename": "aetherxglobal_governed_intelligence-0.1.0rc1.tar.gz",
+      "sdist_sha256": "c9eeab1060689e918c91b882c985ab9630a84d5ded0da7424decde4779616291",
+      "identity_state": "CI_OBSERVED_DETERMINISTIC_CURRENT_CANDIDATE",
+      "observation": {
+        "pr_head_revision": "3007cd5483343f84dd8eb3a897bafbdff7ef4eb1",
+        "pr_merge_test_revision": "2b4d20c588518669ac22b5e0c3396dbfbee0512e",
+        "workflow": "Validate SDK Release Candidate",
+        "workflow_run_id": 32274792119,
+        "job_id": 96139546890,
+        "conclusion": "SUCCESS",
+        "runtime_matrix": ["3.11", "3.12", "3.13", "3.14"]
+      }
+    },
+    "evaluator_handoff": {
+      "identity_state": "CURRENT_PACKAGE_IDENTITY_BOUND",
+      "historical_validation_evidence_retained": "AX-PUB-CI-014",
+      "final_external_index_evaluation_established": false,
+      "human_external_evaluation_established": false
+    }
+  },
+  "claim_boundaries": [
+    "HISTORICAL CLOSED-STATE DIGESTS AND CI EVIDENCE REMAIN IMMUTABLE",
+    "CURRENT CANDIDATE IDENTITY DOES NOT REDEFINE OR RE-CLOSE HISTORICAL GATES",
+    "CURRENT CANDIDATE EVIDENCE DOES NOT ESTABLISH SDK PUBLICATION OR RELEASE AUTHORITY",
+    "LOCAL OR CI EVALUATOR HANDOFF DOES NOT ESTABLISH FINAL HUMAN EXTERNAL EVALUATION",
+    "SDK PUBLICATION NOT AUTHORIZED"
+  ]
+}
