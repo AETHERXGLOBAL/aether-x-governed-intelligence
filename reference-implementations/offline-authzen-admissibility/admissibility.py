@@ -165,6 +165,19 @@ def _validate_single_access_evaluation_request(request: Mapping[str, Any]) -> st
     return None
 
 
+def _unprofiled_non_empty_properties(request: Mapping[str, Any]) -> tuple[str, ...]:
+    """Return structurally valid properties that v0.1 does not profile for binding."""
+    unprofiled: list[str] = []
+    for label in ("subject", "resource", "action"):
+        container = request.get(label)
+        if not isinstance(container, Mapping):
+            continue
+        properties = container.get("properties")
+        if isinstance(properties, Mapping) and properties:
+            unprofiled.append(f"{label}.properties")
+    return tuple(unprofiled)
+
+
 def _later_not_reached(result: dict[str, Any], after: str) -> None:
     seen = False
     for stage in STAGES:
@@ -358,6 +371,12 @@ def assess_access_evaluation(
         _later_not_reached(result, "RECEIVED")
         return result
 
+    if "context" in response and not isinstance(response.get("context"), Mapping):
+        result["states"]["RECEIVED"] = "FAIL"
+        result["receive_error"] = "single Access Evaluation response context, when present, must be an object"
+        _later_not_reached(result, "RECEIVED")
+        return result
+
     result["states"]["RECEIVED"] = "PASS"
     result["raw_decision"] = response["decision"]
     evidence_record["request_source_data"] = request
@@ -380,6 +399,16 @@ def assess_access_evaluation(
         result["verification_evidence"]["request_binding"] = {
             "status": "UNKNOWN",
             "reason": "original immutable request identity unavailable",
+        }
+        return result
+
+    unprofiled_properties = _unprofiled_non_empty_properties(request)
+    if unprofiled_properties:
+        result["states"]["REQUEST_BOUND"] = "UNKNOWN"
+        result["verification_evidence"]["request_binding"] = {
+            "status": "UNKNOWN",
+            "reason": "v0.1 does not profile enforcement semantics for non-empty AuthZEN properties",
+            "unprofiled_properties": list(unprofiled_properties),
         }
         return result
 
@@ -482,8 +511,6 @@ def assess_access_evaluation(
         return result
 
     response_context = response.get("context", {})
-    if response_context is None:
-        response_context = {}
     if not isinstance(response_context, Mapping):
         result["states"]["DECISION_ADMISSIBLE"] = "UNKNOWN"
         result["verification_evidence"]["response_context"] = {
