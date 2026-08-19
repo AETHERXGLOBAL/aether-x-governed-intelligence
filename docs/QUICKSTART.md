@@ -31,7 +31,19 @@ Import:       aetherxglobal.governed_intelligence
 Runtime:      CPython 3.11–3.14 verified at package level
 ```
 
+Current release-readiness aggregation:
+
+```text
+AX-PUB-RELPACK-001: CI-VALIDATED / BLOCKED
+AX-PUB-CI-016: DIRECT VALIDATION EVIDENCE
+HARD DIMENSIONS: 13
+ESTABLISHED: 4
+BLOCKED: 9
+READY FOR DEV-GATE-05D AUTHORITY REVIEW: NO
+```
+
 `INSTALLABLE CANDIDATE ≠ SUPPORTED SDK`  
+`RELEASE READINESS AGGREGATION PASS ≠ RELEASE READINESS`  
 `SDK PUBLICATION NOT AUTHORIZED`
 
 ---
@@ -231,7 +243,7 @@ SDK PUBLICATION: NOT AUTHORIZED
 
 ## 8. Inspect support and security productization contracts
 
-The future production-supported SDK now has two explicit **pre-activation** operating contracts:
+The future production-supported SDK has two explicit **pre-activation** operating contracts:
 
 - [`AX-PUB-SUP-001`](./AX-PUB-SUP-001_SDK_SUPPORT_COMPATIBILITY_MAINTENANCE_CONTRACT.md) — support, compatibility and maintenance contract candidate;
 - [`AX-PUB-SEC-001`](./AX-PUB-SEC-001_SDK_SECURITY_OPERATIONS_READINESS_CONTRACT.md) — security-operations readiness contract candidate;
@@ -262,12 +274,71 @@ The candidate target window is a future activation condition, not a current prom
 
 ---
 
-## 9. Machine-readable current state
+## 9. Inspect the external-evaluator handoff
+
+The current installable evaluator handoff is governed by:
+
+- [`AX-PUB-EVAL-PACK-001`](./AX-PUB-EVAL-PACK-001_INSTALLABLE_EXTERNAL_EVALUATOR_HANDOFF.md);
+- [`AX-PUB-CI-014`](../evidence/AX-PUB-CI-014_INSTALLABLE_EXTERNAL_EVALUATOR_HANDOFF_VALIDATION.md);
+- [`AX-PUB-CI-015`](../evidence/AX-PUB-CI-015_EVALUATOR_HANDOFF_PROMOTED_MATERIALIZATION.md).
+
+Current state:
+
+```text
+HANDOFF PACK: CI-VALIDATED / DETERMINISTIC
+LOCAL REHEARSAL: CPYTHON 3.11–3.14 VERIFIED
+FINAL EXTERNAL INDEX: REQUIRED
+EXTERNAL REGISTRY VALIDATION: NOT ESTABLISHED
+HUMAN EXTERNAL EVALUATION: NOT ESTABLISHED
+SUPPORTED SDK: NOT ESTABLISHED
+SDK PUBLICATION: NOT AUTHORIZED
+```
+
+`HANDOFF CI-VALIDATED ≠ HUMAN EXTERNAL EVALUATION`
+
+---
+
+## 10. Inspect the release-readiness evidence aggregation
+
+The current hard-gate aggregation is governed by:
+
+- [`AX-PUB-RELPACK-001`](./AX-PUB-RELPACK-001_SDK_RELEASE_READINESS_EVIDENCE_PACK.md);
+- [`AX-PUB-CI-016`](../evidence/AX-PUB-CI-016_SDK_RELEASE_READINESS_EVIDENCE_PACK_VALIDATION.md).
+
+Validated current result:
+
+```text
+REQUIRED HARD DIMENSIONS: 13
+ESTABLISHED: 4
+BLOCKED: 9
+READY FOR DEV-GATE-05D AUTHORITY REVIEW: NO
+DEV-GATE-05D: NOT AUTHORIZED
+SDK PUBLICATION: NOT AUTHORIZED
+```
+
+The four established dimensions are engineering evidence only:
+
+```text
+ENGINEERING_CANDIDATE_IDENTITY
+PUBLIC_API_CONTRACT
+EXACT_ARTIFACT_RUNTIME_VALIDATION
+SUPPLY_CHAIN_PROVENANCE_SBOM
+```
+
+The nine remaining blockers cover external registry validation, independent human evaluation, release controls, registry ownership/Trusted Publisher, licence/IP clearance, support activation, security operations, release-owner accountability and explicit release authority.
+
+A green aggregation workflow means the report correctly reflects those blockers.
+
+`AGGREGATION PASS ≠ RELEASE READINESS`
+
+---
+
+## 11. Machine-readable current state
 
 Canonical moving compatibility/governance index:
 
 ```text
-AX-PUB-MANIFEST-001 v1.24
+AX-PUB-MANIFEST-001 v1.26
 AX-PUB-POL-001 v1.6
 ```
 
@@ -279,11 +350,13 @@ The manifest records:
 AX-PUB-CI-011 — first live release-control baseline
 AX-PUB-API-001 + AX-PUB-CI-012 — validated API contract candidate
 AX-PUB-SUP-001 + AX-PUB-SEC-001 + AX-PUB-CI-013 — validated pre-activation support/security contracts
+AX-PUB-EVAL-PACK-001 + AX-PUB-CI-014 + AX-PUB-CI-015 — CI-validated evaluator handoff
+AX-PUB-RELPACK-001 + AX-PUB-CI-016 — CI-validated blocked release-readiness aggregation
 ```
 
 ---
 
-## 10. Production SDK target
+## 12. Production SDK target
 
 The program target is not merely to place a package on a registry. The target is an official production-supported developer product:
 
@@ -309,7 +382,7 @@ Live release-control audit semantics and the current baseline are in [`RELEASE_C
 
 ---
 
-## 11. Recommended reading order
+## 13. Recommended reading order
 
 ```text
 README.md
@@ -321,6 +394,8 @@ README.md
 → AX-PUB-CI-008 / 009 / 010
 → AX-PUB-API-001 / AX-PUB-CI-012
 → AX-PUB-SUP-001 / AX-PUB-SEC-001 / AX-PUB-CI-013
+→ AX-PUB-EVAL-PACK-001 / AX-PUB-CI-014 / AX-PUB-CI-015
+→ AX-PUB-RELPACK-001 / AX-PUB-CI-016
 → AX-PUB-CI-011 / RELEASE_CONTROL_AUDIT.md
 → PRODUCTION_SDK_DEFINITION_OF_DONE.md
 → RELEASE_CONTROL_PLANE.md
@@ -340,6 +415,9 @@ VALIDATED API CONTRACT CANDIDATE ≠ STABLE 1.0 GUARANTEE
 VALIDATED SUPPORT CONTRACT ≠ SUPPORT COMMITMENT ACTIVATED
 VALIDATED SECURITY CONTRACT ≠ SECURITY OPERATIONS READY
 TARGET DEPRECATION WINDOW ≠ CURRENT SUPPORT PROMISE
+EVALUATOR HANDOFF CI PASS ≠ HUMAN EXTERNAL EVALUATION
+RELEASE READINESS AGGREGATION PASS ≠ RELEASE READINESS
+READY FOR DEV-GATE-05D AUTHORITY REVIEW ≠ DEV-GATE-05D AUTHORITY
 LIVE RELEASE-CONTROL AUDIT ≠ RELEASE-CONTROL READY
 LOCAL INDEX PASS ≠ EXTERNAL REGISTRY VALIDATION
 TARGET LICENCE ≠ LICENCE GRANT
