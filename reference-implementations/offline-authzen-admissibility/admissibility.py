@@ -5,6 +5,7 @@ import json
 from copy import deepcopy
 from datetime import datetime
 from typing import Any, Callable, Mapping
+from uuid import uuid4
 
 STAGES = (
     "RECEIVED",
@@ -71,11 +72,10 @@ def _load_input(raw: bytes | None, obj: Mapping[str, Any] | None, label: str) ->
 
 def _base_result(observed_at: str, surface: str) -> dict[str, Any]:
     observed = _iso_timestamp(observed_at)
-    provisional_id = _sha256(f"{surface}|{observed}".encode("utf-8"))
     return {
         "target": "evidence_record",
         "evidence_record": {
-            "evidence_id": f"authzen-admissibility:{provisional_id}",
+            "evidence_id": f"authzen-admissibility:{uuid4()}",
             "classification": "SOURCE_DATA",
             "source_identity": EAV_SOURCE_IDENTITY,
             "semantic_role": "EXTERNAL_AUTHORIZATION_DECISION_SOURCE_DATA",
@@ -107,6 +107,8 @@ def _bind_evidence_identity(
 
     This does not change source_identity and does not treat a PDP identity claim
     as the source. Request/response identities remain separately preserved.
+    Object-only imports retain an independent record identifier and do not
+    synthesize a canonical-object or content identity.
     """
     req_uri = _identity_uri(request_identity)
     resp_uri = _identity_uri(response_identity)
@@ -119,6 +121,12 @@ def _non_empty_string(value: Any) -> bool:
     return isinstance(value, str) and bool(value)
 
 
+def _validate_optional_properties(container: Mapping[str, Any], label: str) -> str | None:
+    if "properties" in container and not isinstance(container.get("properties"), Mapping):
+        return f"request {label}.properties, when present, must be an object"
+    return None
+
+
 def _validate_single_access_evaluation_request(request: Mapping[str, Any]) -> str | None:
     """Validate the bounded AuthZEN 1.0 single Access Evaluation request shape."""
     subject = request.get("subject")
@@ -128,6 +136,9 @@ def _validate_single_access_evaluation_request(request: Mapping[str, Any]) -> st
         return "request subject.type must be a non-empty string"
     if not _non_empty_string(subject.get("id")):
         return "request subject.id must be a non-empty string"
+    properties_error = _validate_optional_properties(subject, "subject")
+    if properties_error:
+        return properties_error
 
     resource = request.get("resource")
     if not isinstance(resource, Mapping):
@@ -136,12 +147,18 @@ def _validate_single_access_evaluation_request(request: Mapping[str, Any]) -> st
         return "request resource.type must be a non-empty string"
     if not _non_empty_string(resource.get("id")):
         return "request resource.id must be a non-empty string"
+    properties_error = _validate_optional_properties(resource, "resource")
+    if properties_error:
+        return properties_error
 
     action = request.get("action")
     if not isinstance(action, Mapping):
         return "request action must be an object"
     if not _non_empty_string(action.get("name")):
         return "request action.name must be a non-empty string"
+    properties_error = _validate_optional_properties(action, "action")
+    if properties_error:
+        return properties_error
 
     if "context" in request and not isinstance(request.get("context"), Mapping):
         return "request context, when present, must be an object"
@@ -490,6 +507,9 @@ def assess_access_evaluation(
         proposal_id=proposal_id,
         purpose=common["purpose"],
     )
+    if freshness.get("status") == "PASS" and freshness.get("verified_pdp_evaluation_time") != policy["verified_evaluation_time"]:
+        freshness["status"] = "UNKNOWN"
+        freshness["reason"] = "PASS forbidden: freshness evidence missing or mismatched verified PDP evaluation-time binding"
     result["verification_evidence"]["freshness"] = freshness
     if freshness["status"] != "PASS":
         result["states"]["DECISION_ADMISSIBLE"] = "FAIL" if freshness["status"] == "FAIL" else "UNKNOWN"
