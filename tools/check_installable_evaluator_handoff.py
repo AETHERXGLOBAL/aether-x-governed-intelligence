@@ -11,6 +11,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 HISTORICAL = ROOT / "tools" / "check_installable_evaluator_handoff_historical.py"
+HISTORICAL_REPORT_CHECKER = ROOT / "tools" / "check_installable_external_evaluation_report_historical.py"
 OVERLAY = ROOT / "artifacts" / "AX-PUB-CANDIDATE-IDENTITY-001.json"
 PACK = ROOT / "artifacts" / "AX-PUB-EVAL-PACK-001.json"
 CURRENT_GUIDE = ROOT / "docs" / "INSTALLABLE_EXTERNAL_EVALUATOR_CURRENT_CANDIDATE_GUIDE.md"
@@ -62,6 +63,7 @@ def current_identity() -> tuple[dict[str, Any], str, str]:
     sdist_sha = current.get("sdist_sha256")
     require(isinstance(wheel_sha, str) and len(wheel_sha) == 64, "current wheel digest missing")
     require(isinstance(sdist_sha, str) and len(sdist_sha) == 64, "current sdist digest missing")
+    require(HISTORICAL_REPORT_CHECKER.is_file(), "historical external-evaluation report checker missing")
 
     guide = CURRENT_GUIDE.read_text(encoding="utf-8")
     require(wheel_sha in guide and sdist_sha in guide, "current evaluator guide package identity mismatch")
@@ -82,6 +84,8 @@ def check_current_bundle(bundle_dir: Path, overlay: dict[str, Any], wheel_sha: s
             "HISTORICAL_EVALUATOR_GUIDE.md",
             "AX-PUB-EVAL-REPORT-002.template.json",
             "CURRENT_CANDIDATE_IDENTITY.json",
+            "check_installable_external_evaluation_report.py",
+            "check_installable_external_evaluation_report_historical.py",
         ):
             require(required in names, f"current handoff missing {required}")
         packed_overlay = json.loads(archive.read("CURRENT_CANDIDATE_IDENTITY.json").decode("utf-8"))
@@ -100,7 +104,9 @@ def main() -> int:
     overlay, wheel_sha, sdist_sha = current_identity()
     historical = load_historical()
 
-    # Validate historical source state first, before applying current package identity.
+    # Preserve historical source-state verification by using the byte-preserved
+    # historical report checker rather than the current candidate adapter.
+    historical.REPORT_CHECKER = HISTORICAL_REPORT_CHECKER
     historical.check_source_state()
 
     if args.bundle_dir is not None:

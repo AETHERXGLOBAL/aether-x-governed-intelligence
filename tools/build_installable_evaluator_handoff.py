@@ -18,6 +18,7 @@ OVERLAY = ROOT / "artifacts" / "AX-PUB-CANDIDATE-IDENTITY-001.json"
 PACK = ROOT / "artifacts" / "AX-PUB-EVAL-PACK-001.json"
 CURRENT_GUIDE = "docs/INSTALLABLE_EXTERNAL_EVALUATOR_CURRENT_CANDIDATE_GUIDE.md"
 CURRENT_TEMPLATE = "examples/external-evaluation/AX-PUB-EVAL-REPORT-002.current.template.json"
+HISTORICAL_REPORT_CHECKER = "tools/check_installable_external_evaluation_report_historical.py"
 
 
 def fail(message: str) -> None:
@@ -76,6 +77,7 @@ def main() -> int:
     source_map[CURRENT_GUIDE] = "EVALUATOR_GUIDE.md"
     source_map[CURRENT_TEMPLATE] = "AX-PUB-EVAL-REPORT-002.template.json"
     source_map["artifacts/AX-PUB-CANDIDATE-IDENTITY-001.json"] = "CURRENT_CANDIDATE_IDENTITY.json"
+    source_map[HISTORICAL_REPORT_CHECKER] = "check_installable_external_evaluation_report_historical.py"
     historical.SOURCE_MAP = source_map
     result = historical.main()
     print(f"AX_EVALUATOR_CURRENT_CANDIDATE_BUILD_PASS wheel={wheel_sha} sdist={sdist_sha} historical_ci014_preserved=true")
