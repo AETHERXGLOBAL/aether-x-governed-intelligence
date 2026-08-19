@@ -15,6 +15,7 @@ on:
       - 'evidence/AX-PUB-CI-013_SDK_SUPPORT_SECURITY_CONTRACT_VALIDATION.md'
       - 'evidence/AX-PUB-CI-014_INSTALLABLE_EXTERNAL_EVALUATOR_HANDOFF_VALIDATION.md'
       - 'evidence/AX-PUB-CI-015_EVALUATOR_HANDOFF_PROMOTED_MATERIALIZATION.md'
+      - 'evidence/AX-PUB-CI-016_SDK_RELEASE_READINESS_EVIDENCE_PACK_VALIDATION.md'
       - 'release-candidate/**'
       - 'sdk-candidate/**'
       - 'snapshots/**'
@@ -25,6 +26,7 @@ on:
       - 'tools/check_artifact_manifest.py'
       - 'tools/check_manifest_productization_extensions.py'
       - 'tools/check_manifest_evaluator_handoff_extension.py'
+      - 'tools/check_manifest_release_readiness_extension.py'
       - 'tools/check_developer_contract_baseline.py'
       - 'tools/check_developer_experience_state.py'
       - 'tools/check_sdk_candidate_boundary.py'
@@ -49,6 +51,7 @@ on:
       - 'evidence/AX-PUB-CI-013_SDK_SUPPORT_SECURITY_CONTRACT_VALIDATION.md'
       - 'evidence/AX-PUB-CI-014_INSTALLABLE_EXTERNAL_EVALUATOR_HANDOFF_VALIDATION.md'
       - 'evidence/AX-PUB-CI-015_EVALUATOR_HANDOFF_PROMOTED_MATERIALIZATION.md'
+      - 'evidence/AX-PUB-CI-016_SDK_RELEASE_READINESS_EVIDENCE_PACK_VALIDATION.md'
       - 'release-candidate/**'
       - 'sdk-candidate/**'
       - 'snapshots/**'
@@ -59,6 +62,7 @@ on:
       - 'tools/check_artifact_manifest.py'
       - 'tools/check_manifest_productization_extensions.py'
       - 'tools/check_manifest_evaluator_handoff_extension.py'
+      - 'tools/check_manifest_release_readiness_extension.py'
       - 'tools/check_developer_contract_baseline.py'
       - 'tools/check_developer_experience_state.py'
       - 'tools/check_sdk_candidate_boundary.py'
@@ -96,6 +100,7 @@ jobs:
           python3 -m json.tool artifacts/AX-PUB-SUP-001.json > /dev/null
           python3 -m json.tool artifacts/AX-PUB-SEC-001.json > /dev/null
           python3 -m json.tool artifacts/AX-PUB-EVAL-PACK-001.json > /dev/null
+          python3 -m json.tool artifacts/AX-PUB-RELPACK-001.json > /dev/null
           python3 -m json.tool release-candidate/AX-PUB-RC-001.json > /dev/null
 
       - name: Compile public integrity checkers
@@ -103,6 +108,7 @@ jobs:
           python3 -m py_compile tools/check_artifact_manifest.py
           python3 -m py_compile tools/check_manifest_productization_extensions.py
           python3 -m py_compile tools/check_manifest_evaluator_handoff_extension.py
+          python3 -m py_compile tools/check_manifest_release_readiness_extension.py
           python3 -m py_compile tools/check_developer_contract_baseline.py
           python3 -m py_compile tools/check_developer_experience_state.py
           python3 -m py_compile tools/check_sdk_candidate_boundary.py
@@ -121,6 +127,9 @@ jobs:
 
       - name: Validate evaluator-handoff manifest extension
         run: python3 tools/check_manifest_evaluator_handoff_extension.py
+
+      - name: Validate release-readiness manifest extension
+        run: python3 tools/check_manifest_release_readiness_extension.py
 
       - name: Validate developer contract baseline
         run: python3 tools/check_developer_contract_baseline.py
