@@ -43,6 +43,16 @@ def _sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def _is_valid_sha256_digest(value: Any) -> bool:
+    if not isinstance(value, str) or len(value) != 64:
+        return False
+    try:
+        int(value, 16)
+    except ValueError:
+        return False
+    return True
+
+
 def _not_reached(states: dict[str, str], after: str) -> None:
     seen = False
     for stage in TERMINAL_STAGES:
@@ -148,7 +158,7 @@ def _bind_subjects(
         supported_pairs = [
             (alg, val)
             for alg, val in expected_digest.items()
-            if alg == "sha256" and isinstance(val, str) and val
+            if alg == "sha256" and _is_valid_sha256_digest(val)
         ]
         if not supported_pairs:
             return "UNKNOWN", matched
@@ -156,11 +166,18 @@ def _bind_subjects(
         found = False
         for idx, subject in enumerate(subjects):
             digest = subject.get("digest", {})
-            if any(digest.get(alg) == val for alg, val in supported_pairs):
+            for alg, val in supported_pairs:
+                observed_value = digest.get(alg)
+                if not _is_valid_sha256_digest(observed_value):
+                    continue
+                if observed_value != val:
+                    continue
                 if "name" in expected and expected.get("name") != subject.get("name"):
                     continue
                 matched.append(idx)
                 found = True
+                break
+            if found:
                 break
         if not found:
             return "FAIL", matched
@@ -357,7 +374,13 @@ def import_attestation(
         for item in per_signature
         if item.get("signer_identity")
     ]
+    verified_signer_identities = [
+        item.get("signer_identity")
+        for item in per_signature
+        if item.get("result") == "PASS" and item.get("signer_identity")
+    ]
     evidence["signer_identity_claims"] = signer_claims
+    evidence["verified_signer_identities"] = verified_signer_identities
     evidence["signer_identity_status"] = (
         "UNTRUSTED_CLAIM" if signer_claims else "ABSENT_OR_UNVERIFIED"
     )
@@ -365,7 +388,9 @@ def import_attestation(
     trust_context = {
         "observed_at": observed_at,
         "predicate_type": statement["predicateType"],
-        "signer_identities": signer_claims,
+        "signer_identities": verified_signer_identities,
+        "verified_signer_identities": verified_signer_identities,
+        "signer_identity_claims": signer_claims,
         "signature_verified": aggregate_signature,
         "verifier_id": _vsa_verifier_id(statement),
     }
