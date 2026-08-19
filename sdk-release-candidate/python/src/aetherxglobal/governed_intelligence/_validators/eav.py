@@ -15,6 +15,18 @@ from pathlib import Path
 from typing import Any, Iterable
 
 
+EXPECTED_SCHEMA_ID = "AX-PUB-SCHEMA-001"
+EXPECTED_SCHEMA_VERSION = "1.0"
+REQUIRED_COLLECTIONS = (
+    "evidence_records",
+    "decision_records",
+    "authority_grants",
+    "execution_records",
+    "verification_records",
+    "verified_outcomes",
+)
+
+
 SUPPORTED_EVIDENCE_CLASSIFICATIONS = {
     "FACT",
     "SOURCE_DATA",
@@ -63,6 +75,44 @@ def require_fields(record: dict[str, Any], fields: Iterable[str], path: str, fin
             findings.append(Finding("AX-REF-REQUIRED", f"{path}.{field}", "required field is missing or empty"))
 
 
+def require_top_level_structure(bundle: dict[str, Any], findings: list[Finding]) -> dict[str, list[Any]]:
+    schema_id = bundle.get("schema_id")
+    if schema_id is None:
+        findings.append(Finding("AX-REF-REQUIRED", "$.schema_id", "required field is missing"))
+    elif schema_id != EXPECTED_SCHEMA_ID:
+        findings.append(Finding("AX-REF-SCHEMA-ID", "$.schema_id", f"schema_id must be {EXPECTED_SCHEMA_ID}"))
+
+    schema_version = bundle.get("schema_version")
+    if schema_version is None:
+        findings.append(Finding("AX-REF-REQUIRED", "$.schema_version", "required field is missing"))
+    elif schema_version != EXPECTED_SCHEMA_VERSION:
+        findings.append(
+            Finding(
+                "AX-REF-SCHEMA-VERSION",
+                "$.schema_version",
+                f"schema_version must be {EXPECTED_SCHEMA_VERSION}",
+            )
+        )
+
+    bundle_id = bundle.get("bundle_id")
+    if not isinstance(bundle_id, str) or not bundle_id:
+        findings.append(Finding("AX-REF-BUNDLE-ID", "$.bundle_id", "bundle_id must be a non-empty string"))
+
+    collections: dict[str, list[Any]] = {}
+    for collection_name in REQUIRED_COLLECTIONS:
+        if collection_name not in bundle:
+            findings.append(Finding("AX-REF-REQUIRED", f"$.{collection_name}", "required collection is missing"))
+            collections[collection_name] = []
+            continue
+        value = bundle[collection_name]
+        if not isinstance(value, list):
+            findings.append(Finding("AX-REF-COLLECTION", f"$.{collection_name}", "collection must be an array"))
+            collections[collection_name] = []
+            continue
+        collections[collection_name] = value
+    return collections
+
+
 def index_records(
     records: Any,
     id_field: str,
@@ -97,14 +147,14 @@ def validate_bundle(bundle: dict[str, Any]) -> list[Finding]:
     if not isinstance(bundle, dict):
         return [Finding("AX-REF-BUNDLE", "$", "bundle must be a JSON object")]
 
-    evidence = index_records(bundle.get("evidence_records"), "evidence_id", "evidence_records", findings)
-    decisions = index_records(bundle.get("decision_records"), "decision_id", "decision_records", findings)
-    authorities = index_records(bundle.get("authority_grants"), "authority_id", "authority_grants", findings)
-    executions = index_records(bundle.get("execution_records"), "execution_id", "execution_records", findings)
-    verifications = index_records(bundle.get("verification_records"), "verification_id", "verification_records", findings)
-    outcomes = index_records(bundle.get("verified_outcomes"), "outcome_id", "verified_outcomes", findings)
+    collections = require_top_level_structure(bundle, findings)
+    evidence = index_records(collections["evidence_records"], "evidence_id", "evidence_records", findings)
+    decisions = index_records(collections["decision_records"], "decision_id", "decision_records", findings)
+    authorities = index_records(collections["authority_grants"], "authority_id", "authority_grants", findings)
+    executions = index_records(collections["execution_records"], "execution_id", "execution_records", findings)
+    verifications = index_records(collections["verification_records"], "verification_id", "verification_records", findings)
+    outcomes = index_records(collections["verified_outcomes"], "outcome_id", "verified_outcomes", findings)
 
-    # Evidence records
     for evidence_id, record in evidence.items():
         path = f"evidence_records[{evidence_id}]"
         require_fields(record, ("classification", "source_identity", "observed_at"), path, findings)
@@ -114,7 +164,6 @@ def validate_bundle(bundle: dict[str, Any]) -> list[Finding]:
         parse_time(record.get("observed_at"), f"{path}.observed_at", findings)
         parse_time(record.get("effective_at"), f"{path}.effective_at", findings)
 
-    # Decisions must reference evidence.
     for decision_id, record in decisions.items():
         path = f"decision_records[{decision_id}]"
         require_fields(record, ("decision_question", "decision_owner", "evidence_refs", "decided_at"), path, findings)
@@ -127,16 +176,10 @@ def validate_bundle(bundle: dict[str, Any]) -> list[Finding]:
         elif refs is not None:
             findings.append(Finding("AX-EAV-EVIDENCE-REF-TYPE", f"{path}.evidence_refs", "evidence_refs must be an array"))
 
-    # Authority grants must bind decision, principal, action and resource scope.
     authority_times: dict[str, tuple[datetime | None, datetime | None]] = {}
     for authority_id, record in authorities.items():
         path = f"authority_grants[{authority_id}]"
-        require_fields(
-            record,
-            ("decision_id", "principal", "permitted_action", "resource_scope", "status", "granted_at"),
-            path,
-            findings,
-        )
+        require_fields(record, ("decision_id", "principal", "permitted_action", "resource_scope", "status", "granted_at"), path, findings)
         if record.get("decision_id") not in decisions:
             findings.append(Finding("AX-EAV-AUTHORITY-DECISION", f"{path}.decision_id", "authority references an unknown decision"))
         if record.get("status") not in {"ACTIVE", "REVOKED", "EXPIRED"}:
@@ -149,15 +192,9 @@ def validate_bundle(bundle: dict[str, Any]) -> list[Finding]:
             findings.append(Finding("AX-EAV-AUTHORITY-EXPIRY", f"{path}.expires_at", "authority expiry must be after grant time"))
         authority_times[authority_id] = (granted, expires)
 
-    # Executions must remain inside active authority.
     for execution_id, record in executions.items():
         path = f"execution_records[{execution_id}]"
-        require_fields(
-            record,
-            ("decision_id", "authority_id", "actor", "action", "resource", "started_at", "status"),
-            path,
-            findings,
-        )
+        require_fields(record, ("decision_id", "authority_id", "actor", "action", "resource", "started_at", "status"), path, findings)
         decision_id = record.get("decision_id")
         authority_id = record.get("authority_id")
         if decision_id not in decisions:
@@ -184,7 +221,6 @@ def validate_bundle(bundle: dict[str, Any]) -> list[Finding]:
         if started and expires and started > expires:
             findings.append(Finding("AX-EAV-EXEC-AFTER-EXPIRY", f"{path}.started_at", "execution began after authority expired"))
 
-    # Verification references execution and can require independence.
     for verification_id, record in verifications.items():
         path = f"verification_records[{verification_id}]"
         require_fields(record, ("execution_id", "verifier", "verdict", "verified_at"), path, findings)
@@ -194,11 +230,9 @@ def validate_bundle(bundle: dict[str, Any]) -> list[Finding]:
         if record.get("verdict") not in {"PASS", "FAIL", "INCONCLUSIVE", "NOT_PERFORMED"}:
             findings.append(Finding("AX-EAV-VERIFY-VERDICT", f"{path}.verdict", "unsupported verification verdict"))
         parse_time(record.get("verified_at"), f"{path}.verified_at", findings)
-        if execution and record.get("requires_independent_verifier") is True:
-            if record.get("verifier") == execution.get("actor"):
-                findings.append(Finding("AX-EAV-VERIFY-INDEPENDENCE", f"{path}.verifier", "independent verifier cannot equal execution actor"))
+        if execution and record.get("requires_independent_verifier") is True and record.get("verifier") == execution.get("actor"):
+            findings.append(Finding("AX-EAV-VERIFY-INDEPENDENCE", f"{path}.verifier", "independent verifier cannot equal execution actor"))
 
-    # Verified outcomes require PASS verification.
     for outcome_id, record in outcomes.items():
         path = f"verified_outcomes[{outcome_id}]"
         require_fields(record, ("verification_id", "outcome_state", "accepted_at"), path, findings)
@@ -227,7 +261,6 @@ def main() -> int:
     parser.add_argument("bundle", type=Path, help="path to JSON bundle")
     parser.add_argument("--json", action="store_true", dest="json_output", help="emit findings as JSON")
     args = parser.parse_args()
-
     try:
         bundle = load_json(args.bundle)
     except (OSError, json.JSONDecodeError, ValueError) as exc:
@@ -237,7 +270,6 @@ def main() -> int:
         else:
             print(f"{finding.code} {finding.path}: {finding.message}")
         return 1
-
     findings = validate_bundle(bundle)
     if args.json_output:
         print(json.dumps({"status": "PASS" if not findings else "FAIL", "findings": [asdict(f) for f in findings]}, indent=2))
@@ -246,7 +278,6 @@ def main() -> int:
             print(f"{finding.code} {finding.path}: {finding.message}")
     else:
         print("AX_EAV_REFERENCE_VALIDATION_PASS")
-
     return 0 if not findings else 1
 
 
