@@ -1,0 +1,74 @@
+name: TEMP Promote Manifest v1.26 On Branch Only
+
+on:
+  push:
+    branches:
+      - governance/release-readiness-manifest-v1.26
+    paths:
+      - 'tools/promote_manifest_release_readiness_v126.py'
+      - '.github/workflows/_temporary_promote_manifest_v126.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: temp-manifest-v126-governance-release-readiness
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    if: github.ref == 'refs/heads/governance/release-readiness-manifest-v1.26' && github.repository == 'AETHERXGLOBAL/aether-x-governed-intelligence'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout exact promotion branch
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          ref: governance/release-readiness-manifest-v1.26
+          fetch-depth: 1
+
+      - name: Set up CPython 3.14
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+        with:
+          python-version: '3.14'
+
+      - name: Apply one-shot fail-closed manifest migration
+        run: |
+          python tools/promote_manifest_release_readiness_v126.py
+          python -m json.tool artifacts/AX-PUB-MANIFEST-001.json >/dev/null
+
+      - name: Verify bounded promotion state before commit
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('artifacts/AX-PUB-MANIFEST-001.json')
+          m = json.loads(p.read_text())
+          assert m['manifest_version'] == '1.26'
+          assert m['current_developer_program']['active_phase'] == 'DEV-GATE-05C — Distribution & External Validation'
+          r = m['current_sdk_release_readiness_aggregation']
+          assert r['validation_evidence'] == 'AX-PUB-CI-016'
+          assert r['required_dimension_count'] == 13
+          assert r['established_dimension_count'] == 4
+          assert r['blocked_dimension_count'] == 9
+          assert r['ready_for_dev_gate_05d_authority_review'] is False
+          assert r['dev_gate_05d_authorized'] is False
+          assert r['supported_sdk_established'] is False
+          assert r['sdk_publication_disposition'] == 'SDK PUBLICATION NOT AUTHORIZED'
+          print('AX_TEMP_PROMOTION_BOUNDARY_PASS manifest=1.26 gate05c=ACTIVE relpack=CI_VALIDATED_BLOCKED ready_for_05d=false')
+          PY
+
+      - name: Commit only generated manifest back to exact branch
+        run: |
+          git config user.name 'aether-x-governance-bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add artifacts/AX-PUB-MANIFEST-001.json
+          if git diff --cached --quiet; then
+            echo 'No manifest change to commit.'
+            exit 0
+          fi
+          git commit -m 'governance: materialize manifest v1.26 release-readiness state'
+          test "$(git rev-parse --abbrev-ref HEAD)" = 'governance/release-readiness-manifest-v1.26'
+          git push origin HEAD:governance/release-readiness-manifest-v1.26
