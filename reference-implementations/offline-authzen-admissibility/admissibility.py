@@ -16,6 +16,7 @@ STAGES = (
 
 SUPPORTED_SURFACE = "single_access_evaluation"
 UNSUPPORTED_SURFACES = {"access_evaluations", "search"}
+EAV_SOURCE_IDENTITY = "offline-authzen-caller-supplied-input"
 
 EvidenceVerifier = Callable[[Mapping[str, Any]], Mapping[str, Any]]
 BindingVerifier = Callable[[Mapping[str, Any]], Mapping[str, Any]]
@@ -69,12 +70,16 @@ def _load_input(raw: bytes | None, obj: Mapping[str, Any] | None, label: str) ->
 
 
 def _base_result(observed_at: str, surface: str) -> dict[str, Any]:
+    observed = _iso_timestamp(observed_at)
+    provisional_id = _sha256(f"{surface}|{observed}".encode("utf-8"))
     return {
         "target": "evidence_record",
         "evidence_record": {
+            "evidence_id": f"authzen-admissibility:{provisional_id}",
             "classification": "SOURCE_DATA",
+            "source_identity": EAV_SOURCE_IDENTITY,
             "semantic_role": "EXTERNAL_AUTHORIZATION_DECISION_SOURCE_DATA",
-            "observed_at": _iso_timestamp(observed_at),
+            "observed_at": observed,
             "api_surface": surface,
             "promotion": "NONE",
         },
@@ -91,6 +96,56 @@ def _base_result(observed_at: str, surface: str) -> dict[str, Any]:
         "aether_verification": "NOT_EVALUATED",
         "verified_outcome": "NOT_ESTABLISHED",
     }
+
+
+def _bind_evidence_identity(
+    evidence_record: dict[str, Any],
+    request_identity: Mapping[str, Any],
+    response_identity: Mapping[str, Any],
+) -> None:
+    """Derive evidence_id from immutable input identities when available.
+
+    This does not change source_identity and does not treat a PDP identity claim
+    as the source. Request/response identities remain separately preserved.
+    """
+    req_uri = _identity_uri(request_identity)
+    resp_uri = _identity_uri(response_identity)
+    if req_uri and resp_uri:
+        digest = _sha256(f"{req_uri}|{resp_uri}".encode("utf-8"))
+        evidence_record["evidence_id"] = f"authzen-admissibility:{digest}"
+
+
+def _non_empty_string(value: Any) -> bool:
+    return isinstance(value, str) and bool(value)
+
+
+def _validate_single_access_evaluation_request(request: Mapping[str, Any]) -> str | None:
+    """Validate the bounded AuthZEN 1.0 single Access Evaluation request shape."""
+    subject = request.get("subject")
+    if not isinstance(subject, Mapping):
+        return "request subject must be an object"
+    if not _non_empty_string(subject.get("type")):
+        return "request subject.type must be a non-empty string"
+    if not _non_empty_string(subject.get("id")):
+        return "request subject.id must be a non-empty string"
+
+    resource = request.get("resource")
+    if not isinstance(resource, Mapping):
+        return "request resource must be an object"
+    if not _non_empty_string(resource.get("type")):
+        return "request resource.type must be a non-empty string"
+    if not _non_empty_string(resource.get("id")):
+        return "request resource.id must be a non-empty string"
+
+    action = request.get("action")
+    if not isinstance(action, Mapping):
+        return "request action must be an object"
+    if not _non_empty_string(action.get("name")):
+        return "request action.name must be a non-empty string"
+
+    if "context" in request and not isinstance(request.get("context"), Mapping):
+        return "request context, when present, must be an object"
+    return None
 
 
 def _later_not_reached(result: dict[str, Any], after: str) -> None:
@@ -250,6 +305,7 @@ def assess_access_evaluation(
     response, response_identity, response_error = _load_input(response_bytes, response_object, "received-authzen-response-bytes")
     evidence_record["request_identity"] = request_identity
     evidence_record["response_identity"] = response_identity
+    _bind_evidence_identity(evidence_record, request_identity, response_identity)
 
     if api_surface in UNSUPPORTED_SURFACES:
         evidence_record["surface_status"] = "UNSUPPORTED"
@@ -271,16 +327,14 @@ def assess_access_evaluation(
         result["states"]["RECEIVED"] = "FAIL"
         _later_not_reached(result, "RECEIVED")
         return result
-    if not all(key in request for key in ("subject", "resource", "action", "context")):
+
+    structural_error = _validate_single_access_evaluation_request(request)
+    if structural_error:
         result["states"]["RECEIVED"] = "FAIL"
-        result["receive_error"] = "single Access Evaluation request missing Subject/Resource/Action/Context"
+        result["receive_error"] = structural_error
         _later_not_reached(result, "RECEIVED")
         return result
-    if not isinstance(request.get("context"), Mapping):
-        result["states"]["RECEIVED"] = "FAIL"
-        result["receive_error"] = "request context must be an object"
-        _later_not_reached(result, "RECEIVED")
-        return result
+
     if not isinstance(response.get("decision"), bool):
         result["states"]["RECEIVED"] = "FAIL"
         result["receive_error"] = "single Access Evaluation response decision must be boolean"
