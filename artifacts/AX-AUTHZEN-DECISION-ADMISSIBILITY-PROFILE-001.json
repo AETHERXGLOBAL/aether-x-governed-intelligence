@@ -1,7 +1,7 @@
 {
   "document_id": "AX-AUTHZEN-DECISION-ADMISSIBILITY-PROFILE-001",
   "version": "0.1",
-  "status": "DESIGN_CANDIDATE / NON-BINDING / OFFLINE / READ-ONLY / NO_RUNTIME_IMPLEMENTATION",
+  "status": "DESIGN_CANDIDATE / NON-BINDING / OFFLINE / READ-ONLY / SINGLE_ACCESS_EVALUATION_ONLY / NO_RUNTIME_IMPLEMENTATION",
   "baseline_commit": "256594c364ca3e76eb7d6d95cd93d56e9773e36f",
   "parent_research": {
     "document_id": "AX-AUTHORIZATION-INTEROP-RESEARCH-002",
@@ -9,7 +9,16 @@
     "oversight_result": "PASS",
     "authorization": "DESIGN_CANDIDATE_ONLY / NO_IMPLEMENTATION"
   },
-  "purpose": "Define the smallest offline semantic contract for admitting an already-supplied AuthZEN Authorization API 1.0 request/response pair as external authorization source data without allowing an external PDP decision to become AETHER Decision, Authority, capability, tool-use grant, execution permission, Verification, or Verified Outcome.",
+  "oversight_correction_basis": {
+    "reviewed_revision": "d823e163f227d471e5e7ba25d8933aa2372fa3e6",
+    "decision": "CORRECTION — bounded design correction only",
+    "corrections": [
+      "P1-1 admissibility provenance binding",
+      "P1-2 object-only identity",
+      "v0.1 scope clarification: single Access Evaluation API only"
+    ]
+  },
+  "purpose": "Define the smallest offline semantic contract for admitting one already-supplied AuthZEN Authorization API 1.0 single Access Evaluation request/response pair as external authorization SOURCE_DATA without allowing asserted or merely supplied provenance, an external PDP decision, or adapter-local checks to become AETHER Decision, Authority, capability, tool-use grant, execution permission, Verification, or Verified Outcome.",
   "required_semantic_chain": [
     "RECEIVED",
     "REQUEST_BOUND",
@@ -32,6 +41,7 @@
     "AETHER_DECISION != AETHER_AUTHORITY",
     "AETHER_AUTHORITY != EXECUTION_PERMISSION",
     "External Decision != AETHER Authority",
+    "Asserted Provenance != Verified Provenance",
     "Unknown != Pass",
     "Execution != Verified Outcome"
   ],
@@ -41,21 +51,27 @@
     "existing authority_context semantics",
     "existing tool_use_grant semantics",
     "existing tool_invocation/tool_result semantics",
-    "existing Point-in-Time and provenance boundaries"
+    "existing Point-in-Time and provenance boundaries",
+    "NEG-AZ-001 through NEG-AZ-022"
   ],
   "scope": {
     "in_scope": [
-      "already-supplied offline AuthZEN request bytes/object and response bytes/object",
-      "exact request and response source identity preservation",
-      "Subject/Resource/Action/Context binding to an existing AETHER action proposal and referenced principal/tool/action/resource/parameters",
+      "one already-supplied offline AuthZEN Authorization API 1.0 single Access Evaluation request/response pair",
+      "raw bytes when available and parsed-object SOURCE_DATA import when bytes are unavailable",
+      "immutable original request/response identity requirements for admissibility",
+      "Subject/Resource/Action/Context binding to one existing AETHER action proposal and referenced principal/tool/action/resource/parameters",
       "response-integrity evidence semantics without implementing cryptography",
-      "PDP and policy provenance requirements",
-      "point-in-time evaluation metadata requirements",
+      "attributable PDP identity, PDP policy, freshness, replay, and evaluation-time provenance requirements",
+      "point-in-time evaluation/check metadata requirements",
       "decision admissibility semantics",
-      "replay/freshness semantics as admissibility conditions",
       "negative semantic cases"
     ],
+    "unsupported": [
+      "AuthZEN Access Evaluations / boxcarring",
+      "AuthZEN Search APIs"
+    ],
     "out_of_scope": [
+      "canonical-object identity or JSON canonicalization mechanism",
       "AuthZEN network client",
       "PDP implementation",
       "Cedar",
@@ -78,30 +94,117 @@
     "classification": "SOURCE_DATA",
     "semantic_role": "EXTERNAL_AUTHORIZATION_DECISION_SOURCE_DATA",
     "promotion": "NONE",
-    "rule": "Raw AuthZEN request/response/decision and associated PDP/policy claims are external SOURCE_DATA first. No field directly creates AETHER Decision, Authority, capability, authority_context, tool_use_grant, execution permission, Verification, or Verified Outcome."
+    "rule": "Raw AuthZEN request/response/decision plus PDP identity, PDP policy, timestamps, freshness, replay, trust, and verification claims/results are SOURCE_DATA first. A value being present, asserted, or caller-supplied establishes no PASS. No field or provenance claim directly creates AETHER Decision, Authority, capability, authority_context, tool_use_grant, execution permission, Verification, or Verified Outcome."
   },
   "raw_identity_and_time": {
     "requirements": [
-      "Preserve SHA-256 identity of exact received request bytes when bytes are available.",
-      "Preserve SHA-256 identity of exact received response bytes when bytes are available.",
-      "If parsed objects are supplied without original bytes, mark exact-byte identity UNAVAILABLE rather than inventing one.",
-      "Preserve observed_at separately from PDP evaluation time.",
-      "Never substitute observed_at or current time for missing PDP evaluation time.",
-      "Never infer PDP identity or PDP/trust policy identity/version/digest without explicit verified provenance."
+      "Preserve SHA-256 identity of exact received request bytes when original bytes are available.",
+      "Preserve SHA-256 identity of exact received response bytes when original bytes are available.",
+      "If parsed objects are supplied without original immutable bytes, preserve them as SOURCE_DATA and mark original immutable identity UNAVAILABLE.",
+      "DECISION_ADMISSIBLE may not be ADMISSIBLE_ALLOW or ADMISSIBLE_DENY unless both original immutable request identity and original immutable response identity are available and bound.",
+      "A hash of reserialized or locally canonicalized parsed objects is not a substitute for received-byte identity.",
+      "No new canonical-object identity mechanism is defined by v0.1.",
+      "Preserve observed_at separately from PDP evaluation time and from every provenance verification/check time.",
+      "Never substitute observed_at, current time, or caller-supplied time for missing verified PDP evaluation time.",
+      "Never infer PDP identity or PDP/trust-policy identity/version/digest from endpoint names, configuration, or raw assertions."
     ]
+  },
+  "admissibility_provenance_contract": {
+    "principle": "PDP identity, PDP policy identity/version/digest, PDP evaluation time, freshness result, and replay result are external SOURCE_DATA until attributable verification evidence binds them to this exact decision use. Presence or assertion alone never yields PASS.",
+    "common_requirements_for_any_provenance_used_to_reach_pass": [
+      "provenance item preserved first as SOURCE_DATA",
+      "attributable source identity",
+      "verification/checker identity distinct from the asserted value where applicable",
+      "verification/check method identity",
+      "verification/check result",
+      "exact immutable request identity",
+      "exact immutable response identity",
+      "bound AETHER action_proposal.proposal_id",
+      "applicable policy identity",
+      "immutable policy version or digest",
+      "verification/check time where the check is time-sensitive",
+      "explicit binding showing the provenance result was evaluated for the same request, response, proposal, and intended purpose"
+    ],
+    "missing_unbound_unverified_rule": "If any provenance required for an admissibility PASS is missing, not attributable, not bound to the exact request+response+proposal, or not verified under the applicable policy, the dependent stage is UNKNOWN/NOT_EVALUATED and the outcome is NO_PROCEED.",
+    "bare_value_rule": "Bare booleans such as replay_pass=true or freshness_pass=true, bare caller-supplied timestamps, bare PDP identifiers, and bare PDP policy identifiers/versions/digests are claims only and cannot establish PASS.",
+    "pdp_identity": {
+      "required_for_trust": [
+        "verified identity value",
+        "identity-source/verification identity",
+        "verification method and result",
+        "binding to exact request and response identities",
+        "binding to exact proposal and purpose",
+        "identity verification/check time where applicable"
+      ]
+    },
+    "pdp_policy": {
+      "required_for_admissibility": [
+        "policy identity",
+        "immutable policy version or digest",
+        "attributable evidence that this exact PDP evaluation used that policy instance",
+        "verification identity/method/result for that attribution",
+        "binding to exact request and response identities and proposal",
+        "policy-attribution check time where applicable"
+      ]
+    },
+    "pdp_evaluation_time": {
+      "required_for_admissibility": [
+        "evaluation time preserved as asserted SOURCE_DATA",
+        "attributable evidence linking the time to the exact PDP evaluation",
+        "verification identity/method/result",
+        "binding to exact request and response identities and proposal"
+      ],
+      "forbidden": "caller-supplied timestamp or observed_at treated as verified PDP evaluation time"
+    },
+    "freshness": {
+      "required_for_admissibility": [
+        "freshness checker/verifier identity",
+        "freshness policy identity and immutable version/digest",
+        "check time",
+        "inputs including verified PDP evaluation time and exact request/response/proposal identities",
+        "result PASS under that exact policy"
+      ],
+      "forbidden": "bare freshness_pass boolean"
+    },
+    "replay": {
+      "required_for_admissibility": [
+        "replay checker/verifier identity",
+        "replay policy identity and immutable version/digest",
+        "check time",
+        "inputs including exact request/response/proposal identities and intended use",
+        "result PASS under that exact policy"
+      ],
+      "forbidden": "bare replay_pass boolean"
+    }
   },
   "stages": [
     {
       "stage": "RECEIVED",
-      "results": ["PASS", "FAIL"],
-      "meaning": "The offline input pair is preserved as external SOURCE_DATA and satisfies minimum structure, including a boolean AuthZEN response decision.",
-      "does_not_imply": ["REQUEST_BOUND", "RESPONSE_INTEGRITY_VERIFIED", "PDP_TRUSTED", "DECISION_ADMISSIBLE", "AETHER_DECISION", "AETHER_AUTHORITY", "EXECUTION_PERMISSION"]
+      "results": [
+        "PASS",
+        "FAIL"
+      ],
+      "meaning": "One offline AuthZEN single Access Evaluation request/response pair is preserved as SOURCE_DATA and satisfies minimum structure, including a boolean response decision. Parsed-object-only input is allowed at this stage.",
+      "does_not_imply": [
+        "REQUEST_BOUND",
+        "RESPONSE_INTEGRITY_VERIFIED",
+        "PDP_TRUSTED",
+        "DECISION_ADMISSIBLE",
+        "AETHER_DECISION",
+        "AETHER_AUTHORITY",
+        "EXECUTION_PERMISSION"
+      ]
     },
     {
       "stage": "REQUEST_BOUND",
-      "results": ["PASS", "FAIL", "UNKNOWN"],
-      "meaning": "The exact request is deterministically bound under an explicit versioned binding profile to the intended existing AETHER action proposal, principal, tool, action, target resource, bounded parameters, and enforcement-relevant context.",
+      "results": [
+        "PASS",
+        "FAIL",
+        "UNKNOWN"
+      ],
+      "meaning": "The exact immutable request identity is deterministically bound under an explicit versioned binding profile to the intended existing AETHER action proposal, principal, tool, action, target resource, bounded parameters, and enforcement-relevant context.",
       "requires_for_pass": [
+        "original immutable request identity available",
         "existing action_proposal reference",
         "binding profile identity/version",
         "Subject -> expected principal binding",
@@ -112,57 +215,108 @@
         "no material mismatch",
         "no omitted required binding dimension"
       ],
-      "does_not_imply": ["RESPONSE_INTEGRITY_VERIFIED", "PDP_TRUSTED", "DECISION_ADMISSIBLE", "AETHER_DECISION", "AETHER_AUTHORITY", "EXECUTION_PERMISSION"]
+      "object_only_rule": "If original immutable request identity is unavailable, parsed request fields remain SOURCE_DATA but REQUEST_BOUND cannot PASS; result is UNKNOWN and NO_PROCEED.",
+      "does_not_imply": [
+        "RESPONSE_INTEGRITY_VERIFIED",
+        "PDP_TRUSTED",
+        "DECISION_ADMISSIBLE",
+        "AETHER_DECISION",
+        "AETHER_AUTHORITY",
+        "EXECUTION_PERMISSION"
+      ]
     },
     {
       "stage": "RESPONSE_INTEGRITY_VERIFIED",
-      "results": ["PASS", "FAIL", "UNKNOWN", "NOT_EVALUATED"],
-      "meaning": "Explicit external verification evidence establishes integrity/correlation for the exact response and exact bound request under a defined verification method; this profile implements no cryptography.",
+      "results": [
+        "PASS",
+        "FAIL",
+        "UNKNOWN",
+        "NOT_EVALUATED"
+      ],
+      "meaning": "Explicit attributable external verification evidence establishes integrity/correlation for the exact immutable response identity and exact bound request identity under a defined verification method; this profile implements no cryptography.",
       "requires_for_pass": [
         "RECEIVED=PASS",
         "REQUEST_BOUND=PASS",
+        "original immutable response identity available",
+        "verification source/identity",
         "verification method identity",
+        "verification result",
+        "verification/check time where applicable",
         "verification result bound to exact response identity",
-        "verification result bound to exact request identity or explicit request/response correlation evidence"
+        "verification result bound to exact request identity and bound proposal"
       ],
-      "does_not_imply": ["PDP_TRUSTED", "decision truth", "DECISION_ADMISSIBLE", "AETHER_DECISION", "AETHER_AUTHORITY", "EXECUTION_PERMISSION"]
+      "object_only_rule": "If original immutable response identity is unavailable, parsed response and decision remain SOURCE_DATA but RESPONSE_INTEGRITY_VERIFIED cannot PASS.",
+      "does_not_imply": [
+        "PDP_TRUSTED",
+        "decision truth",
+        "DECISION_ADMISSIBLE",
+        "AETHER_DECISION",
+        "AETHER_AUTHORITY",
+        "EXECUTION_PERMISSION"
+      ]
     },
     {
       "stage": "PDP_TRUSTED",
-      "results": ["PASS", "FAIL", "UNKNOWN", "NOT_EVALUATED"],
-      "meaning": "The verified PDP identity is admitted for this decision purpose under explicit applicable point-in-time AETHER trust policy.",
+      "results": [
+        "PASS",
+        "FAIL",
+        "UNKNOWN",
+        "NOT_EVALUATED"
+      ],
+      "meaning": "A verified PDP identity, attributable to the exact response/request/proposal, is admitted for this decision purpose under explicit applicable point-in-time AETHER trust policy.",
       "requires_for_pass": [
         "RESPONSE_INTEGRITY_VERIFIED=PASS",
-        "verified PDP identity",
+        "verified PDP identity with attributable identity-verification evidence",
+        "PDP identity evidence bound to exact request identity",
+        "PDP identity evidence bound to exact response identity",
+        "PDP identity evidence bound to exact proposal and purpose",
         "trust-policy identity",
         "immutable trust-policy version or digest",
         "purpose/scope match",
-        "known trust-policy evaluation time"
+        "known trust-policy evaluation/check time",
+        "trust evaluation result bound to the same verified PDP identity and exact decision use"
       ],
-      "missing_provenance_rule": "Missing PDP identity, trust-policy identity/version/digest, or evaluation time yields UNKNOWN; it never becomes PASS by inference.",
-      "does_not_imply": ["DECISION_ADMISSIBLE", "AETHER_DECISION", "AETHER_AUTHORITY", "EXECUTION_PERMISSION"]
+      "missing_provenance_rule": "Missing, asserted-only, unbound, or unverified PDP identity/trust-policy provenance yields UNKNOWN; it never becomes PASS by inference or supply.",
+      "does_not_imply": [
+        "DECISION_ADMISSIBLE",
+        "AETHER_DECISION",
+        "AETHER_AUTHORITY",
+        "EXECUTION_PERMISSION"
+      ]
     },
     {
       "stage": "DECISION_ADMISSIBLE",
-      "results": ["ADMISSIBLE_ALLOW", "ADMISSIBLE_DENY", "FAIL", "UNKNOWN", "NOT_EVALUATED"],
-      "meaning": "The external decision is admissible only as bounded external authorization decision evidence for exactly the bound action proposal.",
+      "results": [
+        "ADMISSIBLE_ALLOW",
+        "ADMISSIBLE_DENY",
+        "FAIL",
+        "UNKNOWN",
+        "NOT_EVALUATED"
+      ],
+      "meaning": "The external decision is admissible only as bounded external authorization decision evidence for exactly the bound AETHER action proposal.",
       "requires_for_any_admissible_result": [
         "RECEIVED=PASS",
         "REQUEST_BOUND=PASS",
         "RESPONSE_INTEGRITY_VERIFIED=PASS",
         "PDP_TRUSTED=PASS",
+        "original immutable request identity available",
+        "original immutable response identity available",
         "boolean decision preserved exactly",
-        "PDP policy identity",
-        "immutable PDP policy version/digest",
-        "PDP evaluation time",
-        "freshness/validity policy PASS",
-        "replay check PASS",
+        "verified PDP policy identity + immutable version/digest attributable to this exact PDP evaluation",
+        "verified PDP evaluation time attributable to this exact PDP evaluation",
+        "freshness result PASS with attributable checker identity, policy identity/version/digest, check time, and exact request/response/proposal bindings",
+        "replay result PASS with attributable checker identity, policy identity/version/digest, check time, and exact request/response/proposal bindings",
         "all enforcement-relevant request/response context understood"
       ],
+      "bare_assertion_rule": "No asserted/supplied provenance field or bare boolean can satisfy an admissibility prerequisite.",
       "allow_rule": "decision=true may yield ADMISSIBLE_ALLOW only after every admissibility condition passes; it still creates no AETHER Decision, Authority, capability, authority_context, tool_use_grant, execution permission, Verification, or Verified Outcome.",
       "deny_rule": "decision=false may yield ADMISSIBLE_DENY only after admissibility is established; it is terminal NO_PROCEED for this adapter path and cannot be flipped to allow by the adapter; it still creates no AETHER Decision record.",
-      "untrusted_rule": "If response integrity or PDP trust is not PASS, neither raw true nor raw false becomes trusted ALLOW/DENY; the result is FAIL/UNKNOWN/NOT_EVALUATED and NO_PROCEED.",
-      "does_not_imply": ["AETHER_DECISION", "AETHER_AUTHORITY", "EXECUTION_PERMISSION"]
+      "untrusted_rule": "If response integrity, PDP trust, required provenance attribution, exact immutable identities, freshness, or replay is not PASS, neither raw true nor raw false becomes trusted ALLOW/DENY; the result is FAIL/UNKNOWN/NOT_EVALUATED and NO_PROCEED.",
+      "does_not_imply": [
+        "AETHER_DECISION",
+        "AETHER_AUTHORITY",
+        "EXECUTION_PERMISSION"
+      ]
     },
     {
       "stage": "AETHER_DECISION",
@@ -184,7 +338,7 @@
     }
   ],
   "request_binding_profile": {
-    "principle": "Binding is explicit, deterministic, and profile-versioned; semantic similarity is insufficient.",
+    "principle": "Binding is explicit, deterministic, immutable-identity-backed, and profile-versioned; semantic similarity or object reserialization is insufficient.",
     "required_aether_references": [
       "action_proposal.proposal_id",
       "action_proposal.principal_id",
@@ -201,65 +355,257 @@
       "Context": "Must bind every profile-defined enforcement-relevant item, including bounded_parameters; missing or mismatched required context is FAIL/UNKNOWN, never PASS."
     },
     "mismatch_rule": "Any material principal/tool/action/resource/required-parameter/context mismatch yields REQUEST_BOUND=FAIL and forbids ADMISSIBLE_ALLOW.",
-    "unknown_rule": "Any required dimension that cannot be established without inference yields REQUEST_BOUND=UNKNOWN and NO_PROCEED."
+    "unknown_rule": "Any required dimension or immutable request identity that cannot be established without inference yields REQUEST_BOUND=UNKNOWN and NO_PROCEED."
   },
   "response_context_semantics": {
     "preserve_raw": true,
     "profiled_context": "Only explicitly defined response-context fields may influence admissibility/enforcement.",
     "unprofiled_context": "Remain SOURCE_DATA only; never imply obligation, approval, delegation, authority, capability, tool-use grant, or AETHER Decision.",
     "unknown_enforcement_relevance": "If enforcement relevance is unknown, an external allow cannot be admitted; result is UNKNOWN/FAIL and NO_PROCEED.",
-    "informational_context": "A field may be ignored only when the active profile explicitly classifies it as non-enforcement informational."
+    "informational_context": "A field may be ignored only when the active reviewed profile explicitly classifies it as non-enforcement informational."
   },
   "replay_and_freshness": {
-    "rule": "No external allow is admissible outside an explicit permitted-use/freshness boundary.",
+    "rule": "No external allow is admissible outside an explicitly evidenced permitted-use/freshness boundary.",
     "requires_for_allow": [
-      "exact request identity",
-      "exact response identity when available",
+      "exact immutable request identity",
+      "exact immutable response identity",
       "bound action_proposal reference",
-      "PDP evaluation time",
-      "freshness/validity policy identity/version",
-      "replay check PASS"
+      "verified PDP evaluation time",
+      "freshness checker identity",
+      "freshness policy identity and immutable version/digest",
+      "freshness check time",
+      "freshness PASS bound to exact request/response/proposal",
+      "replay checker identity",
+      "replay policy identity and immutable version/digest",
+      "replay check time",
+      "replay PASS bound to exact request/response/proposal and intended use"
     ],
+    "bare_boolean_rule": "replay_pass/freshness_pass booleans without attributable evidence are SOURCE_DATA claims only and never PASS.",
     "missing_replay_evidence": "UNKNOWN -> NO_PROCEED",
     "different_proposal_reuse": "FAIL -> NO_PROCEED",
     "stale_or_out_of_window": "FAIL -> NO_PROCEED"
   },
+  "api_surface": {
+    "supported_v0_1": [
+      "AuthZEN single Access Evaluation API"
+    ],
+    "unsupported_v0_1": [
+      "AuthZEN Access Evaluations / boxcarring",
+      "AuthZEN Search APIs"
+    ],
+    "unsupported_rule": "Unsupported API surfaces may be preserved as raw SOURCE_DATA if encountered, but this profile assigns no admissibility semantics; DECISION_ADMISSIBLE=NOT_EVALUATED/UNKNOWN and NO_PROCEED."
+  },
   "negative_semantic_cases": [
-    {"id":"NEG-AZ-001-MALFORMED-INPUT","condition":"Malformed request/response or non-boolean decision.","expected":"RECEIVED=FAIL; later stages NOT_REACHED","forbidden":"trusted allow/deny"},
-    {"id":"NEG-AZ-002-RAW-ALLOW-SOURCE-DATA","condition":"Raw decision=true before integrity/trust/admissibility.","expected":"SOURCE_DATA; NO_PROCEED","forbidden":"AETHER Decision/Authority/grant/capability/execution"},
-    {"id":"NEG-AZ-003-RAW-DENY-UNVERIFIED","condition":"Raw decision=false before integrity/trust/admissibility.","expected":"SOURCE_DATA; NO_PROCEED","forbidden":"trusted deny claim"},
-    {"id":"NEG-AZ-004-SUBJECT-MISMATCH","condition":"Subject does not bind to expected principal.","expected":"REQUEST_BOUND=FAIL; NO_PROCEED","forbidden":"ADMISSIBLE_ALLOW"},
-    {"id":"NEG-AZ-005-RESOURCE-MISMATCH","condition":"Resource does not bind to expected target.","expected":"REQUEST_BOUND=FAIL; NO_PROCEED","forbidden":"ADMISSIBLE_ALLOW"},
-    {"id":"NEG-AZ-006-ACTION-MISMATCH","condition":"Action does not bind to expected proposed_action.","expected":"REQUEST_BOUND=FAIL; NO_PROCEED","forbidden":"ADMISSIBLE_ALLOW"},
-    {"id":"NEG-AZ-007-TOOL-BINDING-MISSING","condition":"Expected tool cannot be explicitly bound.","expected":"REQUEST_BOUND=UNKNOWN; NO_PROCEED","forbidden":"infer tool from action/resource"},
-    {"id":"NEG-AZ-008-CONTEXT-PARAMETER-MISMATCH","condition":"Profiled Context/parameters mismatch.","expected":"REQUEST_BOUND=FAIL; NO_PROCEED","forbidden":"ADMISSIBLE_ALLOW"},
-    {"id":"NEG-AZ-009-INTEGRITY-UNKNOWN","condition":"Response integrity/correlation is not established.","expected":"RESPONSE_INTEGRITY_VERIFIED=UNKNOWN; no later PASS; NO_PROCEED","forbidden":"trusted allow/deny"},
-    {"id":"NEG-AZ-010-PDP-IDENTITY-MISSING","condition":"Integrity verified but verified PDP identity absent.","expected":"PDP_TRUSTED=UNKNOWN; NO_PROCEED","forbidden":"infer PDP identity"},
-    {"id":"NEG-AZ-011-TRUST-POLICY-VERSION-MISSING","condition":"PDP known but trust-policy identity/version/digest incomplete.","expected":"PDP_TRUSTED=UNKNOWN; NO_PROCEED","forbidden":"PDP_TRUSTED=PASS"},
-    {"id":"NEG-AZ-012-PDP-POLICY-PROVENANCE-MISSING","condition":"PDP trusted but evaluated policy identity/version/digest absent.","expected":"DECISION_ADMISSIBLE=UNKNOWN; NO_PROCEED","forbidden":"ADMISSIBLE_ALLOW/DENY"},
-    {"id":"NEG-AZ-013-EVALUATION-TIME-MISSING","condition":"Verified PDP evaluation time absent.","expected":"DECISION_ADMISSIBLE=UNKNOWN; NO_PROCEED","forbidden":"substitute observed_at/current time"},
-    {"id":"NEG-AZ-014-OBSERVED-AT-SUBSTITUTION","condition":"observed_at is used as PDP evaluation time.","expected":"FAIL/UNKNOWN; NO_PROCEED","forbidden":"claim point-in-time PDP provenance"},
-    {"id":"NEG-AZ-015-REPLAY-DIFFERENT-PROPOSAL","condition":"Exact decision is reused for a different proposal or materially different principal/tool/action/resource/parameters.","expected":"DECISION_ADMISSIBLE=FAIL; NO_PROCEED","forbidden":"ADMISSIBLE_ALLOW"},
-    {"id":"NEG-AZ-016-REPLAY-EVIDENCE-MISSING","condition":"Replay/use status cannot be established.","expected":"DECISION_ADMISSIBLE=UNKNOWN; NO_PROCEED","forbidden":"assume freshness/single use"},
-    {"id":"NEG-AZ-017-STALE-ALLOW","condition":"decision=true is outside explicit freshness/validity window.","expected":"DECISION_ADMISSIBLE=FAIL; NO_PROCEED","forbidden":"ADMISSIBLE_ALLOW"},
-    {"id":"NEG-AZ-018-UNPROFILED-RESPONSE-CONTEXT","condition":"Unprofiled response context is present.","expected":"SOURCE_DATA only; unknown enforcement relevance => UNKNOWN/NO_PROCEED","forbidden":"obligation/approval/delegation/authority inference"},
-    {"id":"NEG-AZ-019-UNKNOWN-ENFORCEMENT-CONTEXT","condition":"Request/response context enforcement semantics are unknown.","expected":"REQUEST_BOUND or DECISION_ADMISSIBLE=UNKNOWN; NO_PROCEED","forbidden":"fail-open"},
-    {"id":"NEG-AZ-020-ADMISSIBLE-DENY-NO-FLIP","condition":"All checks pass and decision=false.","expected":"ADMISSIBLE_DENY; terminal NO_PROCEED","forbidden":"flip deny to allow/execution"},
-    {"id":"NEG-AZ-021-ADMISSIBLE-ALLOW-NOT-AUTHORITY","condition":"All checks pass and decision=true.","expected":"ADMISSIBLE_ALLOW; AETHER_DECISION=NOT_CREATED; AETHER_AUTHORITY=NOT_CREATED; EXECUTION_PERMISSION=NOT_GRANTED","forbidden":"authority_context/tool_use_grant/capability/invocation/AETHER Verification/Verified Outcome"},
-    {"id":"NEG-AZ-022-TRUST-WITHOUT-INTEGRITY","condition":"PDP would be trusted but response integrity/correlation is not PASS.","expected":"PDP_TRUSTED=NOT_EVALUATED; no admissibility PASS; NO_PROCEED","forbidden":"trusted decision use"}
+    {
+      "id": "NEG-AZ-001-MALFORMED-INPUT",
+      "condition": "Malformed request/response or non-boolean decision.",
+      "expected": "RECEIVED=FAIL; later stages NOT_REACHED",
+      "forbidden": "trusted allow/deny"
+    },
+    {
+      "id": "NEG-AZ-002-RAW-ALLOW-SOURCE-DATA",
+      "condition": "Raw decision=true before integrity/trust/admissibility.",
+      "expected": "SOURCE_DATA; NO_PROCEED",
+      "forbidden": "AETHER Decision/Authority/grant/capability/execution"
+    },
+    {
+      "id": "NEG-AZ-003-RAW-DENY-UNVERIFIED",
+      "condition": "Raw decision=false before integrity/trust/admissibility.",
+      "expected": "SOURCE_DATA; NO_PROCEED",
+      "forbidden": "trusted deny claim"
+    },
+    {
+      "id": "NEG-AZ-004-SUBJECT-MISMATCH",
+      "condition": "Subject does not bind to expected principal.",
+      "expected": "REQUEST_BOUND=FAIL; NO_PROCEED",
+      "forbidden": "ADMISSIBLE_ALLOW"
+    },
+    {
+      "id": "NEG-AZ-005-RESOURCE-MISMATCH",
+      "condition": "Resource does not bind to expected target.",
+      "expected": "REQUEST_BOUND=FAIL; NO_PROCEED",
+      "forbidden": "ADMISSIBLE_ALLOW"
+    },
+    {
+      "id": "NEG-AZ-006-ACTION-MISMATCH",
+      "condition": "Action does not bind to expected proposed_action.",
+      "expected": "REQUEST_BOUND=FAIL; NO_PROCEED",
+      "forbidden": "ADMISSIBLE_ALLOW"
+    },
+    {
+      "id": "NEG-AZ-007-TOOL-BINDING-MISSING",
+      "condition": "Expected tool cannot be explicitly bound.",
+      "expected": "REQUEST_BOUND=UNKNOWN; NO_PROCEED",
+      "forbidden": "infer tool from action/resource"
+    },
+    {
+      "id": "NEG-AZ-008-CONTEXT-PARAMETER-MISMATCH",
+      "condition": "Profiled Context/parameters mismatch.",
+      "expected": "REQUEST_BOUND=FAIL; NO_PROCEED",
+      "forbidden": "ADMISSIBLE_ALLOW"
+    },
+    {
+      "id": "NEG-AZ-009-INTEGRITY-UNKNOWN",
+      "condition": "Response integrity/correlation is not established.",
+      "expected": "RESPONSE_INTEGRITY_VERIFIED=UNKNOWN; no later PASS; NO_PROCEED",
+      "forbidden": "trusted allow/deny"
+    },
+    {
+      "id": "NEG-AZ-010-PDP-IDENTITY-MISSING",
+      "condition": "Integrity verified but verified PDP identity absent.",
+      "expected": "PDP_TRUSTED=UNKNOWN; NO_PROCEED",
+      "forbidden": "infer PDP identity"
+    },
+    {
+      "id": "NEG-AZ-011-TRUST-POLICY-VERSION-MISSING",
+      "condition": "PDP known but trust-policy identity/version/digest incomplete.",
+      "expected": "PDP_TRUSTED=UNKNOWN; NO_PROCEED",
+      "forbidden": "PDP_TRUSTED=PASS"
+    },
+    {
+      "id": "NEG-AZ-012-PDP-POLICY-PROVENANCE-MISSING",
+      "condition": "PDP trusted but evaluated policy identity/version/digest absent.",
+      "expected": "DECISION_ADMISSIBLE=UNKNOWN; NO_PROCEED",
+      "forbidden": "ADMISSIBLE_ALLOW/DENY"
+    },
+    {
+      "id": "NEG-AZ-013-EVALUATION-TIME-MISSING",
+      "condition": "Verified PDP evaluation time absent.",
+      "expected": "DECISION_ADMISSIBLE=UNKNOWN; NO_PROCEED",
+      "forbidden": "substitute observed_at/current time"
+    },
+    {
+      "id": "NEG-AZ-014-OBSERVED-AT-SUBSTITUTION",
+      "condition": "observed_at is used as PDP evaluation time.",
+      "expected": "FAIL/UNKNOWN; NO_PROCEED",
+      "forbidden": "claim point-in-time PDP provenance"
+    },
+    {
+      "id": "NEG-AZ-015-REPLAY-DIFFERENT-PROPOSAL",
+      "condition": "Exact decision is reused for a different proposal or materially different principal/tool/action/resource/parameters.",
+      "expected": "DECISION_ADMISSIBLE=FAIL; NO_PROCEED",
+      "forbidden": "ADMISSIBLE_ALLOW"
+    },
+    {
+      "id": "NEG-AZ-016-REPLAY-EVIDENCE-MISSING",
+      "condition": "Replay/use status cannot be established.",
+      "expected": "DECISION_ADMISSIBLE=UNKNOWN; NO_PROCEED",
+      "forbidden": "assume freshness/single use"
+    },
+    {
+      "id": "NEG-AZ-017-STALE-ALLOW",
+      "condition": "decision=true is outside explicit freshness/validity window.",
+      "expected": "DECISION_ADMISSIBLE=FAIL; NO_PROCEED",
+      "forbidden": "ADMISSIBLE_ALLOW"
+    },
+    {
+      "id": "NEG-AZ-018-UNPROFILED-RESPONSE-CONTEXT",
+      "condition": "Unprofiled response context is present.",
+      "expected": "SOURCE_DATA only; unknown enforcement relevance => UNKNOWN/NO_PROCEED",
+      "forbidden": "obligation/approval/delegation/authority inference"
+    },
+    {
+      "id": "NEG-AZ-019-UNKNOWN-ENFORCEMENT-CONTEXT",
+      "condition": "Request/response context enforcement semantics are unknown.",
+      "expected": "REQUEST_BOUND or DECISION_ADMISSIBLE=UNKNOWN; NO_PROCEED",
+      "forbidden": "fail-open"
+    },
+    {
+      "id": "NEG-AZ-020-ADMISSIBLE-DENY-NO-FLIP",
+      "condition": "All checks pass and decision=false.",
+      "expected": "ADMISSIBLE_DENY; terminal NO_PROCEED",
+      "forbidden": "flip deny to allow/execution"
+    },
+    {
+      "id": "NEG-AZ-021-ADMISSIBLE-ALLOW-NOT-AUTHORITY",
+      "condition": "All checks pass and decision=true.",
+      "expected": "ADMISSIBLE_ALLOW; AETHER_DECISION=NOT_CREATED; AETHER_AUTHORITY=NOT_CREATED; EXECUTION_PERMISSION=NOT_GRANTED",
+      "forbidden": "authority_context/tool_use_grant/capability/invocation/AETHER Verification/Verified Outcome"
+    },
+    {
+      "id": "NEG-AZ-022-TRUST-WITHOUT-INTEGRITY",
+      "condition": "PDP would be trusted but response integrity/correlation is not PASS.",
+      "expected": "PDP_TRUSTED=NOT_EVALUATED; no admissibility PASS; NO_PROCEED",
+      "forbidden": "trusted decision use"
+    },
+    {
+      "id": "NEG-AZ-023-PDP-IDENTITY-ASSERTED-ONLY",
+      "condition": "A PDP identity is supplied/asserted but lacks attributable verification identity/method/result bound to exact request/response/proposal.",
+      "expected": "PDP_TRUSTED=UNKNOWN; NO_PROCEED",
+      "forbidden": "PDP_TRUSTED=PASS from supplied identity"
+    },
+    {
+      "id": "NEG-AZ-024-PDP-POLICY-ASSERTED-ONLY",
+      "condition": "Policy identity/version/digest is supplied but no attributable evidence proves this exact PDP evaluation used it.",
+      "expected": "DECISION_ADMISSIBLE=UNKNOWN; NO_PROCEED",
+      "forbidden": "ADMISSIBLE_ALLOW/DENY from policy assertion"
+    },
+    {
+      "id": "NEG-AZ-025-EVALUATION-TIME-CALLER-SUPPLIED",
+      "condition": "Caller supplies an evaluation timestamp without attributable evidence linking it to the exact PDP evaluation.",
+      "expected": "DECISION_ADMISSIBLE=UNKNOWN; NO_PROCEED",
+      "forbidden": "treat caller timestamp as verified evaluation time"
+    },
+    {
+      "id": "NEG-AZ-026-BARE-FRESHNESS-PASS",
+      "condition": "freshness_pass=true is supplied without checker identity, policy identity/version/digest, check time, and exact request/response/proposal binding.",
+      "expected": "DECISION_ADMISSIBLE=UNKNOWN; NO_PROCEED",
+      "forbidden": "admissibility PASS from bare freshness boolean"
+    },
+    {
+      "id": "NEG-AZ-027-BARE-REPLAY-PASS",
+      "condition": "replay_pass=true is supplied without checker identity, policy identity/version/digest, check time, and exact request/response/proposal binding.",
+      "expected": "DECISION_ADMISSIBLE=UNKNOWN; NO_PROCEED",
+      "forbidden": "admissibility PASS from bare replay boolean"
+    },
+    {
+      "id": "NEG-AZ-028-PROVENANCE-BOUND-TO-DIFFERENT-DECISION",
+      "condition": "PDP identity/policy/time/freshness/replay evidence is valid but bound to a different request, response, proposal, or purpose.",
+      "expected": "dependent stage FAIL/UNKNOWN; NO_PROCEED",
+      "forbidden": "reuse provenance across decision uses"
+    },
+    {
+      "id": "NEG-AZ-029-OBJECT-ONLY-IMMUTABLE-IDENTITY-UNAVAILABLE",
+      "condition": "Parsed request/response objects are supplied without original immutable request/response identities.",
+      "expected": "RECEIVED=PASS as SOURCE_DATA; REQUEST_BOUND/RESPONSE_INTEGRITY_VERIFIED cannot both PASS; DECISION_ADMISSIBLE=UNKNOWN/NOT_EVALUATED; NO_PROCEED",
+      "forbidden": "ADMISSIBLE_ALLOW/DENY"
+    },
+    {
+      "id": "NEG-AZ-030-RESERIALIZATION-HASH-SUBSTITUTION",
+      "condition": "Adapter hashes locally reserialized parsed objects and presents the digest as received-byte/original immutable identity.",
+      "expected": "identity remains UNAVAILABLE; NO_PROCEED",
+      "forbidden": "substitute reserialization hash for original immutable identity"
+    },
+    {
+      "id": "NEG-AZ-031-BOXCARRING-UNSUPPORTED",
+      "condition": "Input is AuthZEN Access Evaluations/boxcarring rather than one single Access Evaluation.",
+      "expected": "UNSUPPORTED; preserve raw SOURCE_DATA only; DECISION_ADMISSIBLE=NOT_EVALUATED; NO_PROCEED",
+      "forbidden": "apply v0.1 single-evaluation admissibility semantics"
+    },
+    {
+      "id": "NEG-AZ-032-SEARCH-API-UNSUPPORTED",
+      "condition": "Input/result belongs to an AuthZEN Search API.",
+      "expected": "UNSUPPORTED; preserve raw SOURCE_DATA only; DECISION_ADMISSIBLE=NOT_EVALUATED; NO_PROCEED",
+      "forbidden": "treat search result as access decision or authority"
+    }
   ],
   "acceptance_for_design_review": [
-    "semantic chain explicit and non-collapsing",
-    "raw decisions SOURCE_DATA first",
+    "semantic chain remains explicit and non-collapsing",
+    "raw decisions and all admissibility provenance are SOURCE_DATA first",
+    "no asserted/supplied provenance or bare boolean can create PASS",
+    "all provenance used for PASS is attributable and bound to exact immutable request identity + exact immutable response identity + exact action proposal",
+    "PDP/policy/time/freshness/replay provenance carries applicable verification/check identity and policy/time metadata where required",
+    "object-only inputs remain importable SOURCE_DATA but cannot reach DECISION_ADMISSIBLE without original immutable identities",
+    "no reserialization/canonical-object hash substitutes for original immutable identity",
+    "v0.1 supports one AuthZEN single Access Evaluation only; boxcarring and Search APIs are unsupported",
     "unverified/untrusted response cannot become trusted allow or deny",
     "admissible false is terminal and cannot be flipped",
     "admissible true never creates Decision/Authority/capability/grant/execution permission",
     "exact request binding covers principal/tool/action/resource/parameters/context",
-    "missing PDP/policy/evaluation provenance yields UNKNOWN",
     "unprofiled response context cannot become obligation/approval/delegation/authority",
     "unknown enforcement context fails closed",
-    "replay/freshness uncertainty forbids allow",
     "AX-PUB-SCHEMA-003 remains unchanged",
+    "NEG-AZ-001 through NEG-AZ-022 are preserved and new correction cases are added",
     "no implementation is authorized"
   ]
 }
