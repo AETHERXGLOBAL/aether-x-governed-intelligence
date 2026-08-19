@@ -1,34 +1,51 @@
 # AETHER X Governed Intelligence — External Evaluator Guide
 
-`DEV-GATE-04 CANDIDATE · SELF-SERVICE PUBLIC ENGINEERING GUIDE · NON-PRODUCTION`
+`DEV-GATE-04 ESTABLISHED · SELF-SERVICE PUBLIC ENGINEERING GUIDE · NON-PRODUCTION`
 
 This guide is for technically competent external reviewers who want to evaluate the bounded public developer surface without internal AETHER X assistance.
 
 It does not create a support relationship, SDK publication, software reuse licence, product integration claim or production-readiness claim.
 
+The current public engineering program now has two distinct evaluator paths:
+
+```text
+REPOSITORY-LOCAL EVALUATION
+= inspect and run the bounded public engineering surface directly from a repository checkout
+
+INSTALLABLE PACKAGE EVALUATION
+= inspect the exact Gate-05B installable package candidate under the Gate-05C evaluator handoff
+```
+
+This guide covers the **repository-local evaluation path**. For the current installable package candidate and Gate-05C handoff requirements, use [`INSTALLABLE_EXTERNAL_EVALUATOR_GUIDE.md`](./INSTALLABLE_EXTERNAL_EVALUATOR_GUIDE.md).
+
+`REPOSITORY-LOCAL EVALUATION ≠ FINAL GATE-05C HUMAN EVALUATION`
+
 ## 1. What You Are Evaluating
 
-You are evaluating a public, repository-local governed-intelligence engineering surface consisting of:
+You are evaluating a public governed-intelligence engineering surface consisting of:
 
 - three public contract/specification paths;
 - machine-readable JSON Schema structures;
 - bounded reference validators;
 - synthetic conformance kits;
 - a repository-local Python SDK candidate;
+- an installable Python package candidate governed separately under the current Gate-05 program;
 - deterministic release-candidate engineering controls;
 - public CI/governance evidence.
 
 You are **not** evaluating a production AETHER X product, customer deployment, live service, broker connection, private agent runtime or internal product implementation.
+
+The current installable package candidate is an engineering candidate only. Its existence does not establish supported-SDK status, public registry publication, production readiness or release authority.
 
 ## 2. Prerequisites
 
 Required:
 
 - Git;
-- Python `3.10`, `3.11`, `3.12` or `3.13` for the directly verified candidate matrix;
+- Python `3.11`, `3.12`, `3.13` or `3.14` for the current directly verified installable-candidate runtime matrix;
 - a local shell capable of running the commands below.
 
-No third-party Python package is required for the bounded public candidate path.
+No third-party Python package is required for the bounded repository-local evaluation path.
 
 No AETHER X credential, private repository, private package index or private endpoint is required.
 
@@ -40,9 +57,9 @@ cd aether-x-governed-intelligence
 python3 --version
 ```
 
-If your Python runtime is outside `3.10–3.13`, you may inspect the repository, but AETHER X does not claim that runtime as part of the current directly verified candidate matrix.
+For current evaluation, use CPython `3.11–3.14`, which is the directly verified runtime matrix for the current installable candidate. A runtime outside that matrix may still allow repository inspection, but AETHER X does not claim it as part of the current verified installable-candidate runtime surface.
 
-## 4. One-Command Evaluation Path
+## 4. One-Command Repository-Local Evaluation Path
 
 Run:
 
@@ -65,9 +82,11 @@ AX_EXTERNAL_EVALUATION_REPORT_PASS
 
 The runner exercises only public repository material.
 
+A successful repository-local run is useful external engineering evidence, but it is not a substitute for the separately governed final Gate-05C installable-package human evaluation.
+
 ## 5. Manual Evaluation Path
 
-If you want to inspect each layer separately, run:
+If you want to inspect each repository-local layer separately, run:
 
 ```bash
 python3 tools/check_developer_experience.py
@@ -84,7 +103,9 @@ A successful run establishes only that the bounded public checks passed in your 
 
 ## 6. Repository-Local Integration Example
 
-The candidate is not an installable package. To exercise the repository-local facade directly from the checkout:
+The repository-local SDK candidate remains available for direct checkout-based evaluation. A separate **installable package candidate** has also been established under Gate-05B; do not confuse the two evaluation paths.
+
+To exercise the repository-local facade directly from the checkout:
 
 ```bash
 PYTHONPATH="$PWD/sdk-candidate/python" python3 - <<'PY'
@@ -104,13 +125,16 @@ assert result.valid is True
 PY
 ```
 
-This is an evaluation/integration example for the repository-local candidate only.
+This example evaluates the repository-local facade only.
 
-`REPOSITORY-LOCAL IMPORT ≠ APPROVED PACKAGE DISTRIBUTION`
+For the exact installable package candidate, including its governed artifact identity, runtime matrix and external-index evaluation requirements, use [`INSTALLABLE_EXTERNAL_EVALUATOR_GUIDE.md`](./INSTALLABLE_EXTERNAL_EVALUATOR_GUIDE.md).
+
+`REPOSITORY-LOCAL IMPORT ≠ APPROVED PACKAGE DISTRIBUTION`  
+`INSTALLABLE CANDIDATE ≠ SUPPORTED SDK`
 
 ## 7. Contract Surface
 
-The candidate currently maps only to:
+The bounded public candidate surface currently maps only to:
 
 ```text
 AX-PUB-SPEC-002 v1.0 — Evidence / Authority / Verification
@@ -156,6 +180,8 @@ This is a non-published engineering release candidate, not a package release.
 
 Read:
 
+- [`PUBLIC_ENGINEERING_STATE.md`](./PUBLIC_ENGINEERING_STATE.md)
+- [`INSTALLABLE_EXTERNAL_EVALUATOR_GUIDE.md`](./INSTALLABLE_EXTERNAL_EVALUATOR_GUIDE.md)
 - [`LIMITATIONS_AND_UNSUPPORTED_USES.md`](./LIMITATIONS_AND_UNSUPPORTED_USES.md)
 - [`MIGRATION_AND_DEPRECATION_DRAFT.md`](./MIGRATION_AND_DEPRECATION_DRAFT.md)
 - [`FEEDBACK_AND_TRIAGE.md`](./FEEDBACK_AND_TRIAGE.md)
@@ -172,9 +198,9 @@ No response-time or support SLA is created by the public feedback process.
 
 ## 12. Evaluation Result Boundary
 
-A successful external run may support a statement such as:
+A successful repository-local run may support a statement such as:
 
-> The evaluator reproduced the declared bounded public checks in the stated environment.
+> The evaluator reproduced the declared bounded public repository checks in the stated environment.
 
 It must not be generalized into claims of:
 
@@ -185,11 +211,16 @@ It must not be generalized into claims of:
 - customer adoption;
 - supported SDK status;
 - AETHER X product integration;
-- commercial reuse permission.
+- commercial reuse permission;
+- final Gate-05C human evaluation;
+- external registry validation;
+- SDK publication authority.
 
 `EVALUATION PASS ≠ PRODUCTION APPROVAL`  
 `EVALUATION PASS ≠ EXTERNAL ENDORSEMENT`  
+`REPOSITORY-LOCAL EVALUATION ≠ FINAL GATE-05C HUMAN EVALUATION`  
 `EXTERNAL EVALUATION READINESS ≠ EXTERNAL ADOPTION`  
+`INSTALLABLE CANDIDATE ≠ SUPPORTED SDK`  
 `SDK PUBLICATION NOT AUTHORIZED`
 
 ---
