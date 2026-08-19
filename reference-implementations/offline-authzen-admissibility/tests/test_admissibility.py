@@ -23,8 +23,8 @@ def request(*, subject="principal-A", resource="resource-A", action="write", too
     if extra_context:
         context.update(extra_context)
     return {
-        "subject": {"id": subject},
-        "resource": {"id": resource},
+        "subject": {"type": "principal", "id": subject},
+        "resource": {"type": "resource", "id": resource},
         "action": {"name": action},
         "context": context,
     }
