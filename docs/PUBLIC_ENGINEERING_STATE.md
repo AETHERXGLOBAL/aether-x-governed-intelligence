@@ -27,7 +27,7 @@ DEV-GATE-05  ACTIVE
 
 Gate closure establishes only the bounded engineering/evidence objective declared for that gate. It does not imply production readiness, commercial availability, customer deployment or a supported product.
 
-`DEV-GATE-05C` remains active because external-registry validation, independent human evaluation, IP/licensing clearance, live release-control requirements, support activation and security-operations readiness are not established.
+`DEV-GATE-05C` remains active because external-registry validation, independent human evaluation, IP/licensing clearance, live release-control requirements, support activation, security-operations readiness, release-owner accountability and explicit release authority are not established.
 
 ---
 
@@ -57,15 +57,25 @@ Gate closure establishes only the bounded engineering/evidence objective declare
 | Security response owner | `NOT ESTABLISHED` |
 | Security response SLA | `NOT ESTABLISHED` |
 | Bug bounty | `NOT ESTABLISHED` |
+| Installable external-evaluator handoff pack | `CI-VALIDATED / DETERMINISTIC` |
+| Human external evaluation | `NOT ESTABLISHED` |
+| Release-readiness evidence aggregation | `CI-VALIDATED / BLOCKED` |
+| Release-readiness hard dimensions | `13` |
+| Release-readiness dimensions established | `4` |
+| Release-readiness dimensions blocked | `9` |
+| Ready for DEV-GATE-05D authority review | `NO` |
 | Live release-control audit mechanism | `ESTABLISHED / READ-ONLY` |
 | GitHub release-control readiness | `NOT ESTABLISHED` |
 | External registry validation | `NOT ESTABLISHED / NOT AUTHORIZED` |
-| Independent human external evaluation | `NOT ESTABLISHED` |
 | External adoption | `NOT ESTABLISHED` |
 | Registry ownership | `NOT ESTABLISHED` |
+| Trusted Publisher | `NOT ESTABLISHED` |
+| Licence / IP clearance | `NOT ESTABLISHED` |
 | Public SDK licence | `NOT GRANTED` |
+| Release owner / accountability | `NOT ESTABLISHED` |
 | Supported SDK | `NOT ESTABLISHED` |
 | Production SDK | `NOT ESTABLISHED` |
+| DEV-GATE-05D release authority | `NOT AUTHORIZED` |
 | SDK publication | `NOT AUTHORIZED` |
 
 ---
@@ -180,8 +190,8 @@ FORCE-PUSH BLOCKING:                 NOT_ESTABLISHED
 DELETION BLOCKING:                   NOT_ESTABLISHED
 PYPI ENVIRONMENT:                    NOT_ESTABLISHED
 ACTIVE BRANCH RULES:                 NONE
-ENABLED REPOSITORY RULESETS:          NONE
-GITHUB CONTROLS READY FOR RELEASE:    FALSE
+ENABLED REPOSITORY RULESETS:         NONE
+GITHUB CONTROLS READY FOR RELEASE:   FALSE
 ```
 
 The audit mechanism is established. Release-control readiness is not.
@@ -257,6 +267,72 @@ SDK PUBLICATION: NOT AUTHORIZED
 
 `CONTRACT VALIDATION ≠ CONTRACT ACTIVATION`
 
+### Installable External-Evaluator Handoff
+
+Artifact: `AX-PUB-EVAL-PACK-001`  
+Validation evidence: `AX-PUB-CI-014`  
+Promoted materialization evidence: `AX-PUB-CI-015`
+
+Current bounded state:
+
+```text
+HANDOFF PACK: CI-VALIDATED / DETERMINISTIC
+LOCAL REHEARSAL: CPYTHON 3.11–3.14 VERIFIED
+EXTERNAL INDEX REQUIRED FOR FINAL EVALUATION: YES
+EXTERNAL REGISTRY VALIDATION: NOT ESTABLISHED
+HUMAN EXTERNAL EVALUATION: NOT ESTABLISHED
+INDEPENDENT EVALUATOR RESULT: NOT ESTABLISHED
+SUPPORTED SDK: NOT ESTABLISHED
+SDK PUBLICATION: NOT AUTHORIZED
+```
+
+The handoff pack makes the exact evaluator path reproducible. It does not substitute CI for an independent human evaluator.
+
+`HANDOFF CI-VALIDATED ≠ HUMAN EVALUATION`
+
+### SDK Release-Readiness Evidence Aggregation
+
+Artifact: `AX-PUB-RELPACK-001`  
+Evidence: `AX-PUB-CI-016`
+
+The release-readiness pack aggregates thirteen hard dimensions and fails closed. Its validated current result is:
+
+```text
+RELEASE READINESS HARD DIMENSIONS: 13
+RELEASE READINESS ESTABLISHED: 4
+RELEASE READINESS BLOCKED: 9
+READY FOR DEV-GATE-05D AUTHORITY REVIEW: NO
+DEV-GATE-05D: NOT AUTHORIZED
+SDK PUBLICATION: NOT AUTHORIZED
+```
+
+Established engineering dimensions:
+
+```text
+ENGINEERING_CANDIDATE_IDENTITY
+PUBLIC_API_CONTRACT
+EXACT_ARTIFACT_RUNTIME_VALIDATION
+SUPPLY_CHAIN_PROVENANCE_SBOM
+```
+
+Current blockers:
+
+```text
+EXTERNAL_REGISTRY_VALIDATION: NOT_ESTABLISHED
+INDEPENDENT_HUMAN_EXTERNAL_EVALUATION: NOT_ESTABLISHED
+RELEASE_CONTROL_READINESS: NOT_ESTABLISHED
+REGISTRY_OWNERSHIP_AND_TRUSTED_PUBLISHER: NOT_ESTABLISHED
+LICENCE_AND_IP_CLEARANCE: NOT_ESTABLISHED
+SUPPORT_CONTRACT_ACTIVATION: NOT_ACTIVATED
+SECURITY_OPERATIONS_READINESS: NOT_READY
+RELEASE_OWNER_AND_ACCOUNTABILITY: NOT_ESTABLISHED
+EXPLICIT_RELEASE_AUTHORITY: NOT_AUTHORIZED
+```
+
+A green release-readiness CI result means the aggregation correctly represents these blockers. It does not turn a blocked release into a ready release.
+
+`AGGREGATION PASS ≠ RELEASE READINESS`
+
 ---
 
 ## 5. Canonical Moving Governance State
@@ -264,7 +340,7 @@ SDK PUBLICATION: NOT AUTHORIZED
 The current machine-readable moving state is:
 
 ```text
-AX-PUB-MANIFEST-001 v1.24
+AX-PUB-MANIFEST-001 v1.26
 ```
 
 The manifest records:
@@ -279,6 +355,14 @@ PUBLIC API CONTRACT EVIDENCE: AX-PUB-CI-012
 SUPPORT CONTRACT: AX-PUB-SUP-001 / VALIDATED CANDIDATE / NOT ACTIVATED
 SECURITY OPERATIONS CONTRACT: AX-PUB-SEC-001 / VALIDATED CANDIDATE / NOT READY
 SUPPORT / SECURITY EVIDENCE: AX-PUB-CI-013
+EVALUATOR HANDOFF: AX-PUB-EVAL-PACK-001 / CI-VALIDATED
+EVALUATOR HANDOFF EVIDENCE: AX-PUB-CI-014 / AX-PUB-CI-015
+RELEASE READINESS AGGREGATION: AX-PUB-RELPACK-001 / CI-VALIDATED / BLOCKED
+RELEASE READINESS EVIDENCE: AX-PUB-CI-016
+RELEASE READINESS HARD DIMENSIONS: 13
+RELEASE READINESS ESTABLISHED: 4
+RELEASE READINESS BLOCKED: 9
+READY FOR DEV-GATE-05D AUTHORITY REVIEW: NO
 EXTERNAL REGISTRY VALIDATION: NOT AUTHORIZED / NOT ESTABLISHED
 HUMAN EXTERNAL EVALUATION: NOT ESTABLISHED
 REGISTRY OWNERSHIP: NOT ESTABLISHED
@@ -287,15 +371,17 @@ STABLE 1.0 GUARANTEE: NOT ESTABLISHED
 SUPPORT COMMITMENT: NOT ESTABLISHED
 SECURITY OPERATIONS READY: NO
 SUPPORTED SDK: NOT ESTABLISHED
+DEV-GATE-05D: NOT AUTHORIZED
 SDK PUBLICATION: NOT AUTHORIZED
 ```
 
-The moving machine state therefore distinguishes four different facts that must not be collapsed:
+The moving machine state therefore distinguishes five different facts that must not be collapsed:
 
 ```text
 PACKAGE INSTALLABILITY: ESTABLISHED AS CANDIDATE
 API CONTRACT VALIDATION: ESTABLISHED AS CANDIDATE
 SUPPORT / SECURITY OPERATING CONTRACTS: VALIDATED AS PRE-ACTIVATION CANDIDATES
+RELEASE READINESS AGGREGATION: CI-VALIDATED / CURRENTLY BLOCKED
 PRODUCTION RELEASE / SUPPORT AUTHORITY: NOT ESTABLISHED
 ```
 
@@ -328,12 +414,13 @@ The exact promotion criteria are defined in:
 - [`AX-PUB-API-001`](./AX-PUB-API-001_PYTHON_SDK_PUBLIC_API_CONTRACT.md)
 - [`AX-PUB-SUP-001`](./AX-PUB-SUP-001_SDK_SUPPORT_COMPATIBILITY_MAINTENANCE_CONTRACT.md)
 - [`AX-PUB-SEC-001`](./AX-PUB-SEC-001_SDK_SECURITY_OPERATIONS_READINESS_CONTRACT.md)
+- [`AX-PUB-RELPACK-001`](./AX-PUB-RELPACK-001_SDK_RELEASE_READINESS_EVIDENCE_PACK.md)
 
 Live control measurement is defined in:
 
 - [`RELEASE_CONTROL_AUDIT.md`](./RELEASE_CONTROL_AUDIT.md)
 
-These documents define targets and hard gates. Their existence or CI validation does not establish that the underlying operating controls are already activated.
+These documents define targets, evidence aggregation and hard gates. Their existence or CI validation does not establish that the underlying operating controls are activated.
 
 ---
 
@@ -354,6 +441,7 @@ Current hard blockers include:
 - named security response owner and escalation path;
 - security release/withdrawal operating process;
 - support-contract activation decision;
+- release-owner accountability;
 - complete finding/issue disposition;
 - final release evidence pack;
 - explicit final release authority.
@@ -412,6 +500,8 @@ README.md
 → AX-PUB-CI-008 / 009 / 010
 → AX-PUB-API-001 / AX-PUB-CI-012
 → AX-PUB-SUP-001 / AX-PUB-SEC-001 / AX-PUB-CI-013
+→ AX-PUB-EVAL-PACK-001 / AX-PUB-CI-014 / AX-PUB-CI-015
+→ AX-PUB-RELPACK-001 / AX-PUB-CI-016
 → AX-PUB-CI-011 / RELEASE_CONTROL_AUDIT.md
 → PRODUCTION_SDK_DEFINITION_OF_DONE.md
 → RELEASE_CONTROL_PLANE.md
@@ -429,6 +519,8 @@ AX-PUB-GATE-001
 → AX-PUB-CI-011
 → AX-PUB-API-001 / AX-PUB-CI-012
 → AX-PUB-SUP-001 / AX-PUB-SEC-001 / AX-PUB-CI-013
+→ AX-PUB-EVAL-PACK-001 / AX-PUB-CI-014 / AX-PUB-CI-015
+→ AX-PUB-RELPACK-001 / AX-PUB-CI-016
 → PRODUCTION_SDK_DEFINITION_OF_DONE.md
 → RELEASE_CONTROL_PLANE.md
 ```
@@ -446,6 +538,9 @@ VALIDATED API CONTRACT CANDIDATE ≠ STABLE 1.0 GUARANTEE
 VALIDATED SUPPORT CONTRACT CANDIDATE ≠ SUPPORT COMMITMENT
 VALIDATED SECURITY OPERATIONS CONTRACT ≠ SECURITY OPERATIONS READY
 TARGET DEPRECATION WINDOW ≠ CURRENT SUPPORT PROMISE
+EVALUATOR HANDOFF CI PASS ≠ HUMAN EXTERNAL EVALUATION
+RELEASE READINESS AGGREGATION PASS ≠ RELEASE READINESS
+READY FOR AUTHORITY REVIEW ≠ RELEASE AUTHORITY
 LIVE RELEASE-CONTROL AUDIT ≠ RELEASE-CONTROL READY
 LOCAL INDEX PASS ≠ EXTERNAL REGISTRY VALIDATION
 TARGET LICENCE ≠ LICENCE GRANT
