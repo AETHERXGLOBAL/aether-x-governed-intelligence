@@ -118,7 +118,7 @@ def policy_pass(ctx):
 
 
 def freshness_pass(ctx):
-    return bound_evidence(ctx)
+    return bound_evidence(ctx, verified_pdp_evaluation_time=ctx["verified_evaluation_time"])
 
 
 def replay_pass(ctx):
