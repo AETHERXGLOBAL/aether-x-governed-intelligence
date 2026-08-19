@@ -65,7 +65,8 @@ def envelope(stmt, signatures):
     )
 
 
-def verifier_by_sig(_payload, sig):
+def verifier_by_sig(context):
+    sig = context["signature"]
     verdict = {
         "good": ("PASS", "issuer-A"),
         "good-B": ("PASS", "issuer-B"),
@@ -108,7 +109,11 @@ def trusted_but_pair_rejected(_context):
 
 
 def predicate_pass(_context):
-    return "PASS"
+    return {
+        "status": "PASS",
+        "policy_identity": "predicate-policy-v1",
+        "policy_digest": "sha256:" + "f" * 64,
+    }
 
 
 class OfflineImporterNegativeCases(unittest.TestCase):
@@ -212,13 +217,22 @@ class OfflineImporterNegativeCases(unittest.TestCase):
         self.assertEqual(result["states"]["PREDICATE_POLICY_VALIDATED"], "PASS")
         self.assertEqual(result["evidence_record"]["classification"], "SOURCE_DATA")
         self.assertEqual(result["evidence_record"]["semantic_role"], "EXTERNAL_VERIFIER_ASSESSMENT")
+        self.assertEqual(result["evidence_record"]["observed_at"], OBSERVED)
+        self.assertEqual(
+            result["evidence_record"]["attestation_asserted_timestamps"]["timeVerified"],
+            "2026-08-18T12:00:00Z",
+        )
         self.assertEqual(result["aether_verification"], "NOT_EVALUATED")
         self.assertEqual(result["verified_outcome"], "NOT_ESTABLISHED")
         self.assertEqual(result["promotion"], "NONE")
 
     def test_neg_010_vsa_failed(self):
         def vsa_result_policy(context):
-            return "FAIL" if context["statement"]["predicate"].get("verificationResult") == "FAILED" else "PASS"
+            return {
+                "status": "FAIL" if context["statement"]["predicate"].get("verificationResult") == "FAILED" else "PASS",
+                "policy_identity": "predicate-policy-v1",
+                "policy_digest": "sha256:" + "f" * 64,
+            }
         result = self.import_env(
             vsa(verification_result="FAILED"),
             [{"keyid": "k1", "sig": "good"}],
@@ -232,7 +246,11 @@ class OfflineImporterNegativeCases(unittest.TestCase):
     def test_neg_011_vsa_policy_digest_missing(self):
         def exact_policy(context):
             policy = context["statement"]["predicate"].get("policy", {})
-            return "UNKNOWN" if "digest" not in policy else "PASS"
+            return {
+                "status": "UNKNOWN" if "digest" not in policy else "PASS",
+                "policy_identity": "predicate-policy-v1",
+                "policy_digest": "sha256:" + "f" * 64,
+            }
         result = self.import_env(
             vsa(policy_digest=False),
             [{"keyid": "k1", "sig": "good"}],
