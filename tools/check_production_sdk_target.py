@@ -4,7 +4,7 @@
 This checker validates repository-declared engineering state only. It does not
 establish live GitHub branch protection, PyPI ownership, Trusted Publishing,
 software licence authority, human external evaluation, support activation,
-security-operations readiness, or release authority.
+security-operations readiness, release-owner accountability or release authority.
 """
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ DEV009 = ROOT / "artifacts" / "AX-PUB-DEV-009.json"
 API001 = ROOT / "artifacts" / "AX-PUB-API-001.json"
 SUP001 = ROOT / "artifacts" / "AX-PUB-SUP-001.json"
 SEC001 = ROOT / "artifacts" / "AX-PUB-SEC-001.json"
+RELPACK = ROOT / "artifacts" / "AX-PUB-RELPACK-001.json"
 QUICKSTART = ROOT / "docs" / "QUICKSTART.md"
 CURRENT = ROOT / "docs" / "PUBLIC_ENGINEERING_STATE.md"
 DOD = ROOT / "docs" / "PRODUCTION_SDK_DEFINITION_OF_DONE.md"
@@ -26,6 +27,7 @@ CI010 = ROOT / "evidence" / "AX-PUB-CI-010_DISTRIBUTION_EXTERNAL_VALIDATION_BASE
 CI011 = ROOT / "evidence" / "AX-PUB-CI-011_RELEASE_CONTROL_LIVE_AUDIT.md"
 CI012 = ROOT / "evidence" / "AX-PUB-CI-012_SDK_PUBLIC_API_CONTRACT_VALIDATION.md"
 CI013 = ROOT / "evidence" / "AX-PUB-CI-013_SDK_SUPPORT_SECURITY_CONTRACT_VALIDATION.md"
+CI016 = ROOT / "evidence" / "AX-PUB-CI-016_SDK_RELEASE_READINESS_EVIDENCE_PACK_VALIDATION.md"
 
 PROJECT = "aetherxglobal-governed-intelligence"
 IMPORT = "aetherxglobal.governed_intelligence"
@@ -34,6 +36,7 @@ WHEEL_SHA = "bd3c3bfc7306c9b45659e3e0533ea1ac24b065a4c577f08cbe987cc10a4d1fac"
 SDIST_SHA = "2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99"
 RUNTIMES = ["3.11", "3.12", "3.13", "3.14"]
 GATE03_DIGEST = "8444e7c01621f3d63019b407d9379bc82176f892dce64760cc93e84064ac8c21"
+RELPACK_ACTIONS_SHA = "e9614ca5b70667e6d2218d1f19c764ce2cf09ada13764282c5758cf1865fa331"
 
 
 def fail(message: str) -> None:
@@ -83,6 +86,7 @@ def main() -> int:
     api001 = load_json(API001)
     sup001 = load_json(SUP001)
     sec001 = load_json(SEC001)
+    relpack = load_json(RELPACK)
     quickstart = text(QUICKSTART)
     current = text(CURRENT)
     dod = text(DOD)
@@ -91,9 +95,10 @@ def main() -> int:
     ci011 = text(CI011)
     ci012 = text(CI012)
     ci013 = text(CI013)
+    ci016 = text(CI016)
 
     require(manifest.get("manifest_id") == "AX-PUB-MANIFEST-001", "manifest identity mismatch")
-    require(version_at_least(manifest.get("manifest_version"), 1, 24), "manifest must be >= v1.24")
+    require(version_at_least(manifest.get("manifest_version"), 1, 26), "manifest must be >= v1.26")
 
     program = manifest.get("current_developer_program")
     require(isinstance(program, dict), "current_developer_program missing")
@@ -159,6 +164,28 @@ def main() -> int:
         require(security_state.get(key) is False, f"security state boundary changed: {key}")
     require(security_state.get("sdk_publication_disposition") == "SDK PUBLICATION NOT AUTHORIZED", "security publication boundary changed")
 
+    readiness = manifest.get("current_sdk_release_readiness_aggregation")
+    require(isinstance(readiness, dict), "current_sdk_release_readiness_aggregation missing")
+    require(readiness.get("id") == "AX-PUB-RELPACK-001", "release-readiness identity mismatch")
+    require(readiness.get("state") == "CI_VALIDATED_BLOCKED_BEFORE_DEV_GATE_05D_AUTHORITY_REVIEW", "release-readiness state mismatch")
+    require(readiness.get("validation_evidence") == "AX-PUB-CI-016", "release-readiness evidence linkage mismatch")
+    require((readiness.get("required_dimension_count"), readiness.get("established_dimension_count"), readiness.get("blocked_dimension_count")) == (13, 4, 9), "release-readiness counts mismatch")
+    require(readiness.get("ready_for_dev_gate_05d_authority_review") is False, "release readiness must remain false")
+    for key in (
+        "external_registry_validation_established",
+        "independent_human_external_evaluation_established",
+        "release_control_readiness_established",
+        "registry_ownership_and_trusted_publisher_established",
+        "licence_and_ip_clearance_established",
+        "support_contract_activated",
+        "security_operations_ready",
+        "release_owner_and_accountability_established",
+        "dev_gate_05d_authorized",
+        "supported_sdk_established",
+    ):
+        require(readiness.get(key) is False, f"release-readiness boundary changed: {key}")
+    require(readiness.get("sdk_publication_disposition") == "SDK PUBLICATION NOT AUTHORIZED", "release-readiness publication boundary changed")
+
     ci011_manifest = evidence_by_id(manifest, "AX-PUB-CI-011")
     require(ci011_manifest.get("github_controls_ready_for_release_promotion") is False, "CI-011 manifest state must remain controls-not-ready")
     require(ci011_manifest.get("conclusion") == "SUCCESS", "CI-011 audit run must remain successful")
@@ -176,6 +203,15 @@ def main() -> int:
     for key in ("support_commitment_established", "security_operations_ready", "supported_sdk_established", "sdk_publication_authorized"):
         require(ci013_manifest.get(key) is False, f"CI-013 boundary changed: {key}")
     require(ci013_manifest.get("conclusion") == "SUCCESS", "CI-013 validation must remain successful")
+
+    ci016_manifest = evidence_by_id(manifest, "AX-PUB-CI-016")
+    require(ci016_manifest.get("workflow_run_id") == 32200229804 and ci016_manifest.get("job_id") == 95912269419, "CI-016 workflow identity mismatch")
+    require(ci016_manifest.get("actions_artifact_id") == 9347211356 and ci016_manifest.get("actions_artifact_sha256") == RELPACK_ACTIONS_SHA, "CI-016 artifact identity mismatch")
+    require((ci016_manifest.get("required_dimension_count"), ci016_manifest.get("established_dimension_count"), ci016_manifest.get("blocked_dimension_count")) == (13, 4, 9), "CI-016 counts mismatch")
+    require(ci016_manifest.get("ready_for_dev_gate_05d_authority_review") is False, "CI-016 readiness boundary changed")
+    require(ci016_manifest.get("dev_gate_05d_authorized") is False, "CI-016 05D boundary changed")
+    require(ci016_manifest.get("sdk_publication_authorized") is False, "CI-016 publication boundary changed")
+    require(ci016_manifest.get("conclusion") == "SUCCESS", "CI-016 validation must remain successful")
 
     require(dev009.get("phase") == "DEV-GATE-05C", "DEV-009 phase mismatch")
     require(dev009.get("phase_state") == "ACTIVE_ENGINEERING_OBJECTIVE", "Gate-05C must remain active")
@@ -245,8 +281,17 @@ def main() -> int:
     ):
         require(sec001.get(key) is False, f"security artifact boundary changed: {key}")
 
+    require(relpack.get("artifact_id") == "AX-PUB-RELPACK-001", "RELPACK artifact ID mismatch")
+    require(relpack.get("state") == "CI_VALIDATED_DEV_GATE_05D_RELEASE_READINESS_PACK_BLOCKED", "RELPACK source state mismatch")
+    require(relpack.get("validation_evidence") == "AX-PUB-CI-016", "RELPACK source evidence mismatch")
+    relpack_disposition = relpack.get("current_expected_disposition")
+    require(isinstance(relpack_disposition, dict), "RELPACK disposition missing")
+    require(relpack_disposition.get("ready_for_dev_gate_05d_authority_review") is False, "RELPACK readiness must remain false")
+    require(relpack_disposition.get("dev_gate_05d_authorized") is False, "RELPACK must not authorize 05D")
+    require(relpack_disposition.get("sdk_publication_authorized") is False, "RELPACK must not authorize publication")
+
     for marker in (
-        "AX-PUB-MANIFEST-001 v1.24",
+        "AX-PUB-MANIFEST-001 v1.26",
         PROJECT,
         IMPORT,
         VERSION,
@@ -255,6 +300,8 @@ def main() -> int:
         "AX-PUB-SUP-001",
         "AX-PUB-SEC-001",
         "AX-PUB-CI-013",
+        "AX-PUB-RELPACK-001",
+        "AX-PUB-CI-016",
         "DEV-GATE-05C",
         "SDK PUBLICATION NOT AUTHORIZED",
     ):
@@ -263,13 +310,19 @@ def main() -> int:
     for marker in (
         "DEV-GATE-05C  ACTIVE",
         "LOCAL INDEX ENGINEERING VALIDATION: VERIFIED / LOCAL ONLY",
-        "AX-PUB-MANIFEST-001 v1.24",
+        "AX-PUB-MANIFEST-001 v1.26",
         "AX-PUB-CI-011",
         "AX-PUB-API-001",
         "AX-PUB-CI-012",
         "AX-PUB-SUP-001",
         "AX-PUB-SEC-001",
         "AX-PUB-CI-013",
+        "AX-PUB-RELPACK-001",
+        "AX-PUB-CI-016",
+        "RELEASE READINESS HARD DIMENSIONS: 13",
+        "RELEASE READINESS ESTABLISHED: 4",
+        "RELEASE READINESS BLOCKED: 9",
+        "READY FOR DEV-GATE-05D AUTHORITY REVIEW: NO",
         "SUPPORT COMMITMENT: NOT ESTABLISHED",
         "SECURITY OPERATIONS READY: NO",
         "STABLE 1.0 GUARANTEE: NOT ESTABLISHED",
@@ -331,12 +384,24 @@ def main() -> int:
     ):
         require(marker in ci013, f"CI-013 evidence missing marker: {marker}")
 
+    for marker in (
+        "AX-PUB-CI-016",
+        "required = 13",
+        "established = 4",
+        "blocked = 9",
+        "ready_for_05d = false",
+        "DEV-GATE-05D NOT AUTHORIZED",
+        "SDK PUBLICATION NOT AUTHORIZED",
+    ):
+        require(marker in ci016, f"CI-016 evidence missing marker: {marker}")
+
     print(
         "AX_PRODUCTION_SDK_TARGET_PASS "
-        "manifest>=1.24 gate05c=ACTIVE local_index=VERIFIED_LOCAL_ONLY "
+        "manifest>=1.26 gate05c=ACTIVE local_index=VERIFIED_LOCAL_ONLY "
         "release_controls=NOT_READY api_contract=VALIDATED_CANDIDATE "
         "support=NOT_ACTIVATED security_ops=NOT_READY gate03_identity=PRESERVED "
-        "production_sdk=NOT_ESTABLISHED sdk_publication=NOT_AUTHORIZED"
+        "release_pack=CI_VALIDATED_BLOCKED required=13 established=4 blocked=9 "
+        "ready_for_05d=false production_sdk=NOT_ESTABLISHED sdk_publication=NOT_AUTHORIZED"
     )
     return 0
 
