@@ -52,9 +52,18 @@ PROPOSAL = {
 def binding_verifier(ctx):
     req = ctx["request"]
     proposal = ctx["action_proposal"]
+    subject = req.get("subject", {})
+    resource = req.get("resource", {})
+
+    subject_status = "FAIL" if subject.get("id") != proposal["principal_id"] else (
+        "PASS" if subject.get("type") == "principal" else "UNKNOWN"
+    )
+    resource_status = "FAIL" if resource.get("id") != proposal["target_resource"] else (
+        "PASS" if resource.get("type") == "resource" else "UNKNOWN"
+    )
     dimensions = {
-        "subject": "PASS" if req.get("subject", {}).get("id") == proposal["principal_id"] else "FAIL",
-        "resource": "PASS" if req.get("resource", {}).get("id") == proposal["target_resource"] else "FAIL",
+        "subject": subject_status,
+        "resource": resource_status,
         "action": "PASS" if req.get("action", {}).get("name") == proposal["proposed_action"] else "FAIL",
         "tool": "PASS" if req.get("context", {}).get("tool") == proposal["proposed_tool"] else "UNKNOWN",
         "context": "PASS" if req.get("context", {}).get("parameters") == proposal["bounded_parameters"] else "FAIL",
@@ -75,6 +84,20 @@ def binding_verifier(ctx):
         "request_identity": ctx["request_identity"],
         "proposal_id": proposal["proposal_id"],
         "dimensions": dimensions,
+        "subject_identity_binding": {
+            "status": subject_status,
+            "type": subject.get("type"),
+            "id": subject.get("id"),
+            "type_profile_identity": "fixture-authzen-subject-type-scope",
+            "type_profile_version": "0.1",
+        },
+        "resource_identity_binding": {
+            "status": resource_status,
+            "type": resource.get("type"),
+            "id": resource.get("id"),
+            "type_profile_identity": "fixture-authzen-resource-type-scope",
+            "type_profile_version": "0.1",
+        },
     }
 
 
