@@ -27,14 +27,34 @@ def _sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def _iso_timestamp(value: str) -> str:
+def _is_timezone_aware_timestamp(value: Any) -> bool:
     if not isinstance(value, str) or not value:
-        raise ValueError("observed_at must be a non-empty ISO-8601 timestamp")
+        return False
     normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
-    parsed = datetime.fromisoformat(normalized)
-    if parsed.tzinfo is None:
-        raise ValueError("observed_at must include a timezone")
+    try:
+        parsed = datetime.fromisoformat(normalized)
+    except ValueError:
+        return False
+    return parsed.tzinfo is not None and parsed.utcoffset() is not None
+
+
+def _iso_timestamp(value: str) -> str:
+    if not _is_timezone_aware_timestamp(value):
+        raise ValueError("observed_at must be a non-empty timezone-aware ISO-8601 timestamp")
     return value
+
+
+def _strict_json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    obj: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in obj:
+            raise ValueError(f"duplicate JSON object member: {key}")
+        obj[key] = value
+    return obj
+
+
+def _reject_non_finite_json_constant(value: str) -> None:
+    raise ValueError(f"non-finite JSON number forbidden: {value}")
 
 
 def _identity(label: str, raw: bytes | None) -> dict[str, Any]:
@@ -57,9 +77,13 @@ def _load_input(raw: bytes | None, obj: Mapping[str, Any] | None, label: str) ->
             return None, _identity(label, None), f"{label} bytes must be bytes"
         raw = bytes(raw)
         try:
-            parsed = json.loads(raw.decode("utf-8"))
-        except (UnicodeDecodeError, json.JSONDecodeError):
-            return None, _identity(label, raw), f"malformed {label} JSON"
+            parsed = json.loads(
+                raw.decode("utf-8"),
+                object_pairs_hook=_strict_json_object,
+                parse_constant=_reject_non_finite_json_constant,
+            )
+        except (UnicodeDecodeError, json.JSONDecodeError, ValueError):
+            return None, _identity(label, raw), f"malformed or non-strict {label} JSON"
         if not isinstance(parsed, dict):
             return None, _identity(label, raw), f"{label} must decode to an object"
         return parsed, _identity(label, raw), None
@@ -230,7 +254,7 @@ def _common_evidence_complete(
             return False
         if not evidence.get("policy_version_or_digest"):
             return False
-    if require_checked_at and not evidence.get("checked_at"):
+    if require_checked_at and not _is_timezone_aware_timestamp(evidence.get("checked_at")):
         return False
     return True
 
@@ -267,8 +291,22 @@ def _normalized_verification(
         require_checked_at=require_checked_at,
     ):
         evidence["status"] = "UNKNOWN"
-        evidence["reason"] = "PASS forbidden: provenance incomplete, unbound, or unattributable"
+        evidence["reason"] = "PASS forbidden: provenance incomplete, unbound, unattributable, or temporally invalid"
     return evidence
+
+
+def _type_scoped_identity_evidence_complete(
+    evidence: Any,
+    request_entity: Mapping[str, Any],
+) -> bool:
+    return (
+        isinstance(evidence, Mapping)
+        and evidence.get("status") == "PASS"
+        and evidence.get("type") == request_entity.get("type")
+        and evidence.get("id") == request_entity.get("id")
+        and _non_empty_string(evidence.get("type_profile_identity"))
+        and _non_empty_string(evidence.get("type_profile_version"))
+    )
 
 
 def _normalize_binding(
@@ -290,7 +328,10 @@ def _normalize_binding(
     if result.get("status") not in {"PASS", "FAIL", "UNKNOWN"}:
         return {"status": "UNKNOWN", "reason": "invalid binding status"}
     if result.get("status") == "PASS":
+        request = context.get("request")
         dimensions = result.get("dimensions")
+        subject = request.get("subject") if isinstance(request, Mapping) else None
+        resource = request.get("resource") if isinstance(request, Mapping) else None
         complete = (
             result.get("profile_identity")
             and result.get("profile_version")
@@ -298,10 +339,14 @@ def _normalize_binding(
             and result.get("proposal_id") == proposal_id
             and isinstance(dimensions, Mapping)
             and all(dimensions.get(name) == "PASS" for name in ("subject", "resource", "action", "tool", "context"))
+            and isinstance(subject, Mapping)
+            and isinstance(resource, Mapping)
+            and _type_scoped_identity_evidence_complete(result.get("subject_identity_binding"), subject)
+            and _type_scoped_identity_evidence_complete(result.get("resource_identity_binding"), resource)
         )
         if not complete:
             result["status"] = "UNKNOWN"
-            result["reason"] = "PASS forbidden: incomplete or unbound request-binding evidence"
+            result["reason"] = "PASS forbidden: incomplete, unbound, or unprofiled request-binding evidence"
     return result
 
 
@@ -502,9 +547,9 @@ def assess_access_evaluation(
         if not policy.get("verified_policy_identity") or not policy.get("verified_policy_version_or_digest"):
             policy["status"] = "UNKNOWN"
             policy["reason"] = "PASS forbidden without verified PDP policy identity/version-or-digest"
-        if not policy.get("verified_evaluation_time"):
+        if not _is_timezone_aware_timestamp(policy.get("verified_evaluation_time")):
             policy["status"] = "UNKNOWN"
-            policy["reason"] = "PASS forbidden without verified PDP evaluation time"
+            policy["reason"] = "PASS forbidden without valid timezone-aware verified PDP evaluation time"
     result["verification_evidence"]["policy_provenance"] = policy
     if policy["status"] != "PASS":
         result["states"]["DECISION_ADMISSIBLE"] = "FAIL" if policy["status"] == "FAIL" else "UNKNOWN"
@@ -534,9 +579,13 @@ def assess_access_evaluation(
         proposal_id=proposal_id,
         purpose=common["purpose"],
     )
-    if freshness.get("status") == "PASS" and freshness.get("verified_pdp_evaluation_time") != policy["verified_evaluation_time"]:
+    freshness_evaluation_time = freshness.get("verified_pdp_evaluation_time")
+    if freshness.get("status") == "PASS" and (
+        not _is_timezone_aware_timestamp(freshness_evaluation_time)
+        or freshness_evaluation_time != policy["verified_evaluation_time"]
+    ):
         freshness["status"] = "UNKNOWN"
-        freshness["reason"] = "PASS forbidden: freshness evidence missing or mismatched verified PDP evaluation-time binding"
+        freshness["reason"] = "PASS forbidden: freshness evidence missing, mismatched, or temporally invalid verified PDP evaluation-time binding"
     result["verification_evidence"]["freshness"] = freshness
     if freshness["status"] != "PASS":
         result["states"]["DECISION_ADMISSIBLE"] = "FAIL" if freshness["status"] == "FAIL" else "UNKNOWN"
