@@ -20,15 +20,47 @@ SHA_B = "b" * 64
 
 
 def statement(predicate_type=SLSA_PROVENANCE_V1, *, subjects=None, predicate=None, extra=None):
+    if subjects is None:
+        subjects = [{"name": "artifact.whl", "digest": {"sha256": SHA_A}}]
     obj = {
         "_type": IN_TOTO_STATEMENT_V1,
-        "subject": subjects or [{"name": "artifact.whl", "digest": {"sha256": SHA_A}}],
+        "subject": subjects,
         "predicateType": predicate_type,
         "predicate": predicate or {},
     }
     if extra:
         obj.update(extra)
     return obj
+
+
+def build_provenance():
+    return statement(
+        SLSA_PROVENANCE_V1,
+        predicate={
+            "buildDefinition": {
+                "buildType": "https://build.example/type/v1",
+                "externalParameters": {"target": "artifact.whl"},
+                "internalParameters": {"runner": "fixture"},
+                "resolvedDependencies": [
+                    {
+                        "uri": "pkg:generic/dependency@1",
+                        "digest": {"sha256": SHA_B},
+                    }
+                ],
+            },
+            "runDetails": {
+                "builder": {
+                    "id": "https://builder.example",
+                    "version": {"fixture": "1"},
+                },
+                "metadata": {
+                    "invocationId": "fixture-build-001",
+                    "startedOn": "2026-08-18T10:00:00Z",
+                    "finishedOn": "2026-08-18T10:01:00Z",
+                },
+            },
+        },
+    )
 
 
 def vsa(*, verification_result="PASSED", policy_digest=True):
@@ -38,10 +70,19 @@ def vsa(*, verification_result="PASSED", policy_digest=True):
     return statement(
         SLSA_VSA_V1,
         predicate={
-            "verifier": {"id": "https://verifier.example"},
+            "verifier": {
+                "id": "https://verifier.example",
+                "version": {"fixture": "1"},
+            },
             "timeVerified": "2026-08-18T12:00:00Z",
             "resourceUri": "pkg:generic/example@1",
             "policy": policy,
+            "inputAttestations": [
+                {
+                    "uri": "urn:fixture:attestation:1",
+                    "digest": {"sha256": "e" * 64},
+                }
+            ],
             "verificationResult": verification_result,
             "verifiedLevels": ["SLSA_BUILD_LEVEL_2"],
             "dependencyLevels": {},
@@ -316,6 +357,110 @@ class OfflineImporterNegativeCases(unittest.TestCase):
         self.assertEqual(result["states"]["TRUSTED_ISSUER"], "NOT_EVALUATED")
         self.assertEqual(result["states"]["PREDICATE_POLICY_VALIDATED"], "NOT_EVALUATED")
         self.assertEqual(result["aether_verification"], "NOT_EVALUATED")
+
+
+class OfflineImporterP1CorrectionRegressions(unittest.TestCase):
+    def test_p1_001_empty_expected_subjects_cannot_bind(self):
+        result = import_attestation(
+            encode(statement()),
+            observed_at=OBSERVED,
+            expected_subjects=[],
+            predicate_policy=predicate_pass,
+        )
+        self.assertEqual(result["states"]["PARSED"], "PASS")
+        self.assertEqual(result["states"]["SUBJECT_BOUND"], "UNKNOWN")
+        self.assertFalse(result["evidence_record"]["subject_binding"]["artifact_identity_constraint_present"])
+        self.assertEqual(result["states"]["PREDICATE_POLICY_VALIDATED"], "NOT_EVALUATED")
+        self.assertEqual(result["promotion"], "NONE")
+
+    def test_p1_002_empty_statement_subject_set_fails_parse(self):
+        result = import_attestation(
+            encode(statement(subjects=[])),
+            observed_at=OBSERVED,
+            expected_subjects=[{"digest": {"sha256": SHA_A}}],
+        )
+        self.assertEqual(result["states"]["PARSED"], "FAIL")
+        self.assertIn("non-empty", result["parse_error"])
+        self.assertEqual(result["states"]["SUBJECT_BOUND"], "NOT_REACHED")
+        self.assertEqual(result["promotion"], "NONE")
+
+    def test_p1_003_malformed_signature_entry_is_not_silently_filtered(self):
+        raw = envelope(
+            statement(),
+            [
+                {"keyid": "k1", "sig": "good"},
+                "not-an-object",
+            ],
+        )
+        result = import_attestation(
+            raw,
+            observed_at=OBSERVED,
+            expected_subjects=[{"digest": {"sha256": SHA_A}}],
+            signature_verifier=verifier_by_sig,
+            signature_policy=all_required_policy,
+        )
+        self.assertEqual(result["states"]["PARSED"], "FAIL")
+        self.assertIn("signature entry", result["parse_error"])
+        self.assertEqual(result["per_signature_results"], [])
+        self.assertEqual(result["states"]["SIGNATURE_VERIFIED"], "NOT_REACHED")
+        self.assertEqual(result["promotion"], "NONE")
+
+    def test_p1_004_build_provenance_preserves_reviewed_typed_fields(self):
+        stmt = build_provenance()
+        result = import_attestation(
+            encode(stmt),
+            observed_at=OBSERVED,
+            expected_subjects=[{"digest": {"sha256": SHA_A}}],
+        )
+        typed = result["evidence_record"]["slsa_evidence"]
+        self.assertEqual(typed["kind"], "SLSA_BUILD_PROVENANCE_V1")
+        self.assertEqual(typed["predicateType"], SLSA_PROVENANCE_V1)
+        self.assertEqual(typed["predicate"]["buildDefinition"], stmt["predicate"]["buildDefinition"])
+        self.assertEqual(typed["predicate"]["runDetails"], stmt["predicate"]["runDetails"])
+        self.assertEqual(
+            typed["predicate"]["buildDefinition"]["resolvedDependencies"],
+            stmt["predicate"]["buildDefinition"]["resolvedDependencies"],
+        )
+        self.assertEqual(
+            typed["predicate"]["runDetails"]["builder"],
+            stmt["predicate"]["runDetails"]["builder"],
+        )
+        self.assertEqual(
+            result["evidence_record"]["attestation_asserted_timestamps"],
+            {
+                "runDetails.metadata.startedOn": "2026-08-18T10:00:00Z",
+                "runDetails.metadata.finishedOn": "2026-08-18T10:01:00Z",
+            },
+        )
+        self.assertEqual(result["evidence_record"]["classification"], "SOURCE_DATA")
+        self.assertEqual(result["promotion"], "NONE")
+
+    def test_p1_005_vsa_preserves_reviewed_typed_fields(self):
+        stmt = vsa()
+        result = import_attestation(
+            encode(stmt),
+            observed_at=OBSERVED,
+            expected_subjects=[{"digest": {"sha256": SHA_A}}],
+        )
+        typed = result["evidence_record"]["slsa_evidence"]
+        expected_predicate = {
+            "verifier": stmt["predicate"]["verifier"],
+            "timeVerified": stmt["predicate"]["timeVerified"],
+            "resourceUri": stmt["predicate"]["resourceUri"],
+            "policy": stmt["predicate"]["policy"],
+            "inputAttestations": stmt["predicate"]["inputAttestations"],
+            "verificationResult": stmt["predicate"]["verificationResult"],
+            "verifiedLevels": stmt["predicate"]["verifiedLevels"],
+            "dependencyLevels": stmt["predicate"]["dependencyLevels"],
+            "slsaVersion": stmt["predicate"]["slsaVersion"],
+        }
+        self.assertEqual(typed["kind"], "SLSA_VERIFICATION_SUMMARY_V1")
+        self.assertEqual(typed["predicateType"], SLSA_VSA_V1)
+        self.assertEqual(typed["predicate"], expected_predicate)
+        self.assertEqual(result["evidence_record"]["classification"], "SOURCE_DATA")
+        self.assertEqual(result["aether_verification"], "NOT_EVALUATED")
+        self.assertEqual(result["verified_outcome"], "NOT_ESTABLISHED")
+        self.assertEqual(result["promotion"], "NONE")
 
 
 if __name__ == "__main__":
