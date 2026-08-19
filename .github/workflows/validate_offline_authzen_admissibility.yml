@@ -1,0 +1,71 @@
+name: Validate Offline AuthZEN Admissibility Proof
+
+on:
+  pull_request:
+    paths:
+      - 'reference-implementations/offline-authzen-admissibility/**'
+      - 'reference-implementations/eav-contract-validator/validator.py'
+      - 'schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json'
+      - '.github/workflows/validate_offline_authzen_admissibility.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  bounded-reference-proof:
+    name: Python ${{ matrix.python-version }} / NEG-AZ-001..032 + bounded regressions
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12', '3.13', '3.14']
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Prove exact checked-out revision
+        run: |
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+          git rev-parse HEAD
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Compile bounded proof and existing EAV validator
+        run: |
+          python -m py_compile \
+            reference-implementations/offline-authzen-admissibility/admissibility.py \
+            reference-implementations/offline-authzen-admissibility/tests/test_admissibility.py \
+            reference-implementations/offline-authzen-admissibility/tests/test_p1_structural_eav.py \
+            reference-implementations/offline-authzen-admissibility/tests/test_imp_003_005.py \
+            reference-implementations/eav-contract-validator/validator.py
+
+      - name: Run NEG-AZ-001..032 plus bounded P1/P2 regressions
+        run: |
+          python -m unittest discover \
+            -s reference-implementations/offline-authzen-admissibility/tests \
+            -p 'test_*.py' \
+            -v
+
+      - name: Explicit EAV cross-contract validation
+        run: |
+          python -m unittest discover \
+            -s reference-implementations/offline-authzen-admissibility/tests \
+            -p 'test_p1_structural_eav.py' \
+            -v
+          python -m unittest discover \
+            -s reference-implementations/offline-authzen-admissibility/tests \
+            -p 'test_imp_003_005.py' \
+            -v
+
+      - name: Explicit authority boundary
+        run: |
+          echo 'REFERENCE PROOF != PRODUCT IMPLEMENTATION'
+          echo 'DECISION_ADMISSIBLE != AETHER_DECISION != AETHER_AUTHORITY != EXECUTION_PERMISSION'
+          echo 'TEST PASS != SECURITY GO'
+          echo 'IMPLEMENTED != VERIFIED != ACCEPTED'
+          echo 'NO NETWORK / PDP / CEDAR / OPENFGA / OAUTH / WIMSE / RELEASE / GATE AUTHORITY'
