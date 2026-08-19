@@ -130,6 +130,10 @@ def threshold_two_policy(results):
     return "PASS" if sum(item["result"] == "PASS" for item in results) >= 2 else "FAIL"
 
 
+def any_verified_signature_policy(results):
+    return "PASS" if any(item["result"] == "PASS" for item in results) else "FAIL"
+
+
 def trusted_pair_policy(context):
     return {
         "status": "PASS",
@@ -145,6 +149,17 @@ def trusted_but_pair_rejected(_context):
         "status": "PASS",
         "pair_accepted": False,
         "policy_identity": "trust-policy-v1",
+        "policy_digest": "sha256:" + "d" * 64,
+    }
+
+
+def trust_accepts_verified_issuer_a_only(context):
+    accepted = "issuer-A" in context.get("signer_identities", [])
+    return {
+        "status": "PASS" if accepted else "FAIL",
+        "pair_accepted": accepted
+        and context.get("verifier_id") == "https://verifier.example",
+        "policy_identity": "trust-policy-a-only-v1",
         "policy_digest": "sha256:" + "d" * 64,
     }
 
@@ -460,6 +475,61 @@ class OfflineImporterP1CorrectionRegressions(unittest.TestCase):
         self.assertEqual(result["evidence_record"]["classification"], "SOURCE_DATA")
         self.assertEqual(result["aether_verification"], "NOT_EVALUATED")
         self.assertEqual(result["verified_outcome"], "NOT_ESTABLISHED")
+        self.assertEqual(result["promotion"], "NONE")
+
+    def test_p1_006_equal_malformed_sha256_cannot_bind(self):
+        malformed = "g" * 64
+        stmt = statement(
+            subjects=[{"name": "artifact.whl", "digest": {"sha256": malformed}}]
+        )
+        result = import_attestation(
+            encode(stmt),
+            observed_at=OBSERVED,
+            expected_subjects=[{"digest": {"sha256": malformed}}],
+            predicate_policy=predicate_pass,
+        )
+        self.assertEqual(result["states"]["PARSED"], "PASS")
+        self.assertNotEqual(result["states"]["SUBJECT_BOUND"], "PASS")
+        self.assertEqual(result["states"]["SUBJECT_BOUND"], "UNKNOWN")
+        self.assertEqual(
+            result["evidence_record"]["subject_binding"]["matched_subject_indices"],
+            [],
+        )
+        self.assertEqual(result["states"]["PREDICATE_POLICY_VALIDATED"], "NOT_EVALUATED")
+        self.assertEqual(result["promotion"], "NONE")
+
+    def test_p1_007_trust_uses_only_verified_signer_identities(self):
+        result = import_attestation(
+            envelope(
+                vsa(),
+                [
+                    {"keyid": "k-a", "sig": "bad"},
+                    {"keyid": "k-b", "sig": "good-B"},
+                ],
+            ),
+            observed_at=OBSERVED,
+            expected_subjects=[{"digest": {"sha256": SHA_A}}],
+            signature_verifier=verifier_by_sig,
+            signature_policy=any_verified_signature_policy,
+            trust_policy=trust_accepts_verified_issuer_a_only,
+            predicate_policy=predicate_pass,
+        )
+        self.assertEqual(
+            [item["result"] for item in result["per_signature_results"]],
+            ["FAIL", "PASS"],
+        )
+        self.assertEqual(result["states"]["SIGNATURE_VERIFIED"], "PASS")
+        self.assertEqual(
+            result["evidence_record"]["signer_identity_claims"],
+            ["issuer-A", "issuer-B"],
+        )
+        self.assertEqual(
+            result["evidence_record"]["verified_signer_identities"],
+            ["issuer-B"],
+        )
+        self.assertEqual(result["states"]["TRUSTED_ISSUER"], "FAIL")
+        self.assertNotEqual(result["states"]["PREDICATE_POLICY_VALIDATED"], "PASS")
+        self.assertEqual(result["states"]["PREDICATE_POLICY_VALIDATED"], "NOT_EVALUATED")
         self.assertEqual(result["promotion"], "NONE")
 
 
