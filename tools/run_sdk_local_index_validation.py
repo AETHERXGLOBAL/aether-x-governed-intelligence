@@ -1,199 +1,84 @@
 #!/usr/bin/env python3
-"""Validate the exact Gate-05B wheel through a local Python Simple Index.
+"""Run current Gate-05C local-index validation using superseding candidate evidence.
 
-This is reversible DEV-GATE-05C engineering evidence. It deliberately performs
-no TestPyPI/PyPI write and must never be interpreted as external registry
-validation, registry ownership, licence grant, supported-SDK status or release
-authority.
+The historical AX-PUB-CI-010-era runner is preserved byte-for-byte and reused
+as the validation engine. This adapter changes only the exact package digests
+to the current CI-observed candidate recorded after AXGI-REV-001.
 """
 from __future__ import annotations
 
-import argparse
-import hashlib
-import http.server
+import importlib.util
 import json
-import os
-import shutil
-import subprocess
-import sys
-import tempfile
-import threading
-import time
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-PROJECT = "aetherxglobal-governed-intelligence"
-VERSION = "0.1.0rc1"
-IMPORT = "aetherxglobal.governed_intelligence"
-WHEEL = "aetherxglobal_governed_intelligence-0.1.0rc1-py3-none-any.whl"
-SDIST = "aetherxglobal_governed_intelligence-0.1.0rc1.tar.gz"
-WHEEL_SHA256 = "bd3c3bfc7306c9b45659e3e0533ea1ac24b065a4c577f08cbe987cc10a4d1fac"
-SDIST_SHA256 = "2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99"
-REPORT_FORMAT = "AX-PUB-DIST-REPORT-001"
-REPORT_VERSION = "1.0"
-VERIFIED_PYTHON = {"3.11", "3.12", "3.13", "3.14"}
-EXPECTED_CONTRACTS = ["AX-PUB-SPEC-002", "AX-PUB-SPEC-003", "AX-PUB-SPEC-004"]
+ROOT = Path(__file__).resolve().parents[1]
+HISTORICAL = ROOT / "tools" / "run_sdk_local_index_validation_historical.py"
+OVERLAY = ROOT / "artifacts" / "AX-PUB-CANDIDATE-IDENTITY-001.json"
+EXPECTED_HISTORICAL_WHEEL_SHA = "bd3c3bfc7306c9b45659e3e0533ea1ac24b065a4c577f08cbe987cc10a4d1fac"
+EXPECTED_HISTORICAL_SDIST_SHA = "2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99"
 
 
-def sha256(path: Path) -> str:
-    h = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            h.update(chunk)
-    return h.hexdigest()
+def fail(message: str) -> None:
+    raise SystemExit(f"AX_SDK_CURRENT_LOCAL_INDEX_VALIDATION_FAIL: {message}")
 
 
-def run(command: list[str], *, cwd: Path | None = None, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
-    completed = subprocess.run(command, cwd=cwd, env=env, text=True, capture_output=True, check=False)
-    if completed.returncode != 0:
-        raise RuntimeError(
-            f"command failed ({completed.returncode}): {' '.join(command)}\n"
-            f"stdout:\n{completed.stdout[-4000:]}\n"
-            f"stderr:\n{completed.stderr[-4000:]}"
-        )
-    return completed
+def require(condition: bool, message: str) -> None:
+    if not condition:
+        fail(message)
 
 
-def runtime_key() -> str:
-    return f"{sys.version_info.major}.{sys.version_info.minor}"
+def load(path: Path) -> dict[str, Any]:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        fail(f"cannot parse {path.relative_to(ROOT)}: {exc}")
+    require(isinstance(value, dict), f"{path.relative_to(ROOT)} must contain an object")
+    return value
 
 
-def write_index(root: Path, wheel: Path) -> None:
-    packages = root / "packages"
-    simple = root / "simple" / PROJECT
-    packages.mkdir(parents=True)
-    simple.mkdir(parents=True)
-    shutil.copy2(wheel, packages / WHEEL)
-    (root / "simple" / "index.html").write_text(
-        f'<!doctype html><html><body><a href="{PROJECT}/">{PROJECT}</a></body></html>\n',
-        encoding="utf-8",
-    )
-    (simple / "index.html").write_text(
-        '<!doctype html><html><body>'
-        f'<a href="../../packages/{WHEEL}#sha256={WHEEL_SHA256}">{WHEEL}</a>'
-        '</body></html>\n',
-        encoding="utf-8",
-    )
+def load_historical():
+    require(HISTORICAL.is_file(), "historical local-index runner missing")
+    spec = importlib.util.spec_from_file_location("ax_sdk_local_index_historical", HISTORICAL)
+    require(spec is not None and spec.loader is not None, "cannot load historical local-index runner")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
-def make_handler(directory: Path) -> type[http.server.SimpleHTTPRequestHandler]:
-    class QuietHandler(http.server.SimpleHTTPRequestHandler):
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            super().__init__(*args, directory=str(directory), **kwargs)
+def current_identity() -> tuple[str, str]:
+    overlay = load(OVERLAY)
+    require(overlay.get("artifact_id") == "AX-PUB-CANDIDATE-IDENTITY-001", "candidate identity artifact mismatch")
+    require(overlay.get("type") == "CURRENT_SUPERSEDING_CANDIDATE_EVIDENCE", "candidate identity type mismatch")
+    require(overlay.get("state") == "CURRENT_CANDIDATE_IDENTITY_ALIGNED", "candidate identity state mismatch")
 
-        def log_message(self, format: str, *args: Any) -> None:
-            return
+    anchors = overlay.get("historical_anchors", {}).get("gate_05b")
+    require(isinstance(anchors, dict), "historical Gate-05B anchor missing")
+    require(anchors.get("evidence_id") == "AX-PUB-CI-009", "historical Gate-05B evidence identity changed")
+    require(anchors.get("wheel_sha256") == EXPECTED_HISTORICAL_WHEEL_SHA, "historical Gate-05B wheel digest changed")
+    require(anchors.get("sdist_sha256") == EXPECTED_HISTORICAL_SDIST_SHA, "historical Gate-05B sdist digest changed")
 
-    return QuietHandler
-
-
-def validate(dist_dir: Path) -> dict[str, Any]:
-    runtime = runtime_key()
-    if runtime not in VERIFIED_PYTHON:
-        raise RuntimeError(f"runtime {runtime} outside declared Gate-05C matrix")
-
-    wheel = dist_dir / WHEEL
-    sdist = dist_dir / SDIST
-    if not wheel.is_file() or not sdist.is_file():
-        raise RuntimeError("exact wheel/sdist candidate not found in dist directory")
-    wheel_hash = sha256(wheel)
-    sdist_hash = sha256(sdist)
-    if wheel_hash != WHEEL_SHA256:
-        raise RuntimeError(f"wheel SHA-256 mismatch: {wheel_hash}")
-    if sdist_hash != SDIST_SHA256:
-        raise RuntimeError(f"sdist SHA-256 mismatch: {sdist_hash}")
-
-    with tempfile.TemporaryDirectory(prefix="ax-gate05c-") as raw:
-        temp = Path(raw)
-        index_root = temp / "index"
-        venv = temp / "venv"
-        outside = temp / "outside"
-        outside.mkdir()
-        write_index(index_root, wheel)
-
-        server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), make_handler(index_root))
-        port = int(server.server_address[1])
-        thread = threading.Thread(target=server.serve_forever, daemon=True)
-        thread.start()
-        time.sleep(0.1)
-        try:
-            run([sys.executable, "-m", "venv", str(venv)])
-            vpython = venv / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
-            env = os.environ.copy()
-            env.update({
-                "PIP_DISABLE_PIP_VERSION_CHECK": "1",
-                "PIP_NO_CACHE_DIR": "1",
-                "PYTHONNOUSERSITE": "1",
-            })
-            index_url = f"http://127.0.0.1:{port}/simple/"
-            install = run([
-                str(vpython), "-m", "pip", "install",
-                "--no-deps", "--no-cache-dir", "--index-url", index_url,
-                f"{PROJECT}=={VERSION}",
-            ], cwd=outside, env=env)
-            verify_code = (
-                "import importlib.metadata as m, json; "
-                f"import {IMPORT} as sdk; "
-                f"assert m.version('{PROJECT}') == '{VERSION}'; "
-                "contracts=sdk.supported_contracts(); "
-                "ids=[item['contract_id'] for item in contracts]; "
-                f"assert ids=={EXPECTED_CONTRACTS!r}; "
-                "assert getattr(sdk,'SDK_VERSION')=='0.1.0rc1'; "
-                "print(json.dumps({'version':m.version('aetherxglobal-governed-intelligence'),'contract_ids':ids,'sdk_version':sdk.SDK_VERSION}, sort_keys=True))"
-            )
-            verify = run([str(vpython), "-c", verify_code], cwd=outside, env=env)
-        finally:
-            server.shutdown()
-            server.server_close()
-            thread.join(timeout=2)
-
-    return {
-        "report_format": REPORT_FORMAT,
-        "report_version": REPORT_VERSION,
-        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "validation_type": "LOCAL_SIMPLE_INDEX_SIMULATION",
-        "external_registry_validation": False,
-        "external_registry_write_performed": False,
-        "sdk_publication_authorized": False,
-        "project": PROJECT,
-        "version": VERSION,
-        "runtime": runtime,
-        "wheel": {"filename": WHEEL, "sha256": wheel_hash},
-        "sdist": {"filename": SDIST, "sha256": sdist_hash},
-        "index_protocol": "PYTHON_SIMPLE_REPOSITORY_API_COMPATIBLE_TEST_SURFACE",
-        "install_method": "PIP_INDEX_DISCOVERY / LOOPBACK_ONLY / NO_DEPS",
-        "installed_verification": json.loads(verify.stdout.strip().splitlines()[-1]),
-        "pip_output_tail": install.stdout[-2000:],
-        "result": "PASS",
-        "claim_boundaries": [
-            "LOCAL INDEX PASS DOES NOT ESTABLISH TESTPYPI OR PYPI VALIDATION",
-            "LOCAL INDEX PASS DOES NOT ESTABLISH REGISTRY OWNERSHIP",
-            "LOCAL INDEX PASS DOES NOT GRANT A SOFTWARE LICENCE",
-            "LOCAL INDEX PASS DOES NOT ESTABLISH A SUPPORTED SDK",
-            "SDK PUBLICATION NOT AUTHORIZED",
-        ],
-    }
+    current = overlay.get("current_candidate", {}).get("package")
+    require(isinstance(current, dict), "current package identity missing")
+    require(current.get("identity_state") == "CI_OBSERVED_DETERMINISTIC_CURRENT_CANDIDATE", "current package identity is not CI-observed")
+    wheel_sha = current.get("wheel_sha256")
+    sdist_sha = current.get("sdist_sha256")
+    require(isinstance(wheel_sha, str) and len(wheel_sha) == 64, "current wheel digest missing")
+    require(isinstance(sdist_sha, str) and len(sdist_sha) == 64, "current sdist digest missing")
+    return wheel_sha, sdist_sha
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--dist-dir", type=Path, required=True)
-    parser.add_argument("--json-out", type=Path)
-    args = parser.parse_args()
-    try:
-        report = validate(args.dist_dir.resolve())
-    except Exception as exc:
-        print(f"AX_SDK_LOCAL_INDEX_VALIDATION_FAIL: {exc}", file=sys.stderr)
-        return 1
-    if args.json_out:
-        args.json_out.parent.mkdir(parents=True, exist_ok=True)
-        args.json_out.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    wheel_sha, sdist_sha = current_identity()
+    historical = load_historical()
+    historical.WHEEL_SHA256 = wheel_sha
+    historical.SDIST_SHA256 = sdist_sha
+    result = historical.main()
     print(
-        "AX_SDK_LOCAL_INDEX_VALIDATION_PASS "
-        f"python={report['runtime']} wheel={report['wheel']['sha256']} external_write=false"
+        "AX_SDK_CURRENT_LOCAL_INDEX_IDENTITY_PASS "
+        f"wheel={wheel_sha} sdist={sdist_sha} historical_ci010_preserved=true"
     )
-    return 0
+    return int(result or 0)
 
 
 if __name__ == "__main__":

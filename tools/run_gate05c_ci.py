@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""Run deterministic DEV-GATE-05C pre-distribution CI.
+"""Run deterministic DEV-GATE-05C current-candidate pre-distribution CI.
 
-This runner performs local/reversible engineering only. It installs the fixed
-build toolchain, rebuilds the exact Gate-05B candidate, validates its immutable
-hashes, exercises index-based installation through loopback on CPython
-3.11-3.14, and re-runs inherited governance. It performs no external registry
-write and cannot establish human external evaluation or release authority.
+This runner performs local/reversible engineering only. Historical Gate-05C
+baseline evidence remains immutable; current package identity is loaded from
+AX-PUB-CANDIDATE-IDENTITY-001. No external registry write, human evaluation,
+or release authority is established by this runner.
 """
 from __future__ import annotations
 
@@ -15,17 +14,18 @@ import json
 import os
 import shutil
 import subprocess
-import sys
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE = ROOT / "sdk-release-candidate" / "python"
 DIST = PACKAGE / "dist-gate05c"
 REPORTS = ROOT / "gate05c-reports"
+OVERLAY = ROOT / "artifacts" / "AX-PUB-CANDIDATE-IDENTITY-001.json"
 WHEEL = "aetherxglobal_governed_intelligence-0.1.0rc1-py3-none-any.whl"
 SDIST = "aetherxglobal_governed_intelligence-0.1.0rc1.tar.gz"
-WHEEL_SHA = "bd3c3bfc7306c9b45659e3e0533ea1ac24b065a4c577f08cbe987cc10a4d1fac"
-SDIST_SHA = "2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99"
+HISTORICAL_WHEEL_SHA = "bd3c3bfc7306c9b45659e3e0533ea1ac24b065a4c577f08cbe987cc10a4d1fac"
+HISTORICAL_SDIST_SHA = "2736a2d10827bd42cb048c6ceacbffc6d18402028e9db673813a95c474d86b99"
 RUNTIMES = ("3.11", "3.12", "3.13", "3.14")
 
 
@@ -44,6 +44,35 @@ def digest(path: Path) -> str:
     return h.hexdigest()
 
 
+def load(path: Path) -> dict[str, Any]:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"AX_GATE05C_CURRENT_IDENTITY_FAIL cannot parse {path.relative_to(ROOT)}: {exc}")
+    if not isinstance(value, dict):
+        raise SystemExit(f"AX_GATE05C_CURRENT_IDENTITY_FAIL {path.relative_to(ROOT)} must contain an object")
+    return value
+
+
+def current_identity() -> tuple[str, str]:
+    overlay = load(OVERLAY)
+    if overlay.get("artifact_id") != "AX-PUB-CANDIDATE-IDENTITY-001" or overlay.get("state") != "CURRENT_CANDIDATE_IDENTITY_ALIGNED":
+        raise SystemExit("AX_GATE05C_CURRENT_IDENTITY_FAIL overlay state mismatch")
+    anchors = overlay.get("historical_anchors", {}).get("gate_05b")
+    if not isinstance(anchors, dict):
+        raise SystemExit("AX_GATE05C_CURRENT_IDENTITY_FAIL historical Gate-05B anchor missing")
+    if anchors.get("evidence_id") != "AX-PUB-CI-009" or anchors.get("wheel_sha256") != HISTORICAL_WHEEL_SHA or anchors.get("sdist_sha256") != HISTORICAL_SDIST_SHA:
+        raise SystemExit("AX_GATE05C_CURRENT_IDENTITY_FAIL historical Gate-05B identity changed")
+    current = overlay.get("current_candidate", {}).get("package")
+    if not isinstance(current, dict) or current.get("identity_state") != "CI_OBSERVED_DETERMINISTIC_CURRENT_CANDIDATE":
+        raise SystemExit("AX_GATE05C_CURRENT_IDENTITY_FAIL current package identity unavailable")
+    wheel_sha = current.get("wheel_sha256")
+    sdist_sha = current.get("sdist_sha256")
+    if not isinstance(wheel_sha, str) or len(wheel_sha) != 64 or not isinstance(sdist_sha, str) or len(sdist_sha) != 64:
+        raise SystemExit("AX_GATE05C_CURRENT_IDENTITY_FAIL current package digests incomplete")
+    return wheel_sha, sdist_sha
+
+
 def check_governance(py: str) -> None:
     for script in (
         "tools/check_sdk_distribution_external_validation.py",
@@ -59,6 +88,12 @@ def check_governance(py: str) -> None:
     run([
         py,
         "tools/check_installable_external_evaluation_report.py",
+        "examples/external-evaluation/AX-PUB-EVAL-REPORT-002.current.template.json",
+        "--allow-template",
+    ])
+    run([
+        py,
+        "tools/check_installable_external_evaluation_report_historical.py",
         "examples/external-evaluation/AX-PUB-EVAL-REPORT-002.template.json",
         "--allow-template",
     ])
@@ -74,6 +109,7 @@ def main() -> int:
         for runtime in RUNTIMES
     }
     py314 = pythons["3.14"]
+    wheel_sha, sdist_sha = current_identity()
 
     for runtime, exe in pythons.items():
         completed = subprocess.run([exe, "-c", "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"], text=True, capture_output=True, check=True)
@@ -84,14 +120,18 @@ def main() -> int:
 
     for path in (
         "artifacts/AX-PUB-DEV-009.json",
+        "artifacts/AX-PUB-CANDIDATE-IDENTITY-001.json",
         "examples/external-evaluation/AX-PUB-EVAL-REPORT-002.template.json",
+        "examples/external-evaluation/AX-PUB-EVAL-REPORT-002.current.template.json",
     ):
         run([py314, "-m", "json.tool", path], cwd=ROOT)
     for script in (
         "tools/run_sdk_local_index_validation.py",
+        "tools/run_sdk_local_index_validation_historical.py",
         "tools/run_gate05c_ci.py",
         "tools/check_sdk_distribution_external_validation.py",
         "tools/check_installable_external_evaluation_report.py",
+        "tools/check_installable_external_evaluation_report_historical.py",
     ):
         run([py314, "-m", "py_compile", script], cwd=ROOT)
 
@@ -116,12 +156,12 @@ def main() -> int:
     wheel = DIST / WHEEL
     sdist = DIST / SDIST
     if not wheel.is_file() or not sdist.is_file():
-        raise SystemExit("AX_GATE05C_EXACT_CANDIDATE_FAIL missing wheel/sdist")
+        raise SystemExit("AX_GATE05C_CURRENT_CANDIDATE_FAIL missing wheel/sdist")
     wh = digest(wheel)
     sh = digest(sdist)
-    if wh != WHEEL_SHA or sh != SDIST_SHA:
-        raise SystemExit(f"AX_GATE05C_EXACT_CANDIDATE_FAIL wheel={wh} sdist={sh}")
-    print(f"AX_GATE05C_EXACT_CANDIDATE_IDENTITY_PASS wheel={wh} sdist={sh}")
+    if wh != wheel_sha or sh != sdist_sha:
+        raise SystemExit(f"AX_GATE05C_CURRENT_CANDIDATE_FAIL wheel={wh} sdist={sh}")
+    print(f"AX_GATE05C_CURRENT_CANDIDATE_IDENTITY_PASS wheel={wh} sdist={sh} historical_ci009_preserved=true")
 
     shutil.rmtree(REPORTS, ignore_errors=True)
     REPORTS.mkdir(parents=True)
@@ -141,12 +181,12 @@ def main() -> int:
         assert report["external_registry_validation"] is False
         assert report["external_registry_write_performed"] is False
         assert report["sdk_publication_authorized"] is False
-        assert report["wheel"]["sha256"] == WHEEL_SHA
-        assert report["sdist"]["sha256"] == SDIST_SHA
+        assert report["wheel"]["sha256"] == wheel_sha
+        assert report["sdist"]["sha256"] == sdist_sha
         observed.append(report["runtime"])
     if observed != list(RUNTIMES):
         raise SystemExit(f"AX_GATE05C_LOCAL_INDEX_MATRIX_FAIL observed={observed}")
-    print("AX_GATE05C_LOCAL_INDEX_MATRIX_PASS runtimes=3.11,3.12,3.13,3.14 external_write=false")
+    print("AX_GATE05C_CURRENT_LOCAL_INDEX_MATRIX_PASS runtimes=3.11,3.12,3.13,3.14 external_write=false historical_ci010_preserved=true")
 
     shutil.rmtree(DIST, ignore_errors=True)
     check_governance(py314)
