@@ -1,0 +1,47 @@
+name: Validate Offline Attestation Importer Proof
+
+on:
+  pull_request:
+    paths:
+      - 'reference-implementations/offline-attestation-importer/**'
+      - '.github/workflows/validate_offline_attestation_importer.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  bounded-reference-proof:
+    name: Python ${{ matrix.python-version }} / NEG-001..017 + P1 regressions
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12', '3.13', '3.14']
+    steps:
+      - name: Checkout reviewed source
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Compile bounded proof
+        run: |
+          python -m py_compile \
+            reference-implementations/offline-attestation-importer/importer.py \
+            reference-implementations/offline-attestation-importer/tests/test_importer.py
+
+      - name: Run NEG-001..017 and bounded P1 regressions
+        run: |
+          python -m unittest discover \
+            -s reference-implementations/offline-attestation-importer/tests \
+            -p 'test_*.py' \
+            -v
+
+      - name: Explicit authority boundary
+        run: |
+          echo 'REFERENCE PROOF != PRODUCT IMPLEMENTATION'
+          echo 'TEST PASS != SECURITY GO'
+          echo 'IMPLEMENTED != VERIFIED != ACCEPTED'
+          echo 'NO NETWORK / REGISTRY / RELEASE / GATE AUTHORITY'
