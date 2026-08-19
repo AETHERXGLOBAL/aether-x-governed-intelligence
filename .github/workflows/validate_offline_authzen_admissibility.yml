@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - 'reference-implementations/offline-authzen-admissibility/**'
+      - 'reference-implementations/eav-contract-validator/validator.py'
+      - 'schemas/AX-PUB-SCHEMA-001_EAV_CONTRACT.schema.json'
       - '.github/workflows/validate_offline_authzen_admissibility.yml'
 
 permissions:
@@ -11,7 +13,7 @@ permissions:
 
 jobs:
   bounded-reference-proof:
-    name: Python ${{ matrix.python-version }} / NEG-AZ-001..032
+    name: Python ${{ matrix.python-version }} / NEG-AZ-001..032 + P1 regressions
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -33,17 +35,26 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Compile bounded proof
+      - name: Compile bounded proof and existing EAV validator
         run: |
           python -m py_compile \
             reference-implementations/offline-authzen-admissibility/admissibility.py \
-            reference-implementations/offline-authzen-admissibility/tests/test_admissibility.py
+            reference-implementations/offline-authzen-admissibility/tests/test_admissibility.py \
+            reference-implementations/offline-authzen-admissibility/tests/test_p1_structural_eav.py \
+            reference-implementations/eav-contract-validator/validator.py
 
-      - name: Run NEG-AZ-001..032
+      - name: Run NEG-AZ-001..032 plus bounded P1 regressions
         run: |
           python -m unittest discover \
             -s reference-implementations/offline-authzen-admissibility/tests \
             -p 'test_*.py' \
+            -v
+
+      - name: Explicit EAV cross-contract validation
+        run: |
+          python -m unittest discover \
+            -s reference-implementations/offline-authzen-admissibility/tests \
+            -p 'test_p1_structural_eav.py' \
             -v
 
       - name: Explicit authority boundary
