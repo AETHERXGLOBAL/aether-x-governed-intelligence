@@ -97,6 +97,14 @@ This is a **successful fail-closed result**. CI should fail only if the report c
 
 ---
 
+## Validation acceptance
+
+This candidate becomes CI-validated only through a direct run of `Validate SDK Release Readiness Evidence Pack` against the reviewed source. Local execution, a merge to `main`, or a correctly blocked readiness result does not by itself establish CI validation.
+
+A later promotion must preserve the exact workflow run, job and uploaded report-artifact identities as governed evidence. Until that evidence exists, the artifact remains a candidate even when its local checks pass.
+
+---
+
 ## Machine-readable contract
 
 [`artifacts/AX-PUB-RELPACK-001.json`](../artifacts/AX-PUB-RELPACK-001.json)
