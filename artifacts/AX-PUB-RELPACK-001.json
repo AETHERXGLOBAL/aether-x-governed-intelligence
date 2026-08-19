@@ -1,7 +1,8 @@
 {
   "artifact_id": "AX-PUB-RELPACK-001",
   "version": "0.1",
-  "state": "DEV_GATE_05D_RELEASE_READINESS_PACK_CANDIDATE_BLOCKED",
+  "state": "CI_VALIDATED_DEV_GATE_05D_RELEASE_READINESS_PACK_BLOCKED",
+  "validation_evidence": "AX-PUB-CI-016",
   "scope": "FIRST_OFFICIAL_PYTHON_SDK_RELEASE_AUTHORITY_EVIDENCE_AGGREGATION",
   "candidate": {
     "distribution": "aetherxglobal-governed-intelligence",
@@ -23,71 +24,19 @@
     "distribution_state": "artifacts/AX-PUB-DEV-009.json"
   },
   "required_dimensions": [
-    {
-      "id": "ENGINEERING_CANDIDATE_IDENTITY",
-      "required_for_05d": true,
-      "expected_current_state": "ESTABLISHED"
-    },
-    {
-      "id": "PUBLIC_API_CONTRACT",
-      "required_for_05d": true,
-      "expected_current_state": "VALIDATED_CANDIDATE"
-    },
-    {
-      "id": "EXACT_ARTIFACT_RUNTIME_VALIDATION",
-      "required_for_05d": true,
-      "expected_current_state": "ESTABLISHED"
-    },
-    {
-      "id": "SUPPLY_CHAIN_PROVENANCE_SBOM",
-      "required_for_05d": true,
-      "expected_current_state": "ESTABLISHED_ENGINEERING_EVIDENCE"
-    },
-    {
-      "id": "EXTERNAL_REGISTRY_VALIDATION",
-      "required_for_05d": true,
-      "expected_current_state": "NOT_ESTABLISHED"
-    },
-    {
-      "id": "INDEPENDENT_HUMAN_EXTERNAL_EVALUATION",
-      "required_for_05d": true,
-      "expected_current_state": "NOT_ESTABLISHED"
-    },
-    {
-      "id": "RELEASE_CONTROL_READINESS",
-      "required_for_05d": true,
-      "expected_current_state": "NOT_ESTABLISHED"
-    },
-    {
-      "id": "REGISTRY_OWNERSHIP_AND_TRUSTED_PUBLISHER",
-      "required_for_05d": true,
-      "expected_current_state": "NOT_ESTABLISHED"
-    },
-    {
-      "id": "LICENCE_AND_IP_CLEARANCE",
-      "required_for_05d": true,
-      "expected_current_state": "NOT_ESTABLISHED"
-    },
-    {
-      "id": "SUPPORT_CONTRACT_ACTIVATION",
-      "required_for_05d": true,
-      "expected_current_state": "NOT_ACTIVATED"
-    },
-    {
-      "id": "SECURITY_OPERATIONS_READINESS",
-      "required_for_05d": true,
-      "expected_current_state": "NOT_READY"
-    },
-    {
-      "id": "RELEASE_OWNER_AND_ACCOUNTABILITY",
-      "required_for_05d": true,
-      "expected_current_state": "NOT_ESTABLISHED"
-    },
-    {
-      "id": "EXPLICIT_RELEASE_AUTHORITY",
-      "required_for_05d": true,
-      "expected_current_state": "NOT_AUTHORIZED"
-    }
+    {"id": "ENGINEERING_CANDIDATE_IDENTITY", "required_for_05d": true, "expected_current_state": "ESTABLISHED"},
+    {"id": "PUBLIC_API_CONTRACT", "required_for_05d": true, "expected_current_state": "VALIDATED_CANDIDATE"},
+    {"id": "EXACT_ARTIFACT_RUNTIME_VALIDATION", "required_for_05d": true, "expected_current_state": "ESTABLISHED"},
+    {"id": "SUPPLY_CHAIN_PROVENANCE_SBOM", "required_for_05d": true, "expected_current_state": "ESTABLISHED_ENGINEERING_EVIDENCE"},
+    {"id": "EXTERNAL_REGISTRY_VALIDATION", "required_for_05d": true, "expected_current_state": "NOT_ESTABLISHED"},
+    {"id": "INDEPENDENT_HUMAN_EXTERNAL_EVALUATION", "required_for_05d": true, "expected_current_state": "NOT_ESTABLISHED"},
+    {"id": "RELEASE_CONTROL_READINESS", "required_for_05d": true, "expected_current_state": "NOT_ESTABLISHED"},
+    {"id": "REGISTRY_OWNERSHIP_AND_TRUSTED_PUBLISHER", "required_for_05d": true, "expected_current_state": "NOT_ESTABLISHED"},
+    {"id": "LICENCE_AND_IP_CLEARANCE", "required_for_05d": true, "expected_current_state": "NOT_ESTABLISHED"},
+    {"id": "SUPPORT_CONTRACT_ACTIVATION", "required_for_05d": true, "expected_current_state": "NOT_ACTIVATED"},
+    {"id": "SECURITY_OPERATIONS_READINESS", "required_for_05d": true, "expected_current_state": "NOT_READY"},
+    {"id": "RELEASE_OWNER_AND_ACCOUNTABILITY", "required_for_05d": true, "expected_current_state": "NOT_ESTABLISHED"},
+    {"id": "EXPLICIT_RELEASE_AUTHORITY", "required_for_05d": true, "expected_current_state": "NOT_AUTHORIZED"}
   ],
   "output_contract": {
     "report_format": "AX-PUB-RELPACK-REPORT-001",

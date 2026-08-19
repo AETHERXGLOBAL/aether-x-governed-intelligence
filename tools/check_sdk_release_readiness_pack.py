@@ -71,7 +71,8 @@ def check_contract() -> None:
     contract = load(CONTRACT)
     require(contract.get("artifact_id") == "AX-PUB-RELPACK-001", "contract artifact ID mismatch")
     require(contract.get("version") == "0.1", "contract version mismatch")
-    require(contract.get("state") == "DEV_GATE_05D_RELEASE_READINESS_PACK_CANDIDATE_BLOCKED", "contract state mismatch")
+    require(contract.get("state") == "CI_VALIDATED_DEV_GATE_05D_RELEASE_READINESS_PACK_BLOCKED", "contract state mismatch")
+    require(contract.get("validation_evidence") == "AX-PUB-CI-016", "contract validation evidence mismatch")
     candidate = contract.get("candidate")
     require(isinstance(candidate, dict), "contract candidate missing")
     require(candidate.get("distribution") == "aetherxglobal-governed-intelligence", "contract distribution mismatch")
@@ -189,7 +190,7 @@ def main() -> int:
     check_contract()
     if args.report is not None:
         check_report(args.report)
-    print("AX_RELEASE_PACK_CONTRACT_PASS state=BLOCKED dev_gate_05d=NOT_AUTHORIZED sdk_publication=NOT_AUTHORIZED")
+    print("AX_RELEASE_PACK_CONTRACT_PASS state=CI_VALIDATED_BLOCKED dev_gate_05d=NOT_AUTHORIZED sdk_publication=NOT_AUTHORIZED")
     return 0
 
 
