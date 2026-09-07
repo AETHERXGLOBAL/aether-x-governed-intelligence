@@ -186,6 +186,10 @@ The preferred evaluation model keeps proprietary technology under AETHER X contr
 
 See **[Enterprise Evaluation & Licensing](./docs/ENTERPRISE_EVALUATION.md)**.
 
+**[Start a non-confidential Enterprise Evaluation Request](https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence/issues/new?template=enterprise-evaluation.yml)**
+
+Do not submit confidential, security-sensitive, customer, credential, source-code or trade-secret information through the public request form.
+
 ---
 
 ## Intellectual Property & Licensing
