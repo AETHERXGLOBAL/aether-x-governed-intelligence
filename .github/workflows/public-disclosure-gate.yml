@@ -1,0 +1,27 @@
+name: Validate Public Disclosure Boundary
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  public-boundary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout reviewed public surface
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: false
+
+      - name: Compile disclosure policy
+        run: python3 -m py_compile tools/check_public_surface.py
+
+      - name: Enforce non-enabling public surface
+        run: python3 tools/check_public_surface.py
