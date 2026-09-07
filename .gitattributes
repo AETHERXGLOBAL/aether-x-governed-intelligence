@@ -1,0 +1,5 @@
+# The public repository is a corporate technology showcase, not a software distribution.
+# Automation exists only to enforce the disclosure boundary and should not be
+# presented by GitHub Linguist as the repository's product implementation language.
+tools/** linguist-detectable=false
+.github/** linguist-detectable=false
