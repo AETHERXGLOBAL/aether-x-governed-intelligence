@@ -1,0 +1,90 @@
+name: Enterprise Evaluation Request
+description: Start a non-confidential request for technical diligence, evaluation, licensing or strategic collaboration.
+title: "Enterprise evaluation request — "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## AETHER X Governed Intelligence — Enterprise Evaluation
+
+        Use this form only for **non-confidential** introductory information.
+
+        **Do not include** proprietary information, security-sensitive details, customer data, credentials, source code, unpublished research, trade secrets, contract terms, or other confidential information.
+
+        Submission of this public form does not create an NDA, evaluation right, licence, partnership, obligation to proceed, or authorization to access non-public AETHER X technology.
+
+  - type: input
+    id: organization
+    attributes:
+      label: Organization
+      description: Legal or trading name of the organization making the request.
+      placeholder: Example Corporation
+    validations:
+      required: true
+
+  - type: input
+    id: requester
+    attributes:
+      label: Requester
+      description: Name and professional role of the person making the request.
+      placeholder: Name — Title / Function
+    validations:
+      required: true
+
+  - type: dropdown
+    id: engagement
+    attributes:
+      label: Engagement interest
+      description: Select the closest non-confidential purpose.
+      options:
+        - Technical diligence
+        - Controlled evaluation / pilot
+        - Enterprise licensing
+        - Strategic partnership
+        - Research / technical collaboration
+        - Other institutional inquiry
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem area
+      description: Describe the institutional problem or use case at a high level. Keep this non-confidential.
+      placeholder: High-level problem statement only; no confidential implementation detail.
+    validations:
+      required: true
+
+  - type: textarea
+    id: objective
+    attributes:
+      label: Evaluation objective
+      description: What would your organization need to determine during an initial evaluation?
+      placeholder: Technical fit, control model, integration feasibility, assurance evidence, etc.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: timeframe
+    attributes:
+      label: Indicative timeframe
+      options:
+        - Exploratory / no fixed timeline
+        - Within 30 days
+        - 1–3 months
+        - 3–6 months
+        - More than 6 months
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Public-intake acknowledgements
+      options:
+        - label: I confirm this submission contains no confidential, proprietary, security-sensitive, personal, customer, credential, source-code or trade-secret information.
+          required: true
+        - label: I understand that non-public technical disclosure, if any, requires a separately approved private process and may require NDA and evaluation terms.
+          required: true
+        - label: I understand that this request does not grant access, licence, production rights, source rights, exclusivity or ownership of AETHER X technology.
+          required: true
