@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Enterprise evaluation and licensing
+    url: https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence/blob/main/docs/ENTERPRISE_EVALUATION.md
+    about: Start here for qualified technical diligence, evaluation and commercial engagement.
+  - name: Security reporting guidance
+    url: https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence/blob/main/SECURITY.md
+    about: Do not publish sensitive vulnerability details in a public issue.
