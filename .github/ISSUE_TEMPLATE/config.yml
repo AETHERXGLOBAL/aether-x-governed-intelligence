@@ -1,8 +1,11 @@
 blank_issues_enabled: false
 contact_links:
   - name: Enterprise evaluation and licensing
+    url: https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence/issues/new?template=enterprise-evaluation.yml
+    about: Start a non-confidential enterprise evaluation, licensing or strategic-engagement request.
+  - name: Enterprise evaluation process
     url: https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence/blob/main/docs/ENTERPRISE_EVALUATION.md
-    about: Start here for qualified technical diligence, evaluation and commercial engagement.
+    about: Review the progressive-disclosure, evaluation and commercial pathway before submitting sensitive technical information.
   - name: Security reporting guidance
     url: https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence/blob/main/SECURITY.md
     about: Do not publish sensitive vulnerability details in a public issue.

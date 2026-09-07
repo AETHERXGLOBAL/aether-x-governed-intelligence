@@ -163,6 +163,8 @@ Unless expressly stated in a signed agreement, evaluation access does not grant:
 
 Qualified organizations should begin with a **non-confidential technical and business discussion**.
 
-Sensitive technical information should not be sent through a public GitHub issue.
+**[Start an Enterprise Evaluation Request](https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence/issues/new?template=enterprise-evaluation.yml)**
+
+The request form is public. Submit only introductory, non-confidential information. Sensitive technical information should not be sent through a public GitHub issue.
 
 AETHER X will establish the appropriate private communication and diligence channel before controlled information is exchanged.
