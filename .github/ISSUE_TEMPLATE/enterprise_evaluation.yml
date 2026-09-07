@@ -1,0 +1,88 @@
+name: Enterprise Evaluation Request
+description: Start a non-confidential discussion about evaluating AETHER X Governed Intelligence.
+title: "Enterprise evaluation: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## AETHER X GLOBAL — Enterprise Evaluation Intake
+
+        This form is a **public, non-confidential entry point**. Do not include source code, credentials, customer data, security-sensitive details, trade secrets, confidential architecture, unpublished research or other restricted information.
+
+        Submission of this form does **not** create an NDA, licence, source-code right, exclusivity, ownership transfer, commercial commitment or authorization to use AETHER X technology.
+
+        If there appears to be a fit, AETHER X will establish an appropriate private channel before any controlled information is exchanged.
+
+  - type: input
+    id: organization
+    attributes:
+      label: Organization
+      description: Legal or trading name of the organization making the request.
+      placeholder: Example Corp.
+    validations:
+      required: true
+
+  - type: input
+    id: contact_role
+    attributes:
+      label: Contact role
+      description: Your role or function in the organization. Do not include sensitive personal information.
+      placeholder: CTO, Head of AI, Corporate Development, Research Lead
+    validations:
+      required: true
+
+  - type: dropdown
+    id: interest
+    attributes:
+      label: Primary interest
+      options:
+        - Technical evaluation
+        - Enterprise pilot
+        - Commercial licensing
+        - Strategic partnership
+        - Research / technical diligence
+        - Other non-confidential inquiry
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Non-confidential problem statement
+      description: Describe the institutional or technical problem at a high level. Do not include proprietary implementation details or confidential information.
+      placeholder: We are evaluating governed AI controls for consequential workflows where evidence, authority, execution and verification must remain separated and auditable.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evaluation_goal
+    attributes:
+      label: Evaluation objective
+      description: What decision would you like an evaluation to help your organization make?
+      placeholder: Determine technical fit for a bounded pilot and identify the evidence required for internal diligence.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: timeline
+    attributes:
+      label: Indicative timeline
+      options:
+        - Exploratory / no fixed timeline
+        - Within 30 days
+        - 1–3 months
+        - 3–6 months
+        - More than 6 months
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: acknowledgement
+    attributes:
+      label: Disclosure acknowledgement
+      options:
+        - label: I confirm that I have not included confidential, security-sensitive, customer, credential, source-code or trade-secret information in this public request.
+          required: true
+        - label: I understand that this request does not grant any licence, ownership, source-code access, exclusivity or other rights in AETHER X technology.
+          required: true
