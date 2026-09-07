@@ -25,6 +25,8 @@ AETHER X does not treat model output as authority. The technology is designed ar
 
 This repository is the **public corporate technology surface** for Governed Intelligence. It is intentionally non-enabling: proprietary source code, detailed implementation contracts, internal schemas, validators, adversarial test suites, release tooling and confidential engineering evidence are maintained in private AETHER X systems.
 
+For a concise partner-facing summary, see **[Executive Technology Brief](./docs/EXECUTIVE_BRIEF.md)**.
+
 ---
 
 ## The Institutional Problem
@@ -216,6 +218,7 @@ See **[Security Policy](./SECURITY.md)** for the disclosure boundary.
 
 | Document | Purpose |
 |---|---|
+| [Executive Technology Brief](./docs/EXECUTIVE_BRIEF.md) | Concise partner-facing summary for first contact |
 | [Technology Overview](./docs/TECHNOLOGY_OVERVIEW.md) | Non-confidential technology positioning |
 | [Engineering Assurance](./docs/ENGINEERING_ASSURANCE.md) | Public-safe summary of validation discipline |
 | [Disclosure Boundary](./docs/DISCLOSURE_BOUNDARY.md) | What is intentionally public vs controlled |
