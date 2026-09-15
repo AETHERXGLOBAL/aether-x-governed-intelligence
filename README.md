@@ -15,7 +15,7 @@
 >
 > **Current status:** R&D / pre-production evaluation stage. This public repository is a non-confidential technology surface, not a production runtime or supported SDK.
 
-**AETHER X GLOBAL is currently under formation.**
+**AETHER X GLOBAL is a multi-project research and technology company currently under formation. Governed Intelligence is its current flagship public technology direction, and this repository covers that technology specifically rather than the company's entire portfolio.**
 
 **Technology scope:** governed enterprise AI execution and distributed-systems engineering. **AETHER X Governed Intelligence is not a cybersecurity product or an offensive-security research project.**
 
@@ -313,9 +313,11 @@ See **[Security Policy](./SECURITY.md)** for the disclosure boundary.
 
 ## AETHER X GLOBAL
 
-AETHER X GLOBAL, currently under formation, is building governed intelligence systems for consequential financial, research, enterprise, knowledge and institutional workflows.
+AETHER X GLOBAL is a **multi-project research and technology company currently under formation**. Governed Intelligence is the current flagship public technology direction represented by this repository, while the broader portfolio also includes AETHER X Quantum, AX-OS, AETHER Intelligence Core (AIC) and AETHER X Research, each with its own disclosed maturity state.
 
-The company strategy is not to compete solely on model scale. It is to engineer the **system layer around intelligence**: evidence, bounded authority, controlled execution, verification, institutional memory and accountable outcomes.
+The company strategy is to build evidence-driven technologies across distinct but related research and engineering domains while keeping maturity, evidence and commercial claims explicit.
+
+See the **[AETHER X GLOBAL organization profile](https://github.com/AETHERXGLOBAL)** for the broader public portfolio view.
 
 <p align="center"><strong>AETHER X GLOBAL</strong></p>
 <p align="center"><strong>Institutional Intelligence. Governed Autonomy.</strong></p>
