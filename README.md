@@ -15,9 +15,9 @@
 >
 > **Current status:** R&D / pre-production evaluation stage. This public repository is a non-confidential technology surface, not a production runtime or supported SDK.
 
-**AETHER X GLOBAL is a multi-project research and technology company currently under formation. Governed Intelligence is its current flagship public technology direction, and this repository covers that technology specifically rather than the company's entire portfolio.**
+**AETHER X GLOBAL is a multidisciplinary research and technology company operating across financial markets, artificial intelligence, advanced computing and applied research. Governed Intelligence is its current flagship public enterprise-technology initiative, and this repository covers that technology specifically rather than the company's entire portfolio.**
 
-**Technology scope:** governed enterprise AI execution and distributed-systems engineering. **AETHER X Governed Intelligence is not a cybersecurity product or an offensive-security research project.**
+**Technology scope:** governed enterprise AI execution and distributed-systems engineering. **AETHER X Governed Intelligence is not a cybersecurity product, offensive-security product, threat-detection system or cyber-defense offering.**
 
 [Executive Brief](./docs/EXECUTIVE_BRIEF.md) · [Enterprise Integration Model](./docs/ENTERPRISE_INTEGRATION_MODEL.md) · [Enterprise Evaluation](./docs/ENTERPRISE_EVALUATION.md)
 
@@ -166,8 +166,8 @@ The current controlled engineering baseline has been subjected internally to a h
 - deterministic package-build validation;
 - fail-closed boundary testing;
 - adversarial and mutation-based malformed-input testing;
-- supply-chain and CI trust-boundary controls;
-- static security analysis;
+- software supply-chain and CI integrity controls;
+- static code analysis;
 - multi-version Python validation;
 - cross-platform installation and behavior validation on Linux, macOS and Windows;
 - exact artifact identity and reproducibility checks;
@@ -221,7 +221,7 @@ The following are not published here:
 - detailed machine-readable control contracts and schemas;
 - private test corpora and adversarial suites;
 - confidential research and invention records;
-- internal release, security and evidence artifacts;
+- internal release and evidence artifacts;
 - customer-specific or commercial implementations;
 - unpublished product architecture.
 
@@ -241,7 +241,7 @@ This public repository does **not** by itself establish:
 - patentability or freedom to operate;
 - production deployment;
 - customer deployment or adoption;
-- regulatory or security certification;
+- regulatory certification;
 - supported public SDK availability;
 - unrestricted autonomous execution authority;
 - commercial performance or superiority over all adjacent approaches.
@@ -272,7 +272,7 @@ See **[Enterprise Evaluation & Licensing](./docs/ENTERPRISE_EVALUATION.md)**.
 
 **[Start a non-confidential Enterprise Evaluation Request](https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence/issues/new?template=enterprise-evaluation.yml)**
 
-Do not submit confidential, security-sensitive, customer, credential, source-code or trade-secret information through the public request form.
+Do not submit confidential, customer, credential, source-code or trade-secret information through the public request form.
 
 ---
 
@@ -288,14 +288,6 @@ See **[Intellectual Property Notice](./INTELLECTUAL_PROPERTY.md)**.
 
 ---
 
-## Security
-
-Security researchers and qualified evaluators should not publish sensitive vulnerability details in public issues.
-
-See **[Security Policy](./SECURITY.md)** for the disclosure boundary.
-
----
-
 ## Public Technology Documents
 
 | Document | Purpose |
@@ -307,17 +299,18 @@ See **[Security Policy](./SECURITY.md)** for the disclosure boundary.
 | [Disclosure Boundary](./docs/DISCLOSURE_BOUNDARY.md) | What is intentionally public vs controlled |
 | [Enterprise Evaluation & Licensing](./docs/ENTERPRISE_EVALUATION.md) | Qualified evaluation and commercial pathway |
 | [Intellectual Property Notice](./INTELLECTUAL_PROPERTY.md) | Ownership and reuse boundary |
-| [Security Policy](./SECURITY.md) | Responsible security communication |
 
 ---
 
 ## AETHER X GLOBAL
 
-AETHER X GLOBAL is a **multi-project research and technology company currently under formation**. Governed Intelligence is the current flagship public technology direction represented by this repository, while the broader portfolio also includes AETHER X Quantum, AX-OS, AETHER Intelligence Core (AIC) and AETHER X Research, each with its own disclosed maturity state.
+AETHER X GLOBAL is a **multidisciplinary research and technology company currently under formation**, operating at the intersection of financial markets, artificial intelligence, advanced computing and applied research.
 
-The company strategy is to build evidence-driven technologies across distinct but related research and engineering domains while keeping maturity, evidence and commercial claims explicit.
+The broader portfolio includes financial-markets technology and quantitative research, AETHER X Quantum, AX-OS, AETHER Intelligence Core (AIC), AETHER X Research and Governed Intelligence, each with its own disclosed maturity state.
+
+The company strategy is to develop technology platforms, analytical systems, quantitative research initiatives and AI-driven technologies while keeping evidence, maturity and commercial claims explicit.
 
 See the **[AETHER X GLOBAL organization profile](https://github.com/AETHERXGLOBAL)** for the broader public portfolio view.
 
 <p align="center"><strong>AETHER X GLOBAL</strong></p>
-<p align="center"><strong>Institutional Intelligence. Governed Autonomy.</strong></p>
+<p align="center"><strong>Financial Markets · Artificial Intelligence · Advanced Technology · Research</strong></p>

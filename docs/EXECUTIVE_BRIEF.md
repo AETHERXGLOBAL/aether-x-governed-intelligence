@@ -3,7 +3,9 @@
 **Classification:** `PUBLIC · NON-CONFIDENTIAL · CONTROLLED DISCLOSURE`  
 **Organization:** AETHER X GLOBAL — currently under formation
 
-**Portfolio context:** This brief covers **AETHER X Governed Intelligence**, the current flagship public technology direction within the broader multi-project AETHER X GLOBAL research and technology portfolio.
+**Portfolio context:** AETHER X GLOBAL is a multidisciplinary research and technology company working across financial markets, artificial intelligence, advanced computing and applied research. This brief covers **AETHER X Governed Intelligence**, the current flagship public enterprise-technology initiative within that broader portfolio.
+
+**Scope boundary:** Governed Intelligence is an enterprise AI execution / distributed-systems technology direction. It is **not** a cybersecurity product, offensive-security product, threat-detection system or cyber-defense offering.
 
 ---
 
@@ -101,8 +103,8 @@ The current controlled engineering baseline has been subjected internally to val
 - fail-closed boundary testing;
 - adversarial malformed-input testing;
 - deterministic package-build validation;
-- supply-chain and CI trust-boundary controls;
-- static security analysis;
+- software supply-chain and CI integrity controls;
+- static code analysis;
 - multi-version Python testing;
 - cross-platform validation on Linux, macOS and Windows;
 - artifact identity and reproducibility checks;
@@ -180,4 +182,4 @@ AETHER X will establish a private diligence channel before any controlled techni
 ---
 
 **AETHER X GLOBAL**  
-*Institutional Intelligence. Governed Autonomy.*
+*Financial Markets · Artificial Intelligence · Advanced Technology · Research*
