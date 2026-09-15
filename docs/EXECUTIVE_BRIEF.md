@@ -1,7 +1,7 @@
 # AETHER X Governed Intelligence — Executive Technology Brief
 
 **Classification:** `PUBLIC · NON-CONFIDENTIAL · CONTROLLED DISCLOSURE`  
-**Organization:** AETHER X GLOBAL
+**Organization:** AETHER X GLOBAL — currently under formation
 
 ---
 
@@ -16,6 +16,36 @@ The central engineering thesis is:
 > **Intelligence should not become authority merely because a model can produce a recommendation or a tool can technically perform an action.**
 
 AETHER X therefore engineers explicit control boundaries around evidence, decision, authority, action, verification and audit.
+
+In practical enterprise terms, the intended position is between AI-enabled decision/action workflows and approved enterprise execution interfaces.
+
+---
+
+## Enterprise Integration — Plain-Language View
+
+```mermaid
+flowchart LR
+    A[AI Agent / Model / Automation] -->|proposed action| B[AETHER X Governed Intelligence]
+    B -->|approved, bounded request| C[Approved Enterprise API / Connector]
+    C --> D[Enterprise System]
+    D -->|result / state| C
+    C --> B
+    B -->|verified result / evidence| A
+```
+
+The intended role is straightforward:
+
+1. an AI-enabled workflow proposes an action;
+2. the request enters a governed boundary;
+3. authority and workflow state are evaluated for the agreed use case;
+4. an allowed action may proceed through an approved enterprise interface;
+5. the result returns so execution state and evidence can be preserved and reviewed.
+
+AETHER X is not intended to replace the model or the enterprise system of record. It is intended to govern the boundary where intelligence becomes action.
+
+The exact runtime packaging, hosting and deployment model is determined during technical scoping. The current R&D baseline does not imply production readiness or a fixed production topology.
+
+See [Enterprise Integration Model](./ENTERPRISE_INTEGRATION_MODEL.md).
 
 ---
 

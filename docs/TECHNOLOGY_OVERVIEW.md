@@ -1,7 +1,7 @@
 # AETHER X Governed Intelligence — Technology Overview
 
 **Classification:** `PUBLIC · NON-CONFIDENTIAL · NON-ENABLING`  
-**Organization:** AETHER X GLOBAL
+**Organization:** AETHER X GLOBAL — currently under formation
 
 ---
 
@@ -10,6 +10,31 @@
 AETHER X Governed Intelligence is a systems-engineering approach for deploying advanced AI in environments where **analysis, authority and action must remain distinguishable and auditable**.
 
 The technology direction is intended for consequential workflows in which an institution needs more than fluent model output. It needs evidence, explicit authority, constrained action, verification and durable accountability.
+
+This is a **governed-execution / distributed-systems engineering direction**, not an offensive-security or cybersecurity research product.
+
+---
+
+## Where It Sits
+
+At a high level, AETHER X is intended to sit between an AI-enabled workflow and approved enterprise execution interfaces:
+
+```mermaid
+flowchart LR
+    A[AI Agent / Model / Automation] -->|proposed action| B[AETHER X Governed Intelligence]
+    B -->|approved, bounded request| C[Approved Enterprise API / Connector]
+    C --> D[Enterprise System]
+    D -->|result / state| C
+    C --> B
+    B -->|verified result / evidence| A
+    B --> E[Evidence / State / Audit Record]
+```
+
+AETHER X is not intended to replace the enterprise system, the model, or the customer's existing business logic. The intended role is to make the boundary between intelligence and consequential action explicit and reviewable.
+
+The exact hosting, runtime packaging and deployment model is determined during technical scoping. This public overview does not claim a final production topology.
+
+For the partner-facing explanation, see [Enterprise Integration Model](./ENTERPRISE_INTEGRATION_MODEL.md).
 
 ---
 
