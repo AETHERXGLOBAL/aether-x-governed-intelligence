@@ -3,6 +3,8 @@
 **Classification:** `PUBLIC · NON-CONFIDENTIAL · CONTROLLED DISCLOSURE`  
 **Organization:** AETHER X GLOBAL — currently under formation
 
+**Portfolio context:** This brief covers **AETHER X Governed Intelligence**, the current flagship public technology direction within the broader multi-project AETHER X GLOBAL research and technology portfolio.
+
 ---
 
 ## Executive Summary
