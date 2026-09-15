@@ -3,7 +3,7 @@
 **Classification:** `PUBLIC · NON-CONFIDENTIAL · NON-ENABLING`  
 **Organization:** AETHER X GLOBAL — currently under formation
 
-**Portfolio context:** AETHER X Governed Intelligence is the current flagship public technology direction within a broader multi-project AETHER X GLOBAL research and technology portfolio.
+**Portfolio context:** AETHER X GLOBAL is a multidisciplinary research and technology company operating across financial markets, artificial intelligence, advanced computing and applied research. AETHER X Governed Intelligence is the current flagship public enterprise-technology initiative within that broader portfolio.
 
 ---
 
@@ -13,7 +13,7 @@ AETHER X Governed Intelligence is a systems-engineering approach for deploying a
 
 The technology direction is intended for consequential workflows in which an institution needs more than fluent model output. It needs evidence, explicit authority, constrained action, verification and durable accountability.
 
-This is a **governed-execution / distributed-systems engineering direction**, not an offensive-security or cybersecurity research product.
+This is a **governed enterprise AI execution / distributed-systems engineering direction**. It is **not** a cybersecurity product, offensive-security product, threat-detection system or cyber-defense offering.
 
 ---
 
@@ -91,7 +91,7 @@ Constrains how an authorized action may be performed and keeps execution observa
 
 ### Verification & Audit
 
-Separates execution completion from outcome acceptance and preserves evidence suitable for review, incident analysis and institutional learning.
+Separates execution completion from outcome acceptance and preserves evidence suitable for review, operational analysis and institutional learning.
 
 ---
 
@@ -128,7 +128,7 @@ The current engineering direction emphasizes:
 
 ## Intended Enterprise Value
 
-Governed Intelligence is relevant where organizations need to move from **AI that can answer** toward **AI systems that can participate safely in institutional workflows**.
+Governed Intelligence is relevant where organizations need to move from **AI that can answer** toward **AI systems that can participate in institutional workflows under explicit authority and verification boundaries**.
 
 Potential value domains include:
 
@@ -162,3 +162,11 @@ This overview does not claim that AETHER X is the first organization to address 
 Scientific novelty, patentability, freedom to operate and comparative technical superiority require separate evidence and legal/technical analysis.
 
 AETHER X's public position is narrower: **governed intelligence is an engineering discipline in which evidence, authority, action and verification must be designed as explicit system boundaries.**
+
+---
+
+## Company Context
+
+Governed Intelligence is one initiative inside the broader AETHER X GLOBAL portfolio. Other public directions include financial-markets technology, quantitative research, AI operations infrastructure, high-integrity information architecture and applied multidisciplinary research.
+
+See the [AETHER X GLOBAL organization profile](https://github.com/AETHERXGLOBAL) for the broader company view.
