@@ -11,6 +11,14 @@
   <code>PUBLIC TECHNOLOGY SHOWCASE · CONTROLLED DISCLOSURE · NO OPEN-SOURCE LICENCE</code>
 </p>
 
+> **Quick orientation:** AI systems may propose or request actions. AETHER X is intended to provide a governed execution boundary between AI capability and enterprise execution, so authority, state, action and verification remain explicit rather than collapsing into one uncontrolled step.
+>
+> **Current status:** R&D / pre-production evaluation stage. This public repository is a non-confidential technology surface, not a production runtime or supported SDK.
+
+**AETHER X GLOBAL is currently under formation.**
+
+[Executive Brief](./docs/EXECUTIVE_BRIEF.md) · [Enterprise Integration Model](./docs/ENTERPRISE_INTEGRATION_MODEL.md) · [Enterprise Evaluation](./docs/ENTERPRISE_EVALUATION.md)
+
 ---
 
 ## Overview
@@ -26,6 +34,38 @@ AETHER X does not treat model output as authority. The technology is designed ar
 This repository is the **public corporate technology surface** for Governed Intelligence. It is intentionally non-enabling: proprietary source code, detailed implementation contracts, internal schemas, validators, adversarial test suites, release tooling and confidential engineering evidence are maintained in private AETHER X systems.
 
 For a concise partner-facing summary, see **[Executive Technology Brief](./docs/EXECUTIVE_BRIEF.md)**.
+
+---
+
+## How It Fits Into an Enterprise
+
+The simplest integration model is:
+
+```mermaid
+flowchart LR
+    A[AI Agent / Model / Automation] -->|proposed action| B[AETHER X Governed Intelligence]
+    B -->|approved, bounded request| C[Approved Enterprise API / Connector]
+    C --> D[Enterprise System]
+    D -->|result / state| C
+    C --> B
+    B -->|verified result / evidence| A
+    B --> E[Evidence / State / Audit Record]
+```
+
+In plain language:
+
+1. An AI agent, model-enabled workflow or automation proposes an action.
+2. The request enters the AETHER X governed boundary.
+3. The applicable authority and workflow state are evaluated for the agreed use case.
+4. If allowed, the request is passed only through an approved enterprise interface.
+5. The enterprise system performs its own function.
+6. The result returns through the governed boundary so execution state and evidence can be preserved and reviewed.
+
+AETHER X is **not** intended to replace the model, the bank, telecom platform, ERP, CRM or other system of record. It is intended to sit at the boundary where intelligence becomes an enterprise action.
+
+The exact deployment, packaging, hosting and connector model is determined during technical scoping. The current R&D baseline does not imply a final production topology.
+
+See **[Enterprise Integration Model](./docs/ENTERPRISE_INTEGRATION_MODEL.md)**.
 
 ---
 
@@ -112,6 +152,24 @@ The current controlled engineering baseline has been subjected internally to a h
 The public summary is intentionally narrower than the private evidence package. Detailed technical evidence may be made available under an approved diligence or evaluation process.
 
 See **[Engineering Assurance](./docs/ENGINEERING_ASSURANCE.md)**.
+
+---
+
+## What a Qualified Enterprise Can Evaluate
+
+A typical first engagement is designed to avoid production exposure and unnecessary disclosure.
+
+A qualified evaluator may receive, as appropriate to the agreed scope:
+
+- a non-confidential architecture and integration briefing;
+- a bounded use-case definition and success criteria;
+- synthetic or sanitized test inputs;
+- evaluator-facing artifacts needed for the agreed test path;
+- observed evidence, limitations and a joint go / no-go review.
+
+The standard evaluation path does **not** require transfer of AETHER X proprietary core source code.
+
+`EVALUATION ACCESS ≠ SOURCE-CODE TRANSFER`
 
 ---
 
@@ -219,6 +277,7 @@ See **[Security Policy](./SECURITY.md)** for the disclosure boundary.
 | Document | Purpose |
 |---|---|
 | [Executive Technology Brief](./docs/EXECUTIVE_BRIEF.md) | Concise partner-facing summary for first contact |
+| [Enterprise Integration Model](./docs/ENTERPRISE_INTEGRATION_MODEL.md) | Plain-language view of how AETHER X fits between AI and enterprise systems |
 | [Technology Overview](./docs/TECHNOLOGY_OVERVIEW.md) | Non-confidential technology positioning |
 | [Engineering Assurance](./docs/ENGINEERING_ASSURANCE.md) | Public-safe summary of validation discipline |
 | [Disclosure Boundary](./docs/DISCLOSURE_BOUNDARY.md) | What is intentionally public vs controlled |
@@ -230,7 +289,7 @@ See **[Security Policy](./SECURITY.md)** for the disclosure boundary.
 
 ## AETHER X GLOBAL
 
-AETHER X GLOBAL engineers governed intelligence systems for consequential financial, research, enterprise, knowledge and institutional workflows.
+AETHER X GLOBAL, currently under formation, is building governed intelligence systems for consequential financial, research, enterprise, knowledge and institutional workflows.
 
 The company strategy is not to compete solely on model scale. It is to engineer the **system layer around intelligence**: evidence, bounded authority, controlled execution, verification, institutional memory and accountable outcomes.
 
