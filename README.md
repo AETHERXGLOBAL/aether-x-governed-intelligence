@@ -11,11 +11,13 @@
   <code>PUBLIC TECHNOLOGY SHOWCASE · CONTROLLED DISCLOSURE · NO OPEN-SOURCE LICENCE</code>
 </p>
 
-> **Quick orientation:** AI systems may propose or request actions. AETHER X is intended to provide a governed execution boundary between AI capability and enterprise execution, so authority, state, action and verification remain explicit rather than collapsing into one uncontrolled step.
+> **Quick orientation:** AETHER X Governed Intelligence is intended to operate as a governed execution layer between AI intent and approved enterprise systems. AI systems may propose or request actions; AETHER X keeps authority, state, execution and verification explicit before and after an approved enterprise action.
 >
 > **Current status:** R&D / pre-production evaluation stage. This public repository is a non-confidential technology surface, not a production runtime or supported SDK.
 
 **AETHER X GLOBAL is currently under formation.**
+
+**Technology scope:** governed enterprise AI execution and distributed-systems engineering. **AETHER X Governed Intelligence is not a cybersecurity product or an offensive-security research project.**
 
 [Executive Brief](./docs/EXECUTIVE_BRIEF.md) · [Enterprise Integration Model](./docs/ENTERPRISE_INTEGRATION_MODEL.md) · [Enterprise Evaluation](./docs/ENTERPRISE_EVALUATION.md)
 
@@ -37,9 +39,25 @@ For a concise partner-facing summary, see **[Executive Technology Brief](./docs/
 
 ---
 
-## How It Fits Into an Enterprise
+## Where AETHER X Sits
 
-The simplest integration model is:
+The simplest enterprise view is:
+
+```text
+AI AGENT / MODEL / AUTOMATION
+            ↓ proposed action
+AETHER X GOVERNED INTELLIGENCE
+            ↓ approved, bounded request
+APPROVED ENTERPRISE API / CONNECTOR
+            ↓
+ENTERPRISE SYSTEM
+            ↓ result / state
+AETHER X GOVERNED INTELLIGENCE
+            ↓
+VERIFIED RESULT / EVIDENCE
+```
+
+The same flow can be visualized as:
 
 ```mermaid
 flowchart LR
@@ -56,14 +74,20 @@ In plain language:
 
 1. An AI agent, model-enabled workflow or automation proposes an action.
 2. The request enters the AETHER X governed boundary.
-3. The applicable authority and workflow state are evaluated for the agreed use case.
+3. The applicable authority, policy and workflow state are evaluated for the agreed use case.
 4. If allowed, the request is passed only through an approved enterprise interface.
 5. The enterprise system performs its own function.
 6. The result returns through the governed boundary so execution state and evidence can be preserved and reviewed.
 
 AETHER X is **not** intended to replace the model, the bank, telecom platform, ERP, CRM or other system of record. It is intended to sit at the boundary where intelligence becomes an enterprise action.
 
-The exact deployment, packaging, hosting and connector model is determined during technical scoping. The current R&D baseline does not imply a final production topology.
+### Enterprise Integration Model
+
+At a high level, AETHER X may be deployed as an agreed service or governed runtime/engine within a customer-controlled or jointly agreed environment, connected only to the enterprise interfaces approved for the scoped use case.
+
+The exact packaging, hosting, networking and connector model is determined during technical scoping. AETHER X does **not** publicly commit at this stage to SaaS-only, on-premises-only, source-code delivery or any other single final production topology.
+
+The standard evaluation path does **not** require transfer of proprietary core source code.
 
 See **[Enterprise Integration Model](./docs/ENTERPRISE_INTEGRATION_MODEL.md)**.
 
