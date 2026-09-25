@@ -1,0 +1,126 @@
+name: ReproCert Consumer Proof
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.reprocert/**'
+      - '.github/workflows/reprocert-consumer-proof.yml'
+      - 'tools/check_public_surface.py'
+      - 'README.md'
+      - 'INTELLECTUAL_PROPERTY.md'
+      - 'docs/DISCLOSURE_BOUNDARY.md'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.reprocert/**'
+      - '.github/workflows/reprocert-consumer-proof.yml'
+      - 'tools/check_public_surface.py'
+      - 'README.md'
+      - 'INTELLECTUAL_PROPERTY.md'
+      - 'docs/DISCLOSURE_BOUNDARY.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  consumer-proof:
+    name: Verify disclosure boundary with ReproCert
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout reviewed public surface
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+
+      - name: Materialize root-scoped claim
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp .reprocert/public-surface-boundary.yml ./reprocert-public-surface-boundary.yml
+
+      - name: Run pinned external ReproCert action
+        id: reprocert
+        uses: AETHERXGLOBAL/reprocert@761b5209675f504599e6c80fb9b281a9733f757e
+        with:
+          claim: reprocert-public-surface-boundary.yml
+          certificate: reprocert-public-surface-certificate.json
+          python-version: '3.13'
+
+      - name: Verify certificate against claim and local evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          reprocert verify             reprocert-public-surface-certificate.json             --claim reprocert-public-surface-boundary.yml             --evidence-root .
+
+      - name: Apply repository acceptance policy
+        shell: bash
+        run: |
+          set -euo pipefail
+          reprocert policy             reprocert-public-surface-certificate.json             .reprocert/public-surface-policy.yml             --output reprocert-public-surface-policy-result.json
+
+      - name: Build privacy-minimized ReproCert predicate
+        shell: bash
+        run: |
+          set -euo pipefail
+          reprocert predicate             reprocert-public-surface-certificate.json             --output reprocert-public-surface-predicate.json
+
+      - name: Publish verification summary
+        shell: bash
+        env:
+          REPROCERT_VERDICT: ${{ steps.reprocert.outputs.verdict }}
+          REPROCERT_DIGEST: ${{ steps.reprocert.outputs.certificate-digest }}
+        run: |
+          {
+            echo "## ReproCert consumer proof"
+            echo
+            echo "- Verdict: `$REPROCERT_VERDICT`"
+            echo "- Certificate SHA-256: `$REPROCERT_DIGEST`"
+            echo "- Policy: `PASS`"
+            echo "- Consumer: `AETHERXGLOBAL/aether-x-governed-intelligence`"
+            echo "- ReproCert pin: `761b5209675f504599e6c80fb9b281a9733f757e`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload consumer evidence bundle
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: reprocert-consumer-proof
+          path: |
+            reprocert-public-surface-certificate.json
+            reprocert-public-surface-policy-result.json
+            reprocert-public-surface-predicate.json
+          if-no-files-found: error
+
+  attest-on-main:
+    name: Attest ReproCert consumer certificate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: consumer-proof
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+
+    steps:
+      - name: Download verified consumer evidence bundle
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: reprocert-consumer-proof
+          path: evidence
+
+      - name: Attest general producer provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6
+        with:
+          subject-path: evidence/reprocert-public-surface-certificate.json
+
+      - name: Attest ReproCert consumer predicate
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6
+        with:
+          subject-path: evidence/reprocert-public-surface-certificate.json
+          predicate-type: https://raw.githubusercontent.com/AETHERXGLOBAL/reprocert/main/schemas/attestation-predicate-v1.schema.json
+          predicate-path: evidence/reprocert-public-surface-predicate.json
