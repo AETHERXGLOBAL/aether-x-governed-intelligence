@@ -1,5 +1,7 @@
 # AETHER X ReproCert
 
+[![ReproCert CI](https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence/actions/workflows/reprocert-ci.yml/badge.svg)](https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence/actions/workflows/reprocert-ci.yml)
+
 **Claim → Experiment → Evidence → Verdict → Certificate**
 
 ReproCert is an open developer tool from **AETHER X GLOBAL** for turning technical claims into machine-checkable, reproducible evidence records in local development and CI.
