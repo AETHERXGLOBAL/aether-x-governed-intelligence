@@ -1,9 +1,0 @@
-__pycache__/
-.pytest_cache/
-*.py[cod]
-dist/
-build/
-*.egg-info/
-certificate.json
-reprocert-certificate.json
-result.json
