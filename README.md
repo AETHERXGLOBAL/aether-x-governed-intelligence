@@ -19,7 +19,7 @@
 
 **Technology scope:** governed enterprise AI execution and distributed-systems engineering. **AETHER X Governed Intelligence is not a cybersecurity product, offensive-security product, threat-detection system or cyber-defense offering.**
 
-[Executive Brief](./docs/EXECUTIVE_BRIEF.md) · [Enterprise Integration Model](./docs/ENTERPRISE_INTEGRATION_MODEL.md) · [Enterprise Evaluation](./docs/ENTERPRISE_EVALUATION.md)
+[Executive Brief](./docs/EXECUTIVE_BRIEF.md) · [Enterprise Integration Model](./docs/ENTERPRISE_INTEGRATION_MODEL.md) · [Enterprise Evaluation](./docs/ENTERPRISE_EVALUATION.md) · [Public Developer Tool: ReproCert](./tools/reprocert/README.md)
 
 ---
 
