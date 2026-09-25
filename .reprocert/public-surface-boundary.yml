@@ -1,0 +1,31 @@
+apiVersion: reprocert.dev/v1alpha1
+kind: ReproducibilityClaim
+metadata:
+  id: governed-intelligence-public-disclosure-boundary
+  title: Public Governed Intelligence surface remains non-enabling
+spec:
+  command:
+    - python3
+    - tools/check_public_surface.py
+  timeout_seconds: 60
+  evidence:
+    - README.md
+    - INTELLECTUAL_PROPERTY.md
+    - docs/DISCLOSURE_BOUNDARY.md
+    - tools/check_public_surface.py
+  checks:
+    - id: disclosure-gate-passed
+      source:
+        type: stdout
+      op: contains
+      expected: AX_PUBLIC_DISCLOSURE_PASS
+    - id: non-enabling-mode
+      source:
+        type: stdout
+      op: contains
+      expected: mode=NON_ENABLING_SHOWCASE
+    - id: checker-exit-code
+      source:
+        type: exit_code
+      op: eq
+      expected: 0
