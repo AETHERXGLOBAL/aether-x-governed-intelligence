@@ -19,7 +19,7 @@
 
 **Technology scope:** governed enterprise AI execution and distributed-systems engineering. **AETHER X Governed Intelligence is not a cybersecurity product, offensive-security product, threat-detection system or cyber-defense offering.**
 
-[Executive Brief](./docs/EXECUTIVE_BRIEF.md) · [Enterprise Integration Model](./docs/ENTERPRISE_INTEGRATION_MODEL.md) · [Enterprise Evaluation](./docs/ENTERPRISE_EVALUATION.md) · [Public Developer Tool: ReproCert](./tools/reprocert/README.md)
+[Executive Brief](./docs/EXECUTIVE_BRIEF.md) · [Enterprise Integration Model](./docs/ENTERPRISE_INTEGRATION_MODEL.md) · [Enterprise Evaluation](./docs/ENTERPRISE_EVALUATION.md) · [Open-Source Project: ReproCert](https://github.com/AETHERXGLOBAL/reprocert)
 
 ---
 
@@ -278,34 +278,33 @@ Do not submit confidential, customer, credential, source-code or trade-secret in
 
 ## Intellectual Property & Licensing
 
-This repository does **not** include a general repository-wide open-source licence. Proprietary Governed Intelligence material remains subject to the repository's controlled-disclosure and IP boundary.
+This repository is **not open source** and does not include a general software, patent, technology, trademark or commercial licence.
 
-A separately scoped exception exists for **AETHER X ReproCert** under `tools/reprocert/`: that developer-tool subtree is licensed under **Apache License 2.0** according to its own `LICENSE` and `LICENSE_SCOPE.md`. That scoped licence does not extend to the rest of this repository or to AETHER X trademarks.
+Publication is for information, technical positioning and controlled evaluation only. No permission is granted to commercialize, redistribute, sublicense, adapt or represent proprietary AETHER X Governed Intelligence material as another party's technology except where separately permitted by applicable law or by a written agreement executed by AETHER X GLOBAL.
+
+Separately published AETHER X open-source projects have their own repositories and licence terms. Those licences do not apply to this repository.
 
 See **[Intellectual Property Notice](./INTELLECTUAL_PROPERTY.md)**.
 
 ---
 
-## Public Developer Tool — AETHER X ReproCert
+## Open-Source Developer Project — ReproCert
 
-**AETHER X ReproCert** is a separately licensed public developer tool for turning technical claims into machine-checkable reproducibility records.
+AETHER X GLOBAL publishes **ReproCert** as a separate open-source developer project:
+
+**https://github.com/AETHERXGLOBAL/reprocert**
+
+ReproCert turns explicit technical claims into machine-checkable reproducibility records:
 
 ```text
-CLAIM
-→ EXACT COMMAND
-→ EVIDENCE
-→ EXPLICIT CHECKS
+CLAIM → EXACT COMMAND → EVIDENCE → CHECKS
 → PASS / FAIL / INCONCLUSIVE / ERROR
 → REPRODUCIBILITY CERTIFICATE
 ```
 
-The alpha includes a Python CLI, an embeddable GitHub Action, open JSON Schemas, evidence hashing, offline certificate verification, cross-platform CI and a reference workflow for signed producer provenance through GitHub Artifact Attestations.
+It is maintained in its own repository with its own source code, CI, contribution workflow, security guidance and Apache-2.0 licence.
 
-ReproCert deliberately separates **certificate/evidence integrity** from **producer authenticity** and from **scientific truth**.
-
-**[Explore AETHER X ReproCert →](./tools/reprocert/README.md)**
-
-`LOCAL CERTIFICATE INTEGRITY ≠ PRODUCER AUTHENTICITY ≠ SCIENTIFIC TRUTH`
+This Governed Intelligence repository does **not** duplicate or serve as the source of truth for ReproCert.
 
 ---
 
