@@ -24,6 +24,12 @@ classifiers = [
 ]
 dependencies = ["PyYAML>=6.0.2,<7"]
 
+[project.urls]
+Homepage = "https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence/tree/main/tools/reprocert"
+Documentation = "https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence/tree/main/tools/reprocert"
+Issues = "https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence/issues"
+Source = "https://github.com/AETHERXGLOBAL/aether-x-governed-intelligence/tree/main/tools/reprocert"
+
 [project.optional-dependencies]
 dev = [
   "pytest>=8.3,<9",
