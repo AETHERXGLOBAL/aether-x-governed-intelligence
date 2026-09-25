@@ -1,0 +1,43 @@
+name: ReproCert feature proposal
+description: Propose a developer-facing capability for AETHER X ReproCert.
+title: "[ReproCert Feature] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Strong proposals explain the developer problem, evidence semantics and trust-boundary impact before suggesting implementation.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Developer problem
+      description: What concrete workflow is difficult or unreliable today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed capability
+      description: Describe the smallest useful capability, not just a product name.
+    validations:
+      required: true
+  - type: textarea
+    id: semantics
+    attributes:
+      label: Evidence and verdict semantics
+      description: Explain how PASS, FAIL, INCONCLUSIVE or ERROR should behave, if relevant.
+    validations:
+      required: false
+  - type: textarea
+    id: trust
+    attributes:
+      label: Trust-boundary impact
+      description: Does this change producer identity, signing, evidence trust, remote execution, secrets, or code execution?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Existing tools or alternatives
+      description: Name adjacent tools/standards if they already solve part of the problem.
+    validations:
+      required: false

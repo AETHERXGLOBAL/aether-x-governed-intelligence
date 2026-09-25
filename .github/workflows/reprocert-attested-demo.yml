@@ -1,0 +1,42 @@
+name: ReproCert Attested Demo
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/reprocert/**'
+      - '.github/workflows/reprocert-attested-demo.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+  artifact-metadata: write
+
+jobs:
+  certificate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Install ReproCert
+        run: python -m pip install tools/reprocert
+      - name: Produce reference certificate
+        working-directory: tools/reprocert/examples/basic
+        run: reprocert run claim.yml --output reprocert-certificate.json
+      - name: Verify certificate and evidence locally
+        working-directory: tools/reprocert/examples/basic
+        run: reprocert verify reprocert-certificate.json --claim claim.yml --evidence-root .
+      - name: Attest certificate producer provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: tools/reprocert/examples/basic/reprocert-certificate.json
+      - name: Upload certificate
+        uses: actions/upload-artifact@v7
+        with:
+          name: reprocert-reference-certificate
+          path: tools/reprocert/examples/basic/reprocert-certificate.json
+          if-no-files-found: error
