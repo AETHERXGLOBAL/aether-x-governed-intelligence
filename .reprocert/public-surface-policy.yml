@@ -1,0 +1,15 @@
+apiVersion: reprocert.dev/policy/v1alpha1
+kind: ReproCertPolicy
+metadata:
+  id: governed-intelligence-public-disclosure-policy
+  title: Acceptance policy for the public disclosure boundary
+spec:
+  allowed_verdicts:
+    - PASS
+  require_ci: true
+  min_evidence_files: 4
+  max_diagnostics: 0
+  required_check_ids:
+    - disclosure-gate-passed
+    - non-enabling-mode
+    - checker-exit-code
